@@ -1,0 +1,314 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, Button, Input, Badge } from '../components/ui';
+import { ArrowLeft, Save, Image as ImageIcon, UploadCloud, X, Plus, Loader2, CheckCircle2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+
+export function ProductFormPage() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    original_price: '',
+    sku: '',
+    stock_quantity: '0',
+    category: 'Electronics',
+    brand: '',
+    status: 'active' as 'active' | 'draft' | 'out_of_stock',
+    image_url: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80', // Primary image
+    images: [] as string[] // Additional images
+  });
+
+  const handleSave = async () => {
+    if (!formData.name || !formData.price) {
+      setError('Product Name and Price are required.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error: insertError } = await supabase
+        .from('products')
+        .insert([{
+          ...formData,
+          price: parseFloat(formData.price),
+          original_price: formData.original_price ? parseFloat(formData.original_price) : null,
+          stock_quantity: parseInt(formData.stock_quantity),
+          images: [formData.image_url, ...formData.images].filter(url => url && url.trim() !== ''),
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        }]);
+
+      if (insertError) throw insertError;
+
+      setSuccess(true);
+      setTimeout(() => navigate('/products'), 1500);
+    } catch (err: any) {
+      console.error('Error saving product:', err);
+      setError(err.message || 'An error occurred while saving the product.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6 max-w-5xl mx-auto pb-20">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="sm" className="px-2" onClick={() => navigate('/products')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-display-sm font-semibold text-on-background">Add New Product</h1>
+        </div>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={() => navigate('/products')}>Discard</Button>
+          <Button 
+            className="gap-2 min-w-[140px]" 
+            onClick={handleSave} 
+            disabled={loading}
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {success ? 'Saved!' : 'Save Product'}
+          </Button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="p-4 bg-error/10 border border-error text-error rounded-lg text-sm font-medium">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="p-4 bg-success/10 border border-success text-success rounded-lg text-sm font-medium flex items-center gap-2">
+          <CheckCircle2 className="h-5 w-5" />
+          Product successfully created! Redirecting...
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content Area */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card>
+            <div className="p-4 border-b border-outline-variant">
+              <h2 className="text-lg font-semibold text-on-surface">General Information</h2>
+            </div>
+            <CardContent className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-on-surface mb-1.5">Product Title</label>
+                <input 
+                  type="text" 
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
+                  placeholder="e.g. Wireless Noise Cancelling Headphones" 
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-on-surface mb-1.5">Description</label>
+                <textarea 
+                  rows={6} 
+                  value={formData.description}
+                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none" 
+                  placeholder="Write a detailed product description..."
+                ></textarea>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <div className="p-4 border-b border-outline-variant flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-on-surface">Media</h2>
+            </div>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-on-surface">Primary Image URL</label>
+                <div className="flex gap-4">
+                  <div className="h-24 w-24 shrink-0 border border-outline rounded-lg overflow-hidden bg-surface-container">
+                    {formData.image_url ? (
+                      <img src={formData.image_url} alt="Preview" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-on-surface-variant">
+                        <ImageIcon className="h-8 w-8" />
+                      </div>
+                    )}
+                  </div>
+                  <input 
+                    type="text" 
+                    value={formData.image_url}
+                    onChange={e => setFormData({ ...formData, image_url: e.target.value })}
+                    className="flex-1 h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none self-center" 
+                    placeholder="Enter image URL..." 
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="block text-sm font-medium text-on-surface">Additional Images (Up to 5)</label>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 text-primary"
+                    onClick={() => {
+                      if (formData.images.length < 5) {
+                        setFormData({ ...formData, images: [...formData.images, ''] });
+                      }
+                    }}
+                    disabled={formData.images.length >= 5}
+                  >
+                    <Plus className="h-4 w-4 mr-1" /> Add Image
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-3">
+                  {formData.images.map((url, index) => (
+                    <div key={index} className="flex gap-3 items-center">
+                      <div className="h-12 w-12 shrink-0 border border-outline rounded-md overflow-hidden bg-surface-container">
+                        {url ? (
+                          <img src={url} alt={`Preview ${index}`} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center text-on-surface-variant">
+                            <ImageIcon className="h-5 w-5" />
+                          </div>
+                        )}
+                      </div>
+                      <input 
+                        type="text" 
+                        value={url}
+                        onChange={e => {
+                          const newImages = [...formData.images];
+                          newImages[index] = e.target.value;
+                          setFormData({ ...formData, images: newImages });
+                        }}
+                        className="flex-1 h-9 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none text-sm" 
+                        placeholder="Additional image URL..." 
+                      />
+                      <button 
+                        onClick={() => {
+                          const newImages = formData.images.filter((_, i) => i !== index);
+                          setFormData({ ...formData, images: newImages });
+                        }}
+                        className="p-1.5 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-md transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ))}
+                  {formData.images.length === 0 && (
+                    <div className="text-center py-6 border-2 border-dashed border-outline-variant rounded-lg text-on-surface-variant text-sm">
+                      No additional images added
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <div className="p-4 border-b border-outline-variant">
+              <h2 className="text-lg font-semibold text-on-surface">Inventory & Pricing</h2>
+            </div>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-1.5">Price (₹)</label>
+                  <input 
+                    type="number" 
+                    value={formData.price}
+                    onChange={e => setFormData({ ...formData, price: e.target.value })}
+                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
+                    placeholder="0.00" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-1.5">Stock Quantity</label>
+                  <input 
+                    type="number" 
+                    value={formData.stock_quantity}
+                    onChange={e => setFormData({ ...formData, stock_quantity: e.target.value })}
+                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
+                    placeholder="0" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-1.5">SKU</label>
+                  <input 
+                    type="text" 
+                    value={formData.sku}
+                    onChange={e => setFormData({ ...formData, sku: e.target.value })}
+                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
+                    placeholder="e.g. WH-1000XM4" 
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar Configuration */}
+        <div className="space-y-6">
+          <Card>
+            <div className="p-4 border-b border-outline-variant">
+              <h2 className="text-lg font-semibold text-on-surface">Status</h2>
+            </div>
+            <CardContent className="p-6">
+              <select 
+                value={formData.status}
+                onChange={e => setFormData({ ...formData, status: e.target.value as any })}
+                className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
+              >
+                <option value="active">Active</option>
+                <option value="draft">Draft</option>
+                <option value="out_of_stock">Out of Stock</option>
+              </select>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <div className="p-4 border-b border-outline-variant">
+              <h2 className="text-lg font-semibold text-on-surface">Organization</h2>
+            </div>
+            <CardContent className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-on-surface mb-1.5">Category</label>
+                <select 
+                  value={formData.category}
+                  onChange={e => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
+                >
+                  <option>Laptops</option>
+                  <option>Printers</option>
+                  <option>Peripherals</option>
+                  <option>Monitors</option>
+                  <option>Components</option>
+                  <option>Storage</option>
+                  <option>Networking</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-on-surface mb-1.5">Brand</label>
+                <input 
+                  type="text" 
+                  value={formData.brand}
+                  onChange={e => setFormData({ ...formData, brand: e.target.value })}
+                  className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
+                  placeholder="e.g. Sony" 
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
