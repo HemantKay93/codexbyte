@@ -1,0 +1,11 @@
+{
+  "name": "@byteevolvr/ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "dependencies": {
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.11.0"
+  }
+}

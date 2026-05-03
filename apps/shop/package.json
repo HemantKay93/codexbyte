@@ -1,0 +1,32 @@
+{
+  "name": "@byteevolvr/shop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 4030",
+    "build": "tsc -b && vite build",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@byteevolvr/api-client": "file:../../packages/api-client",
+    "@byteevolvr/store": "file:../../packages/store",
+    "@byteevolvr/ui": "^1.0.0",
+    "@supabase/supabase-js": "^2.105.1",
+    "@tanstack/react-query": "^5.100.1",
+    "axios": "^1.9.0",
+    "lucide-react": "^1.11.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-helmet-async": "^3.0.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.5.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.4.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  }
+}

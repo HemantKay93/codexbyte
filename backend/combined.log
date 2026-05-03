@@ -1,0 +1,4 @@
+{"level":"info","message":"API server listening on port 8080","service":"byteevolvr-backend","timestamp":"2026-05-03T09:55:38.214Z"}
+{"level":"info","message":"Provider status: Razorpay=configured Shiprocket=configured","service":"byteevolvr-backend","timestamp":"2026-05-03T09:55:38.217Z"}
+{"level":"info","message":"API server listening on port 8080","service":"byteevolvr-backend","timestamp":"2026-05-03T10:07:34.239Z"}
+{"level":"info","message":"Provider status: Razorpay=configured Shiprocket=configured","service":"byteevolvr-backend","timestamp":"2026-05-03T10:07:34.242Z"}

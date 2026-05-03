@@ -1,0 +1,49 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - PORT=8080
+      - NODE_ENV=development
+    restart: always
+
+  shop:
+    build:
+      context: .
+      dockerfile: apps/shop/Dockerfile
+    ports:
+      - "4030:80"
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    restart: always
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    ports:
+      - "4031:80"
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    restart: always
+
+  website:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    ports:
+      - "4028:80"
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    restart: always
