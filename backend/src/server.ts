@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 
 import logger from './services/logger.js';
 import { errorHandler } from './middlewares/error.js';
+import './jobs/index.js'; // Initialize background workers
 
 // Route Imports
 import productRoutes from './routes/productRoutes.js';
@@ -22,7 +23,6 @@ import shippingRoutes from './routes/shippingRoutes.js';
 import warehouseRoutes from './routes/warehouseRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import posRoutes from './routes/posRoutes.js';
-
 
 import * as reportController from './controllers/reportController.js';
 import { authenticate, authorize } from './middlewares/auth.js';
@@ -59,7 +59,6 @@ app.use('/api/v1/shipping', shippingRoutes);
 app.use('/api/v1/warehouse', warehouseRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/pos', posRoutes);
-
 
 app.get(
   '/api/v1/reports/export',

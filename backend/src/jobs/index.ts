@@ -30,7 +30,7 @@ export const notificationWorker = new Worker(
     const { title, message, type, priority } = job.data;
     logger.info(`[Job] Creating system notification: ${title}`);
     try {
-      await NotificationService.create(title, message, type, priority);
+      await NotificationService.send({ title, message, type, priority });
     } catch (err) {
       logger.error(`[Job] Notification failed:`, err);
     }
