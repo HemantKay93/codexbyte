@@ -2,12 +2,13 @@ import { Request, Response } from 'express';
 import { AdminService } from '../services/adminService.js';
 import { AdminRepository } from '../repositories/adminRepository.js';
 import { catchAsync } from '../middlewares/error.js';
+import { AnalyticsService } from '../services/analyticsService.js';
 
 const adminService = new AdminService();
 const adminRepo = new AdminRepository();
 
 export const getDashboardStats = catchAsync(async (req: Request, res: Response) => {
-  const stats = await adminService.getDashboardData();
+  const stats = await AnalyticsService.getDashboardStats();
   res.json(stats);
 });
 
@@ -23,7 +24,8 @@ export const getCustomerDetail = catchAsync(async (req: Request, res: Response) 
 });
 
 export const getSalesReport = catchAsync(async (req: Request, res: Response) => {
-  const report = await adminService.getSalesReport();
+  const days = req.query.days ? parseInt(req.query.days as string) : 7;
+  const report = await AnalyticsService.getSalesTrend(days);
   res.json(report);
 });
 

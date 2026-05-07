@@ -25,7 +25,7 @@ export const createOrder = catchAsync(async (req: AuthRequest, res: Response) =>
   res.status(201).json(order);
 });
 
-export const updateOrder = catchAsync(async (req: Request, res: Response) => {
-  const result = await orderService.updateOrderStatus(req.params.id, req.body);
+export const updateOrder = catchAsync(async (req: AuthRequest, res: Response) => {
+  const result = await orderService.updateOrderStatus(req.params.id, req.body, req.user?.id);
   res.json(result);
 });

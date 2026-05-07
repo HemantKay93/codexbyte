@@ -19,6 +19,8 @@ import cmsRoutes from './routes/cmsRoutes.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import shippingRoutes from './routes/shippingRoutes.js';
+import warehouseRoutes from './routes/warehouseRoutes.js';
+
 import * as reportController from './controllers/reportController.js';
 import { authenticate, authorize } from './middlewares/auth.js';
 
@@ -37,7 +39,7 @@ app.use(express.json());
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 200,
-  message: 'Too many requests'
+  message: 'Too many requests',
 });
 app.use('/api/', limiter);
 
@@ -51,7 +53,14 @@ app.use('/api/v1/cms', cmsRoutes);
 app.use('/api/v1/wishlist', wishlistRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/shipping', shippingRoutes);
-app.get('/api/v1/reports/export', authenticate, authorize('admin', 'super-admin'), reportController.exportReport);
+app.use('/api/v1/warehouse', warehouseRoutes);
+
+app.get(
+  '/api/v1/reports/export',
+  authenticate,
+  authorize('admin', 'super-admin'),
+  reportController.exportReport
+);
 
 // Legacy Routes (for frontend compatibility)
 app.use('/api/auth', authRoutes);
@@ -62,7 +71,12 @@ app.use('/api/cms', cmsRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/shipping', shippingRoutes);
-app.get('/api/reports/export', authenticate, authorize('admin', 'super-admin'), reportController.exportReport);
+app.get(
+  '/api/reports/export',
+  authenticate,
+  authorize('admin', 'super-admin'),
+  reportController.exportReport
+);
 
 // Additional Legacy Mappings
 app.get('/api/products/:productId/reviews', reviewRoutes);
