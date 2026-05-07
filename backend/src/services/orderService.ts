@@ -3,7 +3,6 @@ import { AppError } from '../middlewares/error.js';
 import { InventoryService } from './inventoryService.js';
 import { AuditService } from './auditService.js';
 import { getAdminClient } from '../config/supabase.js';
-import { NotificationService } from './notificationService.js';
 import logger from './logger.js';
 import { notificationQueue, emailQueue } from '../jobs/index.js';
 
@@ -33,8 +32,38 @@ export class OrderService {
       (sum: number, item: any) => sum + Number(item.price) * item.quantity,
       0
     );
-    const tax = Math.round(subtotal * 0.18);
+    const tax = Math.round(subtotal * 0.18 * 100) / 100;
     const orderNumber = orderData.order_number || `ORD-${Date.now()}`;
+
+    // 0. Get Default Warehouse if not provided
+    const admin = await getAdminClient();
+    let warehouseId = orderData.warehouseId;
+    if (!warehouseId) {
+      const { data: defaultWh } = await admin
+        .from('warehouses')
+        .select('id')
+        .eq('is_active', true)
+        .limit(1)
+        .single();
+      warehouseId = defaultWh?.id;
+    }
+
+    // 1. Pre-validate stock availability
+    for (const item of items) {
+      const { data: inv } = await admin
+        .from('inventory')
+        .select('quantity')
+        .eq('product_id', item.productId)
+        .eq('warehouse_id', warehouseId)
+        .maybeSingle();
+
+      if (inv && inv.quantity < item.quantity) {
+        throw new AppError(
+          `Insufficient stock for product ${item.productId} in selected warehouse`,
+          400
+        );
+      }
+    }
 
     const dbOrderData = {
       user_id: userId || orderData.user_id || null, // Allow NULL for walk-in/POS
@@ -52,20 +81,12 @@ export class OrderService {
 
     const order = await orderRepo.create(dbOrderData, items);
 
-    // 1. Inventory & Activity Tracking
-    const admin = await getAdminClient();
-    const { data: defaultWarehouse } = await admin
-      .from('warehouses')
-      .select('id')
-      .eq('is_active', true)
-      .limit(1)
-      .single();
-
+    // 2. Inventory & Activity Tracking
     for (const item of items) {
       try {
         await InventoryService.adjustStock({
           productId: item.productId,
-          warehouseId: orderData.warehouseId || defaultWarehouse?.id,
+          warehouseId: warehouseId,
           quantity: -item.quantity,
           type: 'out',
           referenceType: 'order',
@@ -73,7 +94,7 @@ export class OrderService {
           userId: userId,
         });
       } catch (err) {
-        console.error(`Failed to reduce stock for product ${item.productId}:`, err);
+        logger.error(`Failed to reduce stock for product ${item.productId}:`, err);
         // In production, you might want to rollback or queue for manual review
       }
     }
@@ -132,16 +153,30 @@ export class OrderService {
 
       await orderRepo.update(id, { status: newStatus });
 
+      // Audit Logging for ALL status changes
+      await AuditService.logOrderActivity({
+        order_id: id,
+        status: newStatus,
+        notes: notes || `Order status updated to ${newStatus}`,
+        performed_by: userId,
+      });
+
+      await AuditService.log({
+        user_id: userId,
+        action: 'UPDATE_ORDER_STATUS',
+        module: 'orders',
+        entity_id: id,
+        old_data: { status: currentStatus },
+        new_data: { status: newStatus, notes },
+      });
+
       // Handle Stock Reversal for Cancelled/Returned
       if (
         ['cancelled', 'returned'].includes(newStatus) &&
         ['pending', 'confirmed', 'packed', 'shipped', 'delivered'].includes(currentStatus)
       ) {
         try {
-          const { data: orderItems } = await admin
-            .from('order_items')
-            .select('product_id, quantity')
-            .eq('order_id', id);
+          const orderItems = order.order_items; // Use already loaded items
 
           const { data: defaultWarehouse } = await admin
             .from('warehouses')
@@ -165,59 +200,22 @@ export class OrderService {
             }
           }
         } catch (stockErr) {
-          console.error('Failed to restock items on status change:', stockErr);
+          logger.error('Failed to restock items on status change:', stockErr);
         }
 
         // Queue Notification for critical status changes (Phase 4 background job)
         try {
-          const orderData = await admin.from('orders').select('order_number').eq('id', id).single();
-          if (orderData && orderData.data) {
-            const isCritical = ['cancelled', 'returned'].includes(newStatus);
-            await notificationQueue.add('order-notification', {
-              title: `Order ${newStatus.toUpperCase()}`,
-              message: `Order #${orderData.data.order_number} has been ${newStatus}.${notes ? ` Note: ${notes}` : ''}`,
-              type: isCritical ? 'error' : 'info',
-              priority: isCritical ? 'high' : 'medium',
-            });
-          }
+          const isCritical = ['cancelled', 'returned'].includes(newStatus);
+          await notificationQueue.add('order-notification', {
+            title: `Order ${newStatus.toUpperCase()}`,
+            message: `Order #${order.order_number} has been ${newStatus}.${notes ? ` Note: ${notes}` : ''}`,
+            type: isCritical ? 'error' : 'info',
+            priority: isCritical ? 'high' : 'medium',
+          });
         } catch (notifErr) {
-          console.error('Failed to queue order notification:', notifErr);
+          logger.error('Failed to queue order notification:', notifErr);
         }
-
-        // Audit Logging
-        await AuditService.logOrderActivity({
-          order_id: id,
-          status: newStatus,
-          notes: notes || `Status updated to ${newStatus}`,
-          performed_by: userId,
-        });
-
-        await AuditService.log({
-          user_id: userId,
-          action: 'ORDER_STATUS_UPDATE',
-          module: 'orders',
-          entity_id: id,
-          new_data: { status: newStatus, notes },
-        });
       }
-
-      // Log Activity
-      await AuditService.logOrderActivity({
-        order_id: id,
-        status: newStatus,
-        notes: notes || `Order status updated to ${newStatus}`,
-        performed_by: userId,
-      });
-
-      // Audit Log
-      await AuditService.log({
-        user_id: userId,
-        action: 'UPDATE_ORDER_STATUS',
-        module: 'orders',
-        entity_id: id,
-        old_data: { status: currentStatus },
-        new_data: { status: newStatus },
-      });
     }
 
     if (courier || trackingId) {

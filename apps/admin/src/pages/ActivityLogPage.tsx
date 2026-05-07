@@ -15,7 +15,6 @@ import {
   Search,
   Filter,
   ShieldAlert,
-  Key,
   UserPlus,
   Settings,
   Package,
@@ -28,14 +27,17 @@ export function ActivityLogPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLogs = async () => {
       try {
+        setError(null);
         const data = await AdminService.getAuditLogs();
         setLogs(data || []);
       } catch (err) {
         console.error('Failed to fetch logs:', err);
+        setError('Failed to load system activity logs. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -109,6 +111,18 @@ export function ActivityLogPage() {
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-8 text-on-surface-variant">
                     Loading audit logs...
+                  </TableCell>
+                </TableRow>
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-8 text-error">
+                    {error}
+                  </TableCell>
+                </TableRow>
+              ) : logs.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-8 text-on-surface-variant">
+                    No activity logs found.
                   </TableCell>
                 </TableRow>
               ) : (

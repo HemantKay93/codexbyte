@@ -29,12 +29,6 @@ export const createCoupon = catchAsync(async (req: AuthRequest, res: Response) =
 });
 
 export const getCoupons = catchAsync(async (req: AuthRequest, res: Response) => {
-  const { getAdminClient } = await import('../config/supabase.js');
-  const admin = await getAdminClient();
-  const { data, error } = await admin
-    .from('coupons')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  res.json(data);
+  const coupons = await marketingService.getCoupons();
+  res.json(coupons);
 });

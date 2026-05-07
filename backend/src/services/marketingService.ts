@@ -31,19 +31,24 @@ export class MarketingService {
 
     // 3. Check Minimum Order Amount
     if (orderAmount < coupon.min_order_amount) {
-      throw new AppError(`Minimum order amount of ₹${coupon.min_order_amount} required for this coupon`, 400);
+      throw new AppError(
+        `Minimum order amount of ₹${coupon.min_order_amount} required for this coupon`,
+        400
+      );
     }
 
     // 4. Check if user already used it (optional, depends on policy)
-    const { data: previousUsage } = await admin
-      .from('coupon_usage')
-      .select('id')
-      .eq('coupon_id', coupon.id)
-      .eq('user_id', userId)
-      .maybeSingle();
+    if (userId) {
+      const { data: previousUsage } = await admin
+        .from('coupon_usage')
+        .select('id')
+        .eq('coupon_id', coupon.id)
+        .eq('user_id', userId)
+        .maybeSingle();
 
-    if (previousUsage) {
-      throw new AppError('You have already used this coupon', 400);
+      if (previousUsage) {
+        throw new AppError('You have already used this coupon', 400);
+      }
     }
 
     // 5. Calculate Discount
@@ -79,10 +84,24 @@ export class MarketingService {
       discount_applied: discountApplied,
     });
 
-    // 2. Increment Usage Count
-    const { data: coupon } = await admin.from('coupons').select('usage_count').eq('id', couponId).single();
-    if (coupon) {
-      await admin.from('coupons').update({ usage_count: coupon.usage_count + 1 }).eq('id', couponId);
+    // 2. Increment Usage Count (Atomic)
+    const { error: updateError } = await admin.rpc('increment_coupon_usage', {
+      coupon_id: couponId,
+    });
+
+    if (updateError) {
+      // Fallback if RPC doesn't exist, though RPC is preferred
+      const { data: coupon } = await admin
+        .from('coupons')
+        .select('usage_count')
+        .eq('id', couponId)
+        .single();
+      if (coupon) {
+        await admin
+          .from('coupons')
+          .update({ usage_count: coupon.usage_count + 1 })
+          .eq('id', couponId);
+      }
     }
   }
 
@@ -95,5 +114,15 @@ export class MarketingService {
       .single();
     if (error) throw error;
     return coupon;
+  }
+
+  async getCoupons() {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('coupons')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data;
   }
 }

@@ -53,6 +53,10 @@ export function DiscountsPage() {
     }
   };
 
+  const filteredDiscounts = discounts.filter((d) =>
+    d.code.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -108,8 +112,14 @@ export function DiscountsPage() {
                     Loading discounts...
                   </TableCell>
                 </TableRow>
+              ) : filteredDiscounts.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-on-surface-variant">
+                    {searchTerm ? `No discounts matching "${searchTerm}"` : 'No discounts found'}
+                  </TableCell>
+                </TableRow>
               ) : (
-                discounts.map((discount) => (
+                filteredDiscounts.map((discount) => (
                   <TableRow key={discount.id}>
                     <TableCell className="font-semibold text-on-surface">
                       <div className="flex items-center gap-2">
@@ -146,15 +156,8 @@ export function DiscountsPage() {
           </Table>
         </CardContent>
         <div className="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
-          <div>Showing {discounts.length} discounts</div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled>
-              Previous
-            </Button>
-            <Button variant="outline" size="sm">
-              Next
-            </Button>
-          </div>
+          <div>Showing {filteredDiscounts.length} discounts</div>
+          {/* Pagination hidden until implemented */}
         </div>
       </Card>
     </div>

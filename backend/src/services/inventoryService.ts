@@ -2,6 +2,7 @@ import { getAdminClient } from '../config/supabase.js';
 import { AppError } from '../middlewares/error.js';
 import { AuditService } from './auditService.js';
 import { NotificationService } from './notificationService.js';
+import logger from './logger.js';
 
 export class InventoryService {
   private static LOW_STOCK_THRESHOLD = 5;
@@ -36,7 +37,7 @@ export class InventoryService {
       throw new AppError(`Insufficient stock in warehouse for product ${data.productId}`, 400);
     }
 
-    console.log(
+    logger.info(
       `[Inventory] Adjusting stock for product ${data.productId} in warehouse ${data.warehouseId}. Delta: ${data.quantity}, New Qty: ${newQty}`
     );
 
@@ -45,7 +46,7 @@ export class InventoryService {
       const { error: updateError } = await admin
         .from('inventory')
         .update({ quantity: newQty, updated_at: new Date().toISOString() })
-        .eq('id', inventoryId);
+        .eq('id', inventory.id);
       if (updateError) throw updateError;
     } else {
       // Create new
@@ -82,7 +83,7 @@ export class InventoryService {
       .eq('product_id', data.productId);
 
     const totalStock = allInv?.reduce((sum, item) => sum + item.quantity, 0) || 0;
-    console.log(`[Inventory] Calculated total stock for product ${data.productId}: ${totalStock}`);
+    logger.info(`[Inventory] Calculated total stock for product ${data.productId}: ${totalStock}`);
 
     const { error: prodUpdateError } = await admin
       .from('products')
@@ -90,7 +91,7 @@ export class InventoryService {
       .eq('id', data.productId);
 
     if (prodUpdateError) {
-      console.error('[Inventory] Failed to update master product stock:', prodUpdateError);
+      logger.error('[Inventory] Failed to update master product stock:', prodUpdateError);
     }
 
     // 4. Check for Low Stock Notification
@@ -110,7 +111,7 @@ export class InventoryService {
           await NotificationService.notifyLowStock(prod.name, wh.name, newQty);
         }
       } catch (e) {
-        console.error('Failed to send low stock notification:', e);
+        logger.error('Failed to send low stock notification:', e);
       }
     }
 

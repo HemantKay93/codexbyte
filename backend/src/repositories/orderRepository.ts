@@ -1,4 +1,5 @@
-import { supabase, getAdminClient } from '../config/supabase.js';
+import { getAdminClient } from '../config/supabase.js';
+import logger from '../services/logger.js';
 
 export class OrderRepository {
   async findAll(filters: any = {}) {
@@ -38,7 +39,7 @@ export class OrderRepository {
 
   async findByUserId(userId: string, email?: string) {
     const admin = await getAdminClient();
-    console.log(`[Repository] Fetching orders for UserID: ${userId}, Email: ${email}`);
+    logger.info(`[Repository] Fetching orders for UserID: ${userId}, Email: ${email}`);
 
     const query = admin
       .from('orders')
@@ -49,11 +50,11 @@ export class OrderRepository {
     const { data, error } = await query;
 
     if (error) {
-      console.error('[Repository] Error fetching orders:', error);
+      logger.error('[Repository] Error fetching orders:', error);
       throw error;
     }
 
-    console.log(`[Repository] Found ${data?.length || 0} orders`);
+    logger.info(`[Repository] Found ${data?.length || 0} orders`);
     return data;
   }
 

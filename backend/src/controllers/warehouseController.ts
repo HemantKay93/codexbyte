@@ -61,12 +61,12 @@ export const markTaskPicked = catchAsync(async (req: AuthRequest, res: Response)
     order_id: orderId,
     status: 'packed',
     notes: notes || `Item picked: ${productId || 'unknown SKU'}`,
-    performed_by: (req as AuthRequest).user?.id,
+    performed_by: req.user?.id,
   });
 
   // Also write a system audit entry
   await AuditService.log({
-    user_id: (req as AuthRequest).user?.id,
+    user_id: req.user?.id,
     action: 'WAREHOUSE_PICK',
     module: 'warehouse',
     entity_id: orderId,
