@@ -6,6 +6,8 @@ import * as reviewController from '../controllers/reviewController.js';
 import * as cmsController from '../controllers/cmsController.js';
 import * as warehouseController from '../controllers/warehouseController.js';
 import { authenticate, authorize } from '../middlewares/auth.js';
+import { validate } from '../middlewares/validate.js';
+import { productSchema, productUpdateSchema } from '../validators/productValidator.js';
 
 const router = express.Router();
 
@@ -14,30 +16,35 @@ router.use(authenticate, authorize('admin', 'super-admin'));
 // Dashboard Stats
 router.get('/stats', adminController.getDashboardStats);
 
+// Analytics
+router.get('/sales-report', adminController.getSalesReport);
+
 // Orders
 router.get('/orders', orderController.getAllOrders);
 router.get('/orders/:id', orderController.getOrderById);
 router.get('/orders/:id/activity', adminController.getOrderActivity);
 router.put('/orders/:id', orderController.updateOrder);
+router.post('/orders/:id/return', orderController.processReturn);
 
 // Products
 router.get('/products', productController.getProducts);
 router.post('/products/bulk-import', productController.bulkImportProducts);
 router.get('/products/:id', productController.getProduct);
-router.post('/products', productController.createProduct);
-router.put('/products/:id', productController.updateProduct);
+router.post('/products', validate(productSchema), productController.createProduct);
+router.put('/products/:id', validate(productUpdateSchema), productController.updateProduct);
 router.delete('/products/:id', productController.deleteProduct);
 
 // Customers
 router.get('/customers', adminController.getCustomers);
 router.get('/customers/:id', adminController.getCustomerDetail);
 
-// Warehouse
+// Warehouse — static routes MUST come before dynamic /:id routes
 router.get('/warehouse', adminController.getWarehouses);
 router.post('/warehouse', adminController.createWarehouse);
+router.get('/warehouse/tasks', adminController.getWarehouseTasks);         // static: before /:id
+router.post('/warehouse/adjust-stock', warehouseController.adjustStock);   // static: before /:id
+router.get('/warehouse/:id/inventory', warehouseController.getWarehouseInventory);
 router.put('/warehouse/:id', adminController.updateWarehouse);
-router.get('/warehouse/tasks', adminController.getWarehouseTasks);
-router.post('/warehouse/adjust-stock', warehouseController.adjustStock);
 
 // Notifications
 router.get('/notifications', adminController.getNotifications);

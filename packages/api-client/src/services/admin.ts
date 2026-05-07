@@ -104,4 +104,18 @@ export const AdminService = {
     const response = await apiClient.get(`/admin/orders/${id}/activity`);
     return response.data;
   },
+
+  processReturn: async (
+    orderId: string,
+    data: { items: { productId: string; quantity: number }[]; warehouseId: string; reason: string; refundAmount?: number }
+  ) => {
+    const response = await apiClient.post(`/admin/orders/${orderId}/return`, data);
+    return response.data;
+  },
+
+  getSalesReport: async (days = 7) => {
+    const response = await apiClient.get('/admin/sales-report', { params: { days } });
+    return response.data;
+  },
 };
+

@@ -38,3 +38,11 @@ export const updateOrder = catchAsync(async (req: AuthRequest, res: Response) =>
   );
   res.json(result);
 });
+
+export const processReturn = catchAsync(async (req: AuthRequest, res: Response) => {
+  const result = await orderService.processReturn(req.params.id as string, {
+    ...req.body,
+    userId: req.user?.id as string,
+  });
+  res.json(result);
+});

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const productSchema = z.object({
+const productFields = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
   description: z.string().optional(),
   price: z.number().positive('Price must be positive'),
@@ -17,4 +17,5 @@ export const productSchema = z.object({
   variants: z.array(z.any()).optional(),
 });
 
-export const productUpdateSchema = productSchema.partial();
+export const productSchema = z.object({ body: productFields });
+export const productUpdateSchema = z.object({ body: productFields.partial() });
