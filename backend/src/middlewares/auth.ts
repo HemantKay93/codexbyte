@@ -22,25 +22,32 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     return next(new AppError('Invalid or expired token', 401));
   }
 
-  req.user = user;
+  // Fetch role once and cache in req.user
+  const admin = await getAdminClient();
+  const { data: profile } = await admin
+    .from('user_profiles')
+    .select('role, full_name')
+    .eq('id', user.id)
+    .single();
+
+  req.user = {
+    ...user,
+    role: profile?.role || 'user',
+    fullName: profile?.full_name || user.email?.split('@')[0],
+  };
+
   next();
 };
 
 export const authorize = (...roles: string[]) => {
-  return async (req: AuthRequest, res: Response, next: NextFunction) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
       return next(new AppError('Unauthorized', 401));
     }
 
-    const { data: profile, error } = await supabase
-      .from('user_profiles')
-      .select('role')
-      .eq('id', req.user.id)
-      .single();
-
-    if (error || !profile || !roles.includes(profile.role)) {
+    if (!roles.includes(req.user.role)) {
       console.warn(
-        `[Auth] Access denied for user ${req.user.id}. Role: ${profile?.role}. Required: ${roles.join(', ')}`
+        `[Auth] Access denied for user ${req.user.id}. Role: ${req.user.role}. Required: ${roles.join(', ')}`
       );
       return next(new AppError('Forbidden: Access denied', 403));
     }
