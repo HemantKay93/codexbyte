@@ -12,17 +12,17 @@ export function CheckoutPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('cod');
   const [shippingAddress, setShippingAddress] = useState({
-    fullName: user?.user_metadata?.name || '',
+    fullName: user?.full_name || '',
     phone: '',
     address: '',
     city: '',
     state: '',
-    pincode: ''
+    pincode: '',
   });
-  
+
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPassword, setGuestPassword] = useState('');
 
@@ -37,16 +37,16 @@ export function CheckoutPage() {
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
-      
+
       if (data && !error) {
-        setShippingAddress(prev => ({
+        setShippingAddress((prev) => ({
           ...prev,
           fullName: data.full_name || prev.fullName,
           phone: data.phone || prev.phone,
           address: data.line_1 || prev.address,
           city: data.city || prev.city,
           state: data.state || prev.state,
-          pincode: data.postal_code || prev.pincode
+          pincode: data.postal_code || prev.pincode,
         }));
       }
     }
@@ -66,12 +66,12 @@ export function CheckoutPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setShippingAddress(prev => ({ ...prev, [name]: value }));
+    setShippingAddress((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     setLoading(true);
     setError('');
 
@@ -80,20 +80,20 @@ export function CheckoutPage() {
         userId: user?.id,
         email: !user ? guestEmail : undefined,
         password: !user ? guestPassword : undefined,
-        items: items.map(item => ({
+        items: items.map((item) => ({
           productId: item.id!,
           name: item.name,
           sku: item.sku,
           quantity: item.quantity,
-          price: item.price
+          price: item.price,
         })),
         shippingAddress,
         paymentMethod,
-        totalAmount: finalTotalAmount
+        totalAmount: finalTotalAmount,
       };
 
       const result = await OrderService.createOrder(payload);
-      
+
       if (paymentMethod === 'razorpay') {
         // In a real implementation, you would open the Razorpay popup here
         // using the order ID returned from the backend.
@@ -103,10 +103,11 @@ export function CheckoutPage() {
 
       clearCart();
       navigate('/shop/dashboard', { state: { orderPlaced: true } });
-      
     } catch (err: any) {
       console.error('Order creation failed:', err);
-      setError(err.response?.data?.message || err.message || 'Failed to place order. Please try again.');
+      setError(
+        err.response?.data?.message || err.message || 'Failed to place order. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -115,7 +116,10 @@ export function CheckoutPage() {
   return (
     <div className="min-h-screen bg-[#04080F] text-white py-12 px-6">
       <div className="max-w-[1200px] mx-auto">
-        <button onClick={() => navigate('/shop/cart')} className="flex items-center gap-2 text-sm text-brand-muted hover:text-white transition-colors mb-8">
+        <button
+          onClick={() => navigate('/shop/cart')}
+          className="flex items-center gap-2 text-sm text-brand-muted hover:text-white transition-colors mb-8"
+        >
           <ArrowLeft className="h-4 w-4" /> Back to Cart
         </button>
 
@@ -123,7 +127,7 @@ export function CheckoutPage() {
           {/* Checkout Form */}
           <div className="flex-1">
             <h1 className="text-3xl md:text-4xl font-display font-bold mb-8">Checkout</h1>
-            
+
             {error && (
               <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
                 {error}
@@ -131,7 +135,6 @@ export function CheckoutPage() {
             )}
 
             <form id="checkout-form" onSubmit={handlePlaceOrder} className="space-y-8">
-              
               {/* Shipping Address Section */}
               <div className="bg-[#070D1A] border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl">
                 <div className="flex items-center gap-3 mb-6">
@@ -140,50 +143,136 @@ export function CheckoutPage() {
                   </div>
                   <h2 className="text-xl font-bold">Shipping Address</h2>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {!user && (
                     <>
                       <div className="space-y-2 md:col-span-2 bg-accent/5 p-4 rounded-xl border border-accent/20 mb-2">
                         <h3 className="font-bold text-accent mb-2">Guest Checkout</h3>
-                        <p className="text-sm text-brand-muted mb-4">We'll automatically create an account for you so you can track your order.</p>
+                        <p className="text-sm text-brand-muted mb-4">
+                          We'll automatically create an account for you so you can track your order.
+                        </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">Email Address</label>
-                            <input required type="email" value={guestEmail} onChange={(e) => setGuestEmail(e.target.value)} className="w-full rounded-xl border border-white/10 bg-[#04080F] py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50" placeholder="you@example.com" />
+                            <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
+                              Email Address
+                            </label>
+                            <input
+                              required
+                              type="email"
+                              value={guestEmail}
+                              onChange={(e) => setGuestEmail(e.target.value)}
+                              className="w-full rounded-xl border border-white/10 bg-[#04080F] py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
+                              placeholder="you@example.com"
+                            />
                           </div>
                           <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">Create Password</label>
-                            <input required type="password" value={guestPassword} onChange={(e) => setGuestPassword(e.target.value)} className="w-full rounded-xl border border-white/10 bg-[#04080F] py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50" placeholder="••••••••" minLength={6} />
+                            <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
+                              Create Password
+                            </label>
+                            <input
+                              required
+                              type="password"
+                              value={guestPassword}
+                              onChange={(e) => setGuestPassword(e.target.value)}
+                              className="w-full rounded-xl border border-white/10 bg-[#04080F] py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
+                              placeholder="••••••••"
+                              minLength={6}
+                            />
                           </div>
                         </div>
-                        <p className="text-xs text-brand-muted mt-3">Already have an account? <button type="button" onClick={() => navigate('/auth/login', { state: { returnTo: '/shop/checkout' }})} className="text-accent hover:underline">Log in here</button></p>
+                        <p className="text-xs text-brand-muted mt-3">
+                          Already have an account?{' '}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              navigate('/auth/login', { state: { returnTo: '/shop/checkout' } })
+                            }
+                            className="text-accent hover:underline"
+                          >
+                            Log in here
+                          </button>
+                        </p>
                       </div>
                     </>
                   )}
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">Full Name</label>
-                    <input required name="fullName" value={shippingAddress.fullName} onChange={handleInputChange} className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50" placeholder="John Doe" />
+                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
+                      Full Name
+                    </label>
+                    <input
+                      required
+                      name="fullName"
+                      value={shippingAddress.fullName}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
+                      placeholder="John Doe"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">Phone Number</label>
-                    <input required name="phone" value={shippingAddress.phone} onChange={handleInputChange} className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50" placeholder="+91 98765 43210" />
+                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
+                      Phone Number
+                    </label>
+                    <input
+                      required
+                      name="phone"
+                      value={shippingAddress.phone}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
+                      placeholder="+91 98765 43210"
+                    />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">Address Line</label>
-                    <input required name="address" value={shippingAddress.address} onChange={handleInputChange} className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50" placeholder="Flat No, Building, Street" />
+                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
+                      Address Line
+                    </label>
+                    <input
+                      required
+                      name="address"
+                      value={shippingAddress.address}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
+                      placeholder="Flat No, Building, Street"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">City</label>
-                    <input required name="city" value={shippingAddress.city} onChange={handleInputChange} className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50" placeholder="Mumbai" />
+                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
+                      City
+                    </label>
+                    <input
+                      required
+                      name="city"
+                      value={shippingAddress.city}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
+                      placeholder="Mumbai"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">State</label>
-                    <input required name="state" value={shippingAddress.state} onChange={handleInputChange} className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50" placeholder="Maharashtra" />
+                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
+                      State
+                    </label>
+                    <input
+                      required
+                      name="state"
+                      value={shippingAddress.state}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
+                      placeholder="Maharashtra"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">Pincode</label>
-                    <input required name="pincode" value={shippingAddress.pincode} onChange={handleInputChange} className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50" placeholder="400001" />
+                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
+                      Pincode
+                    </label>
+                    <input
+                      required
+                      name="pincode"
+                      value={shippingAddress.pincode}
+                      onChange={handleInputChange}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
+                      placeholder="400001"
+                    />
                   </div>
                 </div>
               </div>
@@ -198,12 +287,16 @@ export function CheckoutPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div 
+                  <div
                     onClick={() => setPaymentMethod('razorpay')}
                     className={`cursor-pointer rounded-xl border p-4 flex items-center gap-4 transition-all ${paymentMethod === 'razorpay' ? 'border-accent bg-accent/10 shadow-[0_0_15px_rgba(26,79,214,0.2)]' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
                   >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'razorpay' ? 'border-accent' : 'border-white/30'}`}>
-                      {paymentMethod === 'razorpay' && <div className="w-2.5 h-2.5 bg-accent rounded-full" />}
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'razorpay' ? 'border-accent' : 'border-white/30'}`}
+                    >
+                      {paymentMethod === 'razorpay' && (
+                        <div className="w-2.5 h-2.5 bg-accent rounded-full" />
+                      )}
                     </div>
                     <CreditCard className="h-6 w-6 text-brand-muted" />
                     <div>
@@ -212,12 +305,16 @@ export function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div 
+                  <div
                     onClick={() => setPaymentMethod('cod')}
                     className={`cursor-pointer rounded-xl border p-4 flex items-center gap-4 transition-all ${paymentMethod === 'cod' ? 'border-accent bg-accent/10 shadow-[0_0_15px_rgba(26,79,214,0.2)]' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
                   >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'cod' ? 'border-accent' : 'border-white/30'}`}>
-                      {paymentMethod === 'cod' && <div className="w-2.5 h-2.5 bg-accent rounded-full" />}
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'cod' ? 'border-accent' : 'border-white/30'}`}
+                    >
+                      {paymentMethod === 'cod' && (
+                        <div className="w-2.5 h-2.5 bg-accent rounded-full" />
+                      )}
                     </div>
                     <Banknote className="h-6 w-6 text-brand-muted" />
                     <div>
@@ -234,20 +331,28 @@ export function CheckoutPage() {
           <div className="w-full lg:w-[380px] shrink-0">
             <div className="bg-[#070D1A] border border-white/10 rounded-2xl p-6 shadow-xl sticky top-24">
               <h2 className="text-xl font-bold mb-6">Review Order</h2>
-              
+
               {/* Mini Item List */}
               <div className="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2 scrollbar-thin">
-                {items.map(item => (
-                  <div key={item.cartItemId} className="flex items-center justify-between text-sm">
+                {items.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-3 overflow-hidden">
                       <div className="w-10 h-10 bg-white/5 rounded-md flex-shrink-0 flex items-center justify-center border border-white/10">
                         {item.image_url ? (
-                          <img src={item.image_url} alt="" className="max-w-full max-h-full object-contain p-1" />
+                          <img
+                            src={item.image_url}
+                            alt=""
+                            className="max-w-full max-h-full object-contain p-1"
+                          />
                         ) : null}
                       </div>
-                      <span className="truncate text-brand-muted">{item.quantity}x {item.name}</span>
+                      <span className="truncate text-brand-muted">
+                        {item.quantity}x {item.name}
+                      </span>
                     </div>
-                    <span className="font-medium">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                    <span className="font-medium">
+                      ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -255,7 +360,9 @@ export function CheckoutPage() {
               <div className="space-y-4 text-sm mb-6 border-t border-white/10 pt-6">
                 <div className="flex justify-between text-brand-muted">
                   <span>Subtotal</span>
-                  <span className="text-white font-medium">₹{subtotal.toLocaleString('en-IN')}</span>
+                  <span className="text-white font-medium">
+                    ₹{subtotal.toLocaleString('en-IN')}
+                  </span>
                 </div>
                 <div className="flex justify-between text-brand-muted">
                   <span>GST (18%)</span>
@@ -263,29 +370,36 @@ export function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-brand-muted pb-4 border-b border-white/10">
                   <span>Shipping</span>
-                  <span className={shipping === 0 ? "text-green-400 font-medium" : "text-white font-medium"}>
-                    {shipping === 0 ? "Free" : `₹${shipping.toLocaleString('en-IN')}`}
+                  <span
+                    className={
+                      shipping === 0 ? 'text-green-400 font-medium' : 'text-white font-medium'
+                    }
+                  >
+                    {shipping === 0 ? 'Free' : `₹${shipping.toLocaleString('en-IN')}`}
                   </span>
                 </div>
                 <div className="flex justify-between text-xl font-display font-bold text-white pt-2">
                   <span>Total</span>
-                  <span className="text-accent">₹{totalAmount.toLocaleString('en-IN')}</span>
+                  <span className="text-accent">₹{finalTotalAmount.toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 form="checkout-form"
                 disabled={loading}
-                variant="primary" 
+                variant="primary"
                 className="w-full py-4 rounded-xl shadow-[0_0_15px_rgba(26,79,214,0.3)] text-base flex justify-center items-center gap-2"
               >
-                {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Truck className="h-5 w-5" />}
+                {loading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Truck className="h-5 w-5" />
+                )}
                 {paymentMethod === 'cod' ? 'Place Order' : 'Proceed to Payment'}
               </Button>
             </div>
           </div>
-
         </div>
       </div>
     </div>

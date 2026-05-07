@@ -1,7 +1,7 @@
 import { apiClient } from '../apiClient';
 
 export interface CreateOrderPayload {
-  userId: string;
+  userId?: string;
   items: Array<{ productId: string; quantity: number; price: number }>;
   shippingAddress: any;
   paymentMethod: 'razorpay' | 'cod';
@@ -37,5 +37,5 @@ export const OrderService = {
   getOrderItems: async (orderId: string) => {
     const response = await apiClient.get(`/orders/${orderId}/items`);
     return response.data;
-  }
+  },
 };
