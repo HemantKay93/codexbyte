@@ -74,9 +74,22 @@ export function WarehousePage() {
     }
   };
 
-  const markAsPicked = (id: string) => {
-    setPickTasks((prev) => prev.map((task) => (task.id === id ? { ...task, picked: true } : task)));
+  const markAsPicked = async (task: any) => {
+    // Optimistic UI update
+    setPickTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, picked: true } : t)));
+    try {
+      await AdminService.markTaskPicked({
+        orderId: task.order?.id || task.order_id,
+        productId: task.product_id,
+        notes: `Picked: ${task.product_name} (x${task.quantity}) — SKU: ${task.sku}`,
+      });
+    } catch (err) {
+      console.error('Failed to persist pick:', err);
+      // Roll back optimistic update on failure
+      setPickTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, picked: false } : t)));
+    }
   };
+
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-20">
@@ -254,7 +267,7 @@ export function WarehousePage() {
                         <Button
                           size="sm"
                           className="h-10 px-6 rounded-xl font-bold uppercase tracking-widest text-[10px]"
-                          onClick={() => markAsPicked(task.id)}
+                          onClick={() => markAsPicked(task)}
                         >
                           Mark Picked
                         </Button>

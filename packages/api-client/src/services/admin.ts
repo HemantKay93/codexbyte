@@ -117,5 +117,11 @@ export const AdminService = {
     const response = await apiClient.get('/admin/sales-report', { params: { days } });
     return response.data;
   },
+
+  markTaskPicked: async (data: { orderId: string; productId?: string; notes?: string }) => {
+    const response = await apiClient.post('/admin/warehouse/tasks/pick', data);
+    return response.data;
+  },
 };
+
 

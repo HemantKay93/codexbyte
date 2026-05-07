@@ -24,7 +24,12 @@ import {
   ExternalLink,
   X,
   ChevronDown,
+  RotateCcw,
+  AlertTriangle,
+  DollarSign,
 } from 'lucide-react';
+import { AdminService } from '@byteevolvr/api-client';
+
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { OrderActivityLogs } from '../components/OrderActivityLogs';
 import { numberToWords } from '../lib/utils';
@@ -49,6 +54,10 @@ export function OrderDetailPage() {
   const [showFulfillModal, setShowFulfillModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [returnReason, setReturnReason] = useState('');
+  const [returnRefundAmount, setReturnRefundAmount] = useState('');
+  const [returnItems, setReturnItems] = useState<{ productId: string; quantity: number; maxQty: number; name: string }[]>([]);
+  const [isProcessingReturn, setIsProcessingReturn] = useState(false);
+
 
   const loadData = async () => {
     if (!id) return;
@@ -78,6 +87,47 @@ export function OrderDetailPage() {
       console.error(err);
     }
   };
+
+  const openReturnModal = () => {
+    const items = order?.order_items || [];
+    setReturnItems(
+      items.map((item: any) => ({
+        productId: item.product_id,
+        name: item.product_name,
+        quantity: item.quantity,
+        maxQty: item.quantity,
+      }))
+    );
+    setReturnReason('');
+    setReturnRefundAmount('');
+    setShowReturnModal(true);
+  };
+
+  const handleProcessReturn = async () => {
+    if (!id || !selectedWarehouse || !returnReason.trim()) return;
+    setIsProcessingReturn(true);
+    try {
+      const itemsToReturn = returnItems.filter((i) => i.quantity > 0);
+      if (itemsToReturn.length === 0) {
+        alert('Select at least one item to return.');
+        return;
+      }
+      await AdminService.processReturn(id, {
+        items: itemsToReturn.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+        warehouseId: selectedWarehouse,
+        reason: returnReason,
+        refundAmount: returnRefundAmount ? Number(returnRefundAmount) : undefined,
+      });
+      setShowReturnModal(false);
+      await loadData();
+    } catch (err: any) {
+      console.error('Return processing failed:', err);
+      alert(err?.response?.data?.message || 'Failed to process return.');
+    } finally {
+      setIsProcessingReturn(false);
+    }
+  };
+
 
   const handlePrint = () => {
     if (!order) return;
@@ -345,6 +395,18 @@ export function OrderDetailPage() {
             >
               <CheckCircle2 className="h-4 w-4" />
               Mark Delivered
+            </Button>
+          )}
+
+          {['delivered', 'shipped'].includes(order.status) && (
+            <Button
+              variant="outline"
+              className="gap-2 text-orange-600 border-orange-200 hover:bg-orange-50"
+              onClick={openReturnModal}
+              disabled={isUpdating}
+            >
+              <RotateCcw className="h-4 w-4" />
+              Process Return
             </Button>
           )}
         </div>
@@ -627,6 +689,153 @@ export function OrderDetailPage() {
                       <Truck className="h-5 w-5 mr-2" />
                       Dispatch Order
                     </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Return Processing Modal */}
+      {showReturnModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-slate-900/70 backdrop-blur-md"
+            onClick={() => setShowReturnModal(false)}
+          />
+          <div
+            className="relative bg-surface w-full max-w-[560px] shadow-2xl rounded-3xl border border-white/10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+          >
+            {/* Header */}
+            <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-orange-50 dark:bg-orange-950/20">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500 shadow-inner">
+                  <RotateCcw className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-on-surface">Process Return</h3>
+                  <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
+                    {order.order_number} · Return & Restock
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowReturnModal(false)}
+                className="h-10 w-10 p-0 rounded-xl hover:bg-surface-container"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
+              {/* Warning Banner */}
+              <div className="flex items-start gap-3 p-4 bg-orange-50 dark:bg-orange-950/30 rounded-2xl border border-orange-200 dark:border-orange-800">
+                <AlertTriangle className="h-5 w-5 text-orange-500 shrink-0 mt-0.5" />
+                <p className="text-sm text-orange-700 dark:text-orange-300 font-medium">
+                  Items will be restocked to the selected warehouse. This action logs an audit trail and cannot be undone.
+                </p>
+              </div>
+
+              {/* Return Items */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
+                  Items to Return
+                </label>
+                <div className="space-y-2">
+                  {returnItems.map((item, idx) => (
+                    <div key={item.productId} className="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl border border-outline-variant">
+                      <div className="flex-1">
+                        <p className="font-bold text-on-surface text-sm">{item.name}</p>
+                        <p className="text-[10px] text-on-surface-variant uppercase tracking-widest">Max: {item.maxQty} units</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setReturnItems(prev => prev.map((i, j) => j === idx ? { ...i, quantity: Math.max(0, i.quantity - 1) } : i))}
+                          className="h-8 w-8 rounded-xl bg-surface-container flex items-center justify-center font-bold hover:bg-surface-container-high transition-colors"
+                        >−</button>
+                        <span className="w-8 text-center font-black text-on-surface">{item.quantity}</span>
+                        <button
+                          onClick={() => setReturnItems(prev => prev.map((i, j) => j === idx ? { ...i, quantity: Math.min(i.maxQty, i.quantity + 1) } : i))}
+                          className="h-8 w-8 rounded-xl bg-surface-container flex items-center justify-center font-bold hover:bg-surface-container-high transition-colors"
+                        >+</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Warehouse */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
+                  Restock To Warehouse
+                </label>
+                <div className="relative">
+                  <select
+                    className="w-full h-12 px-4 pr-12 rounded-2xl border border-outline bg-surface text-on-surface font-bold focus:ring-2 focus:ring-orange-500 focus:outline-none appearance-none"
+                    value={selectedWarehouse}
+                    onChange={(e) => setSelectedWarehouse(e.target.value)}
+                  >
+                    <option value="">Select Warehouse</option>
+                    {warehouses.map((w) => (
+                      <option key={w.id} value={w.id}>{w.name} — {w.location}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Reason */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
+                  Return Reason *
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="e.g. Defective product, wrong item shipped, customer request..."
+                  value={returnReason}
+                  onChange={(e) => setReturnReason(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl border border-outline bg-surface text-on-surface font-medium focus:ring-2 focus:ring-orange-500 focus:outline-none resize-none text-sm"
+                />
+              </div>
+
+              {/* Refund Amount */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
+                  Refund Amount (₹) — Optional
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
+                  <Input
+                    type="number"
+                    placeholder={`Max: ${order.total_amount}`}
+                    value={returnRefundAmount}
+                    onChange={(e) => setReturnRefundAmount(e.target.value)}
+                    className="h-12 pl-10 rounded-2xl border-outline focus:ring-orange-500"
+                  />
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-2">
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowReturnModal(false)}
+                  className="flex-1 h-12 rounded-2xl font-black uppercase tracking-widest"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleProcessReturn}
+                  disabled={isProcessingReturn || !selectedWarehouse || !returnReason.trim()}
+                  className="flex-1 h-12 rounded-2xl bg-orange-500 hover:bg-orange-600 font-black uppercase tracking-widest shadow-lg shadow-orange-500/20 text-white"
+                >
+                  {isProcessingReturn ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <><RotateCcw className="h-4 w-4 mr-2" />Confirm Return</>
                   )}
                 </Button>
               </div>

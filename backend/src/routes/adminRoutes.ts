@@ -43,8 +43,10 @@ router.get('/warehouse', adminController.getWarehouses);
 router.post('/warehouse', adminController.createWarehouse);
 router.get('/warehouse/tasks', adminController.getWarehouseTasks);         // static: before /:id
 router.post('/warehouse/adjust-stock', warehouseController.adjustStock);   // static: before /:id
+router.post('/warehouse/tasks/pick', warehouseController.markTaskPicked);   // static: before /:id
 router.get('/warehouse/:id/inventory', warehouseController.getWarehouseInventory);
 router.put('/warehouse/:id', adminController.updateWarehouse);
+
 
 // Notifications
 router.get('/notifications', adminController.getNotifications);
