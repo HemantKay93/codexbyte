@@ -5,6 +5,8 @@ import { AuditService } from './auditService.js';
 import { getAdminClient } from '../config/supabase.js';
 import { NotificationService } from './notificationService.js';
 import logger from './logger.js';
+import { notificationQueue, emailQueue } from '../jobs/index.js';
+
 
 const orderRepo = new OrderRepository();
 
@@ -94,8 +96,16 @@ export class OrderService {
       new_data: { order_number: orderNumber, total: dbOrderData.total_amount },
     });
 
+    // 4. Queue Customer Email (Phase 4 background job)
+    await emailQueue.add('order-confirmation', {
+      to: dbOrderData.customer_email,
+      subject: `Order Confirmed: ${orderNumber}`,
+      html: `<h1>Thank you for your order!</h1><p>Your order #${orderNumber} is being processed.</p>`,
+    });
+
     return order;
   }
+
 
   async updateOrderStatus(id: string, updateData: any, userId?: string) {
     const { status, courier, trackingId, notes } = updateData;
@@ -160,20 +170,23 @@ export class OrderService {
           console.error('Failed to restock items on status change:', stockErr);
         }
 
-        // Send Notification for critical status changes
+        // Queue Notification for critical status changes (Phase 4 background job)
         try {
           const orderData = await admin.from('orders').select('order_number').eq('id', id).single();
           if (orderData && orderData.data) {
-            await NotificationService.notifyOrderEvent(
-              orderData.data.order_number,
-              newStatus,
-              notes
-            );
+            const isCritical = ['cancelled', 'returned'].includes(newStatus);
+            await notificationQueue.add('order-notification', {
+              title: `Order ${newStatus.toUpperCase()}`,
+              message: `Order #${orderData.data.order_number} has been ${newStatus}.${notes ? ` Note: ${notes}` : ''}`,
+              type: isCritical ? 'error' : 'info',
+              priority: isCritical ? 'high' : 'medium',
+            });
           }
         } catch (notifErr) {
-          console.error('Failed to send order notification:', notifErr);
+          console.error('Failed to queue order notification:', notifErr);
         }
       }
+
 
       // Log Activity
       await AuditService.logOrderActivity({

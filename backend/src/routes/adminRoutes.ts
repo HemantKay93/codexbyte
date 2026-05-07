@@ -5,6 +5,8 @@ import * as productController from '../controllers/productController.js';
 import * as reviewController from '../controllers/reviewController.js';
 import * as cmsController from '../controllers/cmsController.js';
 import * as warehouseController from '../controllers/warehouseController.js';
+import * as reportController from '../controllers/reportController.js';
+
 import { authenticate, authorize } from '../middlewares/auth.js';
 import { validate } from '../middlewares/validate.js';
 import { productSchema, productUpdateSchema } from '../validators/productValidator.js';
@@ -59,7 +61,11 @@ router.put('/reviews/:id', reviewController.updateReviewStatus);
 // CMS
 router.put('/cms/:pageSlug/:sectionKey', cmsController.updateCmsContent);
 
+// Reports
+router.get('/reports/invoice/:id', reportController.exportInvoice);
+
 // Upload
+
 router.post('/upload', (req, res) => {
   // Placeholder: In a real system, this would upload to S3/Cloudinary/Supabase
   // For now, return a reliable placeholder or the provided URL if it's already a URL

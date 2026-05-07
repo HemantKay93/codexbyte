@@ -1,7 +1,12 @@
 import { Request, Response } from 'express';
-import { catchAsync } from '../middlewares/error.js';
+import { catchAsync, AppError } from '../middlewares/error.js';
 import { Parser } from 'json2csv';
 import * as XLSX from 'xlsx';
+import { PdfService } from '../services/pdfService.js';
+import { OrderRepository } from '../repositories/orderRepository.js';
+
+const orderRepo = new OrderRepository();
+
 
 export const exportReport = catchAsync(async (req: Request, res: Response) => {
   const { type, format } = req.query;
@@ -22,12 +27,30 @@ export const exportReport = catchAsync(async (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename=report_${type}_${Date.now()}.xlsx`);
     return res.send(buffer);
-  } else {
+  } else if (format === 'csv') {
     const parser = new Parser();
     const csv = parser.parse(data);
 
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', `attachment; filename=report_${type}_${Date.now()}.csv`);
     return res.send(csv);
+  } else if (format === 'pdf') {
+    // For now, return a placeholder or implement a generic table-to-pdf if needed
+    // In enterprise, we usually have specific PDF templates
+    res.status(400).json({ message: 'Generic PDF report export not yet implemented. Use CSV or Excel.' });
+  } else {
+    res.status(400).json({ message: 'Invalid format' });
   }
 });
+
+export const exportInvoice = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const order = await orderRepo.findById(id);
+
+  if (!order) {
+    throw new AppError('Order not found', 404);
+  }
+
+  await PdfService.generateInvoice(order, res);
+});
+
