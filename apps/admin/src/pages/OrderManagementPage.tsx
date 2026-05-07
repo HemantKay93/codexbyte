@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Badge, Button, Input } from '../components/ui';
 import { Search, Filter, Download, MoreHorizontal, Loader2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { useAdminStore } from '@byteevolvr/store';
+import { AdminService } from '@byteevolvr/api-client';
 
 export function OrderManagementPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { orders, setOrders, isLoading, setLoading, setError } = useAdminStore();
 
   useEffect(() => {
     fetchOrders();
@@ -17,35 +17,16 @@ export function OrderManagementPage() {
   async function fetchOrders() {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          user_profiles!user_id (
-            full_name
-          )
-        `)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.warn('Join with user_profiles failed, fetching without join:', error);
-        const { data: simpleData, error: simpleError } = await supabase
-          .from('orders')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (simpleError) throw simpleError;
-        setOrders(simpleData || []);
-      } else {
-        // Map user_profiles to user for backward compatibility in the component
-        const mappedData = data?.map(o => ({
-          ...o,
-          user: o.user_profiles
-        }));
-        setOrders(mappedData || []);
-      }
-    } catch (error) {
+      const data = await AdminService.getOrders();
+      // Map user_profiles to user for backward compatibility
+      const mappedData = data?.map((o: any) => ({
+        ...o,
+        user: o.user_profiles
+      }));
+      setOrders(mappedData || []);
+    } catch (error: any) {
       console.error('Failed to fetch orders:', error);
+      setError(error.customMessage || 'Failed to load orders');
     } finally {
       setLoading(false);
     }
@@ -130,7 +111,7 @@ export function OrderManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading ? (
+              {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-12">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />

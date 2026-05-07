@@ -12,18 +12,6 @@ services:
       - NODE_ENV=development
     restart: always
 
-  shop:
-    build:
-      context: .
-      dockerfile: apps/shop/Dockerfile
-    ports:
-      - "4030:80"
-    env_file:
-      - .env
-    depends_on:
-      - backend
-    restart: always
-
   admin:
     build:
       context: .

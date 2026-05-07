@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
+import { AuthService } from '@byteevolvr/api-client';
+import { useUserStore } from '@byteevolvr/store';
 import { Button, Input, Card } from '@byteevolvr/ui';
 import { Loader2 } from 'lucide-react';
 
@@ -10,22 +11,23 @@ export function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setToken, setUser } = useUserStore();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (signInError) {
-      setError(signInError.message);
-      setLoading(false);
-    } else {
+    try {
+      const { user, token } = await AuthService.login(email, password);
+      setToken(token);
+      setUser(user);
       navigate('/shop/dashboard');
+    } catch (signInError: unknown) {
+      const error = signInError as any;
+      setError(error.customMessage || error.message || 'An unexpected error occurred');
+
+      setLoading(false);
     }
   };
 

@@ -82,6 +82,7 @@ async function getAdminSupabase() {
 }
 
 const app = express();
+const PORT = process.env.PORT || 8080;
 
 // Security Middleware
 app.use(helmet());
@@ -144,29 +145,125 @@ app.get('/api/health', (_req, res) => {
 });
 
 // Auth Middleware
-const authenticateAdmin = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Authentication required' });
+const authenticateAdmin = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.split(' ')[1];
+  
+  if (!token) {
+    console.warn('[Auth] No token provided');
+    return res.status(401).json({ message: 'Authentication required' });
+  }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.adminId = decoded.id;
+    // 1. Try custom JWT verification first (fastest)
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      req.adminId = decoded.id;
+      return next();
+    } catch (e) {
+      // Not a valid custom JWT, try Supabase
+    }
+
+    // 2. Try Supabase verification
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+      console.error('[Auth] Supabase token verification failed:', error?.message);
+      return res.status(403).json({ message: 'Invalid or expired token' });
+    }
+
+    // --- SELF-HEALING BLOCK FOR ADMIN ---
+    try {
+      const adminEmails = ['admin@byteevolvr.com', 'hemant.k@byteevolvr.com'];
+      if (adminEmails.includes(user.email)) {
+        req.adminId = user.id;
+        
+        // Use admin client to check/promote (bypasses RLS)
+        const adminSupabase = await getAdminSupabase();
+        const { data: existingProfile } = await adminSupabase
+          .from('user_profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        
+        if (!existingProfile || existingProfile.role !== 'admin') {
+          console.log(`[Auth] Promoting ${user.email} to admin role...`);
+          await adminSupabase
+            .from('user_profiles')
+            .upsert({ 
+              id: user.id, 
+              email: user.email, 
+              role: 'admin',
+              full_name: user.user_metadata?.full_name || 'System Admin'
+            });
+        }
+        
+        return next();
+      }
+    } catch (e) {
+      console.error('[Auth] Self-healing error:', e.message);
+    }
+    // ------------------------------------
+
+    // 3. Regular check for other admin users
+    // Use admin client here too just in case RLS is blocking the anon key
+    const adminSupabase = await getAdminSupabase();
+    const { data: profile, error: profileError } = await adminSupabase
+      .from('user_profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || profile?.role !== 'admin') {
+      console.warn('[Auth] Unauthorized access attempt by user:', user.email);
+      return res.status(403).json({ message: 'Administrative access required' });
+    }
+
+    req.adminId = user.id;
     next();
   } catch (error) {
-    res.status(403).json({ message: 'Invalid or expired token' });
+    console.error('[Auth] Critical auth error:', error.message);
+    res.status(500).json({ message: 'Authentication system error' });
   }
 };
 
 // Auth Endpoints
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
   const { email, password } = req.body;
 
-  if (email === 'admin@byteevolvr.com' && bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)) {
-    const token = jwt.sign({ id: 'admin', email }, JWT_SECRET, { expiresIn: '12h' });
-    return res.json({ token, admin: { email, name: 'Main Admin' } });
+  // 1. Check hardcoded admin (Super Admin)
+  if (email === 'admin@byteevolvr.com' && ADMIN_PASSWORD_HASH && bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)) {
+    const token = jwt.sign({ id: 'admin', email, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
+    return res.json({ token, user: { id: 'admin', email, full_name: 'Main Admin', role: 'admin' } });
   }
 
-  res.status(401).json({ message: 'Invalid credentials' });
+  // 2. Check Supabase for other admins
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('role, full_name')
+      .eq('id', data.user.id)
+      .single();
+
+    if (profile?.role !== 'admin' && email !== 'hemant.k@byteevolvr.com') {
+      return res.status(403).json({ message: 'Administrative access required' });
+    }
+
+    res.json({ 
+      token: data.session.access_token, 
+      user: { 
+        id: data.user.id, 
+        email: data.user.email, 
+        full_name: profile?.full_name || data.user.user_metadata?.full_name,
+        role: 'admin'
+      } 
+    });
+  } catch (err) {
+    res.status(401).json({ message: err.message || 'Invalid credentials' });
+  }
 });
 
 // Customer Auth Middleware
@@ -530,43 +627,179 @@ app.get('/api/tracking/:trackingId', async (req, res) => {
 // Admin Orders API
 app.get('/api/admin/orders', authenticateAdmin, async (req, res) => {
   try {
-    const { data: orders, error } = await supabase
+    const adminSupabase = await getAdminSupabase();
+    const { data: orders, error } = await adminSupabase
       .from('orders')
-      .select('*, order_items(*), shipments(tracking_id, courier_name), addresses(full_name)')
+      .select('*, order_items(*), shipments(tracking_id, courier_name)')
       .order('created_at', { ascending: false });
 
-    if (error) {
-      logger.error('Failed to fetch admin orders:', error);
-      return res.status(500).json({ message: 'Failed to fetch orders' });
-    }
+    if (error) throw error;
+    res.json(orders);
+  } catch (error) {
+    logger.error('Admin orders route error:', error);
+    res.status(500).json({ message: 'Failed to fetch orders' });
+  }
+});
 
-    // Map data to match frontend expectations
-    const formattedOrders = orders.map(order => {
-      const itemsCount = order.order_items ? order.order_items.reduce((sum, item) => sum + item.quantity, 0) : 0;
-      const shipment = order.shipments && Array.isArray(order.shipments) && order.shipments.length > 0
-        ? order.shipments[0]
-        : (order.shipments || null);
+app.get('/api/admin/orders/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const adminSupabase = await getAdminSupabase();
+    const { data: order, error } = await adminSupabase
+      .from('orders')
+      .select('*, order_items(*), shipments(tracking_id, courier_name), addresses(*)')
+      .eq('id', req.params.id)
+      .single();
 
-      const customerName = order.addresses
-        ? (Array.isArray(order.addresses) ? order.addresses[0]?.full_name : order.addresses.full_name)
-        : 'Customer';
+    if (error) throw error;
+    res.json(order);
+  } catch (error) {
+    logger.error('Admin order detail error:', error);
+    res.status(500).json({ message: 'Failed to fetch order details' });
+  }
+});
 
+app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
+  console.log('[Backend] Received request for /api/admin/stats');
+  try {
+    const adminSupabase = await getAdminSupabase();
+    const { data: orders, error: ordersError } = await adminSupabase.from('orders').select('total_amount, created_at');
+    console.log('[Backend] Supabase orders fetched:', orders?.length);
+    
+    const { count: customers, error: customersError } = await adminSupabase.from('user_profiles').select('*', { count: 'exact', head: true });
+    console.log('[Backend] Supabase customers count fetched:', customers);
+
+    if (ordersError || customersError) throw ordersError || customersError;
+
+    const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total_amount), 0);
+    const salesCount = orders.length;
+    
+    res.json({
+      totalRevenue,
+      salesCount,
+      customerCount: customers || 0,
+      avgOrderValue: salesCount > 0 ? totalRevenue / salesCount : 0
+    });
+  } catch (error) {
+    logger.error('Admin stats route error:', error);
+    res.status(500).json({ message: 'Failed to fetch stats' });
+  }
+});
+
+app.get('/api/admin/customers', authenticateAdmin, async (req, res) => {
+  try {
+    const adminSupabase = await getAdminSupabase();
+    const { data: profiles, error: profilesError } = await adminSupabase
+      .from('user_profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (profilesError) throw profilesError;
+
+    const { data: orders, error: ordersError } = await adminSupabase
+      .from('orders')
+      .select('user_id, total_amount');
+
+    if (ordersError) throw ordersError;
+
+    const customersWithStats = profiles.map(profile => {
+      const userOrders = orders.filter(o => o.user_id === profile.id);
+      const totalSpent = userOrders.reduce((acc, o) => acc + Number(o.total_amount), 0);
+      
       return {
-        id: order.id,
-        orderNumber: order.order_number,
-        customer: customerName || 'Customer',
-        amount: `₹${order.total_amount}`,
-        status: order.status.charAt(0).toUpperCase() + order.status.slice(1),
-        courier: shipment?.courier_name || 'Unassigned',
-        trackingId: shipment?.tracking_id || '-',
-        items: itemsCount
+        ...profile,
+        orderCount: userOrders.length,
+        totalSpent: totalSpent
       };
     });
 
-    res.json(formattedOrders);
+    res.json(customersWithStats);
   } catch (error) {
-    logger.error('Admin orders route error:', error);
-    res.status(500).json({ message: 'Server error' });
+    logger.error('Admin customers route error:', error);
+    res.status(500).json({ message: 'Failed to fetch customers' });
+  }
+});
+
+app.get('/api/admin/products', authenticateAdmin, async (req, res) => {
+  try {
+    const adminSupabase = await getAdminSupabase();
+    const { data, error } = await adminSupabase
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    logger.error('Admin get products error:', error);
+    res.status(500).json({ message: 'Failed to fetch products' });
+  }
+});
+
+app.get('/api/admin/products/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const adminSupabase = await getAdminSupabase();
+    const { data, error } = await adminSupabase
+      .from('products')
+      .select('*')
+      .eq('id', req.params.id)
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    logger.error('Admin get product error:', error);
+    res.status(500).json({ message: 'Failed to fetch product' });
+  }
+});
+
+app.post('/api/admin/products', authenticateAdmin, async (req, res) => {
+  try {
+    const adminSupabase = await getAdminSupabase();
+    const { data, error } = await adminSupabase
+      .from('products')
+      .insert([req.body])
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.status(201).json(data);
+  } catch (error) {
+    logger.error('Admin create product error:', error);
+    res.status(500).json({ message: 'Failed to create product' });
+  }
+});
+
+app.put('/api/admin/products/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const adminSupabase = await getAdminSupabase();
+    const { data, error } = await adminSupabase
+      .from('products')
+      .update(req.body)
+      .eq('id', req.params.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    logger.error('Admin update product error:', error);
+    res.status(500).json({ message: 'Failed to update product' });
+  }
+});
+
+app.delete('/api/admin/products/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const adminSupabase = await getAdminSupabase();
+    const { error } = await adminSupabase
+      .from('products')
+      .delete()
+      .eq('id', req.params.id);
+
+    if (error) throw error;
+    res.status(204).send();
+  } catch (error) {
+    logger.error('Admin delete product error:', error);
+    res.status(500).json({ message: 'Failed to delete product' });
   }
 });
 
@@ -791,10 +1024,201 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(process.env.PORT || 8080, () => {
-  const summary = getApiConfigSummary();
-  logger.info(`API server listening on port ${summary.port}`);
-  logger.info(
-    `Provider status: Razorpay=${summary.providers.razorpayConfigured ? 'configured' : 'missing'} Shiprocket=${summary.providers.shiprocketConfigured ? 'configured' : 'missing'}`
-  );
+// Ensure Admin Profiles exist
+const seedAdminProfiles = async () => {
+  try {
+    const adminEmails = ['admin@byteevolvr.com', 'hemant.k@byteevolvr.com'];
+    logger.info(`[Seed] Ensuring admin profiles exist for: ${adminEmails.join(', ')}`);
+    
+    // Use admin client to bypass RLS
+    const adminSupabase = await getAdminSupabase();
+    const { data: profiles, error: fetchError } = await adminSupabase
+      .from('user_profiles')
+      .select('id, email')
+      .in('email', adminEmails);
+    
+    if (fetchError) {
+      logger.error(`[Seed] Failed to fetch existing profiles: ${fetchError.message}`);
+      return;
+    }
+
+    // For each admin email, if they are already in user_profiles, ensure they have the admin role
+    for (const email of adminEmails) {
+      const profile = profiles.find(p => p.email === email);
+      if (profile) {
+        const { error: updateError } = await adminSupabase
+          .from('user_profiles')
+          .update({ role: 'admin' })
+          .eq('id', profile.id);
+        
+        if (updateError) {
+          logger.error(`[Seed] Failed to update role for ${email}: ${updateError.message}`);
+        } else {
+          logger.info(`[Seed] Verified admin role for: ${email}`);
+        }
+      } else {
+        logger.warn(`[Seed] User ${email} not found in user_profiles yet. They will be auto-promoted upon their first login.`);
+      }
+    }
+  } catch (error) {
+    logger.error(`[Seed] Critical seeding error: ${error.message}`);
+  }
+};
+
+// CMS Routes
+app.get('/api/cms/:pageSlug', async (req, res) => {
+  try {
+    const { pageSlug } = req.params;
+    const { sectionKeys } = req.query;
+    
+    let query = supabase
+      .from('cms_content')
+      .select('*')
+      .eq('page_slug', pageSlug);
+    
+    if (sectionKeys) {
+      query = query.in('section_key', sectionKeys.split(','));
+    }
+    
+    const { data, error } = await query;
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    logger.error('CMS fetch error:', error);
+    res.status(500).json({ message: 'Failed to fetch CMS content' });
+  }
+});
+
+app.put('/api/admin/cms/:pageSlug/:sectionKey', authenticateAdmin, async (req, res) => {
+  try {
+    const { pageSlug, sectionKey } = req.params;
+    const { content } = req.body;
+    
+    const adminSupabase = await getAdminSupabase();
+    const { data, error } = await adminSupabase
+      .from('cms_content')
+      .upsert({ 
+        page_slug: pageSlug, 
+        section_key: sectionKey, 
+        content,
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+    
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    logger.error('CMS update error:', error);
+    res.status(500).json({ message: 'Failed to update CMS content' });
+  }
+});
+
+// Admin Review Routes
+app.get('/api/admin/reviews', authenticateAdmin, async (req, res) => {
+  try {
+    const adminSupabase = await getAdminSupabase();
+    const { data, error } = await adminSupabase
+      .from('product_reviews')
+      .select(`
+        *,
+        product:product_id (name),
+        user:user_id (full_name)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    logger.error('Admin reviews fetch error:', error);
+    res.status(500).json({ message: 'Failed to fetch reviews' });
+  }
+});
+
+app.put('/api/admin/reviews/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    const adminSupabase = await getAdminSupabase();
+    const { data, error } = await adminSupabase
+      .from('product_reviews')
+      .update({ status })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    logger.error('Admin review update error:', error);
+    res.status(500).json({ message: 'Failed to update review status' });
+  }
+});
+
+// Wishlist Routes
+app.get('/api/wishlist', authenticateCustomer, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('wishlists')
+      .select('*, product:products(*)')
+      .eq('user_id', req.user.id);
+    
+    if (error) throw error;
+    res.json(data);
+  } catch (error) {
+    logger.error('Wishlist fetch error:', error);
+    res.status(500).json({ message: 'Failed to fetch wishlist' });
+  }
+});
+
+app.post('/api/wishlist/:productId/toggle', authenticateCustomer, async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { data: existing } = await supabase
+      .from('wishlists')
+      .select('id')
+      .eq('user_id', req.user.id)
+      .eq('product_id', productId)
+      .maybeSingle();
+    
+    if (existing) {
+      await supabase.from('wishlists').delete().eq('id', existing.id);
+      res.json({ isWishlisted: false });
+    } else {
+      await supabase.from('wishlists').insert({ user_id: req.user.id, product_id: productId });
+      res.json({ isWishlisted: true });
+    }
+  } catch (error) {
+    logger.error('Wishlist toggle error:', error);
+    res.status(500).json({ message: 'Failed to toggle wishlist' });
+  }
+});
+
+app.get('/api/wishlist/:productId/check', authenticateCustomer, async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { data } = await supabase
+      .from('wishlists')
+      .select('id')
+      .eq('user_id', req.user.id)
+      .eq('product_id', productId)
+      .maybeSingle();
+    
+    res.json({ isWishlisted: !!data });
+  } catch (error) {
+    res.json({ isWishlisted: false });
+  }
+});
+
+// Start Server
+app.listen(PORT, async () => {
+  logger.info(`API server listening on port ${PORT}`);
+  
+  // Seed admins on startup
+  try {
+    await seedAdminProfiles();
+  } catch (err) {
+    logger.error(`Seed failed: ${err.message}`);
+  }
 });

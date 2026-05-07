@@ -2,15 +2,15 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { shopProducts, offerCards, secondaryOfferCards } from '../features/shop/data';
 import { ShoppingCart, User, ArrowRight, Zap, ShieldCheck, Loader2 } from 'lucide-react';
-import { useAuth } from '../features/shop/context/AuthContext';
+import { useUserStore } from '@byteevolvr/store';
 import { Card, Button, Badge } from '@byteevolvr/ui';
-import { getProducts, Product } from '@byteevolvr/api-client';
+import { ProductService, Product } from '@byteevolvr/api-client';
 
 const formatPrice = (value: number) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
 
 export function ShopPage() {
-  const { user } = useAuth();
+  const { user } = useUserStore();
   const navigate = useNavigate();
   const [products, setProducts] = React.useState<Product[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -18,7 +18,7 @@ export function ShopPage() {
   React.useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await getProducts();
+        const data = await ProductService.getProducts();
         setProducts(data);
       } catch (err) {
         console.error('Failed to fetch products', err);

@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, Button, Input, Badge } from '../components/ui';
 import { ArrowLeft, Save, Image as ImageIcon, UploadCloud, X, Plus, Loader2, CheckCircle2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { ProductService } from '@byteevolvr/api-client';
 
 export function ProductFormPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -20,9 +21,30 @@ export function ProductFormPage() {
     category: 'Electronics',
     brand: '',
     status: 'active' as 'active' | 'draft' | 'out_of_stock',
-    image_url: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80', // Primary image
-    images: [] as string[] // Additional images
+    image_url: '',
+    images: [] as string[]
   });
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isPrimary: boolean, index?: number) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const url = await ProductService.uploadImage(file);
+      if (isPrimary) {
+        setFormData({ ...formData, image_url: url });
+      } else if (index !== undefined) {
+        const newImages = [...formData.images];
+        newImages[index] = url;
+        setFormData({ ...formData, images: newImages });
+      }
+    } catch (err: any) {
+      setError('Failed to upload image. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSave = async () => {
     if (!formData.name || !formData.price) {
@@ -32,27 +54,20 @@ export function ProductFormPage() {
 
     setLoading(true);
     setError(null);
-
     try {
-      const { error: insertError } = await supabase
-        .from('products')
-        .insert([{
-          ...formData,
-          price: parseFloat(formData.price),
-          original_price: formData.original_price ? parseFloat(formData.original_price) : null,
-          stock_quantity: parseInt(formData.stock_quantity),
-          images: [formData.image_url, ...formData.images].filter(url => url && url.trim() !== ''),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }]);
+      const payload = {
+        ...formData,
+        price: parseFloat(formData.price),
+        original_price: formData.original_price ? parseFloat(formData.original_price) : undefined,
+        stock_quantity: parseInt(formData.stock_quantity),
+      };
 
-      if (insertError) throw insertError;
+      await ProductService.createProduct(payload as any);
 
       setSuccess(true);
       setTimeout(() => navigate('/products'), 1500);
     } catch (err: any) {
-      console.error('Error saving product:', err);
-      setError(err.message || 'An error occurred while saving the product.');
+      setError(err.customMessage || 'An error occurred while saving the product.');
     } finally {
       setLoading(false);
     }
@@ -142,13 +157,23 @@ export function ProductFormPage() {
                       </div>
                     )}
                   </div>
-                  <input 
-                    type="text" 
-                    value={formData.image_url}
-                    onChange={e => setFormData({ ...formData, image_url: e.target.value })}
-                    className="flex-1 h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none self-center" 
-                    placeholder="Enter image URL..." 
-                  />
+                  <div className="flex-1 flex flex-col justify-center gap-2">
+                    <input 
+                      type="file" 
+                      id="primary-image"
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={(e) => handleImageUpload(e, true)}
+                    />
+                    <label 
+                      htmlFor="primary-image" 
+                      className="flex items-center gap-2 px-4 h-10 border border-outline border-dashed rounded-md bg-surface-container hover:bg-surface-container-high cursor-pointer transition-colors text-sm font-medium text-primary"
+                    >
+                      <UploadCloud className="h-4 w-4" />
+                      {uploading ? 'Uploading...' : 'Upload Primary Image'}
+                    </label>
+                    <p className="text-xs text-on-surface-variant">Recommended size: 800x800px. Max 2MB.</p>
+                  </div>
                 </div>
               </div>
 

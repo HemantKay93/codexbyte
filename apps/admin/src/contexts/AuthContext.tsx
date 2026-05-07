@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { AuthService } from '@byteevolvr/api-client';
 
 interface AuthContextValue {
-  user: User | null;
-  session: Session | null;
+  user: any | null;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
@@ -12,51 +10,49 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue>({
   user: null,
-  session: null,
   isLoading: true,
   signIn: async () => ({ error: null }),
   signOut: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setIsLoading(false);
+    const initAuth = async () => {
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        try {
+          const userData = await AuthService.getCurrentUser();
+          setUser(userData);
+        } catch (err) {
+          console.error('Failed to restore session:', err);
+          AuthService.logout();
+        }
       }
-    );
-
-    return () => subscription.unsubscribe();
+      setIsLoading(false);
+    };
+    initAuth();
   }, []);
 
   const signIn = async (email: string, password: string): Promise<{ error: string | null }> => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      return { error: error.message };
+    try {
+      const data = await AuthService.adminLogin(email, password);
+      setUser(data.admin || data.user);
+      return { error: null };
+    } catch (err: any) {
+      return { error: err.customMessage || 'Login failed' };
     }
-    return { error: null };
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    AuthService.logout();
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isLoading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, isLoading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

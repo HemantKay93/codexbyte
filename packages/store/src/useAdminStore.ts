@@ -1,0 +1,50 @@
+import { create } from 'zustand';
+
+interface AdminState {
+  stats: {
+    totalRevenue: number;
+    salesCount: number;
+    customerCount: number;
+    avgOrderValue: number;
+  };
+  recentSales: any[];
+  chartData: any[];
+  products: any[];
+  customers: any[];
+  orders: any[];
+  isLoading: boolean;
+  error: string | null;
+  setStats: (stats: any) => void;
+  setRecentSales: (sales: any[]) => void;
+  setChartData: (data: any[]) => void;
+  setProducts: (products: any[]) => void;
+  setCustomers: (customers: any[]) => void;
+  setOrders: (orders: any[]) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+}
+
+export const useAdminStore = create<AdminState>((set) => ({
+  stats: {
+    totalRevenue: 0,
+    salesCount: 0,
+    customerCount: 0,
+    avgOrderValue: 0,
+  },
+  recentSales: [],
+  chartData: [],
+  products: [],
+  customers: [],
+  orders: [],
+  isLoading: false,
+  error: null,
+
+  setStats: (stats) => set({ stats }),
+  setRecentSales: (recentSales) => set({ recentSales }),
+  setChartData: (chartData) => set({ chartData }),
+  setProducts: (products) => set({ products }),
+  setCustomers: (customers) => set({ customers }),
+  setOrders: (orders) => set({ orders }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
+}));

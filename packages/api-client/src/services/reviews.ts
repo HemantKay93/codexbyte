@@ -1,24 +1,24 @@
-import axios from 'axios';
+import { apiClient } from '../apiClient';
 
-const metaEnv = (
-  import.meta as ImportMeta & {
-    env?: Record<string, string | undefined>;
+export const ReviewService = {
+  getReviews: async (productId: string) => {
+    const response = await apiClient.get(`/reviews/${productId}`);
+    return response.data;
+  },
+
+
+  addReview: async (productId: string, payload: { rating: number, comment: string }) => {
+    const response = await apiClient.post(`/products/${productId}/reviews`, payload);
+    return response.data;
+  },
+
+  getAllReviews: async () => {
+    const response = await apiClient.get('/admin/reviews');
+    return response.data;
+  },
+
+  updateReviewStatus: async (reviewId: string, status: string) => {
+    const response = await apiClient.put(`/admin/reviews/${reviewId}`, { status });
+    return response.data;
   }
-).env;
-
-const api = axios.create({
-  baseURL: metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('admin_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export async function getReviews() {
-  const response = await api.get('/reviews');
-  return response.data;
-}
+};

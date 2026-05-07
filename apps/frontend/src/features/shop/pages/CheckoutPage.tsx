@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { createOrder } from '@byteevolvr/api-client';
+import { useCartStore, useUserStore } from '@byteevolvr/store';
+import { OrderService } from '@byteevolvr/api-client';
 import { ArrowLeft, Loader2, CreditCard, Banknote, MapPin, Truck } from 'lucide-react';
 import { Button } from '@byteevolvr/ui';
 
 export function CheckoutPage() {
-  const { items, subtotal, clearCart } = useCart();
-  const { user, session } = useAuth();
+  const { items, clearCart, totalAmount } = useCartStore();
+  const { user } = useUserStore();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -54,9 +53,10 @@ export function CheckoutPage() {
     fetchLatestAddress();
   }, [user]);
 
+  const subtotal = totalAmount();
   const tax = subtotal * 0.18; // 18% GST
   const shipping = subtotal > 5000 || subtotal === 0 ? 0 : 500;
-  const totalAmount = subtotal + tax + shipping;
+  const finalTotalAmount = subtotal + tax + shipping;
 
   // Redirect if cart is empty
   if (items.length === 0 && !loading) {
@@ -89,10 +89,10 @@ export function CheckoutPage() {
         })),
         shippingAddress,
         paymentMethod,
-        totalAmount
+        totalAmount: finalTotalAmount
       };
 
-      const result = await createOrder(payload, session?.access_token);
+      const result = await OrderService.createOrder(payload);
       
       if (paymentMethod === 'razorpay') {
         // In a real implementation, you would open the Razorpay popup here

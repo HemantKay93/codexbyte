@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import { ShippingService } from '@byteevolvr/api-client';
 import { Button, Input, Card, Badge } from '@byteevolvr/ui';
 import { Loader2, PackageSearch } from 'lucide-react';
 
@@ -19,13 +20,10 @@ export function TrackingPage() {
     setError('');
     
     try {
-      // Fetch from our backend
-      const res = await fetch(`http://localhost:8080/api/tracking/${idToFetch}`);
-      if (!res.ok) throw new Error('Tracking ID not found');
-      const data = await res.json();
+      const data = await ShippingService.getTrackingById(idToFetch);
       setResult(data);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch tracking details');
+      setError(err.customMessage || 'Failed to fetch tracking details');
       setResult(null);
     } finally {
       setLoading(false);

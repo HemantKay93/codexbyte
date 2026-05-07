@@ -21,8 +21,8 @@ const SignupPage = lazy(() => import('@/features/shop/pages/SignupPage').then(m 
 const DashboardPage = lazy(() => import('@/features/shop/pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
 const TrackingPage = lazy(() => import('@/features/shop/pages/TrackingPage').then(m => ({ default: m.TrackingPage })));
 
-import { AuthProvider } from '@/features/shop/context/AuthContext';
-import { CartProvider } from '@/features/shop/context/CartContext';
+import { useEffect } from 'react';
+import { useUserStore } from '@byteevolvr/store';
 import { ProtectedRoute } from '@/features/shop/components/ProtectedRoute';
 
 function PageLoader() {
@@ -34,11 +34,15 @@ function PageLoader() {
 }
 
 export default function App() {
+  const { initialize } = useUserStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Suspense fallback={<PageLoader />}>
-        <Routes>
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<HomePage />} />
@@ -66,8 +70,6 @@ export default function App() {
           <Route path="/legal/terms" element={<TermsAndConditions />} />
         </Route>
       </Routes>
-      </Suspense>
-      </CartProvider>
-    </AuthProvider>
+    </Suspense>
   );
 }

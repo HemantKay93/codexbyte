@@ -1,24 +1,22 @@
-import axios from 'axios';
+import { apiClient } from '../apiClient';
 
-const metaEnv = (
-  import.meta as ImportMeta & {
-    env?: Record<string, string | undefined>;
-  }
-).env;
-
-const api = axios.create({
-  baseURL: metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('admin_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export async function getDiscounts() {
-  const response = await api.get('/discounts');
-  return response.data;
+export interface Coupon {
+  code: string;
+  discount_type: 'percentage' | 'fixed_amount';
+  value: number;
+  min_order_amount?: number;
+  max_discount_amount?: number;
+  expiry_date?: string;
 }
+
+export const DiscountService = {
+  getDiscounts: async () => {
+    const response = await apiClient.get('/discounts');
+    return response.data;
+  },
+
+  applyDiscount: async (code: string, cartTotal: number) => {
+    const response = await apiClient.post('/discounts/apply', { code, cartTotal });
+    return response.data;
+  }
+};

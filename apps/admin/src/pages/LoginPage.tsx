@@ -202,11 +202,17 @@ export function LoginPage() {
               </div>
             </form>
 
-            <div className="mt-12 pt-10 border-t border-slate-100 flex flex-col items-center gap-2">
+            <div className="mt-12 pt-10 border-t border-slate-100 flex flex-col items-center gap-4">
               <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em]">Internal Access Keys</p>
-              <div className="flex gap-6">
-                <span className="text-[11px] text-slate-400 font-bold italic">admin@byteevolvr.com</span>
-                <span className="text-[11px] text-slate-900 font-black tracking-[0.2em]">Admin@123</span>
+              <div className="flex flex-col items-center gap-2">
+                <div className="flex gap-4 items-center">
+                  <span className="text-[10px] text-slate-400 font-bold italic">admin@byteevolvr.com</span>
+                  <span className="text-[10px] text-slate-900 font-black tracking-[0.1em]">Admin@123</span>
+                </div>
+                <div className="flex gap-4 items-center">
+                  <span className="text-[10px] text-slate-400 font-bold italic">hemant.k@byteevolvr.com</span>
+                  <span className="text-[10px] text-slate-900 font-black tracking-[0.1em]">Admin@123</span>
+                </div>
               </div>
             </div>
           </div>

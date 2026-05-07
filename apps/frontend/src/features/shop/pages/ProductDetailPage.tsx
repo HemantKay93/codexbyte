@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProduct, Product } from '@byteevolvr/api-client';
+import { ProductService, Product } from '@byteevolvr/api-client';
 import { Loader2, ArrowLeft, ShoppingCart, Truck, ShieldCheck, Star } from 'lucide-react';
 import { Button, Badge } from '@byteevolvr/ui';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
+import { useUserStore, useCartStore } from '@byteevolvr/store';
 
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { addToCart } = useCart();
+  const { user } = useUserStore();
+  const { addItem: addToCart } = useCartStore();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -23,7 +22,7 @@ export function ProductDetailPage() {
     const fetchProduct = async () => {
       if (!id) return;
       try {
-        const data = await getProduct(id);
+        const data = await ProductService.getProduct(id);
         setProduct(data);
       } catch (err) {
         console.error(err);
@@ -279,7 +278,7 @@ export function ProductDetailPage() {
               <div className="flex flex-wrap gap-2">
                 {product.tags && product.tags.length > 0 ? (
                   product.tags.map((tag, i) => (
-                    <Badge key={i} variant="outline" className="text-sm py-2 px-4 bg-white/5 border-white/10 text-brand-subtle">
+                    <Badge key={i} variant="secondary" className="text-sm py-2 px-4 bg-white/5 border-white/10 text-brand-subtle">
                       {tag}
                     </Badge>
                   ))

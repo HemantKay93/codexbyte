@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
 import { Star, MessageSquare, Check, X, Search, Filter, Loader2, RefreshCcw } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { useAdminStore } from '@byteevolvr/store';
+import { ReviewService } from '@byteevolvr/api-client';
 
 export function ReviewsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [reviews, setReviews] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { isLoading, setLoading, setError } = useAdminStore();
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -16,23 +17,11 @@ export function ReviewsPage() {
   async function fetchReviews() {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('product_reviews')
-        .select(`
-          *,
-          product:product_id (
-            name
-          ),
-          user:user_id (
-            full_name
-          )
-        `)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      const data = await ReviewService.getAllReviews();
       setReviews(data || []);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching reviews:', err);
+      setError(err.customMessage || 'Failed to load reviews');
     } finally {
       setLoading(false);
     }
@@ -41,12 +30,7 @@ export function ReviewsPage() {
   const updateReviewStatus = async (id: string, newStatus: string) => {
     setProcessingId(id);
     try {
-      const { error } = await supabase
-        .from('product_reviews')
-        .update({ status: newStatus })
-        .eq('id', id);
-
-      if (error) throw error;
+      await ReviewService.updateReviewStatus(id, newStatus);
       await fetchReviews();
     } catch (err) {
       console.error('Error updating review status:', err);
@@ -81,8 +65,8 @@ export function ReviewsPage() {
           <h1 className="text-display-sm font-semibold text-on-background">Customer Reviews</h1>
           <p className="text-body-sm text-on-surface-variant mt-1">Moderate and respond to product reviews</p>
         </div>
-        <Button variant="outline" onClick={fetchReviews} disabled={loading}>
-          <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+        <Button variant="outline" onClick={fetchReviews} disabled={isLoading}>
+          <RefreshCcw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
       </div>
@@ -93,7 +77,7 @@ export function ReviewsPage() {
             <div>
               <div className="text-on-surface-variant font-medium text-sm mb-1">Average Rating</div>
               <div className="text-3xl font-bold text-on-surface flex items-center gap-2">
-                {loading ? '...' : stats.avg} <Star className="h-6 w-6 text-amber-400 fill-amber-400" />
+                {isLoading ? '...' : stats.avg} <Star className="h-6 w-6 text-amber-400 fill-amber-400" />
               </div>
             </div>
           </CardContent>
@@ -102,7 +86,7 @@ export function ReviewsPage() {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <div className="text-on-surface-variant font-medium text-sm mb-1">Total Reviews</div>
-              <div className="text-3xl font-bold text-on-surface">{loading ? '...' : stats.total}</div>
+              <div className="text-3xl font-bold text-on-surface">{isLoading ? '...' : stats.total}</div>
             </div>
           </CardContent>
         </Card>
@@ -110,7 +94,7 @@ export function ReviewsPage() {
           <CardContent className="p-6 flex items-center justify-between">
             <div>
               <div className="font-medium text-sm mb-1 opacity-90">Pending Moderation</div>
-              <div className="text-3xl font-bold">{loading ? '...' : stats.pending}</div>
+              <div className="text-3xl font-bold">{isLoading ? '...' : stats.pending}</div>
             </div>
             {stats.pending > 0 && <Badge variant="warning" className="bg-warning text-on-warning">Action Needed</Badge>}
           </CardContent>
@@ -150,7 +134,7 @@ export function ReviewsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading ? (
+              {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-12">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
@@ -185,7 +169,7 @@ export function ReviewsPage() {
                         review.status === 'flagged' ? 'error' : 'warning'
                       }
                     >
-                      {review.status.charAt(0).toUpperCase() + review.status.slice(1)}
+                      {(review.status || 'pending').charAt(0).toUpperCase() + (review.status || 'pending').slice(1)}
                     </Badge>
                   </TableCell>
                   <TableCell className="align-top pt-4 text-right">

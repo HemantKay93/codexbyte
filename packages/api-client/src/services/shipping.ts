@@ -1,21 +1,19 @@
-import axios from 'axios';
+import { apiClient } from '../apiClient';
 
-const metaEnv = (
-  import.meta as ImportMeta & {
-    env?: Record<string, string | undefined>;
+export const ShippingService = {
+  createShiprocketShipment: async (payload: Record<string, unknown>) => {
+    const response = await apiClient.post('/shipping/shiprocket', payload);
+    return response.data;
+  },
+
+
+  getTrackingById: async (trackingId: string) => {
+    const response = await apiClient.get(`/tracking/${trackingId}`);
+    return response.data;
+  },
+
+  calculateShippingRates: async (payload: any) => {
+    const response = await apiClient.post('/shipping/rates', payload);
+    return response.data;
   }
-).env;
-
-const api = axios.create({
-  baseURL: metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
-});
-
-export async function createShiprocketShipment(payload: Record<string, unknown>) {
-  const response = await api.post('/shipping/shiprocket', payload);
-  return response.data;
-}
-
-export async function getTrackingById(trackingId: string) {
-  const response = await api.get(`/tracking/${trackingId}`);
-  return response.data;
-}
+};

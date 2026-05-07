@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, Badge } from '../components/ui';
-import { ArrowUpRight, ArrowDownRight, DollarSign, ShoppingBag, Users, Activity, Loader2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '../components/ui';
+import { ArrowUpRight, DollarSign, ShoppingBag, Users, Activity, Loader2 } from 'lucide-react';
+import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import {
   AreaChart,
   Area,
@@ -10,92 +11,15 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts';
-import { supabase } from '../lib/supabase';
 
 export function DashboardPage() {
-  const [stats, setStats] = useState({
-    totalRevenue: 0,
-    salesCount: 0,
-    customerCount: 0,
-    avgOrderValue: 0
-  });
-  const [recentSales, setRecentSales] = useState<any[]>([]);
-  const [chartData, setChartData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { stats, recentSales, chartData, isLoading, error, fetchDashboardData } = useAdmin();
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
-  async function fetchDashboardData() {
-    setLoading(true);
-    try {
-      // 1. Fetch Orders
-      const { data: orders, error: ordersError } = await supabase
-        .from('orders')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (ordersError) throw ordersError;
-
-      // 2. Fetch User Profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('user_profiles')
-        .select('*');
-
-      if (profilesError) throw profilesError;
-
-      // 3. Process Stats
-      const totalRevenue = orders?.reduce((acc, o) => acc + Number(o.total_amount), 0) || 0;
-      const salesCount = orders?.length || 0;
-      const avgOrderValue = salesCount > 0 ? totalRevenue / salesCount : 0;
-
-      setStats({
-        totalRevenue,
-        salesCount,
-        customerCount: profiles?.length || 0,
-        avgOrderValue
-      });
-
-      // 4. Process Recent Sales (Combine manually)
-      const mappedRecent = orders?.slice(0, 5).map(order => ({
-        ...order,
-        user_profiles: profiles?.find(p => p.id === order.user_id)
-      })) || [];
-      
-      setRecentSales(mappedRecent);
-
-      // 5. Process Chart Data (Last 6 months)
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      const revenueByMonth: { [key: string]: number } = {};
-      
-      orders?.forEach(o => {
-        const date = new Date(o.created_at);
-        const monthName = months[date.getMonth()];
-        revenueByMonth[monthName] = (revenueByMonth[monthName] || 0) + Number(o.total_amount);
-      });
-
-      const currentMonthIndex = new Date().getMonth();
-      const last6Months = [];
-      for (let i = 5; i >= 0; i--) {
-        const idx = (currentMonthIndex - i + 12) % 12;
-        const name = months[idx];
-        last6Months.push({
-          name,
-          total: revenueByMonth[name] || 0
-        });
-      }
-
-      setChartData(last6Months);
-
-    } catch (err) {
-      console.error('Error fetching dashboard data:', err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center text-on-surface-variant">
         <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
@@ -103,6 +27,27 @@ export function DashboardPage() {
       </div>
     );
   }
+
+  if (error) {
+    return (
+      <div className="h-[80vh] flex flex-col items-center justify-center text-on-surface-variant p-6">
+        <div className="bg-error/10 border border-error p-6 rounded-2xl max-w-md text-center">
+          <p className="text-error font-bold mb-2">Sync Error</p>
+          <p className="text-sm mb-4">{error}</p>
+          <Button onClick={() => fetchDashboardData()}>Try Again</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Ensure stats object exists with defaults
+  const displayStats = {
+    totalRevenue: 0,
+    salesCount: 0,
+    customerCount: 0,
+    avgOrderValue: 0,
+    ...(stats || {})
+  };
 
   return (
     <div className="space-y-6">
@@ -120,7 +65,7 @@ export function DashboardPage() {
               <DollarSign className="h-4 w-4 text-primary" />
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">₹{stats.totalRevenue.toLocaleString()}</div>
+              <div className="text-2xl font-bold">₹{displayStats.totalRevenue.toLocaleString()}</div>
               <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
                 +12.5%
@@ -137,7 +82,7 @@ export function DashboardPage() {
               <ShoppingBag className="h-4 w-4 text-primary" />
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">+{stats.salesCount}</div>
+              <div className="text-2xl font-bold">+{displayStats.salesCount}</div>
               <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
                 +8.2%
@@ -154,7 +99,7 @@ export function DashboardPage() {
               <Users className="h-4 w-4 text-primary" />
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">+{stats.customerCount}</div>
+              <div className="text-2xl font-bold">+{displayStats.customerCount}</div>
               <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
                 +4.1%
@@ -171,7 +116,7 @@ export function DashboardPage() {
               <Activity className="h-4 w-4 text-primary" />
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">₹{Math.round(stats.avgOrderValue).toLocaleString()}</div>
+              <div className="text-2xl font-bold">₹{Math.round(displayStats.avgOrderValue).toLocaleString()}</div>
               <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
                 +₹450
@@ -219,9 +164,9 @@ export function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-8">
-              {recentSales.length === 0 ? (
+              {!Array.isArray(recentSales) || recentSales.length === 0 ? (
                 <div className="text-center py-12 text-on-surface-variant italic">No recent sales found.</div>
-              ) : recentSales.map((sale, i) => (
+              ) : recentSales.map((sale: any, i: number) => (
                 <div key={i} className="flex items-center">
                   <div className="h-9 w-9 rounded-full bg-primary-container text-primary flex items-center justify-center font-semibold text-sm">
                     {(sale.user_profiles?.full_name || 'G').charAt(0)}

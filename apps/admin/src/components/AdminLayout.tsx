@@ -33,7 +33,7 @@ export function AdminLayout() {
   // Derive initials from email
   const userInitial = user?.email?.charAt(0).toUpperCase() ?? 'A';
   const userEmail = user?.email ?? '';
-  const displayName = user?.user_metadata?.full_name || userEmail.split('@')[0] || 'Admin';
+  const displayName = user?.full_name || user?.user_metadata?.full_name || userEmail.split('@')[0] || 'Admin';
 
   return (
     <div className="flex h-screen w-full bg-background font-sans text-on-background">

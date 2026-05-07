@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
 import { Plus, Search, Filter, MoreHorizontal, Tag } from 'lucide-react';
-import { getDiscounts } from '@byteevolvr/api-client';
+import { DiscountService } from '@byteevolvr/api-client';
 
 const mockDiscounts = [
   { id: '1', code: 'SUMMER25', type: 'Percentage', value: '25%', status: 'active', usage: '142 / Unlimited', expiry: '2026-08-31' },
@@ -19,7 +19,7 @@ export function DiscountsPage() {
   useEffect(() => {
     const fetchDiscounts = async () => {
       try {
-        const data = await getDiscounts();
+        const data = await DiscountService.getDiscounts();
         if (data && data.length > 0) {
           // Map DB schema to UI schema if needed
           const mapped = data.map((d: any) => ({

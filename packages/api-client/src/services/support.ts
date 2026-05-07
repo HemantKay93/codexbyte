@@ -1,24 +1,14 @@
-import axios from 'axios';
+import { apiClient } from '../apiClient';
 
-const metaEnv = (
-  import.meta as ImportMeta & {
-    env?: Record<string, string | undefined>;
+export const SupportService = {
+  getTickets: async () => {
+    const response = await apiClient.get('/support/tickets');
+    return response.data;
+  },
+
+
+  createTicket: async (payload: any) => {
+    const response = await apiClient.post('/support/tickets', payload);
+    return response.data;
   }
-).env;
-
-const api = axios.create({
-  baseURL: metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('admin_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export async function getSupportTickets() {
-  const response = await api.get('/support/tickets');
-  return response.data;
-}
+};

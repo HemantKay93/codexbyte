@@ -5,14 +5,10 @@ interface BadgeProps {
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error';
   size?: 'sm' | 'md';
   className?: string;
+  style?: React.CSSProperties;
 }
 
-export const Badge: React.FC<BadgeProps> = ({
-  children,
-  variant = 'primary',
-  size = 'md',
-  className,
-}) => {
+export const Badge: React.FC<BadgeProps> = ({ children, variant = 'primary', size = 'md', className, style }) => {
   const variants: Record<string, React.CSSProperties> = {
     primary: {
       background: 'rgba(26, 79, 214, 0.12)',
@@ -58,6 +54,7 @@ export const Badge: React.FC<BadgeProps> = ({
         letterSpacing: '0.05em',
         ...variants[variant],
         ...sizes[size],
+        ...style,
       }}
     >
       {children}

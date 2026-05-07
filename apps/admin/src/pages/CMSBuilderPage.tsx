@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Button, Input, Badge } from '../components/ui';
-import { LayoutTemplate, Image, Type, Columns, ArrowLeft, Save, MousePointer2, Move, Smartphone, Monitor, Trash2, Globe, Phone, MapPin, Mail, Clock, Loader2 } from 'lucide-react';
+import { LayoutTemplate, Image, Type, Columns, ArrowLeft, Save, MousePointer2, Move, Smartphone, Monitor, Trash2, Globe, Phone, MapPin, Mail, Clock, Loader2, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 export function CMSBuilderPage() {

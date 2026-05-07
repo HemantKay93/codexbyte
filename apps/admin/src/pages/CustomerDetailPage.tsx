@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
 import { ArrowLeft, Edit, Mail, MapPin, ShoppingBag, CreditCard, Star, Loader2, Phone, Calendar } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { AdminService } from '@byteevolvr/api-client';
 
 export function CustomerDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -24,57 +24,20 @@ export function CustomerDetailPage() {
   }, [id]);
 
   async function fetchCustomerData() {
+    if (!id) return;
     setLoading(true);
     try {
-      // 1. Fetch Profile
-      const { data: profile, error: profileError } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const data = await AdminService.getCustomerDetail(id);
+      const { profile, orders: customerOrders, addresses, reviewsCount } = data;
 
-      if (profileError) throw profileError;
       setCustomer(profile);
-
-      // 2. Fetch Orders
-      const { data: customerOrders, error: ordersError } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', id)
-        .order('created_at', { ascending: false });
-
-      if (ordersError) throw ordersError;
       setOrders(customerOrders || []);
-
-      // 3. Fetch Primary Address
-      const { data: addresses, error: addressError } = await supabase
-        .from('addresses')
-        .select('*')
-        .eq('user_id', id)
-        .eq('is_default', true)
-        .limit(1);
-
-      if (!addressError && addresses && addresses.length > 0) {
-        setAddress(addresses[0]);
-      } else if (!addressError) {
-        // Try getting any address if no default
-        const { data: anyAddress } = await supabase
-          .from('addresses')
-          .select('*')
-          .eq('user_id', id)
-          .limit(1);
-        if (anyAddress && anyAddress.length > 0) setAddress(anyAddress[0]);
-      }
-
-      // 4. Calculate Stats
-      const totalSpent = (customerOrders || []).reduce((acc, o) => acc + Number(o.total_amount), 0);
-      const orderCount = (customerOrders || []).length;
       
-      // Fetch reviews count
-      const { count: reviewsCount } = await supabase
-        .from('product_reviews')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', id);
+      const primaryAddress = addresses.find((a: any) => a.is_default) || addresses[0];
+      setAddress(primaryAddress || null);
+
+      const totalSpent = (customerOrders || []).reduce((acc: number, o: any) => acc + Number(o.total_amount), 0);
+      const orderCount = (customerOrders || []).length;
 
       setStats({
         totalSpent,

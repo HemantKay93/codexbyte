@@ -1,3 +1,4 @@
+export * from './apiClient';
 export * from './services/orders';
 export * from './services/payments';
 export * from './services/shipping';
@@ -7,3 +8,8 @@ export * from './services/discounts';
 export * from './services/reviews';
 export * from './services/support';
 export * from './services/team';
+export * from './services/users';
+export * from './services/admin';
+export * from './services/cms';
+export * from './services/auth';
+export * from './services/wishlist';

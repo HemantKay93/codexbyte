@@ -2,36 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Button, Badge, Input } from '../components/ui';
 import { Plus, MoreHorizontal, Filter, Search, UploadCloud } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 import { BulkImportDialog } from '../components/BulkImportDialog';
+import { useProduct } from '../modules/product/hooks/useProduct';
 
 export function ProductManagementPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { products, isLoading, fetchProducts, deleteProduct } = useProduct();
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchProducts();
   }, []);
-
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setProducts(data || []);
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -94,7 +76,7 @@ export function ProductManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading ? (
+              {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8 text-on-surface-variant">Loading products...</TableCell>
                 </TableRow>

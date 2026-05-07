@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { useUserStore } from '@byteevolvr/store';
+import { UserService, OrderService } from '@byteevolvr/api-client';
 import { Card, Badge, Button } from '@byteevolvr/ui';
-import { Package, User, MapPin, LogOut, Edit2, Save, Plus, Trash2, Phone, X } from 'lucide-react';
+import { Package, User, MapPin, LogOut, Edit2, Save, Plus, Trash2, Phone, X, Printer, Truck, Calendar, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { numberToWords } from '@/lib/utils';
 
 const formatPrice = (value: number) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
@@ -30,7 +31,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function DashboardPage() {
-  const { user, signOut } = useAuth();
+  const { user, logout } = useUserStore();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
@@ -56,28 +57,38 @@ export function DashboardPage() {
   }, [user]);
 
   const fetchData = async () => {
-    if (!user) return;
     setLoading(true);
+    try {
+      const [profileData, ordersData, addrData] = await Promise.all([
+        UserService.getProfile(),
+        OrderService.getOrders(),
+        UserService.getAddresses()
+      ]);
 
-    const [{ data: profileData }, { data: ordersData }, { data: addrData }] = await Promise.all([
-      supabase.from('user_profiles').select('*').eq('id', user.id).maybeSingle(),
-      supabase.from('orders').select('*, order_items(*)').eq('user_id', user.id).order('created_at', { ascending: false }),
-      supabase.from('addresses').select('*').eq('user_id', user.id).order('is_default', { ascending: false }),
-    ]);
-
-    if (profileData) { setProfile(profileData); setFullName(profileData.full_name || ''); }
-    if (ordersData) setOrders(ordersData);
-    if (addrData) setAddresses(addrData);
-    setLoading(false);
+      if (profileData) { 
+        setProfile(profileData); 
+        setFullName(profileData.full_name || ''); 
+      }
+      if (ordersData) setOrders(ordersData);
+      if (addrData) setAddresses(addrData);
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSaveProfile = async () => {
-    if (!user) return;
     setSavingProfile(true);
-    const { error } = await supabase.from('user_profiles').update({ full_name: fullName, updated_at: new Date().toISOString() }).eq('id', user.id);
-    if (!error) { setProfile({ ...profile, full_name: fullName }); setEditingProfile(false); }
-    else alert('Failed to update profile.');
-    setSavingProfile(false);
+    try {
+      const updated = await UserService.updateProfile({ full_name: fullName });
+      setProfile(updated);
+      setEditingProfile(false);
+    } catch (error) {
+      alert('Failed to update profile.');
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
   const openAddressForm = (addr?: any) => {
@@ -93,29 +104,199 @@ export function DashboardPage() {
 
   const handleSaveAddress = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
     setSavingAddress(true);
-    if (editingAddress) {
-      await supabase.from('addresses').update({ ...addressForm }).eq('id', editingAddress.id);
-    } else {
-      await supabase.from('addresses').insert([{ ...addressForm, user_id: user.id }]);
+    try {
+      if (editingAddress) {
+        await UserService.updateAddress(editingAddress.id, addressForm);
+      } else {
+        await UserService.addAddress(addressForm);
+      }
+      await fetchData();
+      setShowAddressForm(false);
+      setEditingAddress(null);
+    } catch (error) {
+      alert('Failed to save address.');
+    } finally {
+      setSavingAddress(false);
     }
-    await fetchData();
-    setShowAddressForm(false);
-    setEditingAddress(null);
-    setSavingAddress(false);
   };
 
   const handleDeleteAddress = async (id: string) => {
     if (!confirm('Delete this address?')) return;
-    await supabase.from('addresses').delete().eq('id', id);
-    setAddresses(addresses.filter(a => a.id !== id));
+    try {
+      await UserService.deleteAddress(id);
+      setAddresses(addresses.filter(a => a.id !== id));
+    } catch (error) {
+      alert('Failed to delete address.');
+    }
   };
 
-  const handleSignOut = async () => { await signOut(); navigate('/shop'); };
+  const handleSignOut = () => { logout(); navigate('/shop'); };
+
+  const handlePrintInvoice = async (order: any) => {
+    try {
+      const items = await OrderService.getOrderItems(order.id);
+      
+      const printWindow = window.open('', '_blank');
+      if (printWindow) {
+        const cgst = (Number(order.tax_amount) || 0) / 2;
+        const sgst = (Number(order.tax_amount) || 0) / 2;
+        const totalInWords = numberToWords(Math.floor(Number(order.total_amount)));
+
+        const invoiceHtml = `
+          <html>
+            <head>
+              <title>Invoice - ${order.order_number}</title>
+              <style>
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+                body { font-family: 'Inter', sans-serif; padding: 20px; color: #1a1a1a; line-height: 1.4; font-size: 11px; }
+                .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+                .company-info h1 { margin: 0; font-size: 20px; color: #000; }
+                .company-info p { margin: 2px 0; color: #333; }
+                .tax-invoice-box { background: #3b82f6; color: white; padding: 10px 20px; border-radius: 4px; min-width: 250px; }
+                .tax-invoice-box h2 { margin: 0; font-size: 18px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 5px; }
+                .tax-invoice-box table { width: 100%; border-collapse: collapse; }
+                .tax-invoice-box td { color: white; border: none; padding: 2px 0; }
+                .address-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #ddd; margin-bottom: 0; }
+                .address-box { padding: 10px; border-right: 1px solid #ddd; }
+                .address-box:last-child { border-right: none; }
+                .section-title { font-weight: bold; background: #f3f4f6; padding: 5px 10px; border: 1px solid #ddd; border-bottom: none; }
+                .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #ddd; }
+                .items-table th { background: #3b82f6; color: white; text-align: center; padding: 8px; border: 1px solid #3b82f6; text-transform: uppercase; font-size: 10px; }
+                .items-table td { padding: 8px; border: 1px solid #ddd; vertical-align: top; }
+                .text-right { text-align: right; }
+                .text-center { text-align: center; }
+                .footer-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; margin-top: 0; border: 1px solid #ddd; border-top: none; }
+                .amount-words { padding: 15px; border-right: 1px solid #ddd; }
+                .totals-table { width: 100%; border-collapse: collapse; }
+                .totals-table td { padding: 5px 10px; border-bottom: 1px solid #eee; }
+                .total-bar { background: #3b82f6; color: white; font-weight: bold; font-size: 14px; }
+                .total-bar td { color: white; border: none; padding: 10px; }
+                .terms { padding: 15px; font-size: 9px; color: #666; border-top: 1px solid #ddd; margin-top: 20px; }
+                .signature { text-align: right; padding: 20px; margin-top: 20px; }
+                .signature-line { border-top: 1px solid #000; width: 200px; display: inline-block; margin-top: 40px; }
+              </style>
+            </head>
+            <body>
+              <div class="header">
+                <div class="company-info">
+                  <h1>ByteEvolvr</h1>
+                  <p>101, Tech Park, Andheri East<br/>Mumbai, MH 400069<br/>Phone: +91 99999 88888<br/>Email: sales@byteevolvr.in<br/>GSTIN: 27AABCB1234F1Z5</p>
+                </div>
+                <div class="tax-invoice-box">
+                  <h2>Tax Invoice</h2>
+                  <table>
+                    <tr><td>Invoice Number</td><td class="text-right">: <strong>${order.order_number}</strong></td></tr>
+                    <tr><td>Invoice Date</td><td class="text-right">: ${new Date(order.created_at).toLocaleDateString()}</td></tr>
+                    <tr><td>Print Date</td><td class="text-right">: ${new Date().toLocaleDateString()}</td></tr>
+                  </table>
+                </div>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+                <div class="section-title">Billed To</div>
+                <div class="section-title" style="border-left: none;">Billing & Shipping Address</div>
+              </div>
+              <div class="address-grid">
+                <div class="address-box">
+                  <p><strong>${order.customer_name || profile?.full_name || 'Customer'}</strong></p>
+                  <p>${order.customer_email || user?.email || ''}</p>
+                  <p>GSTIN: N/A</p>
+                  <p>POS: Maharashtra</p>
+                </div>
+                <div class="address-box">
+                  ${order.shipping_address ? `
+                    <p><strong>${order.shipping_address.full_name}</strong></p>
+                    <p>${order.shipping_address.line_1}</p>
+                    ${order.shipping_address.line_2 ? `<p>${order.shipping_address.line_2}</p>` : ''}
+                    <p>${order.shipping_address.city}, ${order.shipping_address.state} - ${order.shipping_address.postal_code}</p>
+                    <p>Mobile: ${order.shipping_address.phone}</p>
+                  ` : '<p>Address not available</p>'}
+                  <p>Email: ${order.customer_email || user?.email || ''}</p>
+                </div>
+              </div>
+
+              <table class="items-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40px;">S.No</th>
+                    <th>Item Description</th>
+                    <th style="width: 60px;">Qty</th>
+                    <th style="width: 80px;">Rate (INR)</th>
+                    <th style="width: 80px;">Tax (%)</th>
+                    <th style="width: 100px;">Amount (INR)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${items.map((item: any, i: number) => `
+                    <tr>
+                      <td class="text-center">${i + 1}</td>
+                      <td>
+                        <strong>${item.product_name}</strong><br/>
+                        <small style="color: #666">SKU: ${item.sku}</small>
+                      </td>
+                      <td class="text-center">${item.quantity} Nos</td>
+                      <td class="text-right">${Number(item.unit_price).toFixed(2)}</td>
+                      <td class="text-center">18%</td>
+                      <td class="text-right">${Number(item.total_price).toFixed(2)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+
+              <div class="footer-grid">
+                <div class="amount-words">
+                  <p style="font-weight: bold; margin-bottom: 5px;">Amount in words:</p>
+                  <p>${totalInWords} Rupees Only</p>
+                  <p style="margin-top: 20px;">Thanks for your Business!</p>
+                </div>
+                <div>
+                  <table class="totals-table">
+                    <tr><td>Sub Total</td><td class="text-right">${Number(order.subtotal || order.total_amount * 0.82).toFixed(2)}</td></tr>
+                    <tr><td>CGST 9%</td><td class="text-right">${cgst.toFixed(2)}</td></tr>
+                    <tr><td>SGST 9%</td><td class="text-right">${sgst.toFixed(2)}</td></tr>
+                    <tr><td>Round Off</td><td class="text-right">0.00</td></tr>
+                    <tr class="total-bar"><td>Total</td><td class="text-right">Rs ${Number(order.total_amount).toFixed(2)}</td></tr>
+                  </table>
+                </div>
+              </div>
+              
+              <div class="terms">
+                <strong>Terms & Conditions:</strong><br/>
+                1. Goods once sold will not be taken back or exchanged.<br/>
+                2. Any dispute subject to Mumbai Jurisdiction.<br/>
+                3. This is a computer generated invoice and requires no physical signature.
+              </div>
+              
+              <div class="signature">
+                <p>for <strong>ByteEvolvr</strong></p>
+                <div class="signature-line"></div>
+                <p>Authorized Signature</p>
+              </div>
+              
+              <div style="text-align: center; color: #999; font-size: 8px; margin-top: 20px;">
+                This is a computer generated document
+              </div>
+            </body>
+          </html>
+        `;
+        printWindow.document.write(invoiceHtml);
+        printWindow.document.close();
+        
+        printWindow.onload = () => {
+          setTimeout(() => {
+            printWindow.print();
+          }, 500);
+        };
+      }
+    } catch (err) {
+      console.error('Print failed:', err);
+      alert('Could not generate invoice.');
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-[#04080F] text-white p-6">
+    <div className="min-h-screen bg-[#04080F] text-white p-6 pt-32">
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-display text-3xl font-bold">My Account</h1>
@@ -151,7 +332,7 @@ export function DashboardPage() {
 
               {editingProfile ? (
                 <div className="flex gap-2 mt-2">
-                  <button onClick={handleSaveProfile} disabled={savingProfile} style={{ flex: 1, padding: '8px', borderRadius: 8, background: 'var(--color-accent, #3b7bf8)', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <button onClick={handleSaveProfile} disabled={savingProfile} style={{ flex: 1, padding: '8px', borderRadius: 8, background: '#3b82f6', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                     <Save size={14} /> {savingProfile ? 'Saving...' : 'Save'}
                   </button>
                   <button onClick={() => { setEditingProfile(false); setFullName(profile?.full_name || ''); }} style={{ flex: 1, padding: '8px', borderRadius: 8, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
@@ -225,8 +406,11 @@ export function DashboardPage() {
                       <Badge variant={order.status === 'delivered' ? 'success' : 'primary'}>
                         {order.status.toUpperCase()}
                       </Badge>
+                      <Button variant="secondary" size="sm" onClick={() => handlePrintInvoice(order)} className="flex items-center gap-2">
+                        <Printer className="h-4 w-4" /> Invoice
+                      </Button>
                       <Button variant="secondary" size="sm" onClick={() => navigate(`/shop/track/${order.tracking_number || order.id}`)}>
-                        Track Order
+                        Track
                       </Button>
                     </div>
                   </div>
@@ -240,7 +424,7 @@ export function DashboardPage() {
                   </div>
                   <div className="border-t border-white/10 pt-4 flex justify-between items-center font-bold">
                     <span>Total Amount</span>
-                    <span>{formatPrice(order.total_amount)}</span>
+                    <span className="text-accent">{formatPrice(order.total_amount)}</span>
                   </div>
                 </Card>
               ))
@@ -251,8 +435,8 @@ export function DashboardPage() {
 
       {/* Address Form Modal */}
       {showAddressForm && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}>
-          <div style={{ background: '#070D1A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 36, maxWidth: 520, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifySelf: 'center', zIndex: 1000, padding: 20 }}>
+          <div style={{ background: '#070D1A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 36, maxWidth: 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', margin: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
               <h2 style={{ fontSize: 22, fontWeight: 700 }}>{editingAddress ? 'Edit Address' : 'Add New Address'}</h2>
               <button onClick={() => setShowAddressForm(false)} style={{ padding: 6, borderRadius: 8, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#ccc', cursor: 'pointer' }}><X size={18} /></button>
@@ -299,7 +483,7 @@ export function DashboardPage() {
                 <label htmlFor="default-addr" style={{ fontSize: 14, color: '#ccc', cursor: 'pointer' }}>Set as default address</label>
               </div>
               <div style={{ gridColumn: 'span 2', display: 'flex', gap: 12, marginTop: 8 }}>
-                <button type="submit" disabled={savingAddress} style={{ flex: 1, padding: '12px', borderRadius: 10, background: 'var(--color-accent, #3b7bf8)', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: 15 }}>
+                <button type="submit" disabled={savingAddress} style={{ flex: 1, padding: '12px', borderRadius: 10, background: '#3b82f6', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: 15 }}>
                   {savingAddress ? 'Saving...' : 'Save Address'}
                 </button>
                 <button type="button" onClick={() => setShowAddressForm(false)} style={{ flex: 1, padding: '12px', borderRadius: 10, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontWeight: 600, cursor: 'pointer', fontSize: 15 }}>

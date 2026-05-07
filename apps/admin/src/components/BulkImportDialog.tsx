@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from './ui';
 import { Upload, X, Check, AlertCircle, FileText, Download, Loader2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
-import { supabase } from '../lib/supabase';
+import { ProductService, AdminService } from '@byteevolvr/api-client';
 
 interface BulkImportDialogProps {
   isOpen: boolean;
@@ -61,10 +61,7 @@ export function BulkImportDialog({ isOpen, onClose, onSuccess }: BulkImportDialo
         const sheet = workbook.Sheets[sheetName];
         const json = XLSX.utils.sheet_to_json(sheet) as any[];
 
-        let count = 0;
-        for (const item of json) {
-          // Map fields
-          // Collect up to 6 images from columns Image1-Image6 or a single Images column
+        const products = json.map(item => {
           const imagesFromCols = [
             item.Image1 || item.image1,
             item.Image2 || item.image2,
@@ -86,7 +83,7 @@ export function BulkImportDialog({ isOpen, onClose, onSuccess }: BulkImportDialo
             item['Image Link'] || item.image_link
           ].filter(url => url && url.toString().trim() !== '').map(url => url.toString()).slice(0, 6);
 
-          const productData = {
+          return {
             name: item.Name || item.name || item.product_name,
             description: item.Description || item.description || '',
             price: parseFloat(item.Price || item.price || '0'),
@@ -96,45 +93,13 @@ export function BulkImportDialog({ isOpen, onClose, onSuccess }: BulkImportDialo
             category: item.Category || item.category || 'General',
             brand: item.Brand || item.brand || '',
             status: (item.Status || item.status || 'active').toLowerCase(),
-            image_url: allImages[0] || item.ImageUrl || item.image_url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80',
-            images: allImages,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            image_url: allImages[0] || item.ImageUrl || item.image_url || '',
+            images: allImages
           };
+        }).filter(p => p.name);
 
-          if (!productData.name) continue;
-
-          // Upsert based on SKU if present, otherwise insert
-          if (productData.sku) {
-            const { error: upsertError } = await supabase
-              .from('products')
-              .upsert([productData], { onConflict: 'sku' });
-            
-            if (upsertError) {
-              console.error('Upsert error:', upsertError);
-              // If upsert fails because of non-unique SKU constraint missing, try manual check
-              const { data: existing } = await supabase
-                .from('products')
-                .select('id')
-                .eq('sku', productData.sku)
-                .single();
-
-              if (existing) {
-                await supabase
-                  .from('products')
-                  .update({ ...productData, updated_at: new Date().toISOString() })
-                  .eq('sku', productData.sku);
-              } else {
-                await supabase.from('products').insert([productData]);
-              }
-            }
-          } else {
-            await supabase.from('products').insert([productData]);
-          }
-          count++;
-        }
-
-        setSuccessCount(count);
+        const result = await AdminService.bulkImportProducts(products);
+        setSuccessCount(result.length || products.length);
         onSuccess();
         setTimeout(() => {
           onClose();
@@ -143,7 +108,7 @@ export function BulkImportDialog({ isOpen, onClose, onSuccess }: BulkImportDialo
           setSuccessCount(0);
         }, 2000);
       } catch (err: any) {
-        setError(err.message || 'An error occurred during import.');
+        setError(err.customMessage || err.message || 'An error occurred during import.');
       } finally {
         setImporting(false);
       }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Input, Button, Badge } from '../components/ui';
 import { Search, ShoppingCart, CreditCard, Banknote, User, Plus, Minus, Loader2, CheckCircle2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { ProductService, AdminService } from '@byteevolvr/api-client';
 
 export function POSPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -18,16 +18,8 @@ export function POSPage() {
   async function fetchProducts() {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('status', 'active')
-        .order('name');
-      
-      if (error) throw error;
-      if (data) {
-        setProducts(data);
-      }
+      const data = await ProductService.getProducts({ status: 'active' });
+      setProducts(data);
     } catch (err) {
       console.error('Error fetching products:', err);
     } finally {
@@ -61,77 +53,55 @@ export function POSPage() {
     try {
       console.log('Starting checkout for method:', method);
       
-      // 1. Get current user
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      if (authError || !user) {
-        console.error('Auth error:', authError);
-        throw new Error('Not authenticated. Please log in again.');
-      }
-      console.log('Authenticated as:', user.email, user.id);
-
-      // 2. Create Order
+      // 1. Order Details
       const orderNumber = `POS-${Date.now().toString().slice(-6)}`;
       const subtotal = cart.reduce((acc, item) => acc + (Number(item.price) * item.qty), 0);
       const tax = subtotal * 0.18;
       const total = subtotal + tax;
 
-      console.log('Inserting order:', { orderNumber, subtotal, total });
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          order_number: orderNumber,
-          user_id: user.id,
-          status: 'processing',
-          payment_status: 'captured',
-          payment_method: method,
-          subtotal,
-          tax_amount: tax,
-          total_amount: total,
-        })
-        .select()
-        .single();
+      const orderData = {
+        order_number: orderNumber,
+        status: 'processing' as const,
+        payment_status: 'captured' as const,
+        payment_method: method,
+        totalAmount: total,
+        shippingAddress: {
+          name: 'Walk-in Customer',
+          email: 'walkin@customer.com',
+          phone: '0000000000',
+          line_1: 'POS Counter',
+          city: 'In-Store',
+          state: 'Local',
+          postal_code: '000000',
+          country: 'India'
+        },
+        items: cart.map(item => ({
+          productId: item.id,
+          name: item.name,
+          sku: item.sku || '',
+          quantity: item.qty,
+          price: Number(item.price)
+        }))
+      };
 
-      if (orderError) {
-        console.error('Order insertion error:', orderError);
-        throw orderError;
-      }
-      console.log('Order created successfully:', order.id);
+      await AdminService.createOrder(orderData);
 
-      // 3. Create Order Items
-      const orderItems = cart.map(item => ({
-        order_id: order.id,
-        product_id: item.id,
-        product_name: item.name,
-        sku: item.sku || '',
-        quantity: item.qty,
-        unit_price: Number(item.price),
-        total_price: Number(item.price) * item.qty,
+      // 2. Update Inventory (Local State)
+      // Ideally backend handles this, but we update UI state here
+      setProducts(prev => prev.map(p => {
+        const item = cart.find(c => c.id === p.id);
+        if (item) {
+          return { ...p, stock_quantity: Math.max(0, p.stock_quantity - item.qty) };
+        }
+        return p;
       }));
-
-      console.log('Inserting order items:', orderItems.length);
-      const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
-      if (itemsError) {
-        console.error('Order items insertion error:', itemsError);
-        throw itemsError;
-      }
-
-      // 4. Update Inventory
-      console.log('Updating inventory...');
-      for (const item of cart) {
-        const currentStock = products.find(p => p.id === item.id)?.stock_quantity || 0;
-        const newStock = Math.max(0, currentStock - item.qty);
-        await supabase.from('products')
-          .update({ stock_quantity: newStock })
-          .eq('id', item.id);
-      }
 
       setSuccess(true);
       setCart([]);
-      fetchProducts(); // Refresh products to get updated stock
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
-      console.error('Checkout failed deep catch:', err);
-      alert(`Checkout failed: ${err.message || (err.error_description) || 'Check console for RLS/Database errors'}`);
+      console.error('Checkout failed:', err);
+      alert(`Checkout failed: ${err.customMessage || err.message || 'Something went wrong'}`);
     } finally {
       setIsProcessing(false);
     }

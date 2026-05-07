@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Button, Input, Badge } from '../components/ui';
 import { Search, Download, Filter, MoreHorizontal, Mail, MapPin, Loader2, User } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { useAdminStore } from '@byteevolvr/store';
+import { AdminService } from '@byteevolvr/api-client';
 
 export function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [customers, setCustomers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { customers, setCustomers, isLoading, setLoading, setError } = useAdminStore();
 
   useEffect(() => {
     fetchCustomers();
@@ -15,44 +15,19 @@ export function CustomersPage() {
   async function fetchCustomers() {
     setLoading(true);
     try {
-      // Fetch user profiles
-      const { data: profiles, error: profilesError } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (profilesError) throw profilesError;
-
-      // Fetch order counts and total spent for each user
-      const { data: orders, error: ordersError } = await supabase
-        .from('orders')
-        .select('user_id, total_amount');
-
-      if (ordersError) throw ordersError;
-
-      // Combine data
-      const customersWithStats = profiles.map(profile => {
-        const userOrders = orders.filter(o => o.user_id === profile.id);
-        const totalSpent = userOrders.reduce((acc, o) => acc + Number(o.total_amount), 0);
-        
-        return {
-          ...profile,
-          orderCount: userOrders.length,
-          totalSpent: totalSpent
-        };
-      });
-
-      setCustomers(customersWithStats);
-    } catch (err) {
+      const data = await AdminService.getCustomers();
+      setCustomers(data || []);
+    } catch (err: any) {
       console.error('Error fetching customers:', err);
+      setError(err.customMessage || 'Failed to load customers');
     } finally {
       setLoading(false);
     }
   }
 
   const filteredCustomers = customers.filter(c => 
-    c.full_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    c.email.toLowerCase().includes(searchTerm.toLowerCase())
+    (c.full_name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+    (c.email || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const exportCustomers = () => {
@@ -131,7 +106,7 @@ export function CustomersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading ? (
+              {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
@@ -170,15 +145,15 @@ export function CustomersPage() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-right font-medium text-on-surface">{customer.orderCount}</TableCell>
-                  <TableCell className="text-right font-medium text-on-surface">₹{customer.totalSpent.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-medium text-on-surface">{customer.orderCount || 0}</TableCell>
+                  <TableCell className="text-right font-medium text-on-surface">₹{(customer.totalSpent || 0).toLocaleString()}</TableCell>
                   <TableCell>
                     <Badge
                       variant={
                         customer.role === 'admin' ? 'info' : 'default'
                       }
                     >
-                      {customer.role.charAt(0).toUpperCase() + customer.role.slice(1)}
+                      {(customer.role || 'user').charAt(0).toUpperCase() + (customer.role || 'user').slice(1)}
                     </Badge>
                   </TableCell>
                   <TableCell>

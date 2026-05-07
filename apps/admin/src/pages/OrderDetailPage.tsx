@@ -1,148 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
-import { ArrowLeft, Printer, Package, Truck, CheckCircle2, Copy, Loader2, Save, RefreshCcw } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { ArrowLeft, Printer, Package, Truck, CheckCircle2, Loader2, Save, RefreshCcw, ExternalLink } from 'lucide-react';
+import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { numberToWords } from '../lib/utils';
 
 export function OrderDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { fetchOrderDetail, updateOrderStatus, isUpdating, isLoading: hookLoading } = useAdmin();
+  
   const [order, setOrder] = useState<any>(null);
-  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState('');
+  const [courier, setCourier] = useState('');
+  const [showFulfillModal, setShowFulfillModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [returnReason, setReturnReason] = useState('');
 
-  useEffect(() => {
-    if (id) {
-      fetchOrderDetails();
+  const loadData = async () => {
+    if (!id) return;
+    setLoading(true);
+    const data = await fetchOrderDetail(id);
+    if (data) {
+      setOrder(data);
+      const shipment = data.shipments?.[0] || data.shipments;
+      setTrackingNumber(shipment?.tracking_id || '');
+      setCourier(shipment?.courier_name || '');
     }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadData();
   }, [id]);
 
-  async function fetchOrderDetails() {
-    setLoading(true);
+  const handleUpdateStatus = async (status: string, extra: any = {}) => {
+    if (!id) return;
     try {
-      // Fetch order and customer
-      const { data: orderData, error: orderError } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          customer:user_profiles!user_id (
-            full_name,
-            email
-          ),
-          shipping_address:addresses!shipping_address_id (*)
-        `)
-        .eq('id', id)
-        .single();
-
-      if (orderError) {
-        console.warn('Join failed, fetching order only:', orderError);
-        const { data: simpleOrder, error: simpleError } = await supabase
-          .from('orders')
-          .select('*')
-          .eq('id', id)
-          .single();
-        
-        if (simpleError) throw simpleError;
-        setOrder(simpleOrder);
-      } else {
-        setOrder(orderData);
-      }
-      setTrackingNumber(orderData?.tracking_number || '');
-
-      // Fetch items
-      const { data: itemsData, error: itemsError } = await supabase
-        .from('order_items')
-        .select('*')
-        .eq('order_id', id);
-
-      if (itemsError) throw itemsError;
-      setItems(itemsData || []);
-    } catch (err) {
-      console.error('Error fetching order details:', err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const handleCreateReturn = async () => {
-    if (!returnReason) {
-      alert('Please provide a reason for the return');
-      return;
-    }
-    setIsUpdating(true);
-    try {
-      const rmaNumber = `RMA-${Math.floor(1000 + Math.random() * 9000)}`;
-      const { error } = await supabase
-        .from('order_returns')
-        .insert({
-          order_id: id,
-          user_id: order.user_id,
-          rma_number: rmaNumber,
-          reason: returnReason,
-          status: 'pending'
-        });
-
-      if (error) throw error;
-      
-      alert(`Return Request Created: ${rmaNumber}`);
-      setShowReturnModal(false);
-      navigate('/returns');
-    } catch (err) {
-      console.error('Error creating return:', err);
-      alert('Failed to create return request');
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const [showFulfillModal, setShowFulfillModal] = useState(false);
-
-  const updateOrderStatus = async (newStatus: string, additionalData: any = {}) => {
-    setIsUpdating(true);
-    try {
-      const updateData: any = { 
-        status: newStatus,
-        ...additionalData
-      };
-
-      // Set timestamps based on status
-      const now = new Date().toISOString();
-      if (newStatus === 'processing' && !order.accepted_at) {
-        updateData.accepted_at = now;
-      } else if (newStatus === 'shipped') {
-        updateData.shipped_at = now;
-      } else if (newStatus === 'delivered') {
-        updateData.delivered_at = now;
-      }
-
-      const { error } = await supabase
-        .from('orders')
-        .update(updateData)
-        .eq('id', id);
-
-      if (error) throw error;
-      
-      await fetchOrderDetails();
-      alert(`Order status updated to ${newStatus}`);
+      await updateOrderStatus(id, { status, ...extra });
+      await loadData();
       setShowFulfillModal(false);
     } catch (err) {
-      console.error('Error updating order status:', err);
-      alert('Failed to update order status');
-    } finally {
-      setIsUpdating(false);
+      console.error(err);
     }
   };
 
-  if (loading) {
+  if (loading || hookLoading) {
     return (
-      <div className="h-96 flex flex-col items-center justify-center text-on-surface-variant">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-        Loading order details...
+      <div className="h-[60vh] flex flex-col items-center justify-center text-on-surface-variant">
+        <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+        <p className="text-lg font-medium">Retrieving Order Manifest...</p>
       </div>
     );
   }
@@ -156,38 +64,39 @@ export function OrderDetailPage() {
     );
   }
 
+  const items = order.order_items || [];
+  const address = order.addresses?.[0] || order.addresses;
+  const shipment = order.shipments?.[0] || order.shipments;
+
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 max-w-6xl mx-auto pb-20">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" className="px-2" onClick={() => navigate('/orders')}>
+          <Button variant="ghost" size="sm" onClick={() => navigate('/orders')} className="rounded-full">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <div className="flex items-center gap-3">
-            <h1 className="text-display-sm font-semibold text-on-background">{order.order_number}</h1>
-            <Badge variant={order.payment_status === 'captured' ? 'success' : 'warning'}>
-              {order.payment_status === 'captured' ? 'Paid' : 'Unpaid'}
-            </Badge>
-            <Badge 
-              variant={
-                order.status === 'delivered' ? 'success' :
-                order.status === 'shipped' ? 'success' :
-                order.status === 'processing' ? 'info' :
-                order.status === 'cancelled' ? 'error' : 'warning'
-              }
-            >
-              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-            </Badge>
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-black tracking-tighter text-on-surface uppercase italic">{order.order_number}</h1>
+              <Badge variant={order.payment_status === 'paid' || order.payment_status === 'captured' ? 'success' : 'warning'}>
+                {order.payment_status === 'paid' || order.payment_status === 'captured' ? 'PAID' : 'PENDING'}
+              </Badge>
+            </div>
+            <p className="text-sm text-on-surface-variant font-medium">Placed on {new Date(order.created_at).toLocaleString()}</p>
           </div>
         </div>
-        <div className="flex gap-3">
+        
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" className="gap-2" onClick={() => {
             const printWindow = window.open('', '_blank');
             if (printWindow) {
               const cgst = Number(order.tax_amount) / 2;
               const sgst = Number(order.tax_amount) / 2;
               const totalInWords = numberToWords(Math.floor(Number(order.total_amount)));
+              const items = order.order_items || [];
+              const address = order.addresses?.[0] || order.addresses;
               
               const invoiceHtml = `
                 <html>
@@ -250,20 +159,19 @@ export function OrderDetailPage() {
                     </div>
                     <div class="address-grid">
                       <div class="address-box">
-                        <p><strong>${order.customer_name || order.customer?.full_name || 'Customer'}</strong></p>
-                        <p>${order.customer_email || order.customer?.email || ''}</p>
+                        <p><strong>${order.customer_name || 'Customer'}</strong></p>
+                        <p>${order.customer_email || ''}</p>
                         <p>GSTIN: N/A</p>
                         <p>POS: Maharashtra</p>
                       </div>
                       <div class="address-box">
-                        ${order.shipping_address ? `
-                          <p><strong>${order.shipping_address.full_name}</strong></p>
-                          <p>${order.shipping_address.line_1}</p>
-                          ${order.shipping_address.line_2 ? `<p>${order.shipping_address.line_2}</p>` : ''}
-                          <p>${order.shipping_address.city}, ${order.shipping_address.state} - ${order.shipping_address.postal_code}</p>
-                          <p>Mobile: ${order.shipping_address.phone}</p>
+                        ${address ? `
+                          <p><strong>${address.full_name}</strong></p>
+                          <p>${address.line_1}</p>
+                          ${address.line_2 ? `<p>${address.line_2}</p>` : ''}
+                          <p>${address.city}, ${address.state} - ${address.postal_code}</p>
+                          <p>Mobile: ${address.phone}</p>
                         ` : '<p>Address not available</p>'}
-                        <p>Email: ${order.customer_email || order.customer?.email || ''}</p>
                       </div>
                     </div>
 
@@ -279,7 +187,7 @@ export function OrderDetailPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        ${items.map((item, i) => `
+                        ${items.map((item: any, i: number) => `
                           <tr>
                             <td class="text-center">${i + 1}</td>
                             <td>
@@ -324,17 +232,11 @@ export function OrderDetailPage() {
                       <div class="signature-line"></div>
                       <p>Authorized Signature</p>
                     </div>
-                    
-                    <div style="text-align: center; color: #999; font-size: 8px; margin-top: 20px;">
-                      This is a computer generated document
-                    </div>
                   </body>
                 </html>
               `;
               printWindow.document.write(invoiceHtml);
               printWindow.document.close();
-              
-              // Ensure images/fonts are loaded before printing
               printWindow.onload = function() {
                 setTimeout(() => {
                   printWindow.print();
@@ -345,143 +247,68 @@ export function OrderDetailPage() {
             <Printer className="h-4 w-4" />
             Print Invoice
           </Button>
+          
           {order.status === 'pending' && (
-            <Button className="gap-2 bg-success hover:bg-success/90" onClick={() => updateOrderStatus('processing')} disabled={isUpdating}>
-              {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+            <Button className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={() => handleUpdateStatus('processing')} disabled={isUpdating}>
+              <CheckCircle2 className="h-4 w-4" />
               Accept Order
             </Button>
           )}
+          
           {order.status === 'processing' && (
-            <Button className="gap-2" onClick={() => setShowFulfillModal(true)} disabled={isUpdating}>
-              {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Package className="h-4 w-4" />}
+            <Button className="gap-2 bg-indigo-600 hover:bg-indigo-700" onClick={() => setShowFulfillModal(true)} disabled={isUpdating}>
+              <Package className="h-4 w-4" />
               Fulfill Order
             </Button>
           )}
-          {['shipped', 'delivered'].includes(order.status) && (
-            <Button variant="outline" className="gap-2 text-error hover:bg-error/10" onClick={() => setShowReturnModal(true)}>
-              <RefreshCcw className="h-4 w-4" />
-              Return Order
+
+          {['shipped', 'processing'].includes(order.status) && (
+            <Button variant="outline" className="gap-2 text-blue-600 border-blue-200" onClick={() => handleUpdateStatus('delivered')} disabled={isUpdating}>
+              <CheckCircle2 className="h-4 w-4" />
+              Mark Delivered
             </Button>
           )}
         </div>
       </div>
 
-      {showFulfillModal && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-black/70 backdrop-blur-md flex items-center justify-center z-[9999] p-4">
-          <div 
-            className="bg-surface shadow-2xl border border-outline-variant rounded-2xl overflow-hidden animate-in fade-in zoom-in duration-300"
-            style={{ width: '480px', maxWidth: '100%' }}
-          >
-            <div className="p-8">
-              <h3 className="text-2xl font-bold text-on-surface mb-2">Fulfill Order</h3>
-              <p className="text-sm text-on-surface-variant mb-8">Please enter the tracking information to mark this order as shipped and notify the customer.</p>
-              
-              <div className="space-y-6 mb-10">
-                <div>
-                  <label className="block text-xs font-bold text-on-surface-variant mb-2 uppercase tracking-widest">Tracking Number</label>
-                  <Input 
-                    placeholder="Enter tracking number (e.g. SF123456789)" 
-                    value={trackingNumber}
-                    onChange={(e) => setTrackingNumber(e.target.value)}
-                    className="w-full h-12 text-lg"
-                    autoFocus
-                  />
-                </div>
-              </div>
-              
-              <div className="flex justify-end gap-4 pt-4 border-t border-outline-variant">
-                <Button variant="ghost" onClick={() => setShowFulfillModal(false)} className="px-6">
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={() => updateOrderStatus('shipped', { tracking_number: trackingNumber })} 
-                  disabled={isUpdating || !trackingNumber}
-                  className="bg-primary hover:bg-primary/90 px-8 h-11"
-                >
-                  {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Truck className="h-4 w-4 mr-2" />}
-                  Confirm & Ship
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showReturnModal && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-black/70 backdrop-blur-md flex items-center justify-center z-[9999] p-4">
-          <div 
-            className="bg-surface shadow-2xl border border-outline-variant rounded-2xl overflow-hidden animate-in fade-in zoom-in duration-300"
-            style={{ width: '480px', maxWidth: '100%' }}
-          >
-            <div className="p-8">
-              <h3 className="text-2xl font-bold text-on-surface mb-2">Create Return Request</h3>
-              <p className="text-sm text-on-surface-variant mb-8">Specify the reason for returning this order to help us process the request faster.</p>
-              
-              <div className="space-y-6 mb-10">
-                <div>
-                  <label className="block text-xs font-bold text-on-surface-variant mb-2 uppercase tracking-widest">Return Reason</label>
-                  <textarea
-                    className="w-full h-40 p-4 rounded-xl border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary outline-none transition-all resize-none text-base"
-                    placeholder="Provide details about the return reason (e.g. Defective, Wrong Item)..."
-                    value={returnReason}
-                    onChange={(e) => setReturnReason(e.target.value)}
-                    autoFocus
-                  />
-                </div>
-              </div>
-              
-              <div className="flex justify-end gap-4 pt-4 border-t border-outline-variant">
-                <Button variant="ghost" onClick={() => setShowReturnModal(false)} className="px-6">
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={handleCreateReturn} 
-                  disabled={isUpdating || !returnReason}
-                  className="bg-error hover:bg-error/90 text-white px-8 h-11"
-                >
-                  {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <RefreshCcw className="h-4 w-4 mr-2" />}
-                  Confirm Return
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content Area */}
+        {/* Left Column - Details */}
         <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <div className="p-4 border-b border-outline-variant flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-on-surface">Order Items ({items.length})</h2>
+          {/* Items Card */}
+          <Card className="border-none shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+              <h2 className="text-lg font-bold text-on-surface">Order Items ({items.length})</h2>
+              <Package className="h-5 w-5 text-on-surface-variant" />
             </div>
             <CardContent className="p-0">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
-                    <TableHead className="text-right">Qty</TableHead>
-                    <TableHead className="text-right">Total</TableHead>
+                  <TableRow className="bg-surface-container-lowest">
+                    <TableHead className="font-bold uppercase text-[10px] tracking-widest">Product</TableHead>
+                    <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">Price</TableHead>
+                    <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">Qty</TableHead>
+                    <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">Total</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {items.map((item) => (
-                    <TableRow key={item.id}>
+                  {items.map((item: any) => (
+                    <TableRow key={item.id} className="hover:bg-surface-container-lowest transition-colors">
                       <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 bg-surface-container rounded flex-shrink-0 flex items-center justify-center">
-                            <Package className="h-5 w-5 text-on-surface-variant opacity-50" />
+                        <div className="flex items-center gap-4">
+                          <div className="h-12 w-12 bg-surface-container rounded-xl flex items-center justify-center border border-outline-variant">
+                            <Package className="h-6 w-6 text-on-surface-variant opacity-30" />
                           </div>
                           <div>
-                            <div className="font-medium text-on-surface text-sm">{item.product_name}</div>
-                            <div className="text-xs text-on-surface-variant">SKU: {item.sku}</div>
+                            <div className="font-bold text-on-surface">{item.product_name}</div>
+                            <div className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">SKU: {item.sku}</div>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-right text-sm">₹{Number(item.unit_price).toLocaleString()}</TableCell>
-                      <TableCell className="text-right text-sm">{item.quantity}</TableCell>
-                      <TableCell className="text-right font-medium text-sm">₹{Number(item.total_price).toLocaleString()}</TableCell>
+                      <TableCell className="text-right font-medium">₹{Number(item.unit_price).toLocaleString()}</TableCell>
+                      <TableCell className="text-right">
+                        <span className="bg-surface-container px-2 py-1 rounded text-xs font-bold">{item.quantity}</span>
+                      </TableCell>
+                      <TableCell className="text-right font-black text-primary">₹{Number(item.total_price).toLocaleString()}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -489,84 +316,64 @@ export function OrderDetailPage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <div className="p-4 border-b border-outline-variant flex justify-between items-center">
-              <h2 className="text-lg font-semibold text-on-surface">Shipping & Tracking</h2>
-              <Truck className="h-5 w-5 text-on-surface-variant" />
+          {/* Fulfillment Status Timeline */}
+          <Card className="border-none shadow-sm">
+            <div className="p-6 border-b border-outline-variant">
+              <h2 className="text-lg font-bold text-on-surface">Logistics & Timeline</h2>
             </div>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider block mb-2">Tracking Number</label>
-                  <div className="flex gap-2">
-                    <Input 
-                      placeholder="Enter tracking number..." 
-                      value={trackingNumber}
-                      onChange={(e) => setTrackingNumber(e.target.value)}
-                      disabled={order.status === 'delivered'}
-                    />
-                    <Button variant="outline" size="sm" onClick={() => updateOrderStatus(order.status)} disabled={isUpdating}>
-                      <Save className="h-4 w-4 mr-2" /> Save
-                    </Button>
+            <CardContent className="p-8">
+              <div className="relative space-y-12">
+                <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-outline-variant"></div>
+                
+                {/* Order Placed */}
+                <div className="relative flex gap-6">
+                  <div className="h-8 w-8 rounded-full bg-blue-600 text-white flex items-center justify-center shrink-0 z-10 shadow-lg shadow-blue-200">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-on-surface">Order Placed</p>
+                    <p className="text-sm text-on-surface-variant">{new Date(order.created_at).toLocaleString()}</p>
                   </div>
                 </div>
-                
-                <div className="pt-4 space-y-4">
-                  <div className="flex gap-4 relative">
-                    <div className={`absolute left-4 top-8 bottom-[-24px] w-px ${order.status !== 'pending' ? 'bg-primary' : 'bg-outline-variant'}`}></div>
-                    <div className={`h-8 w-8 rounded-full ${order.status !== 'pending' ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface-variant'} flex items-center justify-center shrink-0 z-10`}>
-                      <CheckCircle2 className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-on-surface">Order Accepted</p>
-                      <p className="text-sm text-on-surface-variant">
-                        {order.accepted_at ? new Date(order.accepted_at).toLocaleString() : (order.status !== 'pending' ? 'Confirmed' : 'Awaiting acceptance')}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex gap-4 relative">
-                    <div className={`absolute left-4 top-8 bottom-[-24px] w-px ${['shipped', 'delivered'].includes(order.status) ? 'bg-primary' : 'bg-outline-variant'}`}></div>
-                    <div className={`h-8 w-8 rounded-full ${['shipped', 'delivered'].includes(order.status) ? 'bg-primary text-on-primary' : 'bg-surface-container text-on-surface-variant'} flex items-center justify-center shrink-0 z-10`}>
-                      <Package className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-on-surface">Shipped</p>
-                      {order.shipped_at ? (
-                        <div className="text-sm text-on-surface-variant">
-                          <p>{new Date(order.shipped_at).toLocaleString()}</p>
-                          <p>Tracking: <span className="font-mono font-bold text-primary">{order.tracking_number}</span></p>
-                        </div>
-                      ) : (
-                        <p className="text-sm text-on-surface-variant">Awaiting shipment information.</p>
-                      )}
-                    </div>
-                  </div>
 
-                  <div className="flex gap-4">
-                    <div className={`h-8 w-8 rounded-full ${order.status === 'delivered' ? 'bg-success text-white' : 'bg-surface-container text-on-surface-variant'} flex items-center justify-center shrink-0 z-10`}>
-                      <Truck className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-on-surface">Delivered</p>
-                      {order.delivered_at ? (
-                        <p className="text-sm text-on-surface-variant">{new Date(order.delivered_at).toLocaleString()}</p>
-                      ) : (
-                        order.status === 'shipped' ? (
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="mt-2 text-primary" 
-                            onClick={() => updateOrderStatus('delivered')}
-                            disabled={isUpdating}
-                          >
-                            Mark as Delivered
+                {/* Shipped */}
+                <div className="relative flex gap-6">
+                  <div className={`h-8 w-8 rounded-full ${['shipped', 'delivered'].includes(order.status) ? 'bg-indigo-600 text-white' : 'bg-surface-container text-on-surface-variant'} flex items-center justify-center shrink-0 z-10`}>
+                    <Truck className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold text-on-surface">Dispatched</p>
+                    {shipment?.tracking_id ? (
+                      <div className="mt-2 p-4 rounded-2xl bg-surface-container-low border border-outline-variant">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Tracking Details</span>
+                          <Badge variant="info">{shipment.courier_name}</Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono font-bold text-lg text-primary">{shipment.tracking_id}</span>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <ExternalLink className="h-4 w-4" />
                           </Button>
-                        ) : (
-                          <p className="text-sm text-on-surface-variant">Pending delivery.</p>
-                        )
-                      )}
-                    </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-on-surface-variant">Awaiting fulfillment.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Delivered */}
+                <div className="relative flex gap-6">
+                  <div className={`h-8 w-8 rounded-full ${order.status === 'delivered' ? 'bg-green-600 text-white shadow-lg shadow-green-200' : 'bg-surface-container text-on-surface-variant'} flex items-center justify-center shrink-0 z-10`}>
+                    <CheckCircle2 className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-on-surface">Delivered</p>
+                    {order.delivered_at ? (
+                      <p className="text-sm text-on-surface-variant">{new Date(order.delivered_at).toLocaleString()}</p>
+                    ) : (
+                      <p className="text-sm text-on-surface-variant">Pending arrival.</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -574,66 +381,136 @@ export function OrderDetailPage() {
           </Card>
         </div>
 
-        {/* Sidebar Configuration */}
+        {/* Right Column - Sidebar */}
         <div className="space-y-6">
-          <Card>
-            <div className="p-4 border-b border-outline-variant">
-              <h2 className="text-lg font-semibold text-on-surface">Customer</h2>
+          {/* Customer Card */}
+          <Card className="border-none shadow-sm">
+            <div className="p-6 border-b border-outline-variant">
+              <h2 className="text-lg font-bold text-on-surface">Customer Detail</h2>
             </div>
-            <CardContent className="p-6">
-              <div className="font-medium text-on-surface text-lg">
-                {order.customer_name || order.user?.full_name || (order.order_number.startsWith('POS') ? 'Walk-in Customer' : 'Guest Customer')}
-              </div>
-              <div className="text-sm text-primary hover:underline cursor-pointer mb-4">
-                {order.customer_email || order.user?.email || 'No email provided'}
-              </div>
-              
-              <div className="mt-6 space-y-4">
-                <div>
-                  <h4 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Order Source</h4>
-                  <Badge 
-                    variant={order.order_number.startsWith('POS') ? 'warning' : 'info'} 
-                    className="w-fit"
-                  >
-                    {order.order_number.startsWith('POS') ? 'POS Terminal' : 'Online Storefront'}
-                  </Badge>
+            <CardContent className="p-6 space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black text-xl">
+                  {(order.customer_name || 'C').charAt(0)}
                 </div>
+                <div>
+                  <div className="font-bold text-on-surface text-lg">{order.customer_name || 'Guest User'}</div>
+                  <div className="text-sm text-on-surface-variant">{order.customer_email || 'No email provided'}</div>
+                </div>
+              </div>
 
-                <div>
-                  <h4 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">Payment Details</h4>
-                  <div className="text-sm text-on-surface flex items-center gap-2 capitalize bg-surface-container p-3 rounded-lg border border-outline-variant">
-                    <span className="font-semibold">{order.payment_method}</span>
-                    <span className="text-on-surface-variant text-xs">•</span>
-                    <span className={order.payment_status === 'completed' ? 'text-success' : 'text-warning font-medium'}>
-                      {order.payment_status}
-                    </span>
+              <div className="pt-6 border-t border-outline-variant">
+                <h4 className="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.2em] mb-4">Shipping Destination</h4>
+                {address ? (
+                  <div className="text-sm space-y-1">
+                    <p className="font-bold text-on-surface">{address.full_name}</p>
+                    <p className="text-on-surface-variant">{address.line_1}</p>
+                    {address.line_2 && <p className="text-on-surface-variant">{address.line_2}</p>}
+                    <p className="text-on-surface-variant">{address.city}, {address.state} - {address.postal_code}</p>
+                    <p className="text-on-surface-variant font-bold mt-2">Ph: {address.phone}</p>
                   </div>
-                </div>
+                ) : (
+                  <p className="text-sm text-on-surface-variant italic">No address specified</p>
+                )}
               </div>
             </CardContent>
           </Card>
 
-          <Card>
-            <div className="p-4 border-b border-outline-variant">
-              <h2 className="text-lg font-semibold text-on-surface">Summary</h2>
+          {/* Payment Summary */}
+          <Card className="border-none shadow-sm bg-surface-container-lowest">
+            <div className="p-6 border-b border-outline-variant">
+              <h2 className="text-lg font-bold text-on-surface">Billing Overview</h2>
             </div>
-            <CardContent className="p-6 space-y-3">
+            <CardContent className="p-6 space-y-4">
               <div className="flex justify-between text-sm">
-                <span className="text-on-surface-variant">Subtotal ({items.length} items)</span>
-                <span className="text-on-surface">₹{Number(order.subtotal).toLocaleString()}</span>
+                <span className="text-on-surface-variant font-medium">Subtotal</span>
+                <span className="text-on-surface font-bold">₹{Number(order.subtotal).toLocaleString()}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-on-surface-variant">Tax (GST)</span>
-                <span className="text-on-surface">₹{Number(order.tax_amount).toLocaleString()}</span>
+                <span className="text-on-surface-variant font-medium">Estimated Tax</span>
+                <span className="text-on-surface font-bold">₹{Number(order.tax_amount).toLocaleString()}</span>
               </div>
-              <div className="pt-3 border-t border-outline-variant flex justify-between font-bold text-xl">
-                <span className="text-on-surface">Total</span>
-                <span className="text-primary">₹{Number(order.total_amount).toLocaleString()}</span>
+              <div className="flex justify-between text-sm">
+                <span className="text-on-surface-variant font-medium">Shipping</span>
+                <span className="text-green-600 font-bold uppercase text-[10px] tracking-widest mt-1">Free</span>
+              </div>
+              <div className="pt-4 border-t border-outline-variant flex justify-between items-end">
+                <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">Grand Total</span>
+                <span className="text-3xl font-black text-primary">₹{Number(order.total_amount).toLocaleString()}</span>
+              </div>
+              
+              <div className="mt-6 p-4 rounded-2xl bg-surface-container border border-outline-variant flex items-center justify-between">
+                <div>
+                  <p className="text-[9px] font-black text-on-surface-variant uppercase tracking-widest">Method</p>
+                  <p className="text-sm font-bold uppercase">{order.payment_method}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[9px] font-black text-on-surface-variant uppercase tracking-widest">Status</p>
+                  <p className={`text-sm font-bold uppercase ${order.payment_status === 'captured' ? 'text-green-600' : 'text-amber-600'}`}>
+                    {order.payment_status}
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
+
+      {/* Fulfillment Modal */}
+      {showFulfillModal && (
+        <div className="fixed inset-0 bg-[#00144a]/60 backdrop-blur-xl flex items-center justify-center z-[9999] p-4">
+          <div className="bg-white shadow-2xl rounded-[32px] w-full max-w-lg overflow-hidden border border-white/20 animate-in zoom-in-95 duration-200">
+            <div className="p-10">
+              <div className="h-16 w-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-8">
+                <Package className="h-8 w-8 text-indigo-600" />
+              </div>
+              <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-2">Initialize Fulfillment</h3>
+              <p className="text-slate-500 font-medium mb-10 leading-relaxed">Enter logistics provider and tracking ID to notify the customer about shipment.</p>
+              
+              <div className="space-y-6 mb-10">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Courier Service</label>
+                  <select 
+                    className="w-full h-14 px-6 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 font-bold focus:ring-4 focus:ring-indigo-100 transition-all outline-none"
+                    value={courier}
+                    onChange={(e) => setCourier(e.target.value)}
+                  >
+                    <option value="">Select Provider</option>
+                    <option value="Delhivery">Delhivery</option>
+                    <option value="BlueDart">BlueDart</option>
+                    <option value="Ecom Express">Ecom Express</option>
+                    <option value="FedEx">FedEx</option>
+                    <option value="Custom">Other Service</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">AWB / Tracking Number</label>
+                  <Input 
+                    placeholder="Enter tracking ID" 
+                    value={trackingNumber}
+                    onChange={(e) => setTrackingNumber(e.target.value)}
+                    className="h-14 px-6 rounded-2xl text-lg font-mono font-bold"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex gap-4">
+                <Button variant="ghost" onClick={() => setShowFulfillModal(false)} className="flex-1 h-14 rounded-2xl font-bold">
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={() => handleUpdateStatus('shipped', { trackingId: trackingNumber, courier })} 
+                  disabled={isUpdating || !trackingNumber || !courier}
+                  className="flex-1 h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-100 font-black uppercase tracking-widest text-xs"
+                >
+                  {isUpdating ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Truck className="h-4 w-4 mr-2" />}
+                  Confirm Shipment
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

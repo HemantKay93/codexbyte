@@ -1,25 +1,23 @@
-import axios from 'axios';
+import { apiClient } from '../apiClient';
 
-const metaEnv = (
-  import.meta as ImportMeta & {
-    env?: Record<string, string | undefined>;
+export const PaymentService = {
+  createRazorpayOrder: async (amount: number, receipt: string) => {
+    const response = await apiClient.post('/payments/razorpay/order', { amount, receipt });
+    return response.data;
+  },
+
+
+  verifyRazorpayPayment: async (payload: {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+  }) => {
+    const response = await apiClient.post('/payments/verify', payload);
+    return response.data;
+  },
+
+  getPaymentMethods: async () => {
+    const response = await apiClient.get('/payments/methods');
+    return response.data;
   }
-).env;
-
-const api = axios.create({
-  baseURL: metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
-});
-
-export async function createRazorpayOrder(amount: number, receipt: string) {
-  const response = await api.post('/payments/razorpay/order', { amount, receipt });
-  return response.data;
-}
-
-export async function verifyRazorpayPayment(payload: {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-}) {
-  const response = await api.post('/payments/verify', payload);
-  return response.data;
-}
+};

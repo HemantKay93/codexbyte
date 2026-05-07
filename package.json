@@ -8,9 +8,8 @@
     "backend"
   ],
   "scripts": {
-    "dev": "concurrently -n \"frontend,shop,admin,backend\" -c \"blue,green,magenta,yellow\" \"npm run dev -w @byteevolvr/frontend\" \"npm run dev -w @byteevolvr/shop\" \"npm run dev -w @byteevolvr/admin\" \"npm run dev -w @byteevolvr/backend\"",
+    "dev": "concurrently -n \"frontend,admin,backend\" -c \"blue,magenta,yellow\" \"npm run dev -w @byteevolvr/frontend\" \"npm run dev -w @byteevolvr/admin\" \"npm run dev -w @byteevolvr/backend\"",
     "dev:frontend": "npm run dev --workspace @byteevolvr/frontend",
-    "dev:shop": "npm run dev --workspace @byteevolvr/shop",
     "dev:admin": "npm run dev --workspace @byteevolvr/admin",
     "dev:backend": "npm run dev --workspace @byteevolvr/backend",
     "build": "npm run build --workspaces --if-present",
@@ -32,11 +31,11 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
-      "prettier --write",
-      "eslint --fix"
+      "npx prettier --write",
+      "npx eslint --fix"
     ],
     "*.{json,md,css}": [
-      "prettier --write"
+      "npx prettier --write"
     ]
   }
 }

@@ -1,23 +1,18 @@
-import axios from 'axios';
+import { apiClient } from '../apiClient';
 
-const metaEnv = (import.meta as ImportMeta & {
-  env?: Record<string, string | undefined>;
-}).env;
+export const AnalyticsService = {
+  getAnalytics: async (period?: 'day' | 'week' | 'month' | 'year') => {
+    const response = await apiClient.get('/analytics', { params: { period } });
+    return response.data;
+  },
 
-const api = axios.create({
-  baseURL: metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
-});
+  getSalesData: async () => {
+    const response = await apiClient.get('/analytics/sales');
+    return response.data;
+  },
 
-// Interceptor to add auth token for admin requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('admin_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  getCustomerMetrics: async () => {
+    const response = await apiClient.get('/analytics/customers');
+    return response.data;
   }
-  return config;
-});
-
-export async function getAnalytics() {
-  const response = await api.get('/analytics');
-  return response.data;
-}
+};

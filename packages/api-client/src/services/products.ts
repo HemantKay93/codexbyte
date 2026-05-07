@@ -1,23 +1,5 @@
-import axios from 'axios';
+import { apiClient } from '../apiClient';
 
-const metaEnv = (
-  import.meta as ImportMeta & {
-    env?: Record<string, string | undefined>;
-  }
-).env;
-
-const api = axios.create({
-  baseURL: metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
-});
-
-// Interceptor to add auth token for admin requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('admin_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
 
 export interface Product {
   id?: string;
@@ -39,26 +21,37 @@ export interface Product {
   reviews?: Array<{ user: string; rating: number; comment: string }>;
 }
 
-export async function getProducts(): Promise<Product[]> {
-  const response = await api.get('/products');
-  return response.data;
-}
+export const ProductService = {
+  getProducts: async (params?: any): Promise<Product[]> => {
+    const response = await apiClient.get('/products', { params });
+    return response.data;
+  },
 
-export async function getProduct(id: string): Promise<Product> {
-  const response = await api.get(`/products/${id}`);
-  return response.data;
-}
+  getProduct: async (id: string): Promise<Product> => {
+    const response = await apiClient.get(`/products/${id}`);
+    return response.data;
+  },
 
-export async function createProduct(payload: Product): Promise<Product> {
-  const response = await api.post('/products', payload);
-  return response.data;
-}
+  createProduct: async (payload: Product): Promise<Product> => {
+    const response = await apiClient.post('/products', payload);
+    return response.data;
+  },
 
-export async function updateProduct(id: string, payload: Partial<Product>): Promise<Product> {
-  const response = await api.put(`/products/${id}`, payload);
-  return response.data;
-}
+  updateProduct: async (id: string, payload: Partial<Product>): Promise<Product> => {
+    const response = await apiClient.put(`/products/${id}`, payload);
+    return response.data;
+  },
 
-export async function deleteProduct(id: string): Promise<void> {
-  await api.delete(`/products/${id}`);
-}
+  deleteProduct: async (id: string): Promise<void> => {
+    await apiClient.delete(`/products/${id}`);
+  },
+
+  uploadImage: async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('image', file);
+    const response = await apiClient.post('/admin/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data.url;
+  }
+};

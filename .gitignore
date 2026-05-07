@@ -38,3 +38,16 @@ turbo/
 
 # Supabase large files
 supabase/migrations/consolidated_schema.sql
+
+# Logs
+*.log
+backend/logs/
+
+# Build
+dist/
+build/
+.next/
+out/
+
+# Scratch
+backend/scratch/

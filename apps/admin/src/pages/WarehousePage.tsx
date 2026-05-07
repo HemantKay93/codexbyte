@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Button, Badge } from '../components/ui';
 import { ScanBarcode, PackageCheck, Printer, AlertTriangle, Loader2, CheckCircle2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { AdminService } from '@byteevolvr/api-client';
 
 export function WarehousePage() {
   const [pickTasks, setPickTasks] = useState<any[]>([]);
@@ -15,27 +15,8 @@ export function WarehousePage() {
   async function fetchPickTasks() {
     setLoading(true);
     try {
-      // Fetch order items for orders that are 'processing' or 'confirmed'
-      const { data, error } = await supabase
-        .from('order_items')
-        .select(`
-          *,
-          order:order_id (
-            order_number,
-            status
-          ),
-          product:product_id (
-            warehouse_location
-          )
-        `)
-        .in('order.status', ['processing', 'confirmed'])
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      
-      // Filter out items where the order join failed or status is different
-      const validTasks = data?.filter(item => item.order) || [];
-      setPickTasks(validTasks);
+      const data = await AdminService.getWarehouseTasks();
+      setPickTasks(data || []);
     } catch (err) {
       console.error('Error fetching pick tasks:', err);
     } finally {

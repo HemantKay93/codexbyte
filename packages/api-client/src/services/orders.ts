@@ -1,26 +1,4 @@
-import axios from 'axios';
-
-const metaEnv = (
-  import.meta as ImportMeta & {
-    env?: Record<string, string | undefined>;
-  }
-).env;
-
-const api = axios.create({
-  baseURL: metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
-});
-
-// Interceptor to add auth token for requests
-api.interceptors.request.use((config) => {
-  const adminToken = localStorage.getItem('admin_token');
-  const customerToken = localStorage.getItem('sb-access-token');
-  const token = adminToken || customerToken;
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import { apiClient } from '../apiClient';
 
 export interface CreateOrderPayload {
   userId: string;
@@ -30,17 +8,34 @@ export interface CreateOrderPayload {
   totalAmount: number;
 }
 
-export async function createOrder(payload: CreateOrderPayload) {
-  const response = await api.post('/orders', payload);
-  return response.data;
-}
+export const OrderService = {
+  createOrder: async (payload: CreateOrderPayload) => {
+    const response = await apiClient.post('/orders', payload);
+    return response.data;
+  },
 
-export async function getOrders() {
-  const response = await api.get('/orders');
-  return response.data;
-}
+  getOrders: async () => {
+    const response = await apiClient.get('/orders');
+    return response.data;
+  },
 
-export async function updateOrder(id: string, payload: any) {
-  const response = await api.put(`/orders/${id}`, payload);
-  return response.data;
-}
+  getOrderById: async (id: string) => {
+    const response = await apiClient.get(`/orders/${id}`);
+    return response.data;
+  },
+
+  updateOrder: async (id: string, payload: any) => {
+    const response = await apiClient.put(`/orders/${id}`, payload);
+    return response.data;
+  },
+
+  deleteOrder: async (id: string) => {
+    const response = await apiClient.delete(`/orders/${id}`);
+    return response.data;
+  },
+
+  getOrderItems: async (orderId: string) => {
+    const response = await apiClient.get(`/orders/${orderId}/items`);
+    return response.data;
+  }
+};

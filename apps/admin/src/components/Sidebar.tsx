@@ -99,7 +99,7 @@ function NavGroupItem({ group }: { group: NavGroup }) {
   const [open, setOpen] = useState(false);
   const Icon = group.icon;
   const { user } = useAuth();
-  const userRole = user?.user_metadata?.role || 'user';
+  const userRole = user?.role || user?.user_metadata?.role || 'user';
 
   // Filter group items based on role
   const filteredItems = group.items.filter(item => 
@@ -153,7 +153,7 @@ function NavGroupItem({ group }: { group: NavGroup }) {
 
 export function Sidebar() {
   const { user } = useAuth();
-  const userRole = user?.user_metadata?.role || 'user';
+  const userRole = user?.role || user?.user_metadata?.role || 'user';
 
   // Filter top-level navigation based on role
   const filteredNavigation = navigation.filter(item => 

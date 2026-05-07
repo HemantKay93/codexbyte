@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
 import { Plus, Search, Filter, MoreHorizontal, Shield, Mail } from 'lucide-react';
-import { getTeamMembers } from '@byteevolvr/api-client';
+import { TeamService } from '@byteevolvr/api-client';
 
 const mockTeam = [
   { id: '1', name: 'Admin User', email: 'admin@byteevolvr.com', role: 'Super Admin', status: 'active', lastActive: 'Just now' },
@@ -18,7 +18,7 @@ export function TeamPage() {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const data = await getTeamMembers();
+        const data = await TeamService.getTeamMembers();
         if (data && data.length > 0) {
           const mapped = data.map((user: any) => ({
             id: user.id,

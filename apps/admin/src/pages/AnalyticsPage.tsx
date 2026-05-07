@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Button } from '../components/ui';
 import { Download, Calendar, TrendingUp, Users, ShoppingCart, DollarSign, Loader2, RefreshCcw } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { supabase } from '../lib/supabase';
+import { AdminService } from '@byteevolvr/api-client';
 
 export function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({ revenue: 0, orders: 0, customers: 0, avgValue: 0 });
-  const [salesData, setSalesData] = useState<any[]>([]);
-  const [topProducts, setTopProducts] = useState<any[]>([]);
+  const [salesData, setSalesData] = useState<{ name: string; revenue: number }[]>([]);
+  const [topProducts, setTopProducts] = useState<{ name: string; sales: number }[]>([]);
+
 
   useEffect(() => {
     fetchAnalytics();
@@ -17,38 +18,22 @@ export function AnalyticsPage() {
   async function fetchAnalytics() {
     setLoading(true);
     try {
-      // 1. Fetch all orders
-      const { data: orders, error: ordersError } = await supabase
-        .from('orders')
-        .select('*')
-        .order('created_at', { ascending: true });
-
-      if (ordersError) throw ordersError;
-
-      // 2. Fetch top products
-      const { data: orderItems, error: itemsError } = await supabase
-        .from('order_items')
-        .select('product_name, quantity');
-
-      if (itemsError) throw itemsError;
+      // 1. Fetch data from AdminService
+      const stats = await AdminService.getDashboardStats();
+      const orders = await AdminService.getOrders();
+      const customers = await AdminService.getCustomers();
 
       // 3. Process Metrics
-      const totalRevenue = orders?.reduce((sum, o) => sum + Number(o.total_amount), 0) || 0;
-      const totalOrders = orders?.length || 0;
-      
-      const { count: customerCount } = await supabase
-        .from('user_profiles')
-        .select('*', { count: 'exact', head: true });
-
       setMetrics({
-        revenue: totalRevenue,
-        orders: totalOrders,
-        customers: customerCount || 0,
-        avgValue: totalOrders > 0 ? totalRevenue / totalOrders : 0
+        revenue: stats.totalRevenue || 0,
+        orders: stats.salesCount || 0,
+        customers: stats.customerCount || 0,
+        avgValue: stats.avgOrderValue || 0
       });
 
       // 4. Process Revenue Over Time (Daily)
-      const last7Days: any[] = [];
+      const last7Days: { name: string; revenue: number }[] = [];
+
       const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       
       for (let i = 6; i >= 0; i--) {
@@ -57,25 +42,32 @@ export function AnalyticsPage() {
         const dayName = days[d.getDay()];
         const dateStr = d.toISOString().split('T')[0];
         
-        const dayRevenue = orders?.filter(o => o.created_at.startsWith(dateStr))
-          .reduce((sum, o) => sum + Number(o.total_amount), 0) || 0;
+        const dayRevenue = orders?.filter((o) => o.created_at.startsWith(dateStr))
+          .reduce((sum: number, o) => sum + Number(o.total_amount), 0) || 0;
+
           
         last7Days.push({ name: dayName, revenue: dayRevenue });
       }
       setSalesData(last7Days);
 
-      // 5. Process Top Products
+      // 5. Process Top Products (This would ideally come from a specialized backend route)
+      // For now, we'll use a mock or process from orders if items are available
       const productSales: { [key: string]: number } = {};
-      orderItems?.forEach(item => {
-        productSales[item.product_name] = (productSales[item.product_name] || 0) + item.quantity;
+      orders?.forEach((order) => {
+        order.order_items?.forEach((item: { product_name: string; quantity: number }) => {
+          productSales[item.product_name] = (productSales[item.product_name] || 0) + item.quantity;
+        });
       });
+
 
       const sortedProducts = Object.entries(productSales)
         .map(([name, sales]) => ({ name, sales }))
         .sort((a, b) => b.sales - a.sales)
         .slice(0, 5);
         
-      setTopProducts(sortedProducts);
+      setTopProducts(sortedProducts.length > 0 ? sortedProducts : [
+        { name: 'Loading data...', sales: 0 }
+      ]);
 
     } catch (err) {
       console.error('Error fetching analytics:', err);
@@ -188,7 +180,8 @@ export function AnalyticsPage() {
                   <Tooltip 
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'var(--md-sys-color-surface-container-high)' }}
                     itemStyle={{ color: 'var(--md-sys-color-primary)', fontWeight: 600 }}
-                    formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, 'Revenue']}
+                    formatter={(value) => [`₹${Number(value).toLocaleString()}`, 'Revenue']}
+
                   />
                   <Area type="monotone" dataKey="revenue" stroke="#3B7BF8" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
                 </AreaChart>

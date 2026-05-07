@@ -2,8 +2,7 @@ import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Navbar } from '@byteevolvr/ui';
 import { AppLogo } from '@/components/ui/AppLogo';
 import { Mail, Phone, ShoppingCart, User } from 'lucide-react';
-import { useAuth } from '@/features/shop/context/AuthContext';
-import { useCart } from '@/features/shop/context/CartContext';
+import { useUserStore, useCartStore } from '@byteevolvr/store';
 
 const navLinks = [
   { label: 'Home', to: '/home' },
@@ -13,8 +12,9 @@ const navLinks = [
 ];
 
 export function Header() {
-  const { user } = useAuth();
-  const { totalItems } = useCart();
+  const { user } = useUserStore();
+  const { totalItems } = useCartStore();
+  const itemCount = totalItems();
   const location = useLocation();
   const isShopRoute = location.pathname.startsWith('/shop');
   
@@ -68,9 +68,9 @@ export function Header() {
                 <Link to="/shop/cart" className="group flex items-center justify-center h-8 w-8 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:border-accent/50 transition-all duration-300 text-white hover:text-accent" title="Cart">
                   <div className="relative">
                     <ShoppingCart className="h-3.5 w-3.5 group-hover:scale-110 transition-transform duration-300" />
-                    {totalItems > 0 && (
+                    {itemCount > 0 && (
                       <span className="absolute -top-2.5 -right-2.5 bg-accent text-white text-[9px] font-bold h-4 min-w-[16px] px-0.5 rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(96,165,250,0.5)] border border-[#04080F]">
-                        {totalItems}
+                        {itemCount}
                       </span>
                     )}
                   </div>
@@ -95,9 +95,9 @@ export function Header() {
             <Link to="/shop/cart" className="text-white hover:text-accent transition-colors" title="Cart">
               <div className="relative">
                 <ShoppingCart className="h-4 w-4" />
-                {totalItems > 0 && (
+                {itemCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-accent text-white text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center">
-                    {totalItems}
+                    {itemCount}
                   </span>
                 )}
               </div>

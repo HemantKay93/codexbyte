@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
 import { Search, Filter, MoreHorizontal, ArrowUpDown, Download, Upload, Loader2, Save, UploadCloud } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { useAdminStore } from '@byteevolvr/store';
+import { AdminService, ProductService } from '@byteevolvr/api-client';
 import { BulkImportDialog } from '../components/BulkImportDialog';
 
 export function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { products, setProducts, isLoading, setLoading, setError } = useAdminStore();
   const [saving, setSaving] = useState(false);
   const [editedStock, setEditedStock] = useState<Record<string, number>>({});
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
@@ -19,15 +19,11 @@ export function InventoryPage() {
   async function fetchInventory() {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
+      const data = await AdminService.getProducts();
       setProducts(data || []);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error fetching inventory:', err);
+      setError(err.customMessage || 'Failed to load inventory');
     } finally {
       setLoading(false);
     }
@@ -45,10 +41,7 @@ export function InventoryPage() {
     setSaving(true);
     try {
       for (const [id, stock] of Object.entries(editedStock)) {
-        await supabase
-          .from('products')
-          .update({ stock_quantity: stock })
-          .eq('id', id);
+        await ProductService.updateProduct(id, { stock_quantity: stock });
       }
       setEditedStock({});
       await fetchInventory();
@@ -82,9 +75,8 @@ export function InventoryPage() {
     document.body.removeChild(link);
   };
 
-
   const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    (p.name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
     (p.sku && p.sku.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
@@ -155,7 +147,7 @@ export function InventoryPage() {
 
       <Card>
         <div className="flex items-center justify-between p-4 border-b border-outline-variant">
-          <div className="flex items-center gap-2 max-w-md w-full">
+          <div className="flex items-center gap-2 max-md w-full">
             <div className="relative w-full">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-on-surface-variant" />
               <Input
@@ -185,7 +177,7 @@ export function InventoryPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading ? (
+              {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
