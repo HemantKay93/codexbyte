@@ -20,7 +20,7 @@ export const getCustomers = catchAsync(async (req: Request, res: Response) => {
 
 export const getCustomerDetail = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const detail = await adminService.getCustomerDetail(id);
+  const detail = await adminService.getCustomerDetail(id as string);
   res.json(detail);
 });
 
@@ -77,6 +77,32 @@ export const getWarehouses = catchAsync(async (req: Request, res: Response) => {
     .from('warehouses')
     .select('*')
     .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  res.json(data);
+});
+
+export const getNotifications = catchAsync(async (req: Request, res: Response) => {
+  const admin = await getAdminClient();
+  const { data, error } = await admin
+    .from('notifications')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (error) throw error;
+  res.json(data);
+});
+
+export const markNotificationRead = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const admin = await getAdminClient();
+  const { data, error } = await admin
+    .from('notifications')
+    .update({ is_read: true })
+    .eq('id', id)
+    .select()
+    .single();
 
   if (error) throw error;
   res.json(data);

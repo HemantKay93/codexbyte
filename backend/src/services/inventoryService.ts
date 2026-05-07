@@ -1,8 +1,11 @@
 import { getAdminClient } from '../config/supabase.js';
 import { AppError } from '../middlewares/error.js';
 import { AuditService } from './auditService.js';
+import { NotificationService } from './notificationService.js';
 
 export class InventoryService {
+  private static LOW_STOCK_THRESHOLD = 5;
+
   static async adjustStock(data: {
     productId: string;
     warehouseId: string;
@@ -77,6 +80,27 @@ export class InventoryService {
     const totalStock = allInv?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
     await admin.from('products').update({ stock_quantity: totalStock }).eq('id', data.productId);
+
+    // 4. Check for Low Stock Notification
+    if (newQty <= this.LOW_STOCK_THRESHOLD) {
+      try {
+        const { data: prod } = await admin
+          .from('products')
+          .select('name')
+          .eq('id', data.productId)
+          .single();
+        const { data: wh } = await admin
+          .from('warehouses')
+          .select('name')
+          .eq('id', data.warehouseId)
+          .single();
+        if (prod && wh) {
+          await NotificationService.notifyLowStock(prod.name, wh.name, newQty);
+        }
+      } catch (e) {
+        console.error('Failed to send low stock notification:', e);
+      }
+    }
 
     return { success: true, newQuantity: newQty };
   }

@@ -3,7 +3,9 @@ import { supabase, getAdminClient } from '../config/supabase.js';
 export class OrderRepository {
   async findAll(filters: any = {}) {
     const admin = await getAdminClient();
-    let query = admin.from('orders').select('*, order_items(*), shipments(*), user_profiles(full_name, email)');
+    let query = admin
+      .from('orders')
+      .select('*, order_items(*), shipments(*), user_profiles(full_name, email)');
 
     if (filters.status) {
       query = query.eq('status', filters.status.toLowerCase());
@@ -25,9 +27,13 @@ export class OrderRepository {
       .select('*, order_items(*), shipments(*), user_profiles(*), addresses(*)')
       .eq('id', id)
       .single();
-    
+
     if (error) throw error;
     return data;
+  }
+
+  async getById(id: string) {
+    return this.findById(id);
   }
 
   async findByUserId(userId: string) {
@@ -36,32 +42,32 @@ export class OrderRepository {
       .select('*, order_items(*)')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return data;
   }
 
   async create(orderData: any, items: any[]) {
     const admin = await getAdminClient();
-    
+
     // 1. Create the order
     const { data: order, error: orderError } = await admin
       .from('orders')
       .insert(orderData)
       .select()
       .single();
-    
+
     if (orderError) throw orderError;
 
     // 2. Create order items
-    const orderItems = items.map(item => ({
+    const orderItems = items.map((item) => ({
       order_id: order.id,
       product_id: item.productId,
       product_name: item.name,
       sku: item.sku,
       quantity: item.quantity,
       unit_price: item.price,
-      total_price: item.price * item.quantity
+      total_price: item.price * item.quantity,
     }));
 
     const { error: itemsError } = await admin.from('order_items').insert(orderItems);
@@ -78,14 +84,14 @@ export class OrderRepository {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   async updateShipment(orderId: string, courier: string, trackingId: string) {
     const admin = await getAdminClient();
-    
+
     const { data: existing } = await admin
       .from('shipments')
       .select('id')
@@ -98,7 +104,7 @@ export class OrderRepository {
         .update({
           courier_name: courier,
           tracking_id: trackingId,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', existing.id)
         .select()
@@ -111,7 +117,7 @@ export class OrderRepository {
         .insert({
           order_id: orderId,
           courier_name: courier || '',
-          tracking_id: trackingId || ''
+          tracking_id: trackingId || '',
         })
         .select()
         .single();

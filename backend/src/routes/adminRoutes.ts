@@ -37,6 +37,10 @@ router.post('/warehouse', adminController.createWarehouse);
 router.put('/warehouse/:id', adminController.updateWarehouse);
 router.get('/warehouse/tasks', adminController.getWarehouseTasks);
 
+// Notifications
+router.get('/notifications', adminController.getNotifications);
+router.put('/notifications/:id/read', adminController.markNotificationRead);
+
 // Reviews
 router.get('/reviews', reviewController.getAllReviews);
 router.put('/reviews/:id', reviewController.updateReviewStatus);

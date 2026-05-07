@@ -3,6 +3,8 @@ import { AppError } from '../middlewares/error.js';
 import { InventoryService } from './inventoryService.js';
 import { AuditService } from './auditService.js';
 import { getAdminClient } from '../config/supabase.js';
+import { NotificationService } from './notificationService.js';
+import logger from './logger.js';
 
 const orderRepo = new OrderRepository();
 
@@ -97,7 +99,9 @@ export class OrderService {
 
   async updateOrderStatus(id: string, updateData: any, userId?: string) {
     const { status, courier, trackingId, notes } = updateData;
-    const order = await orderRepo.findById(id);
+    const admin = await getAdminClient();
+    const order = await orderRepo.getById(id);
+
     if (!order) throw new AppError('Order not found', 404);
 
     const validTransitions: { [key: string]: string[] } = {
@@ -155,6 +159,20 @@ export class OrderService {
         } catch (stockErr) {
           console.error('Failed to restock items on status change:', stockErr);
         }
+
+        // Send Notification for critical status changes
+        try {
+          const orderData = await admin.from('orders').select('order_number').eq('id', id).single();
+          if (orderData && orderData.data) {
+            await NotificationService.notifyOrderEvent(
+              orderData.data.order_number,
+              newStatus,
+              notes
+            );
+          }
+        } catch (notifErr) {
+          console.error('Failed to send order notification:', notifErr);
+        }
       }
 
       // Log Activity
@@ -186,6 +204,55 @@ export class OrderService {
         performed_by: userId,
       });
     }
+
+    return { success: true };
+  }
+
+  async processReturn(
+    id: string,
+    data: {
+      items: { productId: string; quantity: number }[];
+      warehouseId: string;
+      reason: string;
+      refundAmount?: number;
+      userId: string;
+    }
+  ) {
+    const admin = await getAdminClient();
+
+    // 1. Update Order Status if needed (or keep as 'returned' / 'partially_returned')
+    const order = await orderRepo.getById(id);
+    if (!order) throw new AppError('Order not found', 404);
+
+    // 2. Restock items to warehouse
+    for (const item of data.items) {
+      await InventoryService.adjustStock({
+        productId: item.productId,
+        warehouseId: data.warehouseId,
+        quantity: item.quantity,
+        type: 'return',
+        referenceType: 'order',
+        referenceId: id,
+        notes: `Customer return: ${data.reason}`,
+        userId: data.userId,
+      });
+    }
+
+    // 3. Log Activity
+    await AuditService.logOrderActivity({
+      order_id: id,
+      status: 'returned',
+      notes: `Return processed for ${data.items.length} items. Reason: ${data.reason}`,
+      performed_by: data.userId,
+    });
+
+    // 4. Financial Reconciliation Placeholder
+    if (data.refundAmount && data.refundAmount > 0) {
+      // Here you would call Stripe/Razorpay refund API
+      logger.info(`Initiating refund of ₹${data.refundAmount} for order ${order.order_number}`);
+    }
+
+    await orderRepo.update(id, { status: 'returned' });
 
     return { success: true };
   }

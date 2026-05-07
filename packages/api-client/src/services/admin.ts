@@ -79,6 +79,16 @@ export const AdminService = {
     return response.data;
   },
 
+  getNotifications: async () => {
+    const response = await apiClient.get('/admin/notifications');
+    return response.data;
+  },
+
+  markNotificationAsRead: async (id: string) => {
+    const response = await apiClient.put(`/admin/notifications/${id}/read`);
+    return response.data;
+  },
+
   adjustStock: async (data: {
     productId: string;
     warehouseId: string;
