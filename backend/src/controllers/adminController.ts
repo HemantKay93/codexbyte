@@ -50,25 +50,66 @@ export const getOrderActivity = catchAsync(async (req: Request, res: Response) =
 });
 
 export const createWarehouse = catchAsync(async (req: Request, res: Response) => {
-  const admin = await getAdminClient();
-  const { data, error } = await admin.from('warehouses').insert(req.body).select().single();
+  const { name, location, address, is_active } = req.body;
+  // Merge address and location since 'address' column is missing in schema
+  const combinedLocation = address && location ? `${address}, ${location}` : address || location;
 
-  if (error) throw error;
+  const admin = await getAdminClient();
+  const { data, error } = await admin
+    .from('warehouses')
+    .insert({
+      name,
+      location: combinedLocation,
+      is_active,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error(`[Admin] Database error creating warehouse:`, error);
+    return res.status(500).json({ message: `Database error: ${error.message}` });
+  }
   res.json(data);
 });
 
 export const updateWarehouse = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
+  const { name, location, address, is_active } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ message: 'Warehouse ID is required' });
+  }
+
+  // Merge address and location since 'address' column is missing in schema
+  const combinedLocation = address && location ? `${address}, ${location}` : address || location;
+
+  console.log(`[Admin] Attempting to update warehouse ${id}:`, {
+    name,
+    location: combinedLocation,
+    is_active,
+  });
+
   const admin = await getAdminClient();
   const { data, error } = await admin
     .from('warehouses')
-    .update(req.body)
+    .update({
+      name,
+      location: combinedLocation,
+      is_active,
+    })
     .eq('id', id)
-    .select()
-    .single();
+    .select();
 
-  if (error) throw error;
-  res.json(data);
+  if (error) {
+    console.error(`[Admin] Database error updating warehouse ${id}:`, error);
+    return res.status(500).json({ message: `Database error: ${error.message}` });
+  }
+
+  if (!data || data.length === 0) {
+    return res.status(404).json({ message: 'Warehouse not found or no changes made' });
+  }
+
+  res.json(data[0]);
 });
 
 export const getWarehouses = catchAsync(async (req: Request, res: Response) => {

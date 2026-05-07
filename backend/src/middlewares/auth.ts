@@ -6,18 +6,17 @@ export interface AuthRequest extends Request {
   user?: any;
 }
 
-export const authenticate = async (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return next(new AppError('Unauthorized', 401));
   }
 
   const token = authHeader.split(' ')[1];
-  const { data: { user }, error } = await supabase.auth.getUser(token);
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(token);
 
   if (error || !user) {
     return next(new AppError('Invalid or expired token', 401));
@@ -40,6 +39,9 @@ export const authorize = (...roles: string[]) => {
       .single();
 
     if (error || !profile || !roles.includes(profile.role)) {
+      console.warn(
+        `[Auth] Access denied for user ${req.user.id}. Role: ${profile?.role}. Required: ${roles.join(', ')}`
+      );
       return next(new AppError('Forbidden: Access denied', 403));
     }
 

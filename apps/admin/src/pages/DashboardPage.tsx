@@ -9,7 +9,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
 
 export function DashboardPage() {
@@ -42,11 +42,10 @@ export function DashboardPage() {
 
   // Ensure stats object exists with defaults
   const displayStats = {
-    totalRevenue: 0,
-    salesCount: 0,
-    customerCount: 0,
-    avgOrderValue: 0,
-    ...(stats || {})
+    totalRevenue: Number(stats?.totalRevenue || 0),
+    salesCount: Number(stats?.salesCount || 0),
+    customerCount: Number(stats?.customerCount || 0),
+    avgOrderValue: Number(stats?.avgOrderValue || 0),
   };
 
   return (
@@ -65,7 +64,9 @@ export function DashboardPage() {
               <DollarSign className="h-4 w-4 text-primary" />
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">₹{displayStats.totalRevenue.toLocaleString()}</div>
+              <div className="text-2xl font-bold">
+                ₹{displayStats.totalRevenue.toLocaleString()}
+              </div>
               <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
                 +12.5%
@@ -116,7 +117,9 @@ export function DashboardPage() {
               <Activity className="h-4 w-4 text-primary" />
             </div>
             <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">₹{Math.round(displayStats.avgOrderValue).toLocaleString()}</div>
+              <div className="text-2xl font-bold">
+                ₹{Math.round(displayStats.avgOrderValue).toLocaleString()}
+              </div>
               <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
                 +₹450
@@ -139,19 +142,43 @@ export function DashboardPage() {
                 <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3B7BF8" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3B7BF8" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#3B7BF8" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3B7BF8" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="name" stroke="#737686" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#737686" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} />
+                  <XAxis
+                    dataKey="name"
+                    stroke="#737686"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    stroke="#737686"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => `₹${value}`}
+                  />
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e1e2ed" />
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', backgroundColor: 'var(--md-sys-color-surface-container)' }} 
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: '8px',
+                      border: 'none',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                      backgroundColor: 'var(--md-sys-color-surface-container)',
+                    }}
                     itemStyle={{ color: 'var(--md-sys-color-primary)' }}
                     formatter={(value: any) => [`₹${Number(value).toLocaleString()}`, 'Revenue']}
                   />
-                  <Area type="monotone" dataKey="total" stroke="#3B7BF8" strokeWidth={2} fillOpacity={1} fill="url(#colorRevenue)" />
+                  <Area
+                    type="monotone"
+                    dataKey="total"
+                    stroke="#3B7BF8"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorRevenue)"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -165,19 +192,29 @@ export function DashboardPage() {
           <CardContent>
             <div className="space-y-8">
               {!Array.isArray(recentSales) || recentSales.length === 0 ? (
-                <div className="text-center py-12 text-on-surface-variant italic">No recent sales found.</div>
-              ) : recentSales.map((sale: any, i: number) => (
-                <div key={i} className="flex items-center">
-                  <div className="h-9 w-9 rounded-full bg-primary-container text-primary flex items-center justify-center font-semibold text-sm">
-                    {(sale.user_profiles?.full_name || 'G').charAt(0)}
-                  </div>
-                  <div className="ml-4 space-y-1">
-                    <p className="text-sm font-medium leading-none text-on-surface">{sale.user_profiles?.full_name || 'Walk-in Customer'}</p>
-                    <p className="text-sm text-on-surface-variant truncate max-w-[150px]">{sale.user_profiles?.email || sale.order_number}</p>
-                  </div>
-                  <div className="ml-auto font-medium text-emerald-600">+₹{Number(sale.total_amount).toLocaleString()}</div>
+                <div className="text-center py-12 text-on-surface-variant italic">
+                  No recent sales found.
                 </div>
-              ))}
+              ) : (
+                recentSales.map((sale: any, i: number) => (
+                  <div key={i} className="flex items-center">
+                    <div className="h-9 w-9 rounded-full bg-primary-container text-primary flex items-center justify-center font-semibold text-sm">
+                      {(sale.user_profiles?.full_name || 'G').charAt(0)}
+                    </div>
+                    <div className="ml-4 space-y-1">
+                      <p className="text-sm font-medium leading-none text-on-surface">
+                        {sale.user_profiles?.full_name || 'Walk-in Customer'}
+                      </p>
+                      <p className="text-sm text-on-surface-variant truncate max-w-[150px]">
+                        {sale.user_profiles?.email || sale.order_number}
+                      </p>
+                    </div>
+                    <div className="ml-auto font-medium text-emerald-600">
+                      +₹{Number(sale.total_amount).toLocaleString()}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>

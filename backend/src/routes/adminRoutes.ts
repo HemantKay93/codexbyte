@@ -4,6 +4,7 @@ import * as orderController from '../controllers/orderController.js';
 import * as productController from '../controllers/productController.js';
 import * as reviewController from '../controllers/reviewController.js';
 import * as cmsController from '../controllers/cmsController.js';
+import * as warehouseController from '../controllers/warehouseController.js';
 import { authenticate, authorize } from '../middlewares/auth.js';
 
 const router = express.Router();
@@ -36,6 +37,7 @@ router.get('/warehouse', adminController.getWarehouses);
 router.post('/warehouse', adminController.createWarehouse);
 router.put('/warehouse/:id', adminController.updateWarehouse);
 router.get('/warehouse/tasks', adminController.getWarehouseTasks);
+router.post('/warehouse/adjust-stock', warehouseController.adjustStock);
 
 // Notifications
 router.get('/notifications', adminController.getNotifications);

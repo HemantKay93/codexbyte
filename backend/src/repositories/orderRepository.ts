@@ -36,14 +36,24 @@ export class OrderRepository {
     return this.findById(id);
   }
 
-  async findByUserId(userId: string) {
-    const { data, error } = await supabase
+  async findByUserId(userId: string, email?: string) {
+    const admin = await getAdminClient();
+    console.log(`[Repository] Fetching orders for UserID: ${userId}, Email: ${email}`);
+
+    const query = admin
       .from('orders')
       .select('*, order_items(*)')
-      .eq('user_id', userId)
+      .or(`user_id.eq.${userId}${email ? `,customer_email.eq.${email}` : ''}`)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('[Repository] Error fetching orders:', error);
+      throw error;
+    }
+
+    console.log(`[Repository] Found ${data?.length || 0} orders`);
     return data;
   }
 

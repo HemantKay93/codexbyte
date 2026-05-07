@@ -22,9 +22,12 @@ import {
   Loader2,
   RefreshCcw,
   ExternalLink,
+  X,
+  ChevronDown,
 } from 'lucide-react';
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { OrderActivityLogs } from '../components/OrderActivityLogs';
+import { numberToWords } from '../lib/utils';
 
 export function OrderDetailPage() {
   const { id } = useParams();
@@ -74,6 +77,174 @@ export function OrderDetailPage() {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handlePrint = () => {
+    if (!order) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const items = order.order_items || [];
+    const address = order.addresses?.[0] || order.addresses;
+    const totalInWords = order.total_amount
+      ? numberToWords(Math.floor(Number(order.total_amount)))
+      : '';
+    const cgst = (Number(order.tax_amount) || 0) / 2;
+    const sgst = (Number(order.tax_amount) || 0) / 2;
+
+    const invoiceHtml = `
+      <html>
+        <head>
+          <title>Invoice - ${order.order_number}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+            body { font-family: 'Inter', sans-serif; padding: 20px; color: #1a1a1a; line-height: 1.4; font-size: 11px; }
+            .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+            .company-info h1 { margin: 0; font-size: 20px; color: #000; }
+            .company-info p { margin: 2px 0; color: #333; }
+            .tax-invoice-box { background: #3b82f6; color: white; padding: 10px 20px; border-radius: 4px; min-width: 250px; }
+            .tax-invoice-box h2 { margin: 0; font-size: 18px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 5px; }
+            .tax-invoice-box table { width: 100%; border-collapse: collapse; }
+            .tax-invoice-box td { color: white; border: none; padding: 2px 0; }
+            .address-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #ddd; margin-bottom: 0; }
+            .address-box { padding: 10px; border-right: 1px solid #ddd; }
+            .address-box:last-child { border-right: none; }
+            .section-title { font-weight: bold; background: #f3f4f6; padding: 5px 10px; border: 1px solid #ddd; border-bottom: none; }
+            .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #ddd; }
+            .items-table th { background: #3b82f6; color: white; text-align: center; padding: 8px; border: 1px solid #3b82f6; text-transform: uppercase; font-size: 10px; }
+            .items-table td { padding: 8px; border: 1px solid #ddd; vertical-align: top; }
+            .text-right { text-align: right; }
+            .text-center { text-align: center; }
+            .footer-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; margin-top: 0; border: 1px solid #ddd; border-top: none; }
+            .amount-words { padding: 15px; border-right: 1px solid #ddd; }
+            .totals-table { width: 100%; border-collapse: collapse; }
+            .totals-table td { padding: 5px 10px; border-bottom: 1px solid #eee; }
+            .total-bar { background: #3b82f6; color: white; font-weight: bold; font-size: 14px; }
+            .total-bar td { color: white; border: none; padding: 10px; }
+            .terms { padding: 15px; font-size: 9px; color: #666; border-top: 1px solid #ddd; margin-top: 20px; }
+            .signature { text-align: right; padding: 20px; margin-top: 20px; }
+            .signature-line { border-top: 1px solid #000; width: 200px; display: inline-block; margin-top: 40px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="company-info">
+              <h1>ByteEvolvr</h1>
+              <p>101, Tech Park, Andheri East<br/>Mumbai, MH 400069<br/>Phone: +91 99999 88888<br/>Email: sales@byteevolvr.in<br/>GSTIN: 27AABCB1234F1Z5</p>
+            </div>
+            <div class="tax-invoice-box">
+              <h2>Tax Invoice</h2>
+              <table>
+                <tr><td>Invoice Number</td><td class="text-right">: <strong>${order.order_number}</strong></td></tr>
+                <tr><td>Invoice Date</td><td class="text-right">: ${new Date(order.created_at).toLocaleDateString()}</td></tr>
+                <tr><td>Print Date</td><td class="text-right">: ${new Date().toLocaleDateString()}</td></tr>
+              </table>
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+            <div class="section-title">Billed To</div>
+            <div class="section-title" style="border-left: none;">Billing & Shipping Address</div>
+          </div>
+          <div class="address-grid">
+            <div class="address-box">
+              <p><strong>${order.customer_name || 'Walk-in Customer'}</strong></p>
+              <p>${order.customer_email || ''}</p>
+              <p>GSTIN: N/A</p>
+              <p>POS: Maharashtra</p>
+            </div>
+            <div class="address-box">
+              ${
+                address
+                  ? `
+                <p><strong>${address.full_name}</strong></p>
+                <p>${address.line_1}</p>
+                ${address.line_2 ? `<p>${address.line_2}</p>` : ''}
+                <p>${address.city}, ${address.state} - ${address.postal_code}</p>
+                <p>Mobile: ${address.phone}</p>
+              `
+                  : `<p>${order.customer_name || 'Walk-in Customer'}</p><p>Counter Sale</p>`
+              }
+            </div>
+          </div>
+
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th style="width: 40px;">S.No</th>
+                <th>Item Description</th>
+                <th style="width: 60px;">Qty</th>
+                <th style="width: 80px;">Rate (INR)</th>
+                <th style="width: 80px;">Tax (%)</th>
+                <th style="width: 100px;">Amount (INR)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items
+                .map(
+                  (item: any, i: number) => `
+                <tr>
+                  <td class="text-center">${i + 1}</td>
+                  <td>
+                    <strong>${item.product_name}</strong><br/>
+                    <small style="color: #666">SKU: ${item.sku}</small>
+                  </td>
+                  <td class="text-center">${item.quantity} Nos</td>
+                  <td class="text-right">${Number(item.unit_price).toFixed(2)}</td>
+                  <td class="text-center">18%</td>
+                  <td class="text-right">${Number(item.total_price).toFixed(2)}</td>
+                </tr>
+              `
+                )
+                .join('')}
+            </tbody>
+          </table>
+
+          <div class="footer-grid">
+            <div class="amount-words">
+              <p style="font-weight: bold; margin-bottom: 5px;">Amount in words:</p>
+              <p>${totalInWords} Rupees Only</p>
+              <p style="margin-top: 20px;">Thanks for your Business!</p>
+            </div>
+            <div>
+              <table class="totals-table">
+                <tr><td>Sub Total</td><td class="text-right">${Number(order.subtotal || order.total_amount * 0.82).toFixed(2)}</td></tr>
+                <tr><td>CGST 9%</td><td class="text-right">${cgst.toFixed(2)}</td></tr>
+                <tr><td>SGST 9%</td><td class="text-right">${sgst.toFixed(2)}</td></tr>
+                <tr><td>Round Off</td><td class="text-right">0.00</td></tr>
+                <tr class="total-bar"><td>Total</td><td class="text-right">Rs ${Number(order.total_amount).toFixed(2)}</td></tr>
+              </table>
+            </div>
+          </div>
+          
+          <div class="terms">
+            <strong>Terms & Conditions:</strong><br/>
+            1. Goods once sold will not be taken back or exchanged.<br/>
+            2. Any dispute subject to Mumbai Jurisdiction.<br/>
+            3. This is a computer generated invoice and requires no physical signature.
+          </div>
+          
+          <div class="signature">
+            <p>for <strong>ByteEvolvr</strong></p>
+            <div class="signature-line"></div>
+            <p>Authorized Signature</p>
+          </div>
+          
+          <div style="text-align: center; color: #999; font-size: 8px; margin-top: 20px;">
+            This is a computer generated document
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(invoiceHtml);
+    printWindow.document.close();
+    printWindow.onload = () => {
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    };
   };
 
   if (loading || hookLoading) {
@@ -138,13 +309,7 @@ export function OrderDetailPage() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            className="gap-2"
-            onClick={() => {
-              /* ... (print logic same as before, omitted for brevity but I'll keep it in real file) */
-            }}
-          >
+          <Button variant="outline" className="gap-2" onClick={handlePrint}>
             <Printer className="h-4 w-4" />
             Print Invoice
           </Button>
@@ -346,74 +511,101 @@ export function OrderDetailPage() {
 
       {/* Fulfillment Modal */}
       {showFulfillModal && (
-        <div className="fixed inset-0 bg-[#00144a]/60 backdrop-blur-xl flex items-center justify-center z-[9999] p-4">
-          <div className="bg-white shadow-2xl rounded-[32px] w-full max-w-lg overflow-hidden border border-white/20 animate-in zoom-in-95 duration-200">
-            <div className="p-10">
-              <div className="h-16 w-16 bg-indigo-50 rounded-2xl flex items-center justify-center mb-8">
-                <Package className="h-8 w-8 text-indigo-600" />
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-slate-900/70 backdrop-blur-md"
+            onClick={() => setShowFulfillModal(false)}
+          />
+          <div
+            className="relative bg-surface w-full max-w-[500px] min-w-[320px] shadow-2xl rounded-3xl border border-white/10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+            style={{ width: '500px' }}
+          >
+            {/* Header */}
+            <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-2xl bg-indigo-600/10 flex items-center justify-center text-indigo-400 shadow-inner">
+                  <Package className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-on-surface">Order Fulfillment</h3>
+                  <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
+                    Processing Manifest
+                  </p>
+                </div>
               </div>
-              <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-2">
-                Order Fulfillment
-              </h3>
-              <p className="text-slate-500 font-medium mb-8 leading-relaxed">
-                Select source warehouse and enter tracking details.
-              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowFulfillModal(false)}
+                className="h-10 w-10 p-0 rounded-xl hover:bg-surface-container"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
 
-              <div className="space-y-6 mb-10">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                    Dispatch From Warehouse
-                  </label>
+            <div className="p-8 space-y-8">
+              {/* Warehouse Selection */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
+                  Dispatch From Hub
+                </label>
+                <div className="relative">
                   <select
-                    className="w-full h-14 px-6 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 font-bold focus:ring-4 focus:ring-indigo-100 transition-all outline-none"
+                    className="w-full h-14 px-4 pr-12 rounded-2xl border border-outline bg-surface text-on-surface font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all cursor-pointer hover:border-indigo-500/50 appearance-none"
                     value={selectedWarehouse}
                     onChange={(e) => setSelectedWarehouse(e.target.value)}
                   >
-                    <option value="">Select Warehouse</option>
+                    <option value="">Select Warehouse Hub</option>
                     {warehouses.map((w) => (
                       <option key={w.id} value={w.id}>
-                        {w.name} ({w.location})
+                        {w.name} — {w.location}
                       </option>
                     ))}
                   </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant pointer-events-none" />
                 </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                      Courier Service
-                    </label>
+              {/* Courier & Tracking */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
+                    Courier Provider
+                  </label>
+                  <div className="relative">
                     <select
-                      className="w-full h-14 px-6 rounded-2xl border border-slate-200 bg-slate-50 text-slate-900 font-bold focus:ring-4 focus:ring-indigo-100 transition-all outline-none"
+                      className="w-full h-14 px-4 pr-12 rounded-2xl border border-outline bg-surface text-on-surface font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-all cursor-pointer hover:border-indigo-500/50 appearance-none"
                       value={courier}
                       onChange={(e) => setCourier(e.target.value)}
                     >
-                      <option value="">Provider</option>
+                      <option value="">Select Service</option>
                       <option value="Delhivery">Delhivery</option>
                       <option value="BlueDart">BlueDart</option>
                       <option value="Ecom Express">Ecom Express</option>
                       <option value="FedEx">FedEx</option>
                     </select>
+                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant pointer-events-none" />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                      Tracking ID
-                    </label>
-                    <Input
-                      placeholder="AWB Number"
-                      value={trackingNumber}
-                      onChange={(e) => setTrackingNumber(e.target.value)}
-                      className="h-14 px-6 rounded-2xl font-mono font-bold"
-                    />
-                  </div>
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
+                    Tracking Number
+                  </label>
+                  <Input
+                    placeholder="AWB / LR Number"
+                    value={trackingNumber}
+                    onChange={(e) => setTrackingNumber(e.target.value)}
+                    className="h-14 rounded-2xl font-bold border-outline focus:ring-indigo-500 uppercase"
+                  />
                 </div>
               </div>
 
-              <div className="flex gap-4">
+              {/* Actions */}
+              <div className="pt-4 flex gap-4">
                 <Button
                   variant="ghost"
                   onClick={() => setShowFulfillModal(false)}
-                  className="flex-1 h-14 rounded-2xl font-bold"
+                  className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest hover:bg-surface-container"
                 >
                   Cancel
                 </Button>
@@ -426,14 +618,16 @@ export function OrderDetailPage() {
                     })
                   }
                   disabled={isUpdating || !trackingNumber || !courier || !selectedWarehouse}
-                  className="flex-1 h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-100 font-black uppercase tracking-widest text-xs"
+                  className="flex-1 h-14 rounded-2xl bg-indigo-600 hover:bg-indigo-700 font-black uppercase tracking-widest shadow-lg shadow-indigo-500/20"
                 >
                   {isUpdating ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
-                    <Truck className="h-4 w-4 mr-2" />
+                    <>
+                      <Truck className="h-5 w-5 mr-2" />
+                      Dispatch Order
+                    </>
                   )}
-                  Ship Order
                 </Button>
               </div>
             </div>

@@ -2,12 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { useUserStore } from '@byteevolvr/store';
 import { UserService, OrderService } from '@byteevolvr/api-client';
 import { Card, Badge, Button } from '@byteevolvr/ui';
-import { Package, User, MapPin, LogOut, Edit2, Save, Plus, Trash2, Phone, X, Printer, Truck, Calendar, CreditCard } from 'lucide-react';
+import {
+  Package,
+  User,
+  MapPin,
+  LogOut,
+  Edit2,
+  Save,
+  Plus,
+  Trash2,
+  Phone,
+  X,
+  Printer,
+  Truck,
+  Calendar,
+  CreditCard,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { numberToWords } from '@/lib/utils';
 
 const formatPrice = (value: number) =>
-  new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(value);
+  new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0,
+  }).format(value);
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -47,8 +66,15 @@ export function DashboardPage() {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<any>(null);
   const [addressForm, setAddressForm] = useState({
-    full_name: '', phone: '', line_1: '', line_2: '',
-    city: '', state: '', postal_code: '', address_type: 'home', is_default: false
+    full_name: '',
+    phone: '',
+    line_1: '',
+    line_2: '',
+    city: '',
+    state: '',
+    postal_code: '',
+    address_type: 'home',
+    is_default: false,
   });
   const [savingAddress, setSavingAddress] = useState(false);
 
@@ -59,20 +85,37 @@ export function DashboardPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [profileData, ordersData, addrData] = await Promise.all([
+      const results = await Promise.allSettled([
         UserService.getProfile(),
         OrderService.getOrders(),
-        UserService.getAddresses()
+        UserService.getAddresses(),
       ]);
 
-      if (profileData) { 
-        setProfile(profileData); 
-        setFullName(profileData.full_name || ''); 
+      if (results[0].status === 'fulfilled' && results[0].value) {
+        setProfile(results[0].value);
+        setFullName(results[0].value.full_name || '');
+      } else if (results[0].status === 'rejected') {
+        console.error('Profile fetch failed:', results[0].reason);
       }
-      if (ordersData) setOrders(ordersData);
-      if (addrData) setAddresses(addrData);
+
+      if (results[1].status === 'fulfilled' && results[1].value) {
+        setOrders(results[1].value);
+      } else if (results[1].status === 'rejected') {
+        console.error('Orders fetch failed:', results[1].reason);
+      }
+
+      if (results[2].status === 'fulfilled' && results[2].value) {
+        setAddresses(results[2].value);
+      } else if (results[2].status === 'rejected') {
+        console.error('Addresses fetch failed:', results[2].reason);
+      }
+
+      if (results.some((r) => r.status === 'rejected')) {
+        // alert('Some dashboard data could not be loaded. Please try again.');
+      }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
+      alert('Failed to connect to the server. Please check your internet connection.');
     } finally {
       setLoading(false);
     }
@@ -94,10 +137,30 @@ export function DashboardPage() {
   const openAddressForm = (addr?: any) => {
     if (addr) {
       setEditingAddress(addr);
-      setAddressForm({ full_name: addr.full_name, phone: addr.phone, line_1: addr.line_1, line_2: addr.line_2 || '', city: addr.city, state: addr.state, postal_code: addr.postal_code, address_type: addr.address_type, is_default: addr.is_default });
+      setAddressForm({
+        full_name: addr.full_name,
+        phone: addr.phone,
+        line_1: addr.line_1,
+        line_2: addr.line_2 || '',
+        city: addr.city,
+        state: addr.state,
+        postal_code: addr.postal_code,
+        address_type: addr.address_type,
+        is_default: addr.is_default,
+      });
     } else {
       setEditingAddress(null);
-      setAddressForm({ full_name: profile?.full_name || '', phone: '', line_1: '', line_2: '', city: '', state: '', postal_code: '', address_type: 'home', is_default: addresses.length === 0 });
+      setAddressForm({
+        full_name: profile?.full_name || '',
+        phone: '',
+        line_1: '',
+        line_2: '',
+        city: '',
+        state: '',
+        postal_code: '',
+        address_type: 'home',
+        is_default: addresses.length === 0,
+      });
     }
     setShowAddressForm(true);
   };
@@ -125,18 +188,21 @@ export function DashboardPage() {
     if (!confirm('Delete this address?')) return;
     try {
       await UserService.deleteAddress(id);
-      setAddresses(addresses.filter(a => a.id !== id));
+      setAddresses(addresses.filter((a) => a.id !== id));
     } catch (error) {
       alert('Failed to delete address.');
     }
   };
 
-  const handleSignOut = () => { logout(); navigate('/shop'); };
+  const handleSignOut = () => {
+    logout();
+    navigate('/shop');
+  };
 
   const handlePrintInvoice = async (order: any) => {
     try {
       const items = await OrderService.getOrderItems(order.id);
-      
+
       const printWindow = window.open('', '_blank');
       if (printWindow) {
         const cgst = (Number(order.tax_amount) || 0) / 2;
@@ -205,13 +271,17 @@ export function DashboardPage() {
                   <p>POS: Maharashtra</p>
                 </div>
                 <div class="address-box">
-                  ${order.shipping_address ? `
+                  ${
+                    order.shipping_address
+                      ? `
                     <p><strong>${order.shipping_address.full_name}</strong></p>
                     <p>${order.shipping_address.line_1}</p>
                     ${order.shipping_address.line_2 ? `<p>${order.shipping_address.line_2}</p>` : ''}
                     <p>${order.shipping_address.city}, ${order.shipping_address.state} - ${order.shipping_address.postal_code}</p>
                     <p>Mobile: ${order.shipping_address.phone}</p>
-                  ` : '<p>Address not available</p>'}
+                  `
+                      : '<p>Address not available</p>'
+                  }
                   <p>Email: ${order.customer_email || user?.email || ''}</p>
                 </div>
               </div>
@@ -228,7 +298,9 @@ export function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  ${items.map((item: any, i: number) => `
+                  ${items
+                    .map(
+                      (item: any, i: number) => `
                     <tr>
                       <td class="text-center">${i + 1}</td>
                       <td>
@@ -240,7 +312,9 @@ export function DashboardPage() {
                       <td class="text-center">18%</td>
                       <td class="text-right">${Number(item.total_price).toFixed(2)}</td>
                     </tr>
-                  `).join('')}
+                  `
+                    )
+                    .join('')}
                 </tbody>
               </table>
 
@@ -282,7 +356,7 @@ export function DashboardPage() {
         `;
         printWindow.document.write(invoiceHtml);
         printWindow.document.close();
-        
+
         printWindow.onload = () => {
           setTimeout(() => {
             printWindow.print();
@@ -300,7 +374,11 @@ export function DashboardPage() {
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-display text-3xl font-bold">My Account</h1>
-          <Button variant="ghost" onClick={handleSignOut} className="border border-white/10 text-red-400 hover:bg-red-500/10 flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={handleSignOut}
+            className="border border-white/10 text-red-400 hover:bg-red-500/10 flex items-center gap-2"
+          >
             <LogOut className="h-4 w-4" /> Sign Out
           </Button>
         </div>
@@ -318,7 +396,7 @@ export function DashboardPage() {
                   {editingProfile ? (
                     <input
                       value={fullName}
-                      onChange={e => setFullName(e.target.value)}
+                      onChange={(e) => setFullName(e.target.value)}
                       style={{ ...inputStyle, padding: '6px 10px', fontSize: 15, fontWeight: 600 }}
                       placeholder="Your full name"
                       autoFocus
@@ -332,15 +410,66 @@ export function DashboardPage() {
 
               {editingProfile ? (
                 <div className="flex gap-2 mt-2">
-                  <button onClick={handleSaveProfile} disabled={savingProfile} style={{ flex: 1, padding: '8px', borderRadius: 8, background: '#3b82f6', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <button
+                    onClick={handleSaveProfile}
+                    disabled={savingProfile}
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      borderRadius: 8,
+                      background: '#3b82f6',
+                      color: '#fff',
+                      border: 'none',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                    }}
+                  >
                     <Save size={14} /> {savingProfile ? 'Saving...' : 'Save'}
                   </button>
-                  <button onClick={() => { setEditingProfile(false); setFullName(profile?.full_name || ''); }} style={{ flex: 1, padding: '8px', borderRadius: 8, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                  <button
+                    onClick={() => {
+                      setEditingProfile(false);
+                      setFullName(profile?.full_name || '');
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: '8px',
+                      borderRadius: 8,
+                      background: 'rgba(255,255,255,0.05)',
+                      color: '#fff',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 6,
+                    }}
+                  >
                     <X size={14} /> Cancel
                   </button>
                 </div>
               ) : (
-                <button onClick={() => setEditingProfile(true)} style={{ width: '100%', marginTop: 8, padding: '8px', borderRadius: 8, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#ccc', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                <button
+                  onClick={() => setEditingProfile(true)}
+                  style={{
+                    width: '100%',
+                    marginTop: 8,
+                    padding: '8px',
+                    borderRadius: 8,
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: '#ccc',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                  }}
+                >
                   <Edit2 size={14} /> Edit Name
                 </button>
               )}
@@ -353,26 +482,93 @@ export function DashboardPage() {
                   <MapPin className="text-brand-muted" size={18} />
                   <h3 className="font-bold">Addresses</h3>
                 </div>
-                <button onClick={() => openAddressForm()} style={{ padding: '4px 10px', borderRadius: 6, background: 'rgba(59,123,248,0.15)', color: '#3b7bf8', border: 'none', cursor: 'pointer', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <button
+                  onClick={() => openAddressForm()}
+                  style={{
+                    padding: '4px 10px',
+                    borderRadius: 6,
+                    background: 'rgba(59,123,248,0.15)',
+                    color: '#3b7bf8',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                >
                   <Plus size={12} /> Add
                 </button>
               </div>
-              {loading ? <p className="text-sm text-brand-muted">Loading...</p> : addresses.length === 0 ? (
+              {loading ? (
+                <p className="text-sm text-brand-muted">Loading...</p>
+              ) : addresses.length === 0 ? (
                 <p className="text-sm text-brand-muted italic">No addresses saved yet.</p>
               ) : (
                 <div className="space-y-3">
-                  {addresses.map(addr => (
-                    <div key={addr.id} style={{ padding: 12, borderRadius: 10, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                  {addresses.map((addr) => (
+                    <div
+                      key={addr.id}
+                      style={{
+                        padding: 12,
+                        borderRadius: 10,
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.07)',
+                      }}
+                    >
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="font-medium text-sm">{addr.full_name} {addr.is_default && <span style={{ fontSize: 10, background: 'rgba(59,123,248,0.2)', color: '#3b7bf8', padding: '1px 5px', borderRadius: 3 }}>Default</span>}</p>
+                          <p className="font-medium text-sm">
+                            {addr.full_name}{' '}
+                            {addr.is_default && (
+                              <span
+                                style={{
+                                  fontSize: 10,
+                                  background: 'rgba(59,123,248,0.2)',
+                                  color: '#3b7bf8',
+                                  padding: '1px 5px',
+                                  borderRadius: 3,
+                                }}
+                              >
+                                Default
+                              </span>
+                            )}
+                          </p>
                           <p className="text-xs text-brand-muted">{addr.line_1}</p>
-                          <p className="text-xs text-brand-muted">{addr.city}, {addr.state} - {addr.postal_code}</p>
-                          <p className="text-xs text-brand-muted flex items-center gap-1 mt-1"><Phone size={10} /> {addr.phone}</p>
+                          <p className="text-xs text-brand-muted">
+                            {addr.city}, {addr.state} - {addr.postal_code}
+                          </p>
+                          <p className="text-xs text-brand-muted flex items-center gap-1 mt-1">
+                            <Phone size={10} /> {addr.phone}
+                          </p>
                         </div>
                         <div className="flex gap-1">
-                          <button onClick={() => openAddressForm(addr)} style={{ padding: 4, borderRadius: 6, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#ccc', cursor: 'pointer' }}><Edit2 size={12} /></button>
-                          <button onClick={() => handleDeleteAddress(addr.id)} style={{ padding: 4, borderRadius: 6, background: 'rgba(255,75,75,0.1)', border: 'none', color: '#ff4b4b', cursor: 'pointer' }}><Trash2 size={12} /></button>
+                          <button
+                            onClick={() => openAddressForm(addr)}
+                            style={{
+                              padding: 4,
+                              borderRadius: 6,
+                              background: 'rgba(255,255,255,0.05)',
+                              border: 'none',
+                              color: '#ccc',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAddress(addr.id)}
+                            style={{
+                              padding: 4,
+                              borderRadius: 6,
+                              background: 'rgba(255,75,75,0.1)',
+                              border: 'none',
+                              color: '#ff4b4b',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            <Trash2 size={12} />
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -392,24 +588,40 @@ export function DashboardPage() {
             ) : orders.length === 0 ? (
               <Card className="bg-[#070D1A] border border-white/10 p-8 text-center">
                 <p className="text-brand-muted mb-4">You haven't placed any orders yet.</p>
-                <Button variant="primary" onClick={() => navigate('/shop')}>Start Shopping</Button>
+                <Button variant="primary" onClick={() => navigate('/shop')}>
+                  Start Shopping
+                </Button>
               </Card>
             ) : (
-              orders.map(order => (
-                <Card key={order.id} className="bg-[#070D1A] border border-white/10 p-6 flex flex-col gap-4">
+              orders.map((order) => (
+                <Card
+                  key={order.id}
+                  className="bg-[#070D1A] border border-white/10 p-6 flex flex-col gap-4"
+                >
                   <div className="flex flex-wrap items-center justify-between border-b border-white/10 pb-4 gap-4">
                     <div>
                       <p className="text-sm text-brand-muted">Order #{order.order_number}</p>
-                      <p className="text-xs text-brand-muted">Placed on {new Date(order.created_at).toLocaleDateString()}</p>
+                      <p className="text-xs text-brand-muted">
+                        Placed on {new Date(order.created_at).toLocaleDateString()}
+                      </p>
                     </div>
                     <div className="flex items-center gap-3">
                       <Badge variant={order.status === 'delivered' ? 'success' : 'primary'}>
                         {order.status.toUpperCase()}
                       </Badge>
-                      <Button variant="secondary" size="sm" onClick={() => handlePrintInvoice(order)} className="flex items-center gap-2">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => handlePrintInvoice(order)}
+                        className="flex items-center gap-2"
+                      >
                         <Printer className="h-4 w-4" /> Invoice
                       </Button>
-                      <Button variant="secondary" size="sm" onClick={() => navigate(`/shop/track/${order.tracking_number || order.id}`)}>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={() => navigate(`/shop/track/${order.tracking_number || order.id}`)}
+                      >
                         Track
                       </Button>
                     </div>
@@ -417,7 +629,9 @@ export function DashboardPage() {
                   <div className="space-y-3">
                     {order.order_items?.map((item: any) => (
                       <div key={item.id} className="flex justify-between items-center text-sm">
-                        <span>{item.quantity}x {item.product_name}</span>
+                        <span>
+                          {item.quantity}x {item.product_name}
+                        </span>
                         <span>{formatPrice(item.total_price)}</span>
                       </div>
                     ))}
@@ -435,58 +649,189 @@ export function DashboardPage() {
 
       {/* Address Form Modal */}
       {showAddressForm && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifySelf: 'center', zIndex: 1000, padding: 20 }}>
-          <div style={{ background: '#070D1A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 24, padding: 36, maxWidth: 520, width: '100%', maxHeight: '90vh', overflowY: 'auto', margin: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28 }}>
-              <h2 style={{ fontSize: 22, fontWeight: 700 }}>{editingAddress ? 'Edit Address' : 'Add New Address'}</h2>
-              <button onClick={() => setShowAddressForm(false)} style={{ padding: 6, borderRadius: 8, background: 'rgba(255,255,255,0.05)', border: 'none', color: '#ccc', cursor: 'pointer' }}><X size={18} /></button>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.8)',
+            backdropFilter: 'blur(12px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifySelf: 'center',
+            zIndex: 1000,
+            padding: 20,
+          }}
+        >
+          <div
+            style={{
+              background: '#070D1A',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 24,
+              padding: 36,
+              maxWidth: 520,
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              margin: 'auto',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 28,
+              }}
+            >
+              <h2 style={{ fontSize: 22, fontWeight: 700 }}>
+                {editingAddress ? 'Edit Address' : 'Add New Address'}
+              </h2>
+              <button
+                onClick={() => setShowAddressForm(false)}
+                style={{
+                  padding: 6,
+                  borderRadius: 8,
+                  background: 'rgba(255,255,255,0.05)',
+                  border: 'none',
+                  color: '#ccc',
+                  cursor: 'pointer',
+                }}
+              >
+                <X size={18} />
+              </button>
             </div>
-            <form onSubmit={handleSaveAddress} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <form
+              onSubmit={handleSaveAddress}
+              style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}
+            >
               <div style={{ gridColumn: 'span 2' }}>
                 <label style={labelStyle}>Full Name *</label>
-                <input required style={inputStyle} value={addressForm.full_name} onChange={e => setAddressForm({ ...addressForm, full_name: e.target.value })} placeholder="Recipient full name" />
+                <input
+                  required
+                  style={inputStyle}
+                  value={addressForm.full_name}
+                  onChange={(e) => setAddressForm({ ...addressForm, full_name: e.target.value })}
+                  placeholder="Recipient full name"
+                />
               </div>
               <div style={{ gridColumn: 'span 2' }}>
                 <label style={labelStyle}>Phone Number *</label>
-                <input required style={inputStyle} value={addressForm.phone} onChange={e => setAddressForm({ ...addressForm, phone: e.target.value })} placeholder="+91 XXXXX XXXXX" />
+                <input
+                  required
+                  style={inputStyle}
+                  value={addressForm.phone}
+                  onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
+                  placeholder="+91 XXXXX XXXXX"
+                />
               </div>
               <div style={{ gridColumn: 'span 2' }}>
                 <label style={labelStyle}>Address Line 1 *</label>
-                <input required style={inputStyle} value={addressForm.line_1} onChange={e => setAddressForm({ ...addressForm, line_1: e.target.value })} placeholder="House/Flat no., Street name" />
+                <input
+                  required
+                  style={inputStyle}
+                  value={addressForm.line_1}
+                  onChange={(e) => setAddressForm({ ...addressForm, line_1: e.target.value })}
+                  placeholder="House/Flat no., Street name"
+                />
               </div>
               <div style={{ gridColumn: 'span 2' }}>
                 <label style={labelStyle}>Address Line 2</label>
-                <input style={inputStyle} value={addressForm.line_2} onChange={e => setAddressForm({ ...addressForm, line_2: e.target.value })} placeholder="Landmark, Area (optional)" />
+                <input
+                  style={inputStyle}
+                  value={addressForm.line_2}
+                  onChange={(e) => setAddressForm({ ...addressForm, line_2: e.target.value })}
+                  placeholder="Landmark, Area (optional)"
+                />
               </div>
               <div>
                 <label style={labelStyle}>City *</label>
-                <input required style={inputStyle} value={addressForm.city} onChange={e => setAddressForm({ ...addressForm, city: e.target.value })} placeholder="City" />
+                <input
+                  required
+                  style={inputStyle}
+                  value={addressForm.city}
+                  onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
+                  placeholder="City"
+                />
               </div>
               <div>
                 <label style={labelStyle}>State *</label>
-                <input required style={inputStyle} value={addressForm.state} onChange={e => setAddressForm({ ...addressForm, state: e.target.value })} placeholder="State" />
+                <input
+                  required
+                  style={inputStyle}
+                  value={addressForm.state}
+                  onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
+                  placeholder="State"
+                />
               </div>
               <div>
                 <label style={labelStyle}>Pincode *</label>
-                <input required style={inputStyle} value={addressForm.postal_code} onChange={e => setAddressForm({ ...addressForm, postal_code: e.target.value })} placeholder="400001" />
+                <input
+                  required
+                  style={inputStyle}
+                  value={addressForm.postal_code}
+                  onChange={(e) => setAddressForm({ ...addressForm, postal_code: e.target.value })}
+                  placeholder="400001"
+                />
               </div>
               <div>
                 <label style={labelStyle}>Type</label>
-                <select style={{ ...inputStyle }} value={addressForm.address_type} onChange={e => setAddressForm({ ...addressForm, address_type: e.target.value })}>
+                <select
+                  style={{ ...inputStyle }}
+                  value={addressForm.address_type}
+                  onChange={(e) => setAddressForm({ ...addressForm, address_type: e.target.value })}
+                >
                   <option value="home">Home</option>
                   <option value="work">Work</option>
                   <option value="other">Other</option>
                 </select>
               </div>
               <div style={{ gridColumn: 'span 2', display: 'flex', alignItems: 'center', gap: 10 }}>
-                <input type="checkbox" id="default-addr" checked={addressForm.is_default} onChange={e => setAddressForm({ ...addressForm, is_default: e.target.checked })} />
-                <label htmlFor="default-addr" style={{ fontSize: 14, color: '#ccc', cursor: 'pointer' }}>Set as default address</label>
+                <input
+                  type="checkbox"
+                  id="default-addr"
+                  checked={addressForm.is_default}
+                  onChange={(e) => setAddressForm({ ...addressForm, is_default: e.target.checked })}
+                />
+                <label
+                  htmlFor="default-addr"
+                  style={{ fontSize: 14, color: '#ccc', cursor: 'pointer' }}
+                >
+                  Set as default address
+                </label>
               </div>
               <div style={{ gridColumn: 'span 2', display: 'flex', gap: 12, marginTop: 8 }}>
-                <button type="submit" disabled={savingAddress} style={{ flex: 1, padding: '12px', borderRadius: 10, background: '#3b82f6', color: '#fff', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: 15 }}>
+                <button
+                  type="submit"
+                  disabled={savingAddress}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    borderRadius: 10,
+                    background: '#3b82f6',
+                    color: '#fff',
+                    border: 'none',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontSize: 15,
+                  }}
+                >
                   {savingAddress ? 'Saving...' : 'Save Address'}
                 </button>
-                <button type="button" onClick={() => setShowAddressForm(false)} style={{ flex: 1, padding: '12px', borderRadius: 10, background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontWeight: 600, cursor: 'pointer', fontSize: 15 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAddressForm(false)}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    borderRadius: 10,
+                    background: 'rgba(255,255,255,0.05)',
+                    color: '#fff',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontSize: 15,
+                  }}
+                >
                   Cancel
                 </button>
               </div>

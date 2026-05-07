@@ -19,11 +19,21 @@ export const createWarehouse = catchAsync(async (req: Request, res: Response) =>
 });
 
 export const adjustStock = catchAsync(async (req: AuthRequest, res: Response) => {
-  const result = await InventoryService.adjustStock({
-    ...req.body,
-    userId: req.user?.id,
-  });
-  res.json(result);
+  console.log('[Warehouse] Processing stock adjustment:', req.body);
+  try {
+    const result = await InventoryService.adjustStock({
+      ...req.body,
+      userId: req.user?.id,
+    });
+    console.log('[Warehouse] Adjustment successful');
+    res.json(result);
+  } catch (error: any) {
+    console.error('[Warehouse] Adjustment error:', error);
+    res.status(error.status || 500).json({
+      message: error.message || 'Failed to adjust stock',
+      details: error.details || error,
+    });
+  }
 });
 
 export const getWarehouseInventory = catchAsync(async (req: Request, res: Response) => {

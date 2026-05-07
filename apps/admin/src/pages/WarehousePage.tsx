@@ -14,6 +14,7 @@ import {
   Edit2,
   Settings2,
   Package,
+  X,
 } from 'lucide-react';
 import { AdminService } from '@byteevolvr/api-client';
 
@@ -22,6 +23,7 @@ export function WarehousePage() {
   const [warehouses, setWarehouses] = useState<any[]>([]);
   const [pickTasks, setPickTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingWarehouse, setEditingWarehouse] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -53,6 +55,8 @@ export function WarehousePage() {
   }
 
   const handleSaveWarehouse = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
     try {
       if (editingWarehouse) {
         await AdminService.updateWarehouse(editingWarehouse.id, formData);
@@ -61,9 +65,12 @@ export function WarehousePage() {
       }
       setShowModal(false);
       setEditingWarehouse(null);
-      fetchData();
-    } catch (err) {
+      await fetchData();
+    } catch (err: any) {
       console.error('Error saving warehouse:', err);
+      alert(err.customMessage || 'Failed to save warehouse. Please check your connection.');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -149,18 +156,15 @@ export function WarehousePage() {
                       </Badge>
                     </div>
                     <h3 className="text-xl font-bold text-on-surface mb-1">{w.name}</h3>
-                    <div className="flex items-center gap-2 text-sm text-on-surface-variant mb-4">
-                      <MapPin className="h-3 w-3" />
+                    <div className="flex items-center gap-2 text-sm text-on-surface-variant mb-6">
+                      <MapPin className="h-4 w-4 text-primary" />
                       {w.location}
                     </div>
-                    <div className="pt-4 border-t border-outline-variant flex justify-between items-center">
-                      <div className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
-                        {w.address || 'No address details'}
-                      </div>
+                    <div className="pt-4 border-t border-outline-variant flex justify-end items-center">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="h-9 w-9 p-0 rounded-xl bg-surface hover:bg-primary/10 hover:text-primary transition-all shadow-sm border border-outline-variant flex items-center justify-center"
                         onClick={() => {
                           setEditingWarehouse(w);
                           setFormData({
@@ -266,85 +270,118 @@ export function WarehousePage() {
 
       {/* Warehouse Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-xl flex items-center justify-center z-[9999] p-4">
-          <Card className="w-full max-w-md border-none shadow-2xl rounded-[32px] overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-10">
-              <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-8">
-                <Building2 className="h-8 w-8 text-primary" />
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-slate-900/70 backdrop-blur-md"
+            onClick={() => setShowModal(false)}
+          />
+          <div
+            className="relative bg-surface w-full max-w-[500px] min-w-[320px] shadow-2xl rounded-3xl border border-white/10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+            style={{ width: '500px' }}
+          >
+            <div className="p-8 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+              <div className="flex items-center gap-5">
+                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+                  <Building2 className="h-8 w-8" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-black text-on-surface tracking-tight uppercase">
+                    {editingWarehouse ? 'Update Warehouse' : 'New Warehouse'}
+                  </h3>
+                  <p className="text-xs font-bold text-on-surface-variant tracking-widest uppercase opacity-70">
+                    Logistics Node Configuration
+                  </p>
+                </div>
               </div>
-              <h3 className="text-3xl font-black text-on-surface tracking-tight mb-2">
-                {editingWarehouse ? 'Update Warehouse' : 'New Warehouse'}
-              </h3>
-              <p className="text-on-surface-variant font-medium mb-8 leading-relaxed">
-                Configure essential parameters for your distribution center.
-              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowModal(false)}
+                className="rounded-full h-10 w-10 p-0 hover:bg-error/10 hover:text-error transition-all"
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
 
-              <div className="space-y-6 mb-10">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
-                    Entity Name
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-8">
+              <div className="space-y-8">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <Building2 className="h-3 w-3" /> Entity Name
                   </label>
                   <Input
                     placeholder="e.g. Mumbai North Hub"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="h-14 px-6 rounded-2xl font-bold"
+                    className="h-14 px-6 rounded-2xl font-black border-outline focus:ring-primary"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
-                    Location Region
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapPin className="h-3 w-3" /> Location Region
                   </label>
                   <Input
                     placeholder="e.g. Maharashtra"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    className="h-14 px-6 rounded-2xl font-bold"
+                    className="h-14 px-6 rounded-2xl font-black border-outline focus:ring-primary"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
-                    Full Address
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1 flex items-center gap-2">
+                    <MapPin className="h-3 w-3" /> Full Logistics Address
                   </label>
                   <Input
-                    placeholder="Detailed logistics address..."
+                    placeholder="Detailed street address..."
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="h-14 px-6 rounded-2xl font-bold"
+                    className="h-14 px-6 rounded-2xl font-bold border-outline focus:ring-primary"
                   />
                 </div>
-                <div className="flex items-center gap-3 pt-2">
+
+                <div className="flex items-center gap-4 p-4 bg-surface-container-low rounded-2xl border border-outline-variant">
                   <input
                     type="checkbox"
                     id="is_active"
                     checked={formData.is_active}
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="h-5 w-5 rounded border-outline accent-primary"
+                    className="h-6 w-6 rounded-lg border-outline accent-primary cursor-pointer"
                   />
-                  <label htmlFor="is_active" className="text-sm font-bold text-on-surface">
-                    Mark as Active & Operational
+                  <label
+                    htmlFor="is_active"
+                    className="text-sm font-black text-on-surface uppercase tracking-tight cursor-pointer"
+                  >
+                    Mark Hub as Operational
                   </label>
                 </div>
-              </div>
 
-              <div className="flex gap-4">
-                <Button
-                  variant="ghost"
-                  onClick={() => setShowModal(false)}
-                  className="flex-1 h-14 rounded-2xl font-bold"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSaveWarehouse}
-                  disabled={!formData.name || !formData.location}
-                  className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs"
-                >
-                  {editingWarehouse ? 'Update Hub' : 'Initialize Hub'}
-                </Button>
+                <div className="pt-6 flex gap-4">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowModal(false)}
+                    className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest hover:bg-surface-container transition-colors"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSaveWarehouse}
+                    disabled={!formData.name || !formData.location || isSaving}
+                    className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20"
+                  >
+                    {isSaving ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : editingWarehouse ? (
+                      'Update Hub'
+                    ) : (
+                      'Initialize Hub'
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       )}
     </div>

@@ -36,6 +36,10 @@ export class InventoryService {
       throw new AppError(`Insufficient stock in warehouse for product ${data.productId}`, 400);
     }
 
+    console.log(
+      `[Inventory] Adjusting stock for product ${data.productId} in warehouse ${data.warehouseId}. Delta: ${data.quantity}, New Qty: ${newQty}`
+    );
+
     if (inventory) {
       // Update existing
       const { error: updateError } = await admin
@@ -78,8 +82,16 @@ export class InventoryService {
       .eq('product_id', data.productId);
 
     const totalStock = allInv?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+    console.log(`[Inventory] Calculated total stock for product ${data.productId}: ${totalStock}`);
 
-    await admin.from('products').update({ stock_quantity: totalStock }).eq('id', data.productId);
+    const { error: prodUpdateError } = await admin
+      .from('products')
+      .update({ stock_quantity: totalStock })
+      .eq('id', data.productId);
+
+    if (prodUpdateError) {
+      console.error('[Inventory] Failed to update master product stock:', prodUpdateError);
+    }
 
     // 4. Check for Low Stock Notification
     if (newQty <= this.LOW_STOCK_THRESHOLD) {
@@ -102,7 +114,7 @@ export class InventoryService {
       }
     }
 
-    return { success: true, newQuantity: newQty };
+    return { success: true, newQuantity: newQty, totalQuantity: totalStock };
   }
 
   static async getWarehouseStock(warehouseId: string) {

@@ -20,6 +20,7 @@ import wishlistRoutes from './routes/wishlistRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import shippingRoutes from './routes/shippingRoutes.js';
 import warehouseRoutes from './routes/warehouseRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 import * as reportController from './controllers/reportController.js';
 import { authenticate, authorize } from './middlewares/auth.js';
@@ -54,6 +55,7 @@ app.use('/api/v1/wishlist', wishlistRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/shipping', shippingRoutes);
 app.use('/api/v1/warehouse', warehouseRoutes);
+app.use('/api/v1/users', userRoutes);
 
 app.get(
   '/api/v1/reports/export',
@@ -71,6 +73,7 @@ app.use('/api/cms', cmsRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/shipping', shippingRoutes);
+app.use('/api/users', userRoutes);
 app.get(
   '/api/reports/export',
   authenticate,

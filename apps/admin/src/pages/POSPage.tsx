@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Input, Button, Badge } from '../components/ui';
-import { Search, ShoppingCart, CreditCard, Banknote, User, Plus, Minus, Loader2, CheckCircle2 } from 'lucide-react';
+import {
+  Search,
+  ShoppingCart,
+  CreditCard,
+  Banknote,
+  User,
+  Plus,
+  Minus,
+  Loader2,
+  CheckCircle2,
+  Printer,
+} from 'lucide-react';
 import { ProductService, AdminService } from '@byteevolvr/api-client';
+import { numberToWords } from '../lib/utils';
 
 export function POSPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -10,6 +22,14 @@ export function POSPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [customer, setCustomer] = useState({
+    name: 'Walk-in Customer',
+    email: 'walkin@customer.com',
+    phone: '0000000000',
+  });
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [tempCustomer, setTempCustomer] = useState(customer);
+  const [lastCreatedOrder, setLastCreatedOrder] = useState<any>(null);
 
   useEffect(() => {
     fetchProducts();
@@ -28,34 +48,52 @@ export function POSPage() {
   }
 
   const addToCart = (product: any) => {
-    setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
+    setCart((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
       if (existing) {
-        return prev.map(item => item.id === product.id ? { ...item, qty: item.qty + 1 } : item);
+        return prev.map((item) => (item.id === product.id ? { ...item, qty: item.qty + 1 } : item));
       }
       return [...prev, { ...product, qty: 1 }];
     });
   };
 
   const updateQty = (id: string, delta: number) => {
-    setCart(prev => prev.map(item => {
-      if (item.id === id) {
-        const newQty = Math.max(0, item.qty + delta);
-        return { ...item, qty: newQty };
-      }
-      return item;
-    }).filter(item => item.qty > 0));
+    setCart((prev) =>
+      prev
+        .map((item) => {
+          if (item.id === id) {
+            const newQty = Math.max(0, item.qty + delta);
+            return { ...item, qty: newQty };
+          }
+          return item;
+        })
+        .filter((item) => item.qty > 0)
+    );
+  };
+
+  const saveCustomer = () => {
+    setCustomer(tempCustomer);
+    setShowCustomerModal(false);
   };
 
   const handleCheckout = async (method: 'cash' | 'card') => {
     if (cart.length === 0) return;
+
+    // For Card, redirect to payment page (Mock)
+    if (method === 'card') {
+      const subtotal = cart.reduce((acc, item) => acc + Number(item.price) * item.qty, 0);
+      const total = subtotal * 1.18;
+      // In a real app, this would redirect to /checkout or Stripe
+      alert(`Redirecting to Secure Payment Gateway for ₹${total.toLocaleString()}...`);
+      // Simulating a redirect or opening a payment link
+      window.open(`https://razorpay.com/demo/?amount=${total}`, '_blank');
+      return;
+    }
+
     setIsProcessing(true);
     try {
-      console.log('Starting checkout for method:', method);
-      
-      // 1. Order Details
       const orderNumber = `POS-${Date.now().toString().slice(-6)}`;
-      const subtotal = cart.reduce((acc, item) => acc + (Number(item.price) * item.qty), 0);
+      const subtotal = cart.reduce((acc, item) => acc + Number(item.price) * item.qty, 0);
       const tax = subtotal * 0.18;
       const total = subtotal + tax;
 
@@ -66,54 +104,172 @@ export function POSPage() {
         payment_method: method,
         totalAmount: total,
         shippingAddress: {
-          name: 'Walk-in Customer',
-          email: 'walkin@customer.com',
-          phone: '0000000000',
+          name: customer.name,
+          email: customer.email,
+          phone: customer.phone,
           line_1: 'POS Counter',
           city: 'In-Store',
           state: 'Local',
           postal_code: '000000',
-          country: 'India'
+          country: 'India',
         },
-        items: cart.map(item => ({
+        items: cart.map((item) => ({
           productId: item.id,
           name: item.name,
           sku: item.sku || '',
           quantity: item.qty,
-          price: Number(item.price)
-        }))
+          price: Number(item.price),
+        })),
       };
 
-      await AdminService.createOrder(orderData);
-
-      // 2. Update Inventory (Local State)
-      // Ideally backend handles this, but we update UI state here
-      setProducts(prev => prev.map(p => {
-        const item = cart.find(c => c.id === p.id);
-        if (item) {
-          return { ...p, stock_quantity: Math.max(0, p.stock_quantity - item.qty) };
-        }
-        return p;
-      }));
-
+      const createdOrder = await AdminService.createOrder(orderData);
+      setLastCreatedOrder(createdOrder);
       setSuccess(true);
       setCart([]);
-      setTimeout(() => setSuccess(false), 3000);
+      setTimeout(() => setSuccess(false), 8000); // Longer success message if they want to print
     } catch (err: any) {
       console.error('Checkout failed:', err);
-      alert(`Checkout failed: ${err.customMessage || err.message || 'Something went wrong'}`);
+      alert(`Checkout failed: ${err.message || 'Something went wrong'}`);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const subtotal = cart.reduce((acc, item) => acc + (Number(item.price) * item.qty), 0);
-  const tax = subtotal * 0.18; 
+  const handlePrintReceipt = () => {
+    if (!lastCreatedOrder) return;
+    const order = lastCreatedOrder;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const items =
+      order.order_items && order.order_items.length > 0
+        ? order.order_items
+        : cart.map((item) => ({
+            product_name: item.name,
+            quantity: item.qty,
+            unit_price: item.price,
+            total_price: Number(item.price) * item.qty,
+          }));
+    const totalInWords = order.total_amount
+      ? numberToWords(Math.floor(Number(order.total_amount)))
+      : '';
+    const cgst = (Number(order.tax_amount) || 0) / 2;
+    const sgst = (Number(order.tax_amount) || 0) / 2;
+
+    const invoiceHtml = `
+      <html>
+        <head>
+          <title>Receipt - ${order.order_number}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+            body { font-family: 'Inter', sans-serif; padding: 20px; color: #1a1a1a; line-height: 1.4; font-size: 11px; }
+            .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+            .company-info h1 { margin: 0; font-size: 20px; color: #000; }
+            .company-info p { margin: 2px 0; color: #333; }
+            .tax-invoice-box { background: #3b82f6; color: white; padding: 10px 20px; border-radius: 4px; min-width: 250px; }
+            .tax-invoice-box h2 { margin: 0; font-size: 18px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 5px; }
+            .tax-invoice-box table { width: 100%; border-collapse: collapse; }
+            .tax-invoice-box td { color: white; border: none; padding: 2px 0; }
+            .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #ddd; }
+            .items-table th { background: #3b82f6; color: white; text-align: center; padding: 8px; border: 1px solid #3b82f6; text-transform: uppercase; font-size: 10px; }
+            .items-table td { padding: 8px; border: 1px solid #ddd; vertical-align: top; }
+            .text-right { text-align: right; }
+            .text-center { text-align: center; }
+            .footer-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; margin-top: 20px; border: 1px solid #ddd; }
+            .amount-words { padding: 15px; border-right: 1px solid #ddd; }
+            .totals-table { width: 100%; border-collapse: collapse; }
+            .totals-table td { padding: 5px 10px; border-bottom: 1px solid #eee; }
+            .total-bar { background: #3b82f6; color: white; font-weight: bold; font-size: 14px; }
+            .total-bar td { color: white; border: none; padding: 10px; }
+            .signature { text-align: right; padding: 20px; margin-top: 20px; }
+            .signature-line { border-top: 1px solid #000; width: 200px; display: inline-block; margin-top: 40px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="company-info">
+              <h1>ByteEvolvr</h1>
+              <p>101, Tech Park, Andheri East<br/>Mumbai, MH 400069<br/>GSTIN: 27AABCB1234F1Z5</p>
+            </div>
+            <div class="tax-invoice-box">
+              <h2>POS Receipt</h2>
+              <table>
+                <tr><td>Receipt No</td><td class="text-right">: <strong>${order.order_number}</strong></td></tr>
+                <tr><td>Date</td><td class="text-right">: ${new Date().toLocaleDateString()}</td></tr>
+              </table>
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; background: #f9fafb;">
+            <strong>Customer:</strong> ${order.customer_name || 'Walk-in Customer'}<br/>
+            <strong>Email:</strong> ${order.customer_email || 'N/A'}
+          </div>
+
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th style="width: 40px;">Qty</th>
+                <th style="width: 80px;">Price</th>
+                <th style="width: 100px;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${(order.order_items || [])
+                .map(
+                  (item: any) => `
+                <tr>
+                  <td>${item.product_name}</td>
+                  <td class="text-center">${item.quantity}</td>
+                  <td class="text-right">${Number(item.unit_price).toFixed(2)}</td>
+                  <td class="text-right">${Number(item.total_price).toFixed(2)}</td>
+                </tr>
+              `
+                )
+                .join('')}
+            </tbody>
+          </table>
+
+          <div class="footer-grid">
+            <div class="amount-words">
+              <p style="font-weight: bold; margin-bottom: 5px;">Amount in words:</p>
+              <p>${totalInWords} Rupees Only</p>
+            </div>
+            <div>
+              <table class="totals-table">
+                <tr><td>Sub Total</td><td class="text-right">${Number(order.subtotal).toFixed(2)}</td></tr>
+                <tr><td>Tax (GST)</td><td class="text-right">${Number(order.tax_amount).toFixed(2)}</td></tr>
+                <tr class="total-bar"><td>Total</td><td class="text-right">₹${Number(order.total_amount).toFixed(2)}</td></tr>
+              </table>
+            </div>
+          </div>
+          
+          <div class="signature">
+            <p>Authorized Signature</p>
+            <div class="signature-line"></div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    printWindow.document.write(invoiceHtml);
+    printWindow.document.close();
+    printWindow.onload = () => {
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    };
+  };
+
+  const subtotal = cart.reduce((acc, item) => acc + Number(item.price) * item.qty, 0);
+  const tax = subtotal * 0.18;
   const total = subtotal + tax;
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    (p.sku && p.sku.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredProducts = products.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (p.sku && p.sku.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -123,9 +279,20 @@ export function POSPage() {
         <div className="flex items-center justify-between">
           <h1 className="text-display-sm font-semibold text-on-background">Point of Sale</h1>
           {success && (
-            <div className="flex items-center gap-2 text-success font-medium animate-in fade-in slide-in-from-right-4">
-              <CheckCircle2 className="h-5 w-5" />
-              Order completed successfully!
+            <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-4">
+              <div className="flex items-center gap-2 text-success font-medium">
+                <CheckCircle2 className="h-5 w-5" />
+                Order completed successfully!
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2 border-primary text-primary hover:bg-primary/5"
+                onClick={handlePrintReceipt}
+              >
+                <Printer className="h-4 w-4" />
+                Print Receipt
+              </Button>
             </div>
           )}
         </div>
@@ -136,10 +303,10 @@ export function POSPage() {
             className="w-full h-11 pl-10 pr-4 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-colors"
             placeholder="Search by name or SKU..."
             value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
           {loading ? (
             <div className="flex items-center justify-center h-40 text-on-surface-variant">
@@ -152,22 +319,31 @@ export function POSPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
-              {filteredProducts.map(product => (
-                <Card 
-                  key={product.id} 
+              {filteredProducts.map((product) => (
+                <Card
+                  key={product.id}
                   className="cursor-pointer hover:border-primary hover:shadow-md transition-all h-36 flex flex-col justify-between p-4 group bg-surface"
                   onClick={() => addToCart(product)}
                 >
                   <div>
-                    <div className="font-semibold text-on-surface line-clamp-2 group-hover:text-primary transition-colors text-sm">{product.name}</div>
+                    <div className="font-semibold text-on-surface line-clamp-2 group-hover:text-primary transition-colors text-sm">
+                      {product.name}
+                    </div>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] font-mono text-on-surface-variant uppercase">{product.sku}</span>
-                      <Badge variant={product.stock_quantity > 0 ? 'success' : 'error'} className="text-[10px]">
+                      <span className="text-[10px] font-mono text-on-surface-variant uppercase">
+                        {product.sku}
+                      </span>
+                      <Badge
+                        variant={product.stock_quantity > 0 ? 'success' : 'error'}
+                        className="text-[10px]"
+                      >
                         {product.stock_quantity}
                       </Badge>
                     </div>
                   </div>
-                  <div className="text-lg font-bold text-primary">₹{Number(product.price).toLocaleString()}</div>
+                  <div className="text-lg font-bold text-primary">
+                    ₹{Number(product.price).toLocaleString()}
+                  </div>
                 </Card>
               ))}
             </div>
@@ -187,35 +363,64 @@ export function POSPage() {
 
         <div className="flex items-center gap-2 mb-4 bg-surface p-2 rounded border border-outline-variant">
           <User className="h-4 w-4 text-on-surface-variant" />
-          <span className="text-sm text-on-surface-variant">Walk-in Customer</span>
-          <Button variant="ghost" size="sm" className="ml-auto text-xs py-1 h-auto">Edit</Button>
+          <span className="text-sm text-on-surface-variant truncate max-w-[180px]">
+            {customer.name}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="ml-auto text-xs py-1 h-auto"
+            onClick={() => {
+              setTempCustomer(customer);
+              setShowCustomerModal(true);
+            }}
+          >
+            Edit
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
           {cart.length === 0 ? (
             <div className="text-center text-on-surface-variant text-sm py-20 flex flex-col items-center">
               <ShoppingCart className="h-10 w-10 mb-2 opacity-20" />
-              Cart is empty.<br/>Select items to start.
+              Cart is empty.
+              <br />
+              Select items to start.
             </div>
           ) : (
-            cart.map(item => (
-              <div key={item.id} className="flex flex-col bg-surface p-3 rounded border border-outline-variant hover:border-outline transition-colors">
+            cart.map((item) => (
+              <div
+                key={item.id}
+                className="flex flex-col bg-surface p-3 rounded border border-outline-variant hover:border-outline transition-colors"
+              >
                 <div className="flex justify-between items-start mb-2">
-                  <div className="font-medium text-sm text-on-surface leading-tight pr-4">{item.name}</div>
-                  <div className="font-bold text-sm">₹{(Number(item.price) * item.qty).toLocaleString()}</div>
+                  <div className="font-medium text-sm text-on-surface leading-tight pr-4">
+                    {item.name}
+                  </div>
+                  <div className="font-bold text-sm">
+                    ₹{(Number(item.price) * item.qty).toLocaleString()}
+                  </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <div className="text-xs text-on-surface-variant font-medium">₹{Number(item.price).toLocaleString()} × {item.qty}</div>
+                  <div className="text-xs text-on-surface-variant font-medium">
+                    ₹{Number(item.price).toLocaleString()} × {item.qty}
+                  </div>
                   <div className="flex items-center gap-1.5 bg-surface-container rounded-lg p-1 border border-outline-variant">
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); updateQty(item.id, -1); }} 
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateQty(item.id, -1);
+                      }}
                       className="p-1 text-on-surface hover:text-error transition-colors rounded hover:bg-surface"
                     >
                       <Minus className="h-3 w-3" />
                     </button>
                     <span className="text-xs font-bold w-6 text-center">{item.qty}</span>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); updateQty(item.id, 1); }} 
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateQty(item.id, 1);
+                      }}
                       className="p-1 text-on-surface hover:text-primary transition-colors rounded hover:bg-surface"
                     >
                       <Plus className="h-3 w-3" />
@@ -243,25 +448,97 @@ export function POSPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 mt-6">
-          <Button 
-            variant="secondary" 
-            className="gap-2 h-14 font-bold" 
+          <Button
+            variant="secondary"
+            className="gap-2 h-14 font-bold"
             disabled={cart.length === 0 || isProcessing}
             onClick={() => handleCheckout('cash')}
           >
-            {isProcessing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Banknote className="h-5 w-5" />}
+            {isProcessing ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <Banknote className="h-5 w-5" />
+            )}
             Cash
           </Button>
-          <Button 
-            className="gap-2 h-14 font-bold" 
+          <Button
+            className="gap-2 h-14 font-bold"
             disabled={cart.length === 0 || isProcessing}
             onClick={() => handleCheckout('card')}
           >
-            {isProcessing ? <Loader2 className="h-5 w-5 animate-spin" /> : <CreditCard className="h-5 w-5" />}
+            {isProcessing ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <CreditCard className="h-5 w-5" />
+            )}
             Card
           </Button>
         </div>
       </Card>
+      {/* Customer Edit Modal */}
+      {showCustomerModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <Card className="w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+              <h3 className="font-bold text-on-surface">Customer Details</h3>
+              <button
+                onClick={() => setShowCustomerModal(false)}
+                className="text-on-surface-variant hover:text-on-surface"
+              >
+                &times;
+              </button>
+            </div>
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
+                  Full Name
+                </label>
+                <Input
+                  value={tempCustomer.name}
+                  onChange={(e) => setTempCustomer({ ...tempCustomer, name: e.target.value })}
+                  className="h-11"
+                  placeholder="Customer Name"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
+                  Email Address
+                </label>
+                <Input
+                  type="email"
+                  value={tempCustomer.email}
+                  onChange={(e) => setTempCustomer({ ...tempCustomer, email: e.target.value })}
+                  className="h-11"
+                  placeholder="email@example.com"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
+                  Phone Number
+                </label>
+                <Input
+                  value={tempCustomer.phone}
+                  onChange={(e) => setTempCustomer({ ...tempCustomer, phone: e.target.value })}
+                  className="h-11"
+                  placeholder="00000 00000"
+                />
+              </div>
+              <div className="pt-4 flex gap-3">
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowCustomerModal(false)}
+                  className="flex-1 rounded-xl font-bold"
+                >
+                  Cancel
+                </Button>
+                <Button onClick={saveCustomer} className="flex-1 rounded-xl font-bold">
+                  Save Details
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

@@ -19,8 +19,8 @@ export class OrderService {
     return order;
   }
 
-  async getMyOrders(userId: string) {
-    return await orderRepo.findByUserId(userId);
+  async getMyOrders(userId: string, email?: string) {
+    return await orderRepo.findByUserId(userId, email);
   }
 
   async createOrder(userId: string | undefined, orderData: any) {
@@ -105,9 +105,9 @@ export class OrderService {
     if (!order) throw new AppError('Order not found', 404);
 
     const validTransitions: { [key: string]: string[] } = {
-      pending: ['confirmed', 'cancelled'],
-      confirmed: ['packed', 'cancelled'],
-      packed: ['shipped'],
+      pending: ['confirmed', 'cancelled', 'shipped'],
+      confirmed: ['packed', 'cancelled', 'shipped'],
+      packed: ['shipped', 'cancelled'],
       shipped: ['delivered', 'returned'],
       delivered: ['returned'],
       returned: ['refunded'],
