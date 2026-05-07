@@ -16,6 +16,7 @@ router.get('/stats', adminController.getDashboardStats);
 // Orders
 router.get('/orders', orderController.getAllOrders);
 router.get('/orders/:id', orderController.getOrderById);
+router.get('/orders/:id/activity', adminController.getOrderActivity);
 router.put('/orders/:id', orderController.updateOrder);
 
 // Products
@@ -31,6 +32,9 @@ router.get('/customers', adminController.getCustomers);
 router.get('/customers/:id', adminController.getCustomerDetail);
 
 // Warehouse
+router.get('/warehouse', adminController.getWarehouses);
+router.post('/warehouse', adminController.createWarehouse);
+router.put('/warehouse/:id', adminController.updateWarehouse);
 router.get('/warehouse/tasks', adminController.getWarehouseTasks);
 
 // Reviews

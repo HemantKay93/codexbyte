@@ -120,6 +120,43 @@ export class OrderService {
 
       await orderRepo.update(id, { status: newStatus });
 
+      // Handle Stock Reversal for Cancelled/Returned
+      if (
+        ['cancelled', 'returned'].includes(newStatus) &&
+        ['pending', 'confirmed', 'packed', 'shipped', 'delivered'].includes(currentStatus)
+      ) {
+        try {
+          const { data: orderItems } = await admin
+            .from('order_items')
+            .select('product_id, quantity')
+            .eq('order_id', id);
+
+          const { data: defaultWarehouse } = await admin
+            .from('warehouses')
+            .select('id')
+            .eq('is_active', true)
+            .limit(1)
+            .single();
+
+          if (orderItems) {
+            for (const item of orderItems) {
+              await InventoryService.adjustStock({
+                productId: item.product_id,
+                warehouseId: updateData.warehouseId || defaultWarehouse?.id,
+                quantity: item.quantity, // Positive to restock
+                type: newStatus === 'returned' ? 'return' : 'adjustment',
+                referenceType: 'order',
+                referenceId: id,
+                notes: `Stock restocked due to order ${newStatus}`,
+                userId: userId,
+              });
+            }
+          }
+        } catch (stockErr) {
+          console.error('Failed to restock items on status change:', stockErr);
+        }
+      }
+
       // Log Activity
       await AuditService.logOrderActivity({
         order_id: id,

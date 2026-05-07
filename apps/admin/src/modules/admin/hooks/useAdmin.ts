@@ -3,12 +3,17 @@ import { AdminService } from '@byteevolvr/api-client';
 import { useAdminStore } from '@byteevolvr/store';
 
 export const useAdmin = () => {
-  const { 
-    stats, setStats, 
-    recentSales, setRecentSales,
-    chartData, setChartData,
-    isLoading, setLoading, 
-    error, setError 
+  const {
+    stats,
+    setStats,
+    recentSales,
+    setRecentSales,
+    chartData,
+    setChartData,
+    isLoading,
+    setLoading,
+    error,
+    setError,
   } = useAdminStore();
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -19,15 +24,29 @@ export const useAdmin = () => {
     try {
       const statsData = await AdminService.getDashboardStats();
       const orders = await AdminService.getOrders();
-      
+
       setStats(statsData);
       setRecentSales(orders?.slice(0, 5) || []);
-      
-      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ];
       const revenueByMonth: { [key: string]: number } = {};
       orders?.forEach((o: any) => {
         const date = new Date(o.created_at);
-        revenueByMonth[months[date.getMonth()]] = (revenueByMonth[months[date.getMonth()]] || 0) + Number(o.total_amount);
+        revenueByMonth[months[date.getMonth()]] =
+          (revenueByMonth[months[date.getMonth()]] || 0) + Number(o.total_amount);
       });
 
       const currentMonthIndex = new Date().getMonth();
@@ -82,16 +101,44 @@ export const useAdmin = () => {
     }
   };
 
+  const [warehouses, setWarehouses] = useState<any[]>([]);
+
+  const fetchWarehouses = async () => {
+    try {
+      const data = await AdminService.getWarehouses();
+      setWarehouses(data || []);
+      return data;
+    } catch (err: any) {
+      setError(err.customMessage || 'Failed to fetch warehouses');
+      return [];
+    }
+  };
+
+  const adjustStock = async (data: any) => {
+    setIsUpdating(true);
+    try {
+      await AdminService.adjustStock(data);
+    } catch (err: any) {
+      setError(err.customMessage || 'Failed to adjust stock');
+      throw err;
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   return {
     stats,
     recentSales,
     chartData,
     isLoading,
     error,
+    warehouses,
     fetchDashboardData,
     fetchOrderDetail,
     updateOrderStatus,
     getCustomers,
+    fetchWarehouses,
+    adjustStock,
     isUpdating,
   };
 };

@@ -1,7 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Button } from '../components/ui';
-import { Download, Calendar, TrendingUp, Users, ShoppingCart, DollarSign, Loader2, RefreshCcw } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import {
+  Download,
+  Calendar,
+  TrendingUp,
+  Users,
+  ShoppingCart,
+  DollarSign,
+  Loader2,
+  RefreshCcw,
+} from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from 'recharts';
 import { AdminService } from '@byteevolvr/api-client';
 
 export function AnalyticsPage() {
@@ -9,7 +28,6 @@ export function AnalyticsPage() {
   const [metrics, setMetrics] = useState({ revenue: 0, orders: 0, customers: 0, avgValue: 0 });
   const [salesData, setSalesData] = useState<{ name: string; revenue: number }[]>([]);
   const [topProducts, setTopProducts] = useState<{ name: string; sales: number }[]>([]);
-
 
   useEffect(() => {
     fetchAnalytics();
@@ -28,24 +46,25 @@ export function AnalyticsPage() {
         revenue: stats.totalRevenue || 0,
         orders: stats.salesCount || 0,
         customers: stats.customerCount || 0,
-        avgValue: stats.avgOrderValue || 0
+        avgValue: stats.avgOrderValue || 0,
       });
 
       // 4. Process Revenue Over Time (Daily)
       const last7Days: { name: string; revenue: number }[] = [];
 
       const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-      
+
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(d.getDate() - i);
         const dayName = days[d.getDay()];
         const dateStr = d.toISOString().split('T')[0];
-        
-        const dayRevenue = orders?.filter((o) => o.created_at.startsWith(dateStr))
-          .reduce((sum: number, o) => sum + Number(o.total_amount), 0) || 0;
 
-          
+        const dayRevenue =
+          orders
+            ?.filter((o: any) => o.created_at.startsWith(dateStr))
+            .reduce((sum: number, o: any) => sum + Number(o.total_amount), 0) || 0;
+
         last7Days.push({ name: dayName, revenue: dayRevenue });
       }
       setSalesData(last7Days);
@@ -53,22 +72,20 @@ export function AnalyticsPage() {
       // 5. Process Top Products (This would ideally come from a specialized backend route)
       // For now, we'll use a mock or process from orders if items are available
       const productSales: { [key: string]: number } = {};
-      orders?.forEach((order) => {
+      orders?.forEach((order: any) => {
         order.order_items?.forEach((item: { product_name: string; quantity: number }) => {
           productSales[item.product_name] = (productSales[item.product_name] || 0) + item.quantity;
         });
       });
 
-
       const sortedProducts = Object.entries(productSales)
         .map(([name, sales]) => ({ name, sales }))
         .sort((a, b) => b.sales - a.sales)
         .slice(0, 5);
-        
-      setTopProducts(sortedProducts.length > 0 ? sortedProducts : [
-        { name: 'Loading data...', sales: 0 }
-      ]);
 
+      setTopProducts(
+        sortedProducts.length > 0 ? sortedProducts : [{ name: 'Loading data...', sales: 0 }]
+      );
     } catch (err) {
       console.error('Error fetching analytics:', err);
     } finally {
@@ -90,7 +107,9 @@ export function AnalyticsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-display-sm font-semibold text-on-background">Analytics & Reports</h1>
-          <p className="text-body-sm text-on-surface-variant mt-1">Track your store's performance and growth</p>
+          <p className="text-body-sm text-on-surface-variant mt-1">
+            Track your store's performance and growth
+          </p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="gap-2" onClick={fetchAnalytics}>
@@ -111,7 +130,9 @@ export function AnalyticsPage() {
               <DollarSign className="h-5 w-5 text-primary" />
               <span className="font-medium text-sm uppercase tracking-wider">Total Revenue</span>
             </div>
-            <div className="text-3xl font-bold text-on-surface">₹{metrics.revenue.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-on-surface">
+              ₹{metrics.revenue.toLocaleString()}
+            </div>
             <div className="text-xs text-emerald-600 mt-2 font-medium flex items-center gap-1">
               <TrendingUp className="h-3 w-3" />
               Live cumulative sales
@@ -124,7 +145,9 @@ export function AnalyticsPage() {
               <ShoppingCart className="h-5 w-5 text-primary" />
               <span className="font-medium text-sm uppercase tracking-wider">Total Orders</span>
             </div>
-            <div className="text-3xl font-bold text-on-surface">{metrics.orders.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-on-surface">
+              {metrics.orders.toLocaleString()}
+            </div>
             <div className="text-xs text-emerald-600 mt-2 font-medium flex items-center gap-1">
               <TrendingUp className="h-3 w-3" />
               Successful transactions
@@ -150,7 +173,9 @@ export function AnalyticsPage() {
               <TrendingUp className="h-5 w-5 text-primary" />
               <span className="font-medium text-sm uppercase tracking-wider">Avg. Order Value</span>
             </div>
-            <div className="text-3xl font-bold text-on-surface">₹{Math.round(metrics.avgValue).toLocaleString()}</div>
+            <div className="text-3xl font-bold text-on-surface">
+              ₹{Math.round(metrics.avgValue).toLocaleString()}
+            </div>
             <div className="text-xs text-emerald-600 mt-2 font-medium flex items-center gap-1">
               <TrendingUp className="h-3 w-3" />
               Revenue per order
@@ -170,20 +195,43 @@ export function AnalyticsPage() {
                 <AreaChart data={salesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3B7BF8" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3B7BF8" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#3B7BF8" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3B7BF8" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="name" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} />
+                  <XAxis
+                    dataKey="name"
+                    stroke="#6b7280"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis
+                    stroke="#6b7280"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => `₹${value}`}
+                  />
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', backgroundColor: 'var(--md-sys-color-surface-container-high)' }}
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: '12px',
+                      border: 'none',
+                      boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+                      backgroundColor: 'var(--md-sys-color-surface-container-high)',
+                    }}
                     itemStyle={{ color: 'var(--md-sys-color-primary)', fontWeight: 600 }}
                     formatter={(value) => [`₹${Number(value).toLocaleString()}`, 'Revenue']}
-
                   />
-                  <Area type="monotone" dataKey="revenue" stroke="#3B7BF8" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#3B7BF8"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorRevenue)"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -197,10 +245,30 @@ export function AnalyticsPage() {
           <CardContent className="p-6">
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={topProducts} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                <BarChart
+                  data={topProducts}
+                  layout="vertical"
+                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
                   <XAxis type="number" hide />
-                  <YAxis dataKey="name" type="category" stroke="#4b5563" fontSize={10} width={100} tickLine={false} axisLine={false} />
-                  <Tooltip cursor={{fill: 'rgba(59, 123, 248, 0.1)'}} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }} />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    stroke="#4b5563"
+                    fontSize={10}
+                    width={100}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(59, 123, 248, 0.1)' }}
+                    contentStyle={{
+                      borderRadius: '8px',
+                      border: 'none',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                      fontSize: '12px',
+                    }}
+                  />
                   <Bar dataKey="sales" fill="#3B7BF8" radius={[0, 4, 4, 0]} barSize={12} />
                 </BarChart>
               </ResponsiveContainer>
