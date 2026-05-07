@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import * as adminController from '../controllers/adminController.js';
 import * as orderController from '../controllers/orderController.js';
 import * as productController from '../controllers/productController.js';
@@ -8,9 +8,9 @@ import * as warehouseController from '../controllers/warehouseController.js';
 import * as reportController from '../controllers/reportController.js';
 import * as returnController from '../controllers/returnController.js';
 
-
 import { authenticate, authorize } from '../middlewares/auth.js';
 import { validate } from '../middlewares/validate.js';
+import { catchAsync } from '../middlewares/error.js';
 import { productSchema, productUpdateSchema } from '../validators/productValidator.js';
 
 const router = express.Router();
@@ -35,7 +35,6 @@ router.get('/returns', returnController.getReturns);
 router.put('/returns/:id', returnController.updateReturnStatus);
 router.post('/returns', returnController.createReturnRequest);
 
-
 // Products
 router.get('/products', productController.getProducts);
 router.post('/products/bulk-import', productController.bulkImportProducts);
@@ -51,12 +50,11 @@ router.get('/customers/:id', adminController.getCustomerDetail);
 // Warehouse — static routes MUST come before dynamic /:id routes
 router.get('/warehouse', adminController.getWarehouses);
 router.post('/warehouse', adminController.createWarehouse);
-router.get('/warehouse/tasks', adminController.getWarehouseTasks);         // static: before /:id
-router.post('/warehouse/adjust-stock', warehouseController.adjustStock);   // static: before /:id
-router.post('/warehouse/tasks/pick', warehouseController.markTaskPicked);   // static: before /:id
+router.get('/warehouse/tasks', adminController.getWarehouseTasks); // static: before /:id
+router.post('/warehouse/adjust-stock', warehouseController.adjustStock); // static: before /:id
+router.post('/warehouse/tasks/pick', warehouseController.markTaskPicked); // static: before /:id
 router.get('/warehouse/:id/inventory', warehouseController.getWarehouseInventory);
 router.put('/warehouse/:id', adminController.updateWarehouse);
-
 
 // Notifications
 router.get('/notifications', adminController.getNotifications);
@@ -71,6 +69,22 @@ router.put('/cms/:pageSlug/:sectionKey', cmsController.updateCmsContent);
 
 // Reports
 router.get('/reports/invoice/:id', reportController.exportInvoice);
+
+// Audit
+router.get(
+  '/audit-logs',
+  catchAsync(async (req: Request, res: Response) => {
+    const { getAdminClient } = await import('../config/supabase.js');
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('audit_logs')
+      .select('*, user_profiles(full_name)')
+      .order('created_at', { ascending: false })
+      .limit(100);
+    if (error) throw error;
+    res.json(data);
+  })
+);
 
 // Upload
 

@@ -33,7 +33,7 @@ export class ReturnService {
     if (returnError) throw returnError;
 
     // 2. Create Return Items
-    const returnItems = data.items.map(item => ({
+    const returnItems = data.items.map((item) => ({
       return_id: returnRecord.id,
       order_item_id: item.orderItemId,
       quantity: item.quantity,
@@ -57,9 +57,14 @@ export class ReturnService {
   /**
    * Approve or Reject a return request
    */
-  async updateReturnStatus(returnId: string, status: 'approved' | 'rejected' | 'received' | 'refunded', notes?: string, adminId?: string) {
+  async updateReturnStatus(
+    returnId: string,
+    status: 'approved' | 'rejected' | 'received' | 'refunded',
+    notes?: string,
+    adminId?: string
+  ) {
     const admin = await getAdminClient();
-    
+
     const { data: returnRecord, error: fetchError } = await admin
       .from('order_returns')
       .select('*, order_return_items(*)')
@@ -77,13 +82,21 @@ export class ReturnService {
 
     // Logic for 'received' - Restock Inventory
     if (status === 'received') {
-      const { data: order } = await admin.from('orders').select('warehouse_id').eq('id', returnRecord.order_id).single();
+      const { data: order } = await admin
+        .from('orders')
+        .select('warehouse_id')
+        .eq('id', returnRecord.order_id)
+        .single();
       const warehouseId = order?.warehouse_id;
 
       for (const item of returnRecord.order_return_items) {
         // Fetch product_id from order_item
-        const { data: orderItem } = await admin.from('order_items').select('product_id').eq('id', item.order_item_id).single();
-        
+        const { data: orderItem } = await admin
+          .from('order_items')
+          .select('product_id')
+          .eq('id', item.order_item_id)
+          .single();
+
         if (orderItem) {
           await InventoryService.adjustStock({
             productId: orderItem.product_id,
@@ -101,7 +114,10 @@ export class ReturnService {
 
     // Logic for 'refunded' - Update order payment status
     if (status === 'refunded') {
-      await admin.from('orders').update({ payment_status: 'refunded', status: 'returned' }).eq('id', returnRecord.order_id);
+      await admin
+        .from('orders')
+        .update({ payment_status: 'refunded', status: 'returned' })
+        .eq('id', returnRecord.order_id);
     }
 
     // Log Activity
@@ -112,15 +128,26 @@ export class ReturnService {
       performed_by: adminId,
     });
 
+    await AuditService.log({
+      user_id: adminId,
+      action: 'RMA_STATUS_UPDATE',
+      module: 'returns',
+      entity_id: returnId,
+      new_data: { status, notes },
+    });
+
     return { success: true };
   }
 
   async getAllReturns(filters: any = {}) {
     const admin = await getAdminClient();
-    let query = admin.from('order_returns').select('*, user_profiles(full_name), orders(order_number)').order('created_at', { ascending: false });
-    
+    let query = admin
+      .from('order_returns')
+      .select('*, user_profiles(full_name), orders(order_number)')
+      .order('created_at', { ascending: false });
+
     if (filters.status) query = query.eq('status', filters.status);
-    
+
     const { data, error } = await query;
     if (error) throw error;
     return data;

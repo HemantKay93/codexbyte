@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { ProductService } from '../services/productService.js';
 import { catchAsync } from '../middlewares/error.js';
 import { CacheService } from '../services/cacheService.js';
-
+import { AuditService } from '../services/auditService.js';
+import { AuthRequest } from '../middlewares/auth.js';
 
 const productService = new ProductService();
 
@@ -16,7 +17,6 @@ export const getProducts = catchAsync(async (req: Request, res: Response) => {
   res.json(products);
 });
 
-
 export const getProduct = catchAsync(async (req: Request, res: Response) => {
   const cacheKey = `products:detail:${req.params.id}`;
   const cached = await CacheService.get(cacheKey);
@@ -27,22 +27,47 @@ export const getProduct = catchAsync(async (req: Request, res: Response) => {
   res.json(product);
 });
 
-
-export const createProduct = catchAsync(async (req: Request, res: Response) => {
+export const createProduct = catchAsync(async (req: AuthRequest, res: Response) => {
   const newProduct = await productService.createProduct(req.body);
+
+  await AuditService.log({
+    user_id: req.user?.id,
+    action: 'CREATE_PRODUCT',
+    module: 'products',
+    entity_id: newProduct.id,
+    new_data: newProduct,
+  });
+
   await CacheService.invalidatePattern('products:list:*');
   res.status(201).json(newProduct);
 });
 
-export const updateProduct = catchAsync(async (req: Request, res: Response) => {
+export const updateProduct = catchAsync(async (req: AuthRequest, res: Response) => {
   const updatedProduct = await productService.updateProduct(req.params.id, req.body);
+
+  await AuditService.log({
+    user_id: req.user?.id,
+    action: 'UPDATE_PRODUCT',
+    module: 'products',
+    entity_id: req.params.id,
+    new_data: req.body,
+  });
+
   await CacheService.del(`products:detail:${req.params.id}`);
   await CacheService.invalidatePattern('products:list:*');
   res.json(updatedProduct);
 });
 
-export const deleteProduct = catchAsync(async (req: Request, res: Response) => {
+export const deleteProduct = catchAsync(async (req: AuthRequest, res: Response) => {
   await productService.deleteProduct(req.params.id);
+
+  await AuditService.log({
+    user_id: req.user?.id,
+    action: 'DELETE_PRODUCT',
+    module: 'products',
+    entity_id: req.params.id,
+  });
+
   await CacheService.del(`products:detail:${req.params.id}`);
   await CacheService.invalidatePattern('products:list:*');
   res.status(204).end();

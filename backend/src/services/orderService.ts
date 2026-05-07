@@ -7,7 +7,6 @@ import { NotificationService } from './notificationService.js';
 import logger from './logger.js';
 import { notificationQueue, emailQueue } from '../jobs/index.js';
 
-
 const orderRepo = new OrderRepository();
 
 export class OrderService {
@@ -106,7 +105,6 @@ export class OrderService {
     return order;
   }
 
-
   async updateOrderStatus(id: string, updateData: any, userId?: string) {
     const { status, courier, trackingId, notes } = updateData;
     const admin = await getAdminClient();
@@ -185,8 +183,23 @@ export class OrderService {
         } catch (notifErr) {
           console.error('Failed to queue order notification:', notifErr);
         }
-      }
 
+        // Audit Logging
+        await AuditService.logOrderActivity({
+          order_id: id,
+          status: newStatus,
+          notes: notes || `Status updated to ${newStatus}`,
+          performed_by: userId,
+        });
+
+        await AuditService.log({
+          user_id: userId,
+          action: 'ORDER_STATUS_UPDATE',
+          module: 'orders',
+          entity_id: id,
+          new_data: { status: newStatus, notes },
+        });
+      }
 
       // Log Activity
       await AuditService.logOrderActivity({

@@ -1,25 +1,71 @@
-import React, { useState } from 'react';
-import { Card, CardContent, Button, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
-import { Search, Filter, ShieldAlert, Key, UserPlus, Settings, Package, ShoppingCart } from 'lucide-react';
-
-const mockLogs = [
-  { id: '1', user: 'Admin User', action: 'Settings Updated', details: 'Changed default currency to USD', time: '10 mins ago', type: 'system', icon: Settings },
-  { id: '2', user: 'System', action: 'Security Alert', details: 'Failed login attempt from IP 192.168.1.42', time: '1 hour ago', type: 'security', icon: ShieldAlert },
-  { id: '3', user: 'Jane Smith', action: 'Order Refunded', details: 'Refunded $356.39 for Order #ORD-7392', time: '2 hours ago', type: 'order', icon: ShoppingCart },
-  { id: '4', user: 'Admin User', action: 'API Key Generated', details: 'Created new production API key for Stripe', time: '3 hours ago', type: 'system', icon: Key },
-  { id: '5', user: 'John Doe', action: 'Product Updated', details: 'Updated stock for Premium Wireless Headphones', time: 'Yesterday', type: 'product', icon: Package },
-  { id: '6', user: 'Admin User', action: 'User Invited', details: 'Invited mike@byteevolvr.com as Support Agent', time: 'Yesterday', type: 'user', icon: UserPlus },
-];
+import React, { useState, useEffect } from 'react';
+import {
+  Card,
+  CardContent,
+  Button,
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  Input,
+} from '../components/ui';
+import {
+  Search,
+  Filter,
+  ShieldAlert,
+  Key,
+  UserPlus,
+  Settings,
+  Package,
+  ShoppingCart,
+} from 'lucide-react';
+import { AdminService } from '@byteevolvr/api-client';
+import { formatDistanceToNow } from 'date-fns';
 
 export function ActivityLogPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const data = await AdminService.getAuditLogs();
+        setLogs(data || []);
+      } catch (err) {
+        console.error('Failed to fetch logs:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLogs();
+  }, []);
+
+  const getLogIcon = (module: string) => {
+    switch (module) {
+      case 'auth':
+        return ShieldAlert;
+      case 'users':
+        return UserPlus;
+      case 'products':
+        return Package;
+      case 'orders':
+        return ShoppingCart;
+      default:
+        return Settings;
+    }
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-display-sm font-semibold text-on-background">System Activity Log</h1>
-          <p className="text-body-sm text-on-surface-variant mt-1">Audit trail of all administrative actions and security events</p>
+          <p className="text-body-sm text-on-surface-variant mt-1">
+            Audit trail of all administrative actions and security events
+          </p>
         </div>
         <Button variant="outline">Export CSV</Button>
       </div>
@@ -59,28 +105,49 @@ export function ActivityLogPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockLogs.map((log) => {
-                const Icon = log.icon;
-                return (
-                  <TableRow key={log.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className={`h-8 w-8 rounded flex items-center justify-center shrink-0 ${
-                          log.type === 'security' ? 'bg-error/10 text-error' :
-                          log.type === 'system' ? 'bg-primary/10 text-primary' :
-                          'bg-surface-container text-on-surface-variant'
-                        }`}>
-                          <Icon className="h-4 w-4" />
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-8 text-on-surface-variant">
+                    Loading audit logs...
+                  </TableCell>
+                </TableRow>
+              ) : (
+                logs.map((log) => {
+                  const Icon = getLogIcon(log.module);
+                  return (
+                    <TableRow key={log.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`h-8 w-8 rounded flex items-center justify-center shrink-0 ${
+                              log.module === 'auth'
+                                ? 'bg-error/10 text-error'
+                                : log.module === 'system'
+                                  ? 'bg-primary/10 text-primary'
+                                  : 'bg-surface-container text-on-surface-variant'
+                            }`}
+                          >
+                            <Icon className="h-4 w-4" />
+                          </div>
+                          <span className="font-medium text-on-surface">
+                            {log.action.replace(/_/g, ' ')}
+                          </span>
                         </div>
-                        <span className="font-medium text-on-surface">{log.action}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-on-surface-variant">{log.user}</TableCell>
-                    <TableCell className="text-sm text-on-surface-variant max-w-md truncate">{log.details}</TableCell>
-                    <TableCell className="text-right text-sm text-on-surface-variant">{log.time}</TableCell>
-                  </TableRow>
-                );
-              })}
+                      </TableCell>
+                      <TableCell className="text-on-surface-variant">
+                        {log.user_profiles?.full_name || 'System'}
+                      </TableCell>
+                      <TableCell className="text-sm text-on-surface-variant max-w-md truncate">
+                        {log.notes ||
+                          (log.new_data ? JSON.stringify(log.new_data) : 'No details available')}
+                      </TableCell>
+                      <TableCell className="text-right text-sm text-on-surface-variant">
+                        {formatDistanceToNow(new Date(log.created_at), { addSuffix: true })}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
             </TableBody>
           </Table>
         </CardContent>

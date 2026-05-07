@@ -107,7 +107,12 @@ export const AdminService = {
 
   processReturn: async (
     orderId: string,
-    data: { items: { productId: string; quantity: number }[]; warehouseId: string; reason: string; refundAmount?: number }
+    data: {
+      items: { productId: string; quantity: number }[];
+      warehouseId: string;
+      reason: string;
+      refundAmount?: number;
+    }
   ) => {
     const response = await apiClient.post(`/admin/orders/${orderId}/return`, data);
     return response.data;
@@ -122,6 +127,32 @@ export const AdminService = {
     const response = await apiClient.post('/admin/warehouse/tasks/pick', data);
     return response.data;
   },
+
+  // Returns (RMA)
+  getRmaReturns: async (params?: any) => {
+    const response = await apiClient.get('/admin/returns', { params });
+    return response.data;
+  },
+
+  updateRmaStatus: async (id: string, data: { status: string; notes?: string }) => {
+    const response = await apiClient.put(`/admin/returns/${id}`, data);
+    return response.data;
+  },
+
+  // Marketing & Coupons
+  getCoupons: async () => {
+    const response = await apiClient.get('/admin/marketing/coupons');
+    return response.data;
+  },
+
+  createCoupon: async (data: any) => {
+    const response = await apiClient.post('/admin/marketing/coupons', data);
+    return response.data;
+  },
+
+  // Audit Logs
+  getAuditLogs: async (params?: any) => {
+    const response = await apiClient.get('/admin/audit-logs', { params });
+    return response.data;
+  },
 };
-
-

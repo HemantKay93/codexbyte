@@ -5,7 +5,6 @@ import { AuditService } from '../services/auditService.js';
 import { catchAsync } from '../middlewares/error.js';
 import { AuthRequest } from '../middlewares/auth.js';
 
-
 export const getAllWarehouses = catchAsync(async (req: Request, res: Response) => {
   const admin = await getAdminClient();
   const { data, error } = await admin.from('warehouses').select('*').order('name');
@@ -13,29 +12,37 @@ export const getAllWarehouses = catchAsync(async (req: Request, res: Response) =
   res.json(data);
 });
 
-export const createWarehouse = catchAsync(async (req: Request, res: Response) => {
+export const createWarehouse = catchAsync(async (req: AuthRequest, res: Response) => {
   const admin = await getAdminClient();
   const { data, error } = await admin.from('warehouses').insert(req.body).select().single();
   if (error) throw error;
+
+  await AuditService.log({
+    user_id: req.user?.id,
+    action: 'CREATE_WAREHOUSE',
+    module: 'inventory',
+    entity_id: data.id,
+    new_data: data,
+  });
+
   res.status(201).json(data);
 });
 
 export const adjustStock = catchAsync(async (req: AuthRequest, res: Response) => {
-  console.log('[Warehouse] Processing stock adjustment:', req.body);
-  try {
-    const result = await InventoryService.adjustStock({
-      ...req.body,
-      userId: req.user?.id,
-    });
-    console.log('[Warehouse] Adjustment successful');
-    res.json(result);
-  } catch (error: any) {
-    console.error('[Warehouse] Adjustment error:', error);
-    res.status(error.status || 500).json({
-      message: error.message || 'Failed to adjust stock',
-      details: error.details || error,
-    });
-  }
+  const result = await InventoryService.adjustStock({
+    ...req.body,
+    userId: req.user?.id,
+  });
+
+  await AuditService.log({
+    user_id: req.user?.id,
+    action: 'ADJUST_STOCK',
+    module: 'inventory',
+    entity_id: req.body.productId,
+    new_data: req.body,
+  });
+
+  res.json(result);
 });
 
 export const getWarehouseInventory = catchAsync(async (req: Request, res: Response) => {
