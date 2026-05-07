@@ -84,7 +84,7 @@ export class OrderRepository {
     const { error: itemsError } = await admin.from('order_items').insert(orderItems);
     if (itemsError) throw itemsError;
 
-    return order;
+    return { ...order, order_items: orderItems };
   }
 
   async update(id: string, updateData: any) {

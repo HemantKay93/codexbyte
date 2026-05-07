@@ -215,14 +215,14 @@ export function POSPage() {
               </tr>
             </thead>
             <tbody>
-              ${(order.order_items || [])
+              ${(items || [])
                 .map(
                   (item: any) => `
                 <tr>
-                  <td>${item.product_name}</td>
-                  <td class="text-center">${item.quantity}</td>
-                  <td class="text-right">${Number(item.unit_price).toFixed(2)}</td>
-                  <td class="text-right">${Number(item.total_price).toFixed(2)}</td>
+                  <td>${item.product_name || item.name}</td>
+                  <td class="text-center">${item.quantity || item.qty}</td>
+                  <td class="text-right">${Number(item.unit_price || item.price).toFixed(2)}</td>
+                  <td class="text-right">${Number(item.total_price || item.price * item.qty).toFixed(2)}</td>
                 </tr>
               `
                 )
@@ -273,222 +273,227 @@ export function POSPage() {
   );
 
   return (
-    <div className="h-[calc(100vh-6rem)] flex gap-6">
-      {/* Products Grid */}
-      <div className="flex-1 flex flex-col space-y-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-display-sm font-semibold text-on-background">Point of Sale</h1>
-          {success && (
-            <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-4">
-              <div className="flex items-center gap-2 text-success font-medium">
-                <CheckCircle2 className="h-5 w-5" />
-                Order completed successfully!
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                className="gap-2 border-primary text-primary hover:bg-primary/5"
-                onClick={handlePrintReceipt}
-              >
-                <Printer className="h-4 w-4" />
-                Print Receipt
-              </Button>
-            </div>
-          )}
-        </div>
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-on-surface-variant" />
-          <input
-            type="text"
-            className="w-full h-11 pl-10 pr-4 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-colors"
-            placeholder="Search by name or SKU..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
-          {loading ? (
-            <div className="flex items-center justify-center h-40 text-on-surface-variant">
-              <Loader2 className="h-6 w-6 animate-spin mr-2" />
-              Loading products...
-            </div>
-          ) : filteredProducts.length === 0 ? (
-            <div className="flex items-center justify-center h-40 text-on-surface-variant">
-              No products found.
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
-              {filteredProducts.map((product) => (
-                <Card
-                  key={product.id}
-                  className="cursor-pointer hover:border-primary hover:shadow-md transition-all h-36 flex flex-col justify-between p-4 group bg-surface"
-                  onClick={() => addToCart(product)}
+    <>
+      <div className="h-[calc(100vh-6rem)] flex gap-6">
+        {/* Products Grid */}
+        <div className="flex-1 flex flex-col space-y-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-display-sm font-semibold text-on-background">Point of Sale</h1>
+            {success && (
+              <div className="flex items-center gap-4 animate-in fade-in slide-in-from-right-4">
+                <div className="flex items-center gap-2 text-success font-medium">
+                  <CheckCircle2 className="h-5 w-5" />
+                  Order completed successfully!
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-2 border-primary text-primary hover:bg-primary/5"
+                  onClick={handlePrintReceipt}
                 >
-                  <div>
-                    <div className="font-semibold text-on-surface line-clamp-2 group-hover:text-primary transition-colors text-sm">
-                      {product.name}
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <span className="text-[10px] font-mono text-on-surface-variant uppercase">
-                        {product.sku}
-                      </span>
-                      <Badge
-                        variant={product.stock_quantity > 0 ? 'success' : 'error'}
-                        className="text-[10px]"
-                      >
-                        {product.stock_quantity}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="text-lg font-bold text-primary">
-                    ₹{Number(product.price).toLocaleString()}
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Cart Sidebar */}
-      <Card className="w-96 flex flex-col h-full bg-surface-container-low border-l border-outline-variant shadow-none rounded-none -my-6 -mr-6 py-6 px-4">
-        <div className="flex items-center justify-between border-b border-outline-variant pb-4 mb-4">
-          <div className="flex items-center gap-2">
-            <ShoppingCart className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-lg text-on-surface">Current Order</span>
-          </div>
-          <Badge variant="info">{cart.reduce((a, b) => a + b.qty, 0)} items</Badge>
-        </div>
-
-        <div className="flex items-center gap-2 mb-4 bg-surface p-2 rounded border border-outline-variant">
-          <User className="h-4 w-4 text-on-surface-variant" />
-          <span className="text-sm text-on-surface-variant truncate max-w-[180px]">
-            {customer.name}
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="ml-auto text-xs py-1 h-auto"
-            onClick={() => {
-              setTempCustomer(customer);
-              setShowCustomerModal(true);
-            }}
-          >
-            Edit
-          </Button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
-          {cart.length === 0 ? (
-            <div className="text-center text-on-surface-variant text-sm py-20 flex flex-col items-center">
-              <ShoppingCart className="h-10 w-10 mb-2 opacity-20" />
-              Cart is empty.
-              <br />
-              Select items to start.
-            </div>
-          ) : (
-            cart.map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-col bg-surface p-3 rounded border border-outline-variant hover:border-outline transition-colors"
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <div className="font-medium text-sm text-on-surface leading-tight pr-4">
-                    {item.name}
-                  </div>
-                  <div className="font-bold text-sm">
-                    ₹{(Number(item.price) * item.qty).toLocaleString()}
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <div className="text-xs text-on-surface-variant font-medium">
-                    ₹{Number(item.price).toLocaleString()} × {item.qty}
-                  </div>
-                  <div className="flex items-center gap-1.5 bg-surface-container rounded-lg p-1 border border-outline-variant">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateQty(item.id, -1);
-                      }}
-                      className="p-1 text-on-surface hover:text-error transition-colors rounded hover:bg-surface"
-                    >
-                      <Minus className="h-3 w-3" />
-                    </button>
-                    <span className="text-xs font-bold w-6 text-center">{item.qty}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        updateQty(item.id, 1);
-                      }}
-                      className="p-1 text-on-surface hover:text-primary transition-colors rounded hover:bg-surface"
-                    >
-                      <Plus className="h-3 w-3" />
-                    </button>
-                  </div>
-                </div>
+                  <Printer className="h-4 w-4" />
+                  Print Receipt
+                </Button>
               </div>
-            ))
-          )}
+            )}
+          </div>
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-5 w-5 text-on-surface-variant" />
+            <input
+              type="text"
+              className="w-full h-11 pl-10 pr-4 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none transition-colors"
+              placeholder="Search by name or SKU..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            {loading ? (
+              <div className="flex items-center justify-center h-40 text-on-surface-variant">
+                <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                Loading products...
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="flex items-center justify-center h-40 text-on-surface-variant">
+                No products found.
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
+                {filteredProducts.map((product) => (
+                  <Card
+                    key={product.id}
+                    className="cursor-pointer hover:border-primary hover:shadow-md transition-all h-36 flex flex-col justify-between p-4 group bg-surface"
+                    onClick={() => addToCart(product)}
+                  >
+                    <div>
+                      <div className="font-semibold text-on-surface line-clamp-2 group-hover:text-primary transition-colors text-sm">
+                        {product.name}
+                      </div>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-[10px] font-mono text-on-surface-variant uppercase">
+                          {product.sku}
+                        </span>
+                        <Badge
+                          variant={product.stock_quantity > 0 ? 'success' : 'error'}
+                          className="text-[10px]"
+                        >
+                          {product.stock_quantity}
+                        </Badge>
+                      </div>
+                    </div>
+                    <div className="text-lg font-bold text-primary">
+                      ₹{Number(product.price).toLocaleString()}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="border-t border-outline-variant pt-4 mt-4 space-y-2">
-          <div className="flex justify-between text-sm text-on-surface-variant">
-            <span>Subtotal</span>
-            <span>₹{subtotal.toLocaleString()}</span>
+        {/* Cart Sidebar */}
+        <Card className="w-96 flex flex-col h-full bg-surface-container-low border-l border-outline-variant shadow-none rounded-none -my-6 -mr-6 py-6 px-4">
+          <div className="flex items-center justify-between border-b border-outline-variant pb-4 mb-4">
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="h-5 w-5 text-primary" />
+              <span className="font-semibold text-lg text-on-surface">Current Order</span>
+            </div>
+            <Badge variant="info">{cart.reduce((a, b) => a + b.qty, 0)} items</Badge>
           </div>
-          <div className="flex justify-between text-sm text-on-surface-variant">
-            <span>GST (18%)</span>
-            <span>₹{tax.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between text-2xl font-black text-on-surface pt-3 border-t border-outline-variant mt-2">
-            <span>Total</span>
-            <span className="text-primary">₹{total.toLocaleString()}</span>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-2 gap-3 mt-6">
-          <Button
-            variant="secondary"
-            className="gap-2 h-14 font-bold"
-            disabled={cart.length === 0 || isProcessing}
-            onClick={() => handleCheckout('cash')}
-          >
-            {isProcessing ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
+          <div className="flex items-center gap-2 mb-4 bg-surface p-2 rounded border border-outline-variant">
+            <User className="h-4 w-4 text-on-surface-variant" />
+            <span className="text-sm text-on-surface-variant truncate max-w-[180px]">
+              {customer.name}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto text-xs py-1 h-auto"
+              onClick={() => {
+                setTempCustomer(customer);
+                setShowCustomerModal(true);
+              }}
+            >
+              Edit
+            </Button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
+            {cart.length === 0 ? (
+              <div className="text-center text-on-surface-variant text-sm py-20 flex flex-col items-center">
+                <ShoppingCart className="h-10 w-10 mb-2 opacity-20" />
+                Cart is empty.
+                <br />
+                Select items to start.
+              </div>
             ) : (
-              <Banknote className="h-5 w-5" />
+              cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col bg-surface p-3 rounded border border-outline-variant hover:border-outline transition-colors"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="font-medium text-sm text-on-surface leading-tight pr-4">
+                      {item.name}
+                    </div>
+                    <div className="font-bold text-sm">
+                      ₹{(Number(item.price) * item.qty).toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="text-xs text-on-surface-variant font-medium">
+                      ₹{Number(item.price).toLocaleString()} × {item.qty}
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-surface-container rounded-lg p-1 border border-outline-variant">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateQty(item.id, -1);
+                        }}
+                        className="p-1 text-on-surface hover:text-error transition-colors rounded hover:bg-surface"
+                      >
+                        <Minus className="h-3 w-3" />
+                      </button>
+                      <span className="text-xs font-bold w-6 text-center">{item.qty}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateQty(item.id, 1);
+                        }}
+                        className="p-1 text-on-surface hover:text-primary transition-colors rounded hover:bg-surface"
+                      >
+                        <Plus className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
             )}
-            Cash
-          </Button>
-          <Button
-            className="gap-2 h-14 font-bold"
-            disabled={cart.length === 0 || isProcessing}
-            onClick={() => handleCheckout('card')}
-          >
-            {isProcessing ? (
-              <Loader2 className="h-5 w-5 animate-spin" />
-            ) : (
-              <CreditCard className="h-5 w-5" />
-            )}
-            Card
-          </Button>
-        </div>
-      </Card>
+          </div>
+
+          <div className="border-t border-outline-variant pt-4 mt-4 space-y-2">
+            <div className="flex justify-between text-sm text-on-surface-variant">
+              <span>Subtotal</span>
+              <span>₹{subtotal.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-sm text-on-surface-variant">
+              <span>GST (18%)</span>
+              <span>₹{tax.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between text-2xl font-black text-on-surface pt-3 border-t border-outline-variant mt-2">
+              <span>Total</span>
+              <span className="text-primary">₹{total.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 mt-6">
+            <Button
+              variant="secondary"
+              className="gap-2 h-14 font-bold"
+              disabled={cart.length === 0 || isProcessing}
+              onClick={() => handleCheckout('cash')}
+            >
+              {isProcessing ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Banknote className="h-5 w-5" />
+              )}
+              Cash
+            </Button>
+            <Button
+              className="gap-2 h-14 font-bold"
+              disabled={cart.length === 0 || isProcessing}
+              onClick={() => handleCheckout('card')}
+            >
+              {isProcessing ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <CreditCard className="h-5 w-5" />
+              )}
+              Card
+            </Button>
+          </div>
+        </Card>
+      </div>
       {/* Customer Edit Modal */}
       {showCustomerModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-          <Card className="w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
+          <Card
+            className="w-full max-w-[480px] min-w-[320px] shadow-2xl animate-in zoom-in-95 duration-200"
+            style={{ width: '480px' }}
+          >
             <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
               <h3 className="font-bold text-on-surface">Customer Details</h3>
               <button
                 onClick={() => setShowCustomerModal(false)}
-                className="text-on-surface-variant hover:text-on-surface"
+                className="text-on-surface-variant hover:text-on-surface text-xl"
               >
                 &times;
               </button>
             </div>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-6 space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
                   Full Name
@@ -498,6 +503,7 @@ export function POSPage() {
                   onChange={(e) => setTempCustomer({ ...tempCustomer, name: e.target.value })}
                   className="h-11"
                   placeholder="Customer Name"
+                  fullWidth
                 />
               </div>
               <div className="space-y-2">
@@ -510,6 +516,7 @@ export function POSPage() {
                   onChange={(e) => setTempCustomer({ ...tempCustomer, email: e.target.value })}
                   className="h-11"
                   placeholder="email@example.com"
+                  fullWidth
                 />
               </div>
               <div className="space-y-2">
@@ -521,17 +528,18 @@ export function POSPage() {
                   onChange={(e) => setTempCustomer({ ...tempCustomer, phone: e.target.value })}
                   className="h-11"
                   placeholder="00000 00000"
+                  fullWidth
                 />
               </div>
               <div className="pt-4 flex gap-3">
                 <Button
                   variant="ghost"
                   onClick={() => setShowCustomerModal(false)}
-                  className="flex-1 rounded-xl font-bold"
+                  className="flex-1 rounded-xl font-bold h-12"
                 >
                   Cancel
                 </Button>
-                <Button onClick={saveCustomer} className="flex-1 rounded-xl font-bold">
+                <Button onClick={saveCustomer} className="flex-1 rounded-xl font-bold h-12">
                   Save Details
                 </Button>
               </div>
@@ -539,6 +547,6 @@ export function POSPage() {
           </Card>
         </div>
       )}
-    </div>
+    </>
   );
 }
