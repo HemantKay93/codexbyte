@@ -71,10 +71,19 @@ export function InventoryPage() {
     document.body.removeChild(link);
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const filteredProducts = products.filter(
     (p) =>
       (p.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (p.sku && p.sku.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   const stats = {
@@ -173,7 +182,10 @@ export function InventoryPage() {
                 placeholder="Search products or SKUs..."
                 className="pl-10 h-10 rounded-xl"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
               />
             </div>
           </div>
@@ -216,7 +228,7 @@ export function InventoryPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredProducts.map((item) => (
+                paginatedProducts.map((item) => (
                   <TableRow
                     key={item.id}
                     className="hover:bg-surface-container-lowest transition-colors"
@@ -281,13 +293,27 @@ export function InventoryPage() {
         </CardContent>
         <div className="p-4 border-t border-outline-variant flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
           <div>
-            Showing {filteredProducts.length} of {products.length} items
+            Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
+            {Math.min(currentPage * itemsPerPage, filteredProducts.length)} of{' '}
+            {filteredProducts.length} items
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="h-8 rounded-lg" disabled>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 rounded-lg"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            >
               Previous
             </Button>
-            <Button variant="outline" size="sm" className="h-8 rounded-lg" disabled>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8 rounded-lg"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+            >
               Next
             </Button>
           </div>

@@ -32,13 +32,16 @@ export class AnalyticsService {
       .select('*, products(name, sku)')
       .lt('quantity', 10); // Hardcoded threshold for now, could be dynamic
 
+    const avgOrderValue = totalOrders && totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
     return {
-      revenue: totalRevenue,
-      totalOrders: totalOrders || 0,
+      totalRevenue,
+      salesCount: totalOrders || 0,
       pendingOrders: pendingOrders || 0,
-      activeUsers: totalUsers || 0,
-      lowStockAlerts: lowStock?.length || 0,
-      lowStockItems: lowStock,
+      customerCount: totalUsers || 0,
+      avgOrderValue,
+      lowStockAlertsCount: lowStock?.length || 0,
+      lowStockItems: lowStock || [],
     };
   }
 

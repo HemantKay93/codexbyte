@@ -38,7 +38,7 @@ export function POSPage() {
   async function fetchProducts() {
     setLoading(true);
     try {
-      const data = await ProductService.getProducts({ status: 'active' });
+      const data = await AdminService.getPosProducts({ status: 'active' });
       setProducts(data);
     } catch (err) {
       console.error('Error fetching products:', err);

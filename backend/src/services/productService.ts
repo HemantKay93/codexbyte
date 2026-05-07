@@ -77,7 +77,8 @@ export class ProductService {
     return await productRepo.delete(id);
   }
   async bulkImportProducts(products: any[]) {
-    const sanitizedProducts = products.map((data) => ({
+    const timestamp = Date.now();
+    const sanitizedProducts = products.map((data, index) => ({
       name: data.name,
       description: data.description || '',
       price: Number(data.price) || 0,
@@ -85,7 +86,7 @@ export class ProductService {
       image_url: data.image_url || '',
       category: data.category || 'General',
       brand: data.brand || '',
-      sku: data.sku || `PROD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      sku: data.sku || `PROD-${timestamp}-${index}-${Math.floor(1000 + Math.random() * 9000)}`,
       stock_quantity: Number(data.stock_quantity) || 0,
       status: data.status || 'active',
       images: Array.isArray(data.images) ? data.images : data.image_url ? [data.image_url] : [],

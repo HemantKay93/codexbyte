@@ -40,7 +40,12 @@ export const AdminService = {
   },
 
   createOrder: async (data: any) => {
-    const response = await apiClient.post('/orders', data);
+    const response = await apiClient.post('/pos/checkout', data);
+    return response.data;
+  },
+
+  getPosProducts: async (params?: any) => {
+    const response = await apiClient.get('/pos/products', { params });
     return response.data;
   },
 

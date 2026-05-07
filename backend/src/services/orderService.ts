@@ -70,7 +70,9 @@ export class OrderService {
       order_number: orderNumber,
       status: orderData.status || 'pending',
       payment_status:
-        orderData.payment_status || (paymentMethod === 'razorpay' ? 'paid' : 'pending'),
+        orderData.paymentStatus ||
+        orderData.payment_status ||
+        (paymentMethod === 'razorpay' ? 'paid' : 'pending'),
       subtotal,
       tax_amount: tax,
       total_amount: totalAmount || subtotal + tax,

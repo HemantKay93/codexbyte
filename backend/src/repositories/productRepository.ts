@@ -20,24 +20,16 @@ export class ProductRepository {
 
   async findById(id: string) {
     const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('products')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
+    const { data, error } = await admin.from('products').select('*').eq('id', id).single();
+
     if (error) throw error;
     return data;
   }
 
   async create(productData: any) {
     const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('products')
-      .insert([productData])
-      .select()
-      .single();
-    
+    const { data, error } = await admin.from('products').insert([productData]).select().single();
+
     if (error) throw error;
     return data;
   }
@@ -50,18 +42,15 @@ export class ProductRepository {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
 
   async delete(id: string) {
     const admin = await getAdminClient();
-    const { error } = await admin
-      .from('products')
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await admin.from('products').delete().eq('id', id);
+
     if (error) throw error;
     return true;
   }
@@ -69,9 +58,9 @@ export class ProductRepository {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('products')
-      .insert(products)
+      .upsert(products, { onConflict: 'sku' })
       .select();
-    
+
     if (error) throw error;
     return data;
   }

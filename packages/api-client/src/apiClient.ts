@@ -1,8 +1,10 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-const metaEnv = (import.meta as ImportMeta & {
-  env?: Record<string, string | undefined>;
-}).env;
+const metaEnv = (
+  import.meta as ImportMeta & {
+    env?: Record<string, string | undefined>;
+  }
+).env;
 
 const BASE_URL = metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api';
 
@@ -43,9 +45,11 @@ apiClient.interceptors.response.use(
     if ((isNetworkError || isServerError) && (config._retryCount || 0) < MAX_RETRIES) {
       config._retryCount = (config._retryCount || 0) + 1;
       const delay = RETRY_DELAY * Math.pow(2, config._retryCount - 1); // Exponential backoff
-      
-      console.warn(`[API] Retrying request (${config._retryCount}/${MAX_RETRIES}) in ${delay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+
+      console.warn(
+        `[API] Retrying request (${config._retryCount}/${MAX_RETRIES}) in ${delay}ms...`
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay));
       return apiClient(config);
     }
 
@@ -55,13 +59,17 @@ apiClient.interceptors.response.use(
       localStorage.removeItem('auth_token');
       localStorage.removeItem('admin_token');
       console.error('Session expired. Please login again.');
-      
-      // Optional: window.location.href = '/login' if not in a service context
+
+      // Redirect to login if on the client side
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
     }
 
     // 3. Centralized Error Reporting
-    const errorMessage = (error.response?.data as any)?.message || error.message || 'An unexpected error occurred';
-    
+    const errorMessage =
+      (error.response?.data as any)?.message || error.message || 'An unexpected error occurred';
+
     return Promise.reject({
       ...error,
       customMessage: errorMessage,

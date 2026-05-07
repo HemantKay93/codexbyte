@@ -12,7 +12,6 @@ import { createServer } from 'http';
 import { initSockets } from './sockets/index.js';
 import './jobs/index.js'; // Initialize background workers
 
-
 // Route Imports
 import productRoutes from './routes/productRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
@@ -28,7 +27,6 @@ import userRoutes from './routes/userRoutes.js';
 import posRoutes from './routes/posRoutes.js';
 import marketingRoutes from './routes/marketingRoutes.js';
 
-
 import * as reportController from './controllers/reportController.js';
 import { authenticate, authorize } from './middlewares/auth.js';
 
@@ -40,7 +38,25 @@ const PORT = process.env.PORT || 8080;
 
 // Security Middlewares
 app.use(helmet());
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || origin.startsWith('http://localhost:')) {
+        callback(null, true);
+      } else if (
+        process.env.ALLOWED_ORIGINS &&
+        process.env.ALLOWED_ORIGINS.split(',').includes(origin)
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 app.use(express.json());
 
 // Rate Limiting
@@ -66,7 +82,6 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/pos', posRoutes);
 app.use('/api/v1/marketing', marketingRoutes);
 
-
 app.get(
   '/api/v1/reports/export',
   authenticate,
@@ -86,7 +101,7 @@ app.use('/api/shipping', shippingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/pos', posRoutes);
 app.use('/api/marketing', marketingRoutes);
-
+app.use('/api/warehouse', warehouseRoutes);
 
 app.get(
   '/api/reports/export',
@@ -121,4 +136,3 @@ httpServer.listen(PORT, () => {
 });
 
 export default app;
-

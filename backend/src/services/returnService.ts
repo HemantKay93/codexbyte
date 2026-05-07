@@ -82,12 +82,15 @@ export class ReturnService {
 
     // Logic for 'received' - Restock Inventory
     if (status === 'received') {
-      const { data: order } = await admin
-        .from('orders')
-        .select('warehouse_id')
-        .eq('id', returnRecord.order_id)
+      // Resolve warehouse for restocking (orders table has no warehouse_id)
+      const { data: defaultWh } = await admin
+        .from('warehouses')
+        .select('id')
+        .eq('is_active', true)
+        .limit(1)
         .single();
-      const warehouseId = order?.warehouse_id;
+
+      const warehouseId = defaultWh?.id;
 
       for (const item of returnRecord.order_return_items) {
         // Fetch product_id from order_item

@@ -14,37 +14,54 @@ if (!supabaseUrl || !supabaseKey) {
   console.warn('CRITICAL: Missing Supabase configuration. Using fallbacks if available.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl!, supabaseKey!);
 
+let adminClient: any = null;
 let cachedAdminToken: string | null = null;
 let tokenExpiresAt = 0;
 
 export const getAdminClient = async () => {
   // 1. Preferred: Service Role Key (Bypasses RLS)
   if (serviceRoleKey) {
-    return createClient(supabaseUrl!, serviceRoleKey, {
-      auth: { persistSession: false }
+    if (!adminClient || adminClient.supabaseKey !== serviceRoleKey) {
+      adminClient = createClient(supabaseUrl!, serviceRoleKey, {
+        auth: { persistSession: false },
+      });
+    }
+    return adminClient;
+  }
+
+  // 2. Fallback: Authenticate as Admin user using env variables
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+
+  if (!adminEmail || !adminPassword) {
+    console.error(
+      'CRITICAL: Missing SUPABASE_SERVICE_ROLE_KEY and ADMIN_EMAIL/ADMIN_PASSWORD. Admin operations will fail.'
+    );
+    return supabase;
+  }
+
+  if (!cachedAdminToken || Date.now() > tokenExpiresAt) {
+    const tempClient = createClient(supabaseUrl!, supabaseKey!);
+    const { data, error } = await tempClient.auth.signInWithPassword({
+      email: adminEmail,
+      password: adminPassword,
+    });
+
+    if (error || !data.session) {
+      console.error('CRITICAL: Admin Supabase login failed. Falling back to ANON key.');
+      return supabase;
+    }
+
+    cachedAdminToken = data.session.access_token;
+    tokenExpiresAt = Date.now() + data.session.expires_in * 1000 - 60000;
+
+    // Recreate client with new token
+    adminClient = createClient(supabaseUrl!, supabaseKey!, {
+      global: { headers: { Authorization: `Bearer ${cachedAdminToken}` } },
     });
   }
 
-  // 2. Fallback: Authenticate as Admin user
-  if (!cachedAdminToken || Date.now() > tokenExpiresAt) {
-    const tempClient = createClient(supabaseUrl!, supabaseKey!);
-    const { data, error } = await tempClient.auth.signInWithPassword({ 
-      email: 'admin@byteevolvr.com', 
-      password: 'Admin@123' 
-    });
-    
-    if (error || !data.session) {
-      console.error("CRITICAL: Admin Supabase login failed. Falling back to ANON key.");
-      return supabase;
-    }
-    
-    cachedAdminToken = data.session.access_token;
-    tokenExpiresAt = Date.now() + (data.session.expires_in * 1000) - 60000;
-  }
-  
-  return createClient(supabaseUrl!, supabaseKey!, {
-    global: { headers: { Authorization: `Bearer ${cachedAdminToken}` } }
-  });
+  return adminClient || supabase;
 };
