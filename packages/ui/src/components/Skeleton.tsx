@@ -7,11 +7,11 @@ interface SkeletonProps {
   borderRadius?: string | number;
 }
 
-export const Skeleton: React.FC<SkeletonProps> = ({ 
-  className = '', 
-  width, 
-  height, 
-  borderRadius 
+export const Skeleton: React.FC<SkeletonProps> = ({
+  className = '',
+  width,
+  height,
+  borderRadius,
 }) => {
   const style: React.CSSProperties = {
     width: width,

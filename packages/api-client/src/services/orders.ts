@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-const metaEnv = (import.meta as ImportMeta & {
-  env?: Record<string, string | undefined>;
-}).env;
+const metaEnv = (
+  import.meta as ImportMeta & {
+    env?: Record<string, string | undefined>;
+  }
+).env;
 
 const api = axios.create({
   baseURL: metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
@@ -13,7 +15,7 @@ api.interceptors.request.use((config) => {
   const adminToken = localStorage.getItem('admin_token');
   const customerToken = localStorage.getItem('sb-access-token');
   const token = adminToken || customerToken;
-  
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
