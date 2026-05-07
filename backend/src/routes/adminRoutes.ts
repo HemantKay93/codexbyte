@@ -6,6 +6,8 @@ import * as reviewController from '../controllers/reviewController.js';
 import * as cmsController from '../controllers/cmsController.js';
 import * as warehouseController from '../controllers/warehouseController.js';
 import * as reportController from '../controllers/reportController.js';
+import * as returnController from '../controllers/returnController.js';
+
 
 import { authenticate, authorize } from '../middlewares/auth.js';
 import { validate } from '../middlewares/validate.js';
@@ -27,6 +29,12 @@ router.get('/orders/:id', orderController.getOrderById);
 router.get('/orders/:id/activity', adminController.getOrderActivity);
 router.put('/orders/:id', orderController.updateOrder);
 router.post('/orders/:id/return', orderController.processReturn);
+
+// Returns (RMA)
+router.get('/returns', returnController.getReturns);
+router.put('/returns/:id', returnController.updateReturnStatus);
+router.post('/returns', returnController.createReturnRequest);
+
 
 // Products
 router.get('/products', productController.getProducts);

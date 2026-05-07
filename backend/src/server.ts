@@ -8,7 +8,10 @@ import { fileURLToPath } from 'url';
 
 import logger from './services/logger.js';
 import { errorHandler } from './middlewares/error.js';
+import { createServer } from 'http';
+import { initSockets } from './sockets/index.js';
 import './jobs/index.js'; // Initialize background workers
+
 
 // Route Imports
 import productRoutes from './routes/productRoutes.js';
@@ -23,6 +26,8 @@ import shippingRoutes from './routes/shippingRoutes.js';
 import warehouseRoutes from './routes/warehouseRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import posRoutes from './routes/posRoutes.js';
+import marketingRoutes from './routes/marketingRoutes.js';
+
 
 import * as reportController from './controllers/reportController.js';
 import { authenticate, authorize } from './middlewares/auth.js';
@@ -59,6 +64,8 @@ app.use('/api/v1/shipping', shippingRoutes);
 app.use('/api/v1/warehouse', warehouseRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/pos', posRoutes);
+app.use('/api/v1/marketing', marketingRoutes);
+
 
 app.get(
   '/api/v1/reports/export',
@@ -78,6 +85,8 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/shipping', shippingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/pos', posRoutes);
+app.use('/api/marketing', marketingRoutes);
+
 
 app.get(
   '/api/reports/export',
@@ -104,8 +113,12 @@ app.get('/health', (req, res) => {
 // Error Handling
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+const httpServer = createServer(app);
+initSockets(httpServer);
+
+httpServer.listen(PORT, () => {
   logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
 });
 
 export default app;
+
