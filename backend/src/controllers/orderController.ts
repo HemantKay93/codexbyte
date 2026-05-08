@@ -26,7 +26,7 @@ export const getMyOrders = catchAsync(async (req: AuthRequest, res: Response) =>
 });
 
 export const createOrder = catchAsync(async (req: AuthRequest, res: Response) => {
-  const order = await orderService.createOrder(req.user?.id as string, req.body);
+  const order = await orderService.createOrder(req.user?.id as string, req.body, req.user?.email);
   res.status(201).json(order);
 });
 

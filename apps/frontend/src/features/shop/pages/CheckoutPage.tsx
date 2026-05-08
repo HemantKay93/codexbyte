@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore, useUserStore } from '@byteevolvr/store';
-import { OrderService } from '@byteevolvr/api-client';
+import { OrderService, ShippingService } from '@byteevolvr/api-client';
 import { ArrowLeft, Loader2, CreditCard, Banknote, MapPin, Truck } from 'lucide-react';
 import { Button } from '@byteevolvr/ui';
 
@@ -15,16 +15,65 @@ export function CheckoutPage() {
 
   const [paymentMethod, setPaymentMethod] = useState<'razorpay' | 'cod'>('cod');
   const [shippingAddress, setShippingAddress] = useState({
-    fullName: user?.full_name || '',
+    full_name: user?.full_name || '',
     phone: '',
-    address: '',
+    line_1: '',
     city: '',
     state: '',
-    pincode: '',
+    postal_code: '',
   });
 
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPassword, setGuestPassword] = useState('');
+
+  const subtotal = totalAmount();
+
+  const [shippingRates, setShippingRates] = useState<any[]>([]);
+  const [selectedRate, setSelectedRate] = useState<number>(0);
+  const [calculatingShipping, setCalculatingShipping] = useState(false);
+
+  React.useEffect(() => {
+    const fetchRates = async () => {
+      if (shippingAddress.postal_code.length === 6) {
+        setCalculatingShipping(true);
+        try {
+          const data = await ShippingService.calculateShippingRates({
+            pincode: shippingAddress.postal_code,
+            weight: 1, // Default weight
+            subtotal,
+          });
+
+          if (data.rates && data.rates.length > 0) {
+            setShippingRates(data.rates);
+            // Default to cheapest rate
+            const cheapest = data.rates.reduce(
+              (min: any, r: any) => (r.rate < min.rate ? r : min),
+              data.rates[0]
+            );
+            setSelectedRate(cheapest.rate);
+          } else if (data.data?.available_courier_companies) {
+            // Shiprocket format
+            const rates = data.data.available_courier_companies.map((c: any) => ({
+              courier_name: c.courier_name,
+              rate: Number(c.rate),
+              estimated_delivery_days: c.estimated_delivery_days,
+            }));
+            setShippingRates(rates);
+            setSelectedRate(rates[0]?.rate || 0);
+          }
+        } catch (err) {
+          console.error('Failed to fetch shipping rates', err);
+        } finally {
+          setCalculatingShipping(false);
+        }
+      } else {
+        setShippingRates([]);
+        setSelectedRate(0);
+      }
+    };
+
+    fetchRates();
+  }, [shippingAddress.postal_code, subtotal]);
 
   React.useEffect(() => {
     async function fetchLatestAddress() {
@@ -41,21 +90,20 @@ export function CheckoutPage() {
       if (data && !error) {
         setShippingAddress((prev) => ({
           ...prev,
-          fullName: data.full_name || prev.fullName,
+          full_name: data.full_name || prev.full_name,
           phone: data.phone || prev.phone,
-          address: data.line_1 || prev.address,
+          line_1: data.line_1 || prev.line_1,
           city: data.city || prev.city,
           state: data.state || prev.state,
-          pincode: data.postal_code || prev.pincode,
+          postal_code: data.postal_code || prev.postal_code,
         }));
       }
     }
     fetchLatestAddress();
   }, [user]);
 
-  const subtotal = totalAmount();
   const tax = subtotal * 0.18; // 18% GST
-  const shipping = subtotal > 5000 || subtotal === 0 ? 0 : 500;
+  const shipping = selectedRate;
   const finalTotalAmount = subtotal + tax + shipping;
 
   // Redirect if cart is empty
@@ -89,6 +137,7 @@ export function CheckoutPage() {
         })),
         shippingAddress,
         paymentMethod,
+        shippingFee: selectedRate,
         totalAmount: finalTotalAmount,
       };
 
@@ -202,8 +251,8 @@ export function CheckoutPage() {
                     </label>
                     <input
                       required
-                      name="fullName"
-                      value={shippingAddress.fullName}
+                      name="full_name"
+                      value={shippingAddress.full_name}
                       onChange={handleInputChange}
                       className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
                       placeholder="John Doe"
@@ -228,8 +277,8 @@ export function CheckoutPage() {
                     </label>
                     <input
                       required
-                      name="address"
-                      value={shippingAddress.address}
+                      name="line_1"
+                      value={shippingAddress.line_1}
                       onChange={handleInputChange}
                       className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
                       placeholder="Flat No, Building, Street"
@@ -267,8 +316,8 @@ export function CheckoutPage() {
                     </label>
                     <input
                       required
-                      name="pincode"
-                      value={shippingAddress.pincode}
+                      name="postal_code"
+                      value={shippingAddress.postal_code}
                       onChange={handleInputChange}
                       className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
                       placeholder="400001"
@@ -369,13 +418,34 @@ export function CheckoutPage() {
                   <span className="text-white font-medium">₹{tax.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between text-brand-muted pb-4 border-b border-white/10">
-                  <span>Shipping</span>
+                  <div className="flex flex-col">
+                    <span>Shipping</span>
+                    {shippingRates.length > 0 && (
+                      <select
+                        value={selectedRate}
+                        onChange={(e) => setSelectedRate(Number(e.target.value))}
+                        className="text-[10px] bg-transparent border-none text-accent focus:ring-0 p-0 cursor-pointer"
+                      >
+                        {shippingRates.map((r, i) => (
+                          <option key={i} value={r.rate} className="bg-[#070D1A] text-white">
+                            {r.courier_name} (₹{r.rate})
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
                   <span
                     className={
                       shipping === 0 ? 'text-green-400 font-medium' : 'text-white font-medium'
                     }
                   >
-                    {shipping === 0 ? 'Free' : `₹${shipping.toLocaleString('en-IN')}`}
+                    {calculatingShipping ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : shipping === 0 ? (
+                      'Free'
+                    ) : (
+                      `₹${shipping.toLocaleString('en-IN')}`
+                    )}
                   </span>
                 </div>
                 <div className="flex justify-between text-xl font-display font-bold text-white pt-2">

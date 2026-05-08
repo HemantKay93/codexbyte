@@ -23,7 +23,7 @@ export class OrderService {
     return await orderRepo.findByUserId(userId, email);
   }
 
-  async createOrder(userId: string | undefined, orderData: any) {
+  async createOrder(userId: string | undefined, orderData: any, userEmail?: string) {
     const { items, totalAmount, shippingAddress } = orderData;
     const paymentMethod = orderData.paymentMethod || orderData.payment_method;
 
@@ -75,10 +75,13 @@ export class OrderService {
         (paymentMethod === 'razorpay' ? 'paid' : 'pending'),
       subtotal,
       tax_amount: tax,
-      total_amount: totalAmount || subtotal + tax,
+      shipping_amount: orderData.shippingFee || 0,
+      total_amount: totalAmount || subtotal + tax + (orderData.shippingFee || 0),
       payment_method: paymentMethod || 'cash',
-      customer_name: shippingAddress?.name || 'Walk-in Customer',
-      customer_email: shippingAddress?.email || 'walkin@customer.com',
+      shipping_address: shippingAddress,
+      customer_name: shippingAddress?.full_name || shippingAddress?.name || 'Walk-in Customer',
+      customer_email:
+        shippingAddress?.email || orderData.email || userEmail || 'walkin@customer.com',
     };
 
     const order = await orderRepo.create(dbOrderData, items);

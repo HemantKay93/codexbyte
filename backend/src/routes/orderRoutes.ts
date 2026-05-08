@@ -7,7 +7,7 @@ const router = express.Router();
 // Customer routes
 router.get('/me', authenticate, orderController.getMyOrders);
 router.get('/:id/items', authenticate, orderController.getOrderItems);
-router.post('/', authenticate, orderController.createOrder);
+router.post('/', orderController.createOrder);
 
 // Admin routes
 router.get('/admin', authenticate, authorize('admin', 'super-admin'), orderController.getAllOrders);

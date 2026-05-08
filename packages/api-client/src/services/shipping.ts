@@ -6,14 +6,13 @@ export const ShippingService = {
     return response.data;
   },
 
-
   getTrackingById: async (trackingId: string) => {
     const response = await apiClient.get(`/tracking/${trackingId}`);
     return response.data;
   },
 
-  calculateShippingRates: async (payload: any) => {
-    const response = await apiClient.post('/shipping/rates', payload);
+  calculateShippingRates: async (params: any) => {
+    const response = await apiClient.get('/shipping/rates', { params });
     return response.data;
-  }
+  },
 };

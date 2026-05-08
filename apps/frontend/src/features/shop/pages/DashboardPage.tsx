@@ -18,7 +18,7 @@ import {
   Calendar,
   CreditCard,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { numberToWords } from '@/lib/utils';
 
 const formatPrice = (value: number) =>
@@ -52,6 +52,7 @@ const labelStyle: React.CSSProperties = {
 export function DashboardPage() {
   const { user, logout } = useUserStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const [orders, setOrders] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
@@ -80,7 +81,7 @@ export function DashboardPage() {
 
   useEffect(() => {
     if (user) fetchData();
-  }, [user]);
+  }, [user, location.key]); // Refresh on navigation/mount
 
   const fetchData = async () => {
     setLoading(true);
@@ -265,24 +266,31 @@ export function DashboardPage() {
               </div>
               <div class="address-grid">
                 <div class="address-box">
-                  <p><strong>${order.customer_name || profile?.full_name || 'Customer'}</strong></p>
-                  <p>${order.customer_email || user?.email || ''}</p>
-                  <p>GSTIN: N/A</p>
+                  <p><strong>${order.customer_name || 'Customer'}</strong></p>
+                  <p>${order.customer_email || ''}</p>
                   <p>POS: Maharashtra</p>
                 </div>
                 <div class="address-box">
-                  ${
-                    order.shipping_address
-                      ? `
-                    <p><strong>${order.shipping_address.full_name}</strong></p>
-                    <p>${order.shipping_address.line_1}</p>
-                    ${order.shipping_address.line_2 ? `<p>${order.shipping_address.line_2}</p>` : ''}
-                    <p>${order.shipping_address.city}, ${order.shipping_address.state} - ${order.shipping_address.postal_code}</p>
-                    <p>Mobile: ${order.shipping_address.phone}</p>
-                  `
-                      : '<p>Address not available</p>'
-                  }
-                  <p>Email: ${order.customer_email || user?.email || ''}</p>
+                  ${(() => {
+                    try {
+                      const addr =
+                        typeof order.shipping_address === 'string'
+                          ? JSON.parse(order.shipping_address)
+                          : order.shipping_address;
+
+                      if (!addr || !addr.full_name) return '<p>Address not available</p>';
+
+                      return `
+                        <p><strong>${addr.full_name}</strong></p>
+                        <p>${addr.line_1}</p>
+                        ${addr.line_2 ? `<p>${addr.line_2}</p>` : ''}
+                        <p>${addr.city}, ${addr.state} - ${addr.postal_code}</p>
+                        <p>Mobile: ${addr.phone}</p>
+                      `;
+                    } catch (e) {
+                      return '<p>Address not available</p>';
+                    }
+                  })()}
                 </div>
               </div>
 
@@ -326,9 +334,10 @@ export function DashboardPage() {
                 </div>
                 <div>
                   <table class="totals-table">
-                    <tr><td>Sub Total</td><td class="text-right">${Number(order.subtotal || order.total_amount * 0.82).toFixed(2)}</td></tr>
+                    <tr><td>Sub Total</td><td class="text-right">${Number(order.subtotal || 0).toFixed(2)}</td></tr>
                     <tr><td>CGST 9%</td><td class="text-right">${cgst.toFixed(2)}</td></tr>
                     <tr><td>SGST 9%</td><td class="text-right">${sgst.toFixed(2)}</td></tr>
+                    <tr><td>Shipping</td><td class="text-right">${Number(order.shipping_amount || 0).toFixed(2)}</td></tr>
                     <tr><td>Round Off</td><td class="text-right">0.00</td></tr>
                     <tr class="total-bar"><td>Total</td><td class="text-right">Rs ${Number(order.total_amount).toFixed(2)}</td></tr>
                   </table>
