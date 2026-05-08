@@ -58,11 +58,13 @@ apiClient.interceptors.response.use(
       // Clear token if definitely invalid
       localStorage.removeItem('auth_token');
       localStorage.removeItem('admin_token');
+      localStorage.removeItem('byteevolvr-user-storage'); // Clear persisted user state on auth failure
       console.error('Session expired. Please login again.');
 
       // Redirect to login if on the client side
       if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
+        const loginPath = window.location.pathname.startsWith('/shop') ? '/shop/login' : '/login';
+        window.location.href = loginPath;
       }
     }
 

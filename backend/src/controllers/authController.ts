@@ -7,16 +7,24 @@ const authService = new AuthService();
 
 export const login = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const result = await authService.login(email, password);
+  console.debug(`[Auth] Login attempt for: ${email}`);
 
-  await AuditService.log({
-    user_id: result.user.id,
-    action: 'USER_LOGIN',
-    module: 'auth',
-    new_data: { email: result.user.email },
-  });
+  try {
+    const result = await authService.login(email, password);
+    console.debug(`[Auth] Login successful for: ${email}`);
 
-  res.json(result);
+    await AuditService.log({
+      user_id: result.user.id,
+      action: 'USER_LOGIN',
+      module: 'auth',
+      new_data: { email: result.user.email },
+    });
+
+    res.json(result);
+  } catch (error: any) {
+    console.warn(`[Auth] Login failed for: ${email}. Error: ${error.message}`);
+    throw error;
+  }
 });
 
 export const signup = catchAsync(async (req: Request, res: Response) => {

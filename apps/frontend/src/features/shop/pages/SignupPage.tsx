@@ -21,7 +21,7 @@ export function SignupPage() {
 
     try {
       const { user, token } = await AuthService.register(email, password, name);
-      setToken(token);
+      setToken(token, 'auth');
       setUser(user);
       navigate('/shop/dashboard');
     } catch (signUpError: unknown) {

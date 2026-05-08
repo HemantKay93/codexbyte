@@ -121,7 +121,7 @@ app.get('/api/admin/support/tickets', (req, res) => res.json([]));
 app.get('/api/admin/team', (req, res) => res.json([]));
 
 // Health Check
-app.get('/health', (req, res) => {
+app.get(['/health', '/api/health'], (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 

@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 import { supabase, getAdminClient } from '../config/supabase.js';
 import { AppError } from './error.js';
+import logger from '../services/logger.js';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -8,32 +12,53 @@ export interface AuthRequest extends Request {
 
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return next(new AppError('Unauthorized', 401));
   }
 
   const token = authHeader.split(' ')[1];
+  let user: any = null;
+  let role: string = 'user';
+  let fullName: string = '';
+
+  // 1. Try Supabase Auth
   const {
-    data: { user },
-    error,
+    data: { user: sbUser },
+    error: sbError,
   } = await supabase.auth.getUser(token);
 
-  if (error || !user) {
-    return next(new AppError('Invalid or expired token', 401));
-  }
+  if (sbUser && !sbError) {
+    user = sbUser;
+    // Fetch profile for role
+    const admin = await getAdminClient();
+    const { data: profile } = await admin
+      .from('user_profiles')
+      .select('role, full_name')
+      .eq('id', user.id)
+      .single();
 
-  // Fetch role once and cache in req.user
-  const admin = await getAdminClient();
-  const { data: profile } = await admin
-    .from('user_profiles')
-    .select('role, full_name')
-    .eq('id', user.id)
-    .single();
+    role = profile?.role || 'user';
+    fullName = profile?.full_name || user.email?.split('@')[0];
+  } else {
+    // 2. Try Local JWT (for hardcoded admin)
+    try {
+      const decoded: any = jwt.verify(token, JWT_SECRET);
+      user = { id: decoded.id, email: decoded.email };
+      role = decoded.role || 'user';
+      fullName = 'Main Admin';
+    } catch (jwtError) {
+      logger.warn(
+        `[Auth] Validation failed for ${req.path}: ${sbError?.message || (jwtError as Error).message}`
+      );
+      return next(new AppError('Invalid or expired token', 401));
+    }
+  }
 
   req.user = {
     ...user,
-    role: profile?.role || 'user',
-    fullName: profile?.full_name || user.email?.split('@')[0],
+    role,
+    fullName,
   };
 
   next();

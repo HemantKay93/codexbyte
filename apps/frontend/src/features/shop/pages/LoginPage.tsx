@@ -20,7 +20,7 @@ export function LoginPage() {
 
     try {
       const { user, token } = await AuthService.login(email, password);
-      setToken(token);
+      setToken(token, 'auth');
       setUser(user);
       navigate('/shop/dashboard');
     } catch (signInError: unknown) {

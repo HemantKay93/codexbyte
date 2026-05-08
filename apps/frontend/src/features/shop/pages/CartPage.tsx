@@ -9,7 +9,7 @@ export function CartPage() {
 
   const subtotal = totalAmount();
   const tax = subtotal * 0.18; // 18% GST
-  const shipping = 0; // Free shipping for now to match user expectations
+  const shipping: number = 0; // Free shipping for now to match user expectations
   const total = subtotal + tax + shipping;
 
   if (items.length === 0) {

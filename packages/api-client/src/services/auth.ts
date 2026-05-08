@@ -20,16 +20,19 @@ export const AuthService = {
   logout: () => {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('admin_token');
-    localStorage.removeItem('user-storage'); // Zustand persistence
+    localStorage.removeItem('byteevolvr-user-storage'); // Correct Zustand persistence key
   },
 
   getCurrentUser: async () => {
-    const response = await apiClient.get('/customer/me');
+    const response = await apiClient.get('/auth/customer/me');
     return response.data.user;
   },
 
-  signup: async (payload: any) => {
-    const response = await apiClient.post('/auth/customer/signup', payload);
+  register: async (email: string, password: string, name: string) => {
+    const response = await apiClient.post('/auth/customer/signup', { email, password, name });
+    if (response.data.token) {
+      localStorage.setItem('auth_token', response.data.token);
+    }
     return response.data;
-  }
+  },
 };

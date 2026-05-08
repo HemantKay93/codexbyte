@@ -9,11 +9,17 @@ const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
 export class AuthService {
   async login(email: string, password: string) {
     // 1. Check hardcoded admin
-    if (email === 'admin@byteevolvr.com' && ADMIN_PASSWORD_HASH && bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)) {
-      const token = jwt.sign({ id: 'admin', email, role: 'admin' }, JWT_SECRET, { expiresIn: '12h' });
-      return { 
-        token, 
-        user: { id: 'admin', email, full_name: 'Main Admin', role: 'admin' } 
+    if (
+      email === 'admin@byteevolvr.com' &&
+      ADMIN_PASSWORD_HASH &&
+      bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)
+    ) {
+      const token = jwt.sign({ id: 'admin', email, role: 'admin' }, JWT_SECRET, {
+        expiresIn: '12h',
+      });
+      return {
+        token,
+        user: { id: 'admin', email, full_name: 'Main Admin', role: 'admin' },
       };
     }
 
@@ -31,28 +37,32 @@ export class AuthService {
       .eq('id', data.user.id)
       .single();
 
-    return { 
-      token: data.session?.access_token, 
-      user: { 
-        id: data.user.id, 
-        email: data.user.email, 
+    return {
+      token: data.session?.access_token,
+      user: {
+        id: data.user.id,
+        email: data.user.email,
         full_name: profile?.full_name || data.user.user_metadata?.full_name,
-        role: profile?.role || 'user'
-      } 
+        role: profile?.role || 'user',
+      },
     };
   }
 
   async getMe(userId: string) {
     if (userId === 'admin') {
-      return { 
-        id: 'admin', 
-        email: 'admin@byteevolvr.com', 
-        full_name: 'Main Admin', 
-        role: 'admin' 
+      return {
+        id: 'admin',
+        email: 'admin@byteevolvr.com',
+        full_name: 'Main Admin',
+        role: 'admin',
       };
     }
 
-    const { data: { user }, error: authError } = await supabase.auth.admin.getUserById(userId);
+    const admin = await getAdminClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await admin.auth.admin.getUserById(userId);
     if (authError || !user) {
       throw new AppError('User not found', 404);
     }
@@ -64,11 +74,11 @@ export class AuthService {
       .eq('id', userId)
       .single();
 
-    return { 
-      id: user.id, 
-      email: user.email, 
+    return {
+      id: user.id,
+      email: user.email,
       full_name: profile?.full_name || user.user_metadata?.full_name,
-      role: profile?.role || 'user'
+      role: profile?.role || 'user',
     };
   }
 
@@ -76,7 +86,7 @@ export class AuthService {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } }
+      options: { data: { name } },
     });
 
     if (error) throw new AppError(error.message, 400);
