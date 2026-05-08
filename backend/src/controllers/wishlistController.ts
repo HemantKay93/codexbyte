@@ -11,11 +11,11 @@ export const getWishlist = catchAsync(async (req: AuthRequest, res: Response) =>
 });
 
 export const toggleWishlist = catchAsync(async (req: AuthRequest, res: Response) => {
-  const isWishlisted = await wishlistRepo.toggle(req.user.id, req.params.productId);
+  const isWishlisted = await wishlistRepo.toggle(req.user.id, req.params.productId as string);
   res.json({ isWishlisted });
 });
 
 export const checkWishlist = catchAsync(async (req: AuthRequest, res: Response) => {
-  const isWishlisted = await wishlistRepo.check(req.user.id, req.params.productId);
+  const isWishlisted = await wishlistRepo.check(req.user.id, req.params.productId as string);
   res.json({ isWishlisted });
 });

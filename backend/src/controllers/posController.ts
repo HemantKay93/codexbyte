@@ -126,7 +126,7 @@ export const getPosProducts = catchAsync(async (req: AuthRequest, res: Response)
   const { warehouseId } = req.query as { warehouseId?: string };
   const admin = await getAdminClient();
 
-  let query = admin
+  const query = admin
     .from('products')
     .select('id, name, price, sku, image_url, category, stock_quantity')
     .eq('status', 'active')
@@ -145,7 +145,7 @@ export const getPosProducts = catchAsync(async (req: AuthRequest, res: Response)
     const invMap = new Map((invData || []).map((i: any) => [i.product_id, i.quantity]));
 
     return res.json(
-      products.map((p) => ({
+      products.map((p: any) => ({
         ...p,
         stock_quantity: invMap.has(p.id) ? invMap.get(p.id) : p.stock_quantity,
       }))

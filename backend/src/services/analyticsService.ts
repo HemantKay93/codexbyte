@@ -10,7 +10,8 @@ export class AnalyticsService {
       .select('total_amount')
       .in('status', ['confirmed', 'packed', 'shipped', 'delivered']);
 
-    const totalRevenue = revenueData?.reduce((sum, o) => sum + Number(o.total_amount), 0) || 0;
+    const totalRevenue =
+      revenueData?.reduce((sum: number, o: any) => sum + Number(o.total_amount), 0) || 0;
 
     // 2. Order Counts
     const { count: totalOrders } = await admin

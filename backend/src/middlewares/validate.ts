@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { AnyZodObject, ZodError } from 'zod';
+import { ZodError, type ZodTypeAny } from 'zod';
 import { AppError } from './error.js';
 
-export const validate = (schema: AnyZodObject) => {
+export const validate = (schema: ZodTypeAny) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       await schema.parseAsync({
@@ -13,8 +13,8 @@ export const validate = (schema: AnyZodObject) => {
       return next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const message = error.errors
-          .map((err) => `${err.path.join('.')}: ${err.message}`)
+        const message = error.issues
+          .map((err: any) => `${err.path.join('.')}: ${err.message}`)
           .join(', ');
         return next(new AppError(message, 400));
       }

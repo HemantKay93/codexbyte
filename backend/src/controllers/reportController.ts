@@ -7,7 +7,6 @@ import { OrderRepository } from '../repositories/orderRepository.js';
 
 const orderRepo = new OrderRepository();
 
-
 export const exportReport = catchAsync(async (req: Request, res: Response) => {
   const { type, format } = req.query;
 
@@ -24,7 +23,10 @@ export const exportReport = catchAsync(async (req: Request, res: Response) => {
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Report');
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
 
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
     res.setHeader('Content-Disposition', `attachment; filename=report_${type}_${Date.now()}.xlsx`);
     return res.send(buffer);
   } else if (format === 'csv') {
@@ -37,14 +39,16 @@ export const exportReport = catchAsync(async (req: Request, res: Response) => {
   } else if (format === 'pdf') {
     // For now, return a placeholder or implement a generic table-to-pdf if needed
     // In enterprise, we usually have specific PDF templates
-    res.status(400).json({ message: 'Generic PDF report export not yet implemented. Use CSV or Excel.' });
+    res
+      .status(400)
+      .json({ message: 'Generic PDF report export not yet implemented. Use CSV or Excel.' });
   } else {
     res.status(400).json({ message: 'Invalid format' });
   }
 });
 
 export const exportInvoice = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const order = await orderRepo.findById(id);
 
   if (!order) {
@@ -53,4 +57,3 @@ export const exportInvoice = catchAsync(async (req: Request, res: Response) => {
 
   await PdfService.generateInvoice(order, res);
 });
-

@@ -17,7 +17,7 @@ export function PageSeo({ title, description, image, url }: PageSeoProps) {
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
-      
+
       {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
       <meta property="og:url" content={url || siteUrl} />

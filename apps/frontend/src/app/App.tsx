@@ -3,23 +3,41 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Loader2 } from 'lucide-react';
 
-const HomePage = lazy(() => import('@/pages/HomePage').then(m => ({ default: m.HomePage })));
-const ServicesPage = lazy(() => import('@/pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
-const AboutPage = lazy(() => import('@/pages/AboutPage').then(m => ({ default: m.AboutPage })));
-const ContactPage = lazy(() => import('@/pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m.HomePage })));
+const ServicesPage = lazy(() =>
+  import('@/pages/ServicesPage').then((m) => ({ default: m.ServicesPage }))
+);
+const AboutPage = lazy(() => import('@/pages/AboutPage').then((m) => ({ default: m.AboutPage })));
+const ContactPage = lazy(() =>
+  import('@/pages/ContactPage').then((m) => ({ default: m.ContactPage }))
+);
 const PrivacyPolicy = lazy(() => import('@/pages/legal/PrivacyPolicy'));
 const RefundPolicy = lazy(() => import('@/pages/legal/RefundPolicy'));
 const TermsAndConditions = lazy(() => import('@/pages/legal/TermsAndConditions'));
-const ShopPage = lazy(() => import('@/pages/ShopPage').then(m => ({ default: m.ShopPage })));
-const ProductDetailPage = lazy(() => import('@/features/shop/pages/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
-const CartPage = lazy(() => import('@/features/shop/pages/CartPage').then(m => ({ default: m.CartPage })));
-const CheckoutPage = lazy(() => import('@/features/shop/pages/CheckoutPage').then(m => ({ default: m.CheckoutPage })));
+const ShopPage = lazy(() => import('@/pages/ShopPage').then((m) => ({ default: m.ShopPage })));
+const ProductDetailPage = lazy(() =>
+  import('@/features/shop/pages/ProductDetailPage').then((m) => ({ default: m.ProductDetailPage }))
+);
+const CartPage = lazy(() =>
+  import('@/features/shop/pages/CartPage').then((m) => ({ default: m.CartPage }))
+);
+const CheckoutPage = lazy(() =>
+  import('@/features/shop/pages/CheckoutPage').then((m) => ({ default: m.CheckoutPage }))
+);
 
 // Shop Features
-const LoginPage = lazy(() => import('@/features/shop/pages/LoginPage').then(m => ({ default: m.LoginPage })));
-const SignupPage = lazy(() => import('@/features/shop/pages/SignupPage').then(m => ({ default: m.SignupPage })));
-const DashboardPage = lazy(() => import('@/features/shop/pages/DashboardPage').then(m => ({ default: m.DashboardPage })));
-const TrackingPage = lazy(() => import('@/features/shop/pages/TrackingPage').then(m => ({ default: m.TrackingPage })));
+const LoginPage = lazy(() =>
+  import('@/features/shop/pages/LoginPage').then((m) => ({ default: m.LoginPage }))
+);
+const SignupPage = lazy(() =>
+  import('@/features/shop/pages/SignupPage').then((m) => ({ default: m.SignupPage }))
+);
+const DashboardPage = lazy(() =>
+  import('@/features/shop/pages/DashboardPage').then((m) => ({ default: m.DashboardPage }))
+);
+const TrackingPage = lazy(() =>
+  import('@/features/shop/pages/TrackingPage').then((m) => ({ default: m.TrackingPage }))
+);
 
 import { useEffect } from 'react';
 import { useUserStore } from '@byteevolvr/store';
@@ -49,19 +67,25 @@ export default function App() {
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/product/:id" element={<ProductDetailPage />} />
           <Route path="/shop/cart" element={<CartPage />} />
-          <Route path="/shop/checkout" element={
-            <ProtectedRoute>
-              <CheckoutPage />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/shop/checkout"
+            element={
+              <ProtectedRoute>
+                <CheckoutPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/shop/login" element={<LoginPage />} />
           <Route path="/shop/signup" element={<SignupPage />} />
           <Route path="/shop/track/:id?" element={<TrackingPage />} />
-          <Route path="/shop/dashboard" element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          } />
+          <Route
+            path="/shop/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />

@@ -4,7 +4,13 @@ import { supabase, getAdminClient } from '../config/supabase.js';
 import { AppError } from './error.js';
 import logger from '../services/logger.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+const jwtSecret = process.env.JWT_SECRET;
+
+if (!jwtSecret) {
+  throw new Error('JWT_SECRET is required for backend authentication');
+}
+
+const JWT_SECRET: string = jwtSecret;
 
 export interface AuthRequest extends Request {
   user?: any;

@@ -46,7 +46,7 @@ export const adjustStock = catchAsync(async (req: AuthRequest, res: Response) =>
 });
 
 export const getWarehouseInventory = catchAsync(async (req: Request, res: Response) => {
-  const data = await InventoryService.getWarehouseStock(req.params.id);
+  const data = await InventoryService.getWarehouseStock(req.params.id as string);
   res.json(data);
 });
 

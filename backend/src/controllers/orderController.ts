@@ -16,7 +16,13 @@ export const getOrderById = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getOrderItems = catchAsync(async (req: Request, res: Response) => {
-  const order = await orderService.getOrderById(req.params.id as string);
+  const authReq = req as AuthRequest;
+  const order = await orderService.getOrderByIdForUser(
+    req.params.id as string,
+    authReq.user.id as string,
+    authReq.user.email,
+    authReq.user.role
+  );
   res.json(order.order_items || []);
 });
 

@@ -14,20 +14,27 @@ export function AboutSection() {
     >
       <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mb-16">
-          <span className="font-mono text-xs uppercase tracking-widest text-accent">// About Us</span>
+          <span className="font-mono text-xs uppercase tracking-widest text-accent">
+            // About Us
+          </span>
         </div>
 
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-12">
           <div className="flex flex-col gap-8 lg:col-span-7">
             <h2 className="font-display text-4xl font-bold leading-tight tracking-tight text-white lg:text-5xl">
               We do not just fix computers.
-              <span className="text-[rgba(139,155,184,0.45)]"> We architect the technology backbone of your business.</span>
+              <span className="text-[rgba(139,155,184,0.45)]">
+                {' '}
+                We architect the technology backbone of your business.
+              </span>
             </h2>
             <p className="text-base leading-relaxed text-brand-muted">
-              ByteeVolvr Enterprises started as a small repair shop in Mumbai and grew into a full-spectrum IT company trusted by businesses across India.
+              ByteeVolvr Enterprises started as a small repair shop in Mumbai and grew into a
+              full-spectrum IT company trusted by businesses across India.
             </p>
             <p className="text-base leading-relaxed text-brand-muted">
-              Our strength is versatility: consulting, supply, repair, AMC delivery, and a scalable commerce engine for hardware and accessories.
+              Our strength is versatility: consulting, supply, repair, AMC delivery, and a scalable
+              commerce engine for hardware and accessories.
             </p>
             <img
               src="https://img.rocket.new/generatedImages/rocket_gen_img_14598519e-1768103454712.png"

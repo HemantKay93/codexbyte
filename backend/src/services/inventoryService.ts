@@ -82,7 +82,7 @@ export class InventoryService {
       .select('quantity')
       .eq('product_id', data.productId);
 
-    const totalStock = allInv?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+    const totalStock = allInv?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
     logger.info(`[Inventory] Calculated total stock for product ${data.productId}: ${totalStock}`);
 
     const { error: prodUpdateError } = await admin

@@ -18,11 +18,12 @@ export const getProducts = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getProduct = catchAsync(async (req: Request, res: Response) => {
-  const cacheKey = `products:detail:${req.params.id}`;
+  const id = req.params.id as string;
+  const cacheKey = `products:detail:${id}`;
   const cached = await CacheService.get(cacheKey);
   if (cached) return res.json(cached);
 
-  const product = await productService.getProduct(req.params.id);
+  const product = await productService.getProduct(id);
   await CacheService.set(cacheKey, product, 600); // 10 min cache
   res.json(product);
 });
@@ -43,32 +44,34 @@ export const createProduct = catchAsync(async (req: AuthRequest, res: Response) 
 });
 
 export const updateProduct = catchAsync(async (req: AuthRequest, res: Response) => {
-  const updatedProduct = await productService.updateProduct(req.params.id, req.body);
+  const id = req.params.id as string;
+  const updatedProduct = await productService.updateProduct(id, req.body);
 
   await AuditService.log({
     user_id: req.user?.id,
     action: 'UPDATE_PRODUCT',
     module: 'products',
-    entity_id: req.params.id,
+    entity_id: id,
     new_data: req.body,
   });
 
-  await CacheService.del(`products:detail:${req.params.id}`);
+  await CacheService.del(`products:detail:${id}`);
   await CacheService.invalidatePattern('products:list:*');
   res.json(updatedProduct);
 });
 
 export const deleteProduct = catchAsync(async (req: AuthRequest, res: Response) => {
-  await productService.deleteProduct(req.params.id);
+  const id = req.params.id as string;
+  await productService.deleteProduct(id);
 
   await AuditService.log({
     user_id: req.user?.id,
     action: 'DELETE_PRODUCT',
     module: 'products',
-    entity_id: req.params.id,
+    entity_id: id,
   });
 
-  await CacheService.del(`products:detail:${req.params.id}`);
+  await CacheService.del(`products:detail:${id}`);
   await CacheService.invalidatePattern('products:list:*');
   res.status(204).end();
 });

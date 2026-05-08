@@ -10,13 +10,15 @@ export function ProductDetailPage() {
   const navigate = useNavigate();
   const { user } = useUserStore();
   const { addItem: addToCart } = useCartStore();
-  
+
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
-  const [activeTab, setActiveTab] = useState<'description' | 'specifications' | 'qna' | 'reviews' | 'tags'>('description');
+  const [activeTab, setActiveTab] = useState<
+    'description' | 'specifications' | 'qna' | 'reviews' | 'tags'
+  >('description');
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -60,45 +62,66 @@ export function ProductDetailPage() {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center bg-[#04080F] text-white">
         <h2 className="text-2xl font-bold mb-4">{error || 'Product Not Found'}</h2>
-        <Button onClick={() => navigate('/shop')} variant="secondary">Return to Shop</Button>
+        <Button onClick={() => navigate('/shop')} variant="secondary">
+          Return to Shop
+        </Button>
       </div>
     );
   }
 
-  const discount = product.original_price && product.original_price > product.price
-    ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
-    : 0;
+  const discount =
+    product.original_price && product.original_price > product.price
+      ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
+      : 0;
 
   return (
     <div className="min-h-screen bg-[#04080F] text-white pt-32 pb-12 px-6">
       <div className="max-w-[1200px] mx-auto">
-        <button onClick={() => navigate('/shop')} className="flex items-center gap-2 text-sm text-brand-muted hover:text-white transition-colors mb-8">
+        <button
+          onClick={() => navigate('/shop')}
+          className="flex items-center gap-2 text-sm text-brand-muted hover:text-white transition-colors mb-8"
+        >
           <ArrowLeft className="h-4 w-4" /> Back to Shop
         </button>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-          
           {/* Left Column: Image */}
           <div className="flex flex-col gap-6">
             <div className="aspect-square bg-white/5 rounded-2xl border border-white/10 p-8 flex items-center justify-center relative overflow-hidden group">
               {discount > 0 && (
                 <div className="absolute top-4 left-4 z-10">
-                  <Badge variant="error" className="text-xs bg-red-500/20 text-red-400 border-red-500/20">{discount}% OFF</Badge>
+                  <Badge
+                    variant="error"
+                    className="text-xs bg-red-500/20 text-red-400 border-red-500/20"
+                  >
+                    {discount}% OFF
+                  </Badge>
                 </div>
               )}
               {product.image_url ? (
-                <img src={product.image_url} alt={product.name} className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105" />
+                <img
+                  src={product.image_url}
+                  alt={product.name}
+                  className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
+                />
               ) : (
                 <div className="w-32 h-32 bg-white/10 rounded-xl" />
               )}
             </div>
-            
+
             {/* Small image gallery placeholder */}
             {product.image_url && (
               <div className="flex gap-4">
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className={`w-20 h-20 rounded-xl border ${i === 1 ? 'border-accent' : 'border-white/10'} bg-white/5 p-2 cursor-pointer hover:border-white/30 transition-colors`}>
-                    <img src={product.image_url} className="w-full h-full object-contain opacity-70" alt={`View ${i}`} />
+                  <div
+                    key={i}
+                    className={`w-20 h-20 rounded-xl border ${i === 1 ? 'border-accent' : 'border-white/10'} bg-white/5 p-2 cursor-pointer hover:border-white/30 transition-colors`}
+                  >
+                    <img
+                      src={product.image_url}
+                      className="w-full h-full object-contain opacity-70"
+                      alt={`View ${i}`}
+                    />
                   </div>
                 ))}
               </div>
@@ -108,10 +131,16 @@ export function ProductDetailPage() {
           {/* Right Column: Details */}
           <div className="flex flex-col">
             <div className="mb-6 border-b border-white/10 pb-6">
-              <div className="text-accent text-sm font-bold tracking-wider uppercase mb-2">{product.brand || product.category}</div>
-              <h1 className="text-3xl md:text-4xl font-display font-bold leading-tight mb-4">{product.name}</h1>
+              <div className="text-accent text-sm font-bold tracking-wider uppercase mb-2">
+                {product.brand || product.category}
+              </div>
+              <h1 className="text-3xl md:text-4xl font-display font-bold leading-tight mb-4">
+                {product.name}
+              </h1>
               <div className="flex items-center gap-4 text-sm text-brand-muted mb-4">
-                <span className="flex items-center text-yellow-400"><Star className="h-4 w-4 fill-current mr-1" /> 4.8 (124 reviews)</span>
+                <span className="flex items-center text-yellow-400">
+                  <Star className="h-4 w-4 fill-current mr-1" /> 4.8 (124 reviews)
+                </span>
                 <span>•</span>
                 <span>SKU: {product.sku || 'N/A'}</span>
               </div>
@@ -119,9 +148,13 @@ export function ProductDetailPage() {
 
             <div className="mb-8">
               <div className="flex items-end gap-4 mb-2">
-                <span className="text-4xl font-bold text-white">₹{Number(product.price).toLocaleString('en-IN')}</span>
+                <span className="text-4xl font-bold text-white">
+                  ₹{Number(product.price).toLocaleString('en-IN')}
+                </span>
                 {product.original_price && product.original_price > product.price && (
-                  <span className="text-xl text-brand-muted line-through mb-1">₹{Number(product.original_price).toLocaleString('en-IN')}</span>
+                  <span className="text-xl text-brand-muted line-through mb-1">
+                    ₹{Number(product.original_price).toLocaleString('en-IN')}
+                  </span>
                 )}
               </div>
               <p className="text-sm text-green-400 font-medium mb-1">Inclusive of all taxes</p>
@@ -134,33 +167,51 @@ export function ProductDetailPage() {
             {/* Actions */}
             <div className="bg-[#070D1A] rounded-2xl border border-white/10 p-6 mb-8 shadow-2xl">
               <div className="flex items-center justify-between mb-6">
-                <span className={`font-semibold ${product.stock_quantity > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <span
+                  className={`font-semibold ${product.stock_quantity > 0 ? 'text-green-400' : 'text-red-400'}`}
+                >
                   {product.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}
                 </span>
-                
+
                 {product.stock_quantity > 0 && (
                   <div className="flex items-center border border-white/20 rounded-lg overflow-hidden bg-[#04080F]">
-                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 py-2 text-white hover:bg-white/5 transition-colors">-</button>
-                    <span className="px-4 py-2 font-bold text-white border-x border-white/20 min-w-[3rem] text-center">{quantity}</span>
-                    <button onClick={() => setQuantity(Math.min(product.stock_quantity, quantity + 1))} className="px-4 py-2 text-white hover:bg-white/5 transition-colors">+</button>
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="px-4 py-2 text-white hover:bg-white/5 transition-colors"
+                    >
+                      -
+                    </button>
+                    <span className="px-4 py-2 font-bold text-white border-x border-white/20 min-w-[3rem] text-center">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(Math.min(product.stock_quantity, quantity + 1))}
+                      className="px-4 py-2 text-white hover:bg-white/5 transition-colors"
+                    >
+                      +
+                    </button>
                   </div>
                 )}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button 
-                  onClick={handleAddToCart} 
-                  disabled={product.stock_quantity === 0 || addingToCart} 
-                  variant="secondary" 
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={product.stock_quantity === 0 || addingToCart}
+                  variant="secondary"
                   className="w-full py-4 rounded-xl border border-white/20 bg-transparent hover:bg-white/5 flex justify-center items-center gap-2"
                 >
-                  {addingToCart ? <Loader2 className="h-5 w-5 animate-spin" /> : <ShoppingCart className="h-5 w-5" />} 
+                  {addingToCart ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <ShoppingCart className="h-5 w-5" />
+                  )}
                   Add to Cart
                 </Button>
-                <Button 
-                  onClick={handleBuyNow} 
-                  disabled={product.stock_quantity === 0} 
-                  variant="primary" 
+                <Button
+                  onClick={handleBuyNow}
+                  disabled={product.stock_quantity === 0}
+                  variant="primary"
                   className="w-full py-4 rounded-xl shadow-[0_0_15px_rgba(26,79,214,0.3)]"
                 >
                   Buy Now
@@ -179,7 +230,6 @@ export function ProductDetailPage() {
                 <span>1 Year Brand Warranty</span>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -260,7 +310,11 @@ export function ProductDetailPage() {
                           <p className="font-bold text-white">{review.user}</p>
                           <div className="flex text-yellow-400 text-xs">
                             {[...Array(5)].map((_, idx) => (
-                              <Star key={idx} className={idx < review.rating ? "fill-current" : "text-white/20"} size={14} />
+                              <Star
+                                key={idx}
+                                className={idx < review.rating ? 'fill-current' : 'text-white/20'}
+                                size={14}
+                              />
                             ))}
                           </div>
                         </div>
@@ -278,7 +332,11 @@ export function ProductDetailPage() {
               <div className="flex flex-wrap gap-2">
                 {product.tags && product.tags.length > 0 ? (
                   product.tags.map((tag, i) => (
-                    <Badge key={i} variant="secondary" className="text-sm py-2 px-4 bg-white/5 border-white/10 text-brand-subtle">
+                    <Badge
+                      key={i}
+                      variant="secondary"
+                      className="text-sm py-2 px-4 bg-white/5 border-white/10 text-brand-subtle"
+                    >
                       {tag}
                     </Badge>
                   ))
@@ -289,7 +347,6 @@ export function ProductDetailPage() {
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

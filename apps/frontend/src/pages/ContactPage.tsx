@@ -9,13 +9,13 @@ export function ContactPage() {
     email: '',
     phone: '',
     subject: '',
-    message: ''
+    message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,7 +26,7 @@ export function ContactPage() {
       const response = await fetch('http://localhost:8080/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
@@ -51,14 +51,14 @@ export function ContactPage() {
       y: 0,
       transition: {
         duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
@@ -67,24 +67,38 @@ export function ContactPage() {
         title="Contact | ByteeVolvr"
         description="Reach ByteeVolvr for AMC, consulting, B2B supply, and support enquiries."
       />
-      <motion.section 
+      <motion.section
         className="mx-auto max-w-7xl px-6 pb-24 pt-40 lg:px-8"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
       >
-        <motion.span variants={itemVariants} className="mb-4 block font-mono text-xs uppercase tracking-widest text-accent">// Get In Touch</motion.span>
-        <motion.h1 variants={itemVariants} className="mb-6 font-display text-5xl font-bold leading-[0.9] text-white lg:text-7xl">
+        <motion.span
+          variants={itemVariants}
+          className="mb-4 block font-mono text-xs uppercase tracking-widest text-accent"
+        >
+          // Get In Touch
+        </motion.span>
+        <motion.h1
+          variants={itemVariants}
+          className="mb-6 font-display text-5xl font-bold leading-[0.9] text-white lg:text-7xl"
+        >
           Contact
           <span className="block text-[rgba(139,155,184,0.5)]">Us</span>
         </motion.h1>
-        <motion.p variants={itemVariants} className="max-w-xl text-lg leading-relaxed text-brand-muted">
-          Have a requirement or a question? Send us a message and our technical team will get back to you within 24 hours.
+        <motion.p
+          variants={itemVariants}
+          className="max-w-xl text-lg leading-relaxed text-brand-muted"
+        >
+          Have a requirement or a question? Send us a message and our technical team will get back
+          to you within 24 hours.
         </motion.p>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-12">
           <motion.div variants={itemVariants} className="glass-panel rounded-2xl p-8 lg:col-span-4">
-            <h2 className="mb-8 font-display text-xl font-semibold text-white">Contact Information</h2>
+            <h2 className="mb-8 font-display text-xl font-semibold text-white">
+              Contact Information
+            </h2>
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <MapPin className="h-5 w-5 text-accent mt-1" />
@@ -117,86 +131,98 @@ export function ContactPage() {
 
               {/* Google Maps Embed */}
               <div className="mt-8 overflow-hidden rounded-xl border border-white/5 bg-white/5 h-48 w-full grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                <iframe 
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120650.6222851219!2d72.774994!3d19.082198!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1714040000000!5m2!1sen!2sin" 
-                  width="100%" 
-                  height="100%" 
-                  style={{ border: 0 }} 
-                  allowFullScreen={true} 
-                  loading="lazy" 
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120650.6222851219!2d72.774994!3d19.082198!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1714040000000!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen={true}
+                  loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
             </div>
           </motion.div>
 
-          <motion.form 
+          <motion.form
             variants={itemVariants}
             className="glass-panel rounded-2xl p-8 lg:col-span-8"
             onSubmit={handleSubmit}
           >
-            <h2 className="mb-6 font-display text-xl font-semibold text-white">Send us a Message</h2>
+            <h2 className="mb-6 font-display text-xl font-semibold text-white">
+              Send us a Message
+            </h2>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">Full Name</label>
-                <input 
+                <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">
+                  Full Name
+                </label>
+                <input
                   required
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="contact-input w-full" 
-                  placeholder="John Doe" 
+                  className="contact-input w-full"
+                  placeholder="John Doe"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">Email Address</label>
-                <input 
+                <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">
+                  Email Address
+                </label>
+                <input
                   required
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="contact-input w-full" 
-                  placeholder="john@example.com" 
+                  className="contact-input w-full"
+                  placeholder="john@example.com"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">Phone Number</label>
-                <input 
+                <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">
+                  Phone Number
+                </label>
+                <input
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="contact-input w-full" 
-                  placeholder="+91 98765 43210" 
+                  className="contact-input w-full"
+                  placeholder="+91 98765 43210"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">Subject</label>
-                <input 
+                <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">
+                  Subject
+                </label>
+                <input
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
-                  className="contact-input w-full" 
-                  placeholder="Requirement details" 
+                  className="contact-input w-full"
+                  placeholder="Requirement details"
                 />
               </div>
             </div>
             <div className="mt-5 space-y-2">
-              <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">Message</label>
-              <textarea 
+              <label className="text-xs font-medium text-brand-muted uppercase tracking-wider ml-1">
+                Message
+              </label>
+              <textarea
                 required
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                className="contact-input min-h-40 w-full resize-none" 
-                placeholder="Tell us about your requirement..." 
+                className="contact-input min-h-40 w-full resize-none"
+                placeholder="Tell us about your requirement..."
               />
             </div>
-            
+
             <div className="mt-6 flex flex-col sm:flex-row items-center gap-4">
-              <button 
+              <button
                 disabled={status === 'loading'}
-                type="submit" 
+                type="submit"
                 className="btn-primary flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold text-white w-full sm:w-auto disabled:opacity-50"
               >
                 {status === 'loading' ? (
@@ -208,7 +234,7 @@ export function ContactPage() {
               </button>
 
               {status === 'success' && (
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="text-emerald-400 text-sm flex items-center gap-2"
@@ -218,7 +244,7 @@ export function ContactPage() {
                 </motion.p>
               )}
               {status === 'error' && (
-                <motion.p 
+                <motion.p
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   className="text-rose-400 text-sm"

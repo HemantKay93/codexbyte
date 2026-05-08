@@ -3,8 +3,14 @@ import bcrypt from 'bcryptjs';
 import { supabase, getAdminClient } from '../config/supabase.js';
 import { AppError } from '../middlewares/error.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+const jwtSecret = process.env.JWT_SECRET;
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
+
+if (!jwtSecret) {
+  throw new Error('JWT_SECRET is required for backend authentication');
+}
+
+const JWT_SECRET: string = jwtSecret;
 
 export class AuthService {
   async login(email: string, password: string) {

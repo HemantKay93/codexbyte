@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { InventoryService } from '../inventoryService';
-import { getAdminClient } from '../../config/supabase';
-import { NotificationService } from '../notificationService';
+import { InventoryService } from '../inventoryService.js';
+import { getAdminClient } from '../../config/supabase.js';
+import { NotificationService } from '../notificationService.js';
 
 // Mock dependencies
 vi.mock('../../config/supabase', () => ({
@@ -16,27 +16,44 @@ vi.mock('../notificationService', () => ({
 
 describe('InventoryService', () => {
   let mockSupabase: any;
+  let queryResults: any[];
+  let builders: any[];
+
+  const createBuilder = (result: any) => {
+    const builder: any = {
+      select: vi.fn(() => builder),
+      eq: vi.fn(() => builder),
+      update: vi.fn(() => builder),
+      insert: vi.fn(() => builder),
+      maybeSingle: vi.fn().mockResolvedValue(result),
+      single: vi.fn().mockResolvedValue(result),
+      then: (resolve: any, reject: any) => Promise.resolve(result).then(resolve, reject),
+    };
+    builders.push(builder);
+    return builder;
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
+    queryResults = [];
+    builders = [];
     mockSupabase = {
-      from: vi.fn().mockReturnThis(),
-      select: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockReturnThis(),
-      maybeSingle: vi.fn(),
-      update: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockReturnThis(),
-      single: vi.fn(),
+      from: vi.fn(() => createBuilder(queryResults.shift() || { data: null, error: null })),
     };
     (getAdminClient as any).mockResolvedValue(mockSupabase);
   });
 
   it('should adjust stock correctly for existing inventory', async () => {
     const mockInventory = { id: 'inv_123', quantity: 10 };
-    mockSupabase.maybeSingle.mockResolvedValue({ data: mockInventory, error: null });
-    mockSupabase.select.mockResolvedValue({ data: [{ quantity: 15 }], error: null });
-    mockSupabase.update.mockResolvedValue({ error: null });
-    mockSupabase.insert.mockResolvedValue({ error: null });
+    queryResults.push(
+      { data: mockInventory, error: null },
+      { error: null },
+      { error: null },
+      { data: [{ quantity: 15 }], error: null },
+      { error: null },
+      { data: null, error: null },
+      { data: null, error: null }
+    );
 
     const result = await InventoryService.adjustStock({
       productId: 'prod_1',
@@ -48,24 +65,20 @@ describe('InventoryService', () => {
 
     expect(result.success).toBe(true);
     expect(result.newQuantity).toBe(15);
-    expect(mockSupabase.update).toHaveBeenCalledWith(
-      expect.objectContaining({ quantity: 15 }),
-      expect.anything()
-    );
+    expect(builders[1].update).toHaveBeenCalledWith(expect.objectContaining({ quantity: 15 }));
   });
 
   it('should trigger low stock notification if below threshold', async () => {
     const mockInventory = { id: 'inv_123', quantity: 10 };
-    mockSupabase.maybeSingle.mockResolvedValue({ data: mockInventory, error: null });
-    mockSupabase.update.mockResolvedValue({ error: null });
-    mockSupabase.insert.mockResolvedValue({ error: null });
-    mockSupabase.select.mockImplementation((table: string) => {
-      if (table === 'inventory') return { data: [{ quantity: 3 }], error: null };
-      if (table === 'products') return { data: { name: 'Test Product' }, error: null };
-      if (table === 'warehouses') return { data: { name: 'Test Warehouse' }, error: null };
-      return { data: null, error: null };
-    });
-    mockSupabase.single.mockResolvedValue({ data: { name: 'Test' }, error: null });
+    queryResults.push(
+      { data: mockInventory, error: null },
+      { error: null },
+      { error: null },
+      { data: [{ quantity: 3 }], error: null },
+      { error: null },
+      { data: { name: 'Test Product' }, error: null },
+      { data: { name: 'Test Warehouse' }, error: null }
+    );
 
     await InventoryService.adjustStock({
       productId: 'prod_1',
@@ -84,7 +97,7 @@ describe('InventoryService', () => {
 
   it('should throw error if insufficient stock', async () => {
     const mockInventory = { id: 'inv_123', quantity: 5 };
-    mockSupabase.maybeSingle.mockResolvedValue({ data: mockInventory, error: null });
+    queryResults.push({ data: mockInventory, error: null });
 
     await expect(
       InventoryService.adjustStock({

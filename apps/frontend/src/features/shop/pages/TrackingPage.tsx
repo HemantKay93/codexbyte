@@ -8,7 +8,7 @@ export function TrackingPage() {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const initialId = id || searchParams.get('id') || '';
-  
+
   const [trackingId, setTrackingId] = useState(initialId);
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ export function TrackingPage() {
     if (!idToFetch) return;
     setLoading(true);
     setError('');
-    
+
     try {
       const data = await ShippingService.getTrackingById(idToFetch);
       setResult(data);
@@ -42,7 +42,9 @@ export function TrackingPage() {
         <div className="text-center mb-10">
           <PackageSearch className="mx-auto h-12 w-12 text-accent mb-4" />
           <h1 className="font-display text-4xl font-bold mb-2">Track Your Order</h1>
-          <p className="text-brand-muted">Enter your tracking ID to see the real-time status of your shipment.</p>
+          <p className="text-brand-muted">
+            Enter your tracking ID to see the real-time status of your shipment.
+          </p>
         </div>
 
         <div className="flex gap-4 mb-12">
@@ -69,7 +71,9 @@ export function TrackingPage() {
             <Card className="bg-[#070D1A] border border-white/10 p-8">
               <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-6">
                 <div>
-                  <div className="text-sm text-brand-muted uppercase tracking-widest mb-1">Current Status</div>
+                  <div className="text-sm text-brand-muted uppercase tracking-widest mb-1">
+                    Current Status
+                  </div>
                   <div className="text-3xl font-bold text-accent">{result.status}</div>
                 </div>
                 <Badge variant="primary">{result.courierName}</Badge>
@@ -78,18 +82,22 @@ export function TrackingPage() {
               <div className="relative pl-8">
                 {/* Timeline Line */}
                 <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-white/10" />
-                
+
                 <div className="space-y-8">
                   {result.events.map((event: any, i: number) => (
                     <div key={i} className="relative z-10">
                       {/* Timeline Dot */}
-                      <div className={`absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 ${
-                        i === 0 
-                          ? 'bg-accent border-accent shadow-[0_0_10px_rgba(59,130,246,0.5)]' 
-                          : 'bg-[#04080F] border-white/20'
-                      }`} />
-                      
-                      <div className={`font-semibold text-lg ${i === 0 ? 'text-white' : 'text-white/60'}`}>
+                      <div
+                        className={`absolute -left-[31px] top-1 h-4 w-4 rounded-full border-2 ${
+                          i === 0
+                            ? 'bg-accent border-accent shadow-[0_0_10px_rgba(59,130,246,0.5)]'
+                            : 'bg-[#04080F] border-white/20'
+                        }`}
+                      />
+
+                      <div
+                        className={`font-semibold text-lg ${i === 0 ? 'text-white' : 'text-white/60'}`}
+                      >
                         {event.status}
                       </div>
                       <div className="text-sm text-brand-muted mt-1">{event.description}</div>

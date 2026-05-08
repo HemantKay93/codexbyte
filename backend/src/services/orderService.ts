@@ -19,6 +19,18 @@ export class OrderService {
     return order;
   }
 
+  async getOrderByIdForUser(id: string, userId: string, email?: string, role?: string) {
+    const order = await this.getOrderById(id);
+    const isAdmin = role === 'admin' || role === 'super-admin';
+    const ownsOrder = order.user_id === userId || (email && order.customer_email === email);
+
+    if (!isAdmin && !ownsOrder) {
+      throw new AppError('Order not found', 404);
+    }
+
+    return order;
+  }
+
   async getMyOrders(userId: string, email?: string) {
     return await orderRepo.findByUserId(userId, email);
   }
@@ -26,17 +38,56 @@ export class OrderService {
   async createOrder(userId: string | undefined, orderData: any, userEmail?: string) {
     const { items, totalAmount, shippingAddress } = orderData;
     const paymentMethod = orderData.paymentMethod || orderData.payment_method;
+    if (!Array.isArray(items) || items.length === 0) {
+      throw new AppError('Order must include at least one item', 400);
+    }
 
-    // Calculate totals
-    const subtotal = items.reduce(
-      (sum: number, item: any) => sum + Number(item.price) * item.quantity,
+    const normalizedItems = items.map((item: any) => ({
+      productId: item.productId || item.product_id,
+      quantity: Number(item.quantity),
+    }));
+
+    for (const item of normalizedItems) {
+      if (!item.productId || !Number.isInteger(item.quantity) || item.quantity <= 0) {
+        throw new AppError('Invalid order item', 400);
+      }
+    }
+
+    const admin = await getAdminClient();
+    const productIds = [...new Set(normalizedItems.map((item: any) => item.productId))];
+    const { data: products, error: productError } = await admin
+      .from('products')
+      .select('id, name, sku, price, status')
+      .in('id', productIds);
+
+    if (productError) throw productError;
+
+    const productById = new Map<string, any>(
+      (products || []).map((product: any) => [product.id, product])
+    );
+    const pricedItems = normalizedItems.map((item: any) => {
+      const product = productById.get(item.productId);
+      if (!product || product.status !== 'active') {
+        throw new AppError(`Product ${item.productId} is not available`, 400);
+      }
+
+      return {
+        productId: product.id,
+        name: product.name,
+        sku: product.sku,
+        price: Number(product.price),
+        quantity: item.quantity,
+      };
+    });
+
+    const subtotal = pricedItems.reduce(
+      (sum: number, item: any) => sum + item.price * item.quantity,
       0
     );
     const tax = Math.round(subtotal * 0.18 * 100) / 100;
     const orderNumber = orderData.order_number || `ORD-${Date.now()}`;
 
     // 0. Get Default Warehouse if not provided
-    const admin = await getAdminClient();
     let warehouseId = orderData.warehouseId;
     if (!warehouseId) {
       const { data: defaultWh } = await admin
@@ -49,7 +100,7 @@ export class OrderService {
     }
 
     // 1. Pre-validate stock availability
-    for (const item of items) {
+    for (const item of pricedItems) {
       const { data: inv } = await admin
         .from('inventory')
         .select('quantity')
@@ -66,17 +117,14 @@ export class OrderService {
     }
 
     const dbOrderData = {
-      user_id: userId || orderData.user_id || null, // Allow NULL for walk-in/POS
+      user_id: userId || null,
       order_number: orderNumber,
       status: orderData.status || 'pending',
-      payment_status:
-        orderData.paymentStatus ||
-        orderData.payment_status ||
-        (paymentMethod === 'razorpay' ? 'paid' : 'pending'),
+      payment_status: 'pending',
       subtotal,
       tax_amount: tax,
       shipping_amount: orderData.shippingFee || 0,
-      total_amount: totalAmount || subtotal + tax + (orderData.shippingFee || 0),
+      total_amount: subtotal + tax + (orderData.shippingFee || 0),
       payment_method: paymentMethod || 'cash',
       shipping_address: shippingAddress,
       customer_name: shippingAddress?.full_name || shippingAddress?.name || 'Walk-in Customer',
@@ -84,24 +132,19 @@ export class OrderService {
         shippingAddress?.email || orderData.email || userEmail || 'walkin@customer.com',
     };
 
-    const order = await orderRepo.create(dbOrderData, items);
+    const order = await orderRepo.create(dbOrderData, pricedItems);
 
     // 2. Inventory & Activity Tracking
-    for (const item of items) {
-      try {
-        await InventoryService.adjustStock({
-          productId: item.productId,
-          warehouseId: warehouseId,
-          quantity: -item.quantity,
-          type: 'out',
-          referenceType: 'order',
-          referenceId: order.id,
-          userId: userId,
-        });
-      } catch (err) {
-        logger.error(`Failed to reduce stock for product ${item.productId}:`, err);
-        // In production, you might want to rollback or queue for manual review
-      }
+    for (const item of pricedItems) {
+      await InventoryService.adjustStock({
+        productId: item.productId,
+        warehouseId: warehouseId,
+        quantity: -item.quantity,
+        type: 'out',
+        referenceType: 'order',
+        referenceId: order.id,
+        userId: userId,
+      });
     }
 
     // 2. Log Activity

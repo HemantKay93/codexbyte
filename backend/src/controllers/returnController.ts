@@ -24,7 +24,7 @@ export const getReturns = catchAsync(async (req: AuthRequest, res: Response) => 
 });
 
 export const updateReturnStatus = catchAsync(async (req: AuthRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const { status, notes } = req.body;
   const adminId = req.user?.id;
 

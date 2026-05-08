@@ -26,9 +26,9 @@ export class AdminRepository {
 
     if (stockError) throw stockError;
 
-    const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total_amount), 0);
+    const totalRevenue = orders.reduce((sum: number, o: any) => sum + Number(o.total_amount), 0);
     const avgOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0;
-    const pendingOrders = orders.filter((o) => o.status === 'pending').length;
+    const pendingOrders = orders.filter((o: any) => o.status === 'pending').length;
 
     return {
       totalRevenue,
@@ -56,9 +56,12 @@ export class AdminRepository {
 
     if (ordersError) throw ordersError;
 
-    return profiles.map((profile) => {
-      const userOrders = orders.filter((o) => o.user_id === profile.id);
-      const totalSpent = userOrders.reduce((acc, o) => acc + Number(o.total_amount), 0);
+    return profiles.map((profile: any) => {
+      const userOrders = orders.filter((o: any) => o.user_id === profile.id);
+      const totalSpent = userOrders.reduce(
+        (acc: number, o: any) => acc + Number(o.total_amount),
+        0
+      );
       return {
         ...profile,
         orderCount: userOrders.length,
