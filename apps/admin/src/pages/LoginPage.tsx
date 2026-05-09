@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, Loader2, AlertCircle, ShieldCheck, TrendingUp, ShoppingCart, Package, Users } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  AlertCircle,
+  ShieldCheck,
+  TrendingUp,
+  ShoppingCart,
+  Package,
+  Users,
+} from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const stats = [
@@ -49,12 +59,11 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen w-full flex bg-[#f8fafc] font-sans selection:bg-blue-100 selection:text-blue-900 overflow-hidden">
-      
       {/* ── LEFT PANEL: Enhanced & Stable Layout ── */}
       <div className="hidden lg:flex lg:w-[48%] xl:w-[50%] relative flex-col bg-[#00144a] p-16 xl:p-24 overflow-hidden">
         {/* Background Gradients */}
         <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#001e6c] via-[#00144a] to-[#000b2a]" />
-        
+
         {/* Subtle Decorative Elements */}
         <div className="absolute inset-0 z-0 pointer-events-none">
           <div className="absolute top-[-10%] right-[-10%] w-[800px] h-[800px] rounded-full bg-blue-600/5 blur-[120px]" />
@@ -67,7 +76,9 @@ export function LoginPage() {
             <div className="h-12 w-12 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center border border-white/20">
               <ShieldCheck className="h-6 w-6 text-white" strokeWidth={2.5} />
             </div>
-            <span className="text-white font-black text-2xl tracking-tighter uppercase italic">ByteEvolvr</span>
+            <span className="text-white font-black text-2xl tracking-tighter uppercase italic">
+              ByteEvolvr
+            </span>
           </div>
         </div>
 
@@ -76,27 +87,37 @@ export function LoginPage() {
           <div className="w-full max-w-2xl">
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-400/20 mb-10">
               <span className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_8px_#60a5fa] animate-pulse" />
-              <span className="text-blue-100/80 text-[10px] font-black tracking-[0.25em] uppercase">Control System v4.0.2</span>
+              <span className="text-blue-100/80 text-[10px] font-black tracking-[0.25em] uppercase">
+                Control System v4.0.2
+              </span>
             </div>
-            
+
             <h1 className="text-6xl xl:text-8xl font-black text-white leading-[0.95] tracking-tighter mb-10">
-              Infinite <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-sky-400">Command.</span>
+              Infinite <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-sky-400">
+                Command.
+              </span>
             </h1>
-            
+
             <p className="text-blue-100/60 text-xl xl:text-2xl font-medium leading-relaxed mb-16 max-w-[600px]">
-              The next generation of eCommerce orchestration. Master your data, scale your operations, and lead the market from one unified hub.
+              The next generation of eCommerce orchestration. Master your data, scale your
+              operations, and lead the market from one unified hub.
             </p>
 
             {/* Metrics Flex - Fixed Overlapping Issues */}
             <div className="flex flex-wrap gap-6 w-full max-w-2xl">
               {stats.map((stat, idx) => (
-                <div key={idx} className="flex-1 min-w-[240px] p-8 rounded-[32px] bg-white/[0.04] border border-white/[0.08] backdrop-blur-md">
+                <div
+                  key={idx}
+                  className="flex-1 min-w-[240px] p-8 rounded-[32px] bg-white/[0.04] border border-white/[0.08] backdrop-blur-md"
+                >
                   <div className="flex items-center gap-4 mb-4">
                     <div className={`p-2.5 rounded-xl bg-white/5 ${stat.color}`}>
                       <stat.icon className="h-5 w-5" strokeWidth={2.5} />
                     </div>
-                    <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">{stat.label}</span>
+                    <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">
+                      {stat.label}
+                    </span>
                   </div>
                   <div className="text-4xl font-black text-white tracking-tight">{stat.value}</div>
                 </div>
@@ -107,7 +128,9 @@ export function LoginPage() {
 
         {/* Footer info */}
         <div className="relative z-10 shrink-0 flex items-center justify-between pt-10 border-t border-white/[0.08]">
-          <p className="text-white/20 text-[10px] font-black tracking-[0.3em] uppercase">© 2026 BYTEEVOLVR CORE</p>
+          <p className="text-white/20 text-[10px] font-black tracking-[0.3em] uppercase">
+            © 2026 BYTEEVOLVR CORE
+          </p>
           <div className="flex gap-8 text-white/20 text-[10px] font-black uppercase tracking-[0.3em]">
             <span className="hover:text-white/40 transition-colors cursor-pointer">Status</span>
             <span className="hover:text-white/40 transition-colors cursor-pointer">Security</span>
@@ -118,13 +141,14 @@ export function LoginPage() {
       {/* ── RIGHT PANEL: Precision Login Form ── */}
       <div className="flex-1 flex items-center justify-center bg-[#f0f4f9] p-8 lg:p-16 overflow-y-auto">
         <div className="w-full max-w-[480px] py-12">
-          
           {/* Brand Mark (Mobile Only) */}
           <div className="lg:hidden flex flex-col items-center mb-12">
             <div className="h-16 w-16 rounded-[24px] bg-[#001e6c] flex items-center justify-center shadow-2xl shadow-blue-900/30 mb-5">
               <ShieldCheck className="h-8 w-8 text-white" strokeWidth={2.5} />
             </div>
-            <h1 className="text-3xl font-black text-[#001e6c] tracking-tighter uppercase italic">ByteEvolvr</h1>
+            <h1 className="text-3xl font-black text-[#001e6c] tracking-tighter uppercase italic">
+              ByteEvolvr
+            </h1>
           </div>
 
           {/* Form Container */}
@@ -133,7 +157,9 @@ export function LoginPage() {
 
             <div className="mb-12">
               <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-3">Welcome</h2>
-              <p className="text-slate-400 text-sm font-semibold tracking-tight">Access your secure workspace.</p>
+              <p className="text-slate-400 text-sm font-semibold tracking-tight">
+                Access your secure workspace.
+              </p>
             </div>
 
             {error && (
@@ -160,8 +186,13 @@ export function LoginPage() {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between ml-1">
-                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.25em]">Access Key</label>
-                  <button type="button" className="text-[10px] text-blue-600 hover:text-blue-800 font-black uppercase tracking-widest">
+                  <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.25em]">
+                    Access Key
+                  </label>
+                  <button
+                    type="button"
+                    className="text-[10px] text-blue-600 hover:text-blue-800 font-black uppercase tracking-widest"
+                  >
                     Forgot?
                   </button>
                 </div>
@@ -179,7 +210,11 @@ export function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-600 transition-colors p-1"
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5" strokeWidth={2.5} /> : <Eye className="h-5 w-5" strokeWidth={2.5} />}
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" strokeWidth={2.5} />
+                    ) : (
+                      <Eye className="h-5 w-5" strokeWidth={2.5} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -202,18 +237,10 @@ export function LoginPage() {
               </div>
             </form>
 
-            <div className="mt-12 pt-10 border-t border-slate-100 flex flex-col items-center gap-4">
-              <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.4em]">Internal Access Keys</p>
-              <div className="flex flex-col items-center gap-2">
-                <div className="flex gap-4 items-center">
-                  <span className="text-[10px] text-slate-400 font-bold italic">admin@byteevolvr.com</span>
-                  <span className="text-[10px] text-slate-900 font-black tracking-[0.1em]">Admin@123</span>
-                </div>
-                <div className="flex gap-4 items-center">
-                  <span className="text-[10px] text-slate-400 font-bold italic">hemant.k@byteevolvr.com</span>
-                  <span className="text-[10px] text-slate-900 font-black tracking-[0.1em]">Admin@123</span>
-                </div>
-              </div>
+            <div className="mt-12 border-t border-slate-100 pt-10 text-center">
+              <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-300">
+                Authorized personnel only
+              </p>
             </div>
           </div>
 
@@ -222,7 +249,6 @@ export function LoginPage() {
           </p>
         </div>
       </div>
-
     </div>
   );
 }

@@ -17,7 +17,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
+  if (!user || (user.role !== 'admin' && user.role !== 'super-admin')) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

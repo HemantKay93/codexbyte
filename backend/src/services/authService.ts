@@ -13,7 +13,7 @@ if (!jwtSecret) {
 const JWT_SECRET: string = jwtSecret;
 
 export class AuthService {
-  async login(email: string, password: string) {
+  async login(email: string, password: string, options: { requireAdmin?: boolean } = {}) {
     // 1. Check hardcoded admin
     if (
       email === 'admin@byteevolvr.com' &&
@@ -43,13 +43,19 @@ export class AuthService {
       .eq('id', data.user.id)
       .single();
 
+    const role = profile?.role || 'user';
+
+    if (options.requireAdmin && role !== 'admin' && role !== 'super-admin') {
+      throw new AppError('Admin access required', 403);
+    }
+
     return {
       token: data.session?.access_token,
       user: {
         id: data.user.id,
         email: data.user.email,
         full_name: profile?.full_name || data.user.user_metadata?.full_name,
-        role: profile?.role || 'user',
+        role,
       },
     };
   }
