@@ -8,6 +8,44 @@ import { getAdminClient } from '../config/supabase.js';
 
 const orderService = new OrderService();
 
+const resolvePosInventory = async (admin: any, product: any, warehouseId: string) => {
+  const { data: inv, error: invError } = await admin
+    .from('inventory')
+    .select('id, quantity')
+    .eq('product_id', product.id)
+    .eq('warehouse_id', warehouseId)
+    .maybeSingle();
+
+  if (invError) throw invError;
+
+  const productStock = Number(product.stock_quantity || 0);
+  const inventoryQty = Number(inv?.quantity || 0);
+
+  // Older/demo product imports populate products.stock_quantity without creating
+  // warehouse inventory rows. POS uses the default warehouse, so reconcile that
+  // mismatch before checkout instead of showing stock that cannot be sold.
+  if (productStock > inventoryQty) {
+    if (inv?.id) {
+      const { error: updateError } = await admin
+        .from('inventory')
+        .update({ quantity: productStock, updated_at: new Date().toISOString() })
+        .eq('id', inv.id);
+      if (updateError) throw updateError;
+    } else {
+      const { error: insertError } = await admin.from('inventory').insert({
+        product_id: product.id,
+        warehouse_id: warehouseId,
+        quantity: productStock,
+      });
+      if (insertError) throw insertError;
+    }
+
+    return productStock;
+  }
+
+  return inventoryQty;
+};
+
 /**
  * POST /api/v1/pos/checkout
  * Optimized high-speed in-store checkout.
@@ -43,7 +81,7 @@ export const posCheckout = catchAsync(async (req: AuthRequest, res: Response) =>
   for (const item of items) {
     const { data: product, error: prodError } = await admin
       .from('products')
-      .select('id, name, price, sku')
+      .select('id, name, price, sku, stock_quantity')
       .eq('id', item.productId)
       .single();
 
@@ -52,14 +90,7 @@ export const posCheckout = catchAsync(async (req: AuthRequest, res: Response) =>
       continue;
     }
 
-    const { data: inv } = await admin
-      .from('inventory')
-      .select('quantity')
-      .eq('product_id', item.productId)
-      .eq('warehouse_id', resolvedWarehouseId)
-      .maybeSingle();
-
-    const available = inv?.quantity ?? 0;
+    const available = await resolvePosInventory(admin, product, resolvedWarehouseId);
     if (available < item.quantity) {
       stockErrors.push(
         `Insufficient stock for "${product.name}": requested ${item.quantity}, available ${available}`
@@ -125,6 +156,17 @@ export const posCheckout = catchAsync(async (req: AuthRequest, res: Response) =>
 export const getPosProducts = catchAsync(async (req: AuthRequest, res: Response) => {
   const { warehouseId } = req.query as { warehouseId?: string };
   const admin = await getAdminClient();
+  let resolvedWarehouseId = warehouseId;
+
+  if (!resolvedWarehouseId) {
+    const { data: wh } = await admin
+      .from('warehouses')
+      .select('id')
+      .eq('is_active', true)
+      .limit(1)
+      .single();
+    resolvedWarehouseId = wh?.id;
+  }
 
   const query = admin
     .from('products')
@@ -135,12 +177,12 @@ export const getPosProducts = catchAsync(async (req: AuthRequest, res: Response)
   const { data: products, error } = await query;
   if (error) throw error;
 
-  // Overlay per-warehouse stock if warehouseId provided
-  if (warehouseId && products) {
+  // Overlay per-warehouse stock for the same warehouse POS checkout will use.
+  if (resolvedWarehouseId && products) {
     const { data: invData } = await admin
       .from('inventory')
       .select('product_id, quantity')
-      .eq('warehouse_id', warehouseId);
+      .eq('warehouse_id', resolvedWarehouseId);
 
     const invMap = new Map((invData || []).map((i: any) => [i.product_id, i.quantity]));
 

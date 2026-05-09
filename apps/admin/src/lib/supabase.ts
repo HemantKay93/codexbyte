@@ -4,7 +4,17 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase URL and anon key are required');
+  console.warn('Supabase URL and anon key are required for direct Supabase admin pages.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const unavailableSupabase = new Proxy(
+  {},
+  {
+    get() {
+      throw new Error('Supabase URL and anon key are required');
+    },
+  }
+) as ReturnType<typeof createClient>;
+
+export const supabase =
+  supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey) : unavailableSupabase;
