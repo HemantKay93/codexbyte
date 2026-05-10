@@ -20,22 +20,27 @@ A modular monorepo architecture for ByteEvolvr Enterprises, featuring a business
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - npm 9+
 
 ### Single Command Execution (Development)
+
 To start all services (frontend, admin, shop, backend) simultaneously:
+
 ```bash
 npm install
 npm run dev
 ```
 
 ### Individual Service Scripts
+
 - `npm run dev:frontend` - Start business website
 - `npm run dev:admin` - Start admin panel
 - `npm run dev:backend` - Start API server
 
 ## 🛠️ Technology Stack
+
 - **Frontend**: React 18, Vite, Tailwind CSS, Framer Motion, React Query
 - **Backend**: Node.js, Express, Razorpay, Shiprocket
 - **Monorepo**: npm workspaces, Concurrently
@@ -43,6 +48,7 @@ npm run dev
 - **SEO**: React Helmet Async
 
 ## 🔒 Security & Best Practices
+
 - **CORS**: Configured with allowed origins.
 - **Rate Limiting**: Implemented for API protection.
 - **Input Sanitization**: Handled on both client and server.
@@ -51,21 +57,27 @@ npm run dev
 ## 📦 Deployment
 
 ### Docker (Recommended)
+
 Build and run the entire stack using Docker Compose:
+
 ```bash
 docker-compose up --build
 ```
 
 ### Platform Specifics
-- **Vercel**: Deploy the `apps/frontend` directory.
+
+- **Vercel**: Deploy `apps/frontend` and `apps/admin` as separate Vercel projects from the same GitHub repository. See `docs/vercel-deployment.md`.
 - **AWS/VPS**: Deploy using the provided `docker-compose.yml` or manual Node.js setup for the backend.
 
 ## 🎨 Design System
+
 The project uses a **Deep Tech** dark aesthetic:
+
 - **Primary**: #1A4FD6
 - **Background**: #04080F
 - **Fonts**: Manrope (Display), DM Sans (Body)
 - **Shared UI**: Located in `/packages/ui`
 
 ---
+
 Built with ❤️ by ByteEvolvr Team
