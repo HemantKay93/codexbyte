@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@byteevolvr/api-client": "file:../../packages/api-client",
+    "@byteevolvr/store": "file:../../packages/store",
     "@supabase/supabase-js": "^2.105.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",

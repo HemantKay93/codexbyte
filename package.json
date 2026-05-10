@@ -16,7 +16,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "type-check": "npm run type-check --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "prepare": "if [ \"$VERCEL\" != \"1\" ]; then husky install; fi"
+    "prepare": "node scripts/prepare.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.59.2",
