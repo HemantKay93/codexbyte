@@ -126,8 +126,10 @@ app.use(errorHandler);
 const httpServer = createServer(app);
 initSockets(httpServer);
 
-httpServer.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT} in ${process.env.NODE_ENV || 'development'} mode`);
+httpServer.listen(Number(PORT), '0.0.0.0', () => {
+  logger.info(`🚀 Backend is LIVE!`);
+  logger.info(`URL: http://0.0.0.0:${PORT}`);
+  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 export default app;

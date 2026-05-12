@@ -5,10 +5,20 @@ import crypto from 'node:crypto';
 import Razorpay from 'razorpay';
 import { getAdminClient } from '../config/supabase.js';
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || '',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || '',
-});
+const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
+const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+
+const razorpay =
+  RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET
+    ? new Razorpay({
+        key_id: RAZORPAY_KEY_ID,
+        key_secret: RAZORPAY_KEY_SECRET,
+      })
+    : null;
+
+if (!razorpay) {
+  console.warn('⚠️ [Payment] Razorpay credentials missing. Payments will not function.');
+}
 
 export const createRazorpayOrder = catchAsync(async (req: Request, res: Response) => {
   const { items, receipt } = req.body;
@@ -48,6 +58,10 @@ export const createRazorpayOrder = catchAsync(async (req: Request, res: Response
   }, 0);
   const tax = Math.round(subtotal * 0.18 * 100) / 100;
   const amount = Math.round((subtotal + tax) * 100);
+
+  if (!razorpay) {
+    throw new AppError('Payment system is not configured', 500);
+  }
 
   const order = await razorpay.orders.create({
     amount,
