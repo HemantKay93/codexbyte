@@ -31,27 +31,56 @@ export function CMSBuilderPage() {
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [selectedSection, setSelectedSection] = useState<'hero' | 'navbar' | 'contact'>('hero');
+  const [selectedPage, setSelectedPage] = useState('home');
+  const [selectedSection, setSelectedSection] = useState('hero');
   const [cmsData, setCmsData] = useState<Record<string, any>>({
     hero: { title: '', subtitle: '', buttonText: '', buttonLink: '', backgroundImage: '' },
     navbar: { logoText: '', links: [] },
-    contact: { address: '', phone: '', email: '', workingHours: '' },
+    contact: { address: '', pincode: '', phone: '', email: '', workingHours: '' },
+    main: { title: '', content: '', lastUpdated: '' },
+    details: { address: '', pincode: '', phone: '', email: '', mapUrl: '' },
+    social: { facebook: '', twitter: '', instagram: '', linkedin: '', youtube: '' },
+    seo: { metaTitle: '', metaDescription: '', keywords: '' },
   });
 
-  useEffect(() => {
-    fetchCMSContent();
-  }, []);
+  const PAGES = [
+    {
+      id: 'home',
+      label: 'Home Page',
+      icon: LayoutTemplate,
+      sections: ['hero', 'navbar', 'contact'],
+    },
+    { id: 'about', label: 'About Us', icon: Type, sections: ['main'] },
+    { id: 'contact_page', label: 'Contact Page', icon: Phone, sections: ['details'] },
+    { id: 'terms', label: 'Terms & Conditions', icon: Columns, sections: ['main'] },
+    { id: 'refund', label: 'Refund Policy', icon: ArrowLeft, sections: ['main'] },
+    { id: 'global', label: 'Global Settings', icon: Globe, sections: ['social', 'seo'] },
+  ];
 
-  const fetchCMSContent = async () => {
+  useEffect(() => {
+    fetchCMSContent(selectedPage);
+  }, [selectedPage]);
+
+  const fetchCMSContent = async (page: string) => {
     setLoading(true);
     try {
-      const data = await CMSService.getContent('home');
+      const data = await CMSService.getContent(page);
 
-      const formattedData: any = { ...cmsData };
+      const pageInfo = PAGES.find((p) => p.id === page);
+      const defaultData: any = {};
+      pageInfo?.sections.forEach((s) => {
+        defaultData[s] = cmsData[s] || {};
+      });
+
+      const formattedData: any = { ...defaultData };
       data?.forEach((item: CmsContentRow) => {
         formattedData[item.section_key] = item.content;
       });
       setCmsData(formattedData);
+
+      if (pageInfo && !pageInfo.sections.includes(selectedSection)) {
+        setSelectedSection(pageInfo.sections[0]);
+      }
     } catch (err) {
       console.error('Error fetching CMS content:', err);
     } finally {
@@ -62,7 +91,7 @@ export function CMSBuilderPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await CMSService.updatePageContent('home', cmsData);
+      await CMSService.updatePageContent(selectedPage, cmsData);
       alert('Changes saved and published successfully!');
     } catch (err) {
       console.error('Error saving CMS content:', err);
@@ -82,13 +111,15 @@ export function CMSBuilderPage() {
     }));
   };
 
-  if (loading) {
+  if (loading && !saving) {
     return (
       <div className="h-full flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
+
+  const currentPage = PAGES.find((p) => p.id === selectedPage);
 
   return (
     <div className="h-[calc(100vh-6rem)] flex flex-col -m-6">
@@ -100,7 +131,7 @@ export function CMSBuilderPage() {
             Back
           </Button>
           <div className="h-6 w-px bg-outline-variant mx-2"></div>
-          <span className="font-semibold text-on-surface">Home Page CMS Builder</span>
+          <span className="font-semibold text-on-surface">CMS Builder: {currentPage?.label}</span>
           <Badge variant="success">Live</Badge>
         </div>
         <div className="flex items-center gap-2">
@@ -126,32 +157,41 @@ export function CMSBuilderPage() {
       </div>
 
       <div className="flex flex-1 overflow-hidden">
-        {/* Sections Panel */}
+        {/* Pages & Sections Panel */}
         <div className="w-64 border-r border-outline-variant bg-surface-container-lowest flex flex-col overflow-y-auto shrink-0">
           <div className="p-4 border-b border-outline-variant">
-            <h3 className="text-sm font-semibold text-on-surface mb-3">Sections</h3>
-            <div className="space-y-2">
-              <div
-                className={`flex items-center text-sm p-3 rounded-lg cursor-pointer transition-colors ${selectedSection === 'hero' ? 'bg-primary/10 text-primary border border-primary/20 font-medium' : 'hover:bg-surface-container text-on-surface'}`}
-                onClick={() => setSelectedSection('hero')}
-              >
-                <LayoutTemplate className="h-4 w-4 mr-2" />
-                Hero Section
-              </div>
-              <div
-                className={`flex items-center text-sm p-3 rounded-lg cursor-pointer transition-colors ${selectedSection === 'navbar' ? 'bg-primary/10 text-primary border border-primary/20 font-medium' : 'hover:bg-surface-container text-on-surface'}`}
-                onClick={() => setSelectedSection('navbar')}
-              >
-                <Globe className="h-4 w-4 mr-2" />
-                Navigation Bar
-              </div>
-              <div
-                className={`flex items-center text-sm p-3 rounded-lg cursor-pointer transition-colors ${selectedSection === 'contact' ? 'bg-primary/10 text-primary border border-primary/20 font-medium' : 'hover:bg-surface-container text-on-surface'}`}
-                onClick={() => setSelectedSection('contact')}
-              >
-                <Phone className="h-4 w-4 mr-2" />
-                Contact Info
-              </div>
+            <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">
+              Pages
+            </h3>
+            <div className="space-y-1">
+              {PAGES.map((page) => (
+                <div
+                  key={page.id}
+                  className={`flex items-center text-sm p-2.5 rounded-lg cursor-pointer transition-colors ${selectedPage === page.id ? 'bg-primary text-on-primary font-medium' : 'hover:bg-surface-container text-on-surface'}`}
+                  onClick={() => setSelectedPage(page.id)}
+                >
+                  <page.icon className="h-4 w-4 mr-2" />
+                  {page.label}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-4">
+            <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-3">
+              Sections
+            </h3>
+            <div className="space-y-1">
+              {currentPage?.sections.map((section) => (
+                <div
+                  key={section}
+                  className={`flex items-center text-sm p-2.5 rounded-lg cursor-pointer transition-colors ${selectedSection === section ? 'bg-primary/10 text-primary border border-primary/20 font-medium' : 'hover:bg-surface-container text-on-surface'}`}
+                  onClick={() => setSelectedSection(section)}
+                >
+                  <LayoutTemplate className="h-4 w-4 mr-2" />
+                  {section.charAt(0).toUpperCase() + section.slice(1)}
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -161,72 +201,127 @@ export function CMSBuilderPage() {
           <div
             className={`bg-white shadow-xl min-h-full border border-outline-variant transition-all duration-300 relative ${device === 'mobile' ? 'w-[375px]' : 'w-full max-w-5xl'}`}
           >
-            {/* Navbar Preview */}
-            <div
-              className={`p-4 border-b flex items-center justify-between bg-white ${selectedSection === 'navbar' ? 'ring-2 ring-primary ring-inset' : ''}`}
-            >
-              <div className="font-bold text-xl text-primary">
-                {cmsData.navbar.logoText || 'Logo'}
-              </div>
-              <div className="flex gap-4 text-sm font-medium text-gray-600">
-                {cmsData.navbar.links?.map((link: any, i: number) => (
-                  <span key={i}>{link.label}</span>
-                ))}
-              </div>
-            </div>
+            {selectedPage === 'home' && (
+              <>
+                {/* Navbar Preview */}
+                <div
+                  className={`p-4 border-b flex items-center justify-between bg-white ${selectedSection === 'navbar' ? 'ring-2 ring-primary ring-inset' : ''}`}
+                >
+                  <div className="font-bold text-xl text-primary">
+                    {cmsData.navbar?.logoText || 'Logo'}
+                  </div>
+                  <div className="flex gap-4 text-sm font-medium text-gray-600">
+                    {cmsData.navbar?.links?.map((link: any, i: number) => (
+                      <span key={i}>{link.label}</span>
+                    ))}
+                  </div>
+                </div>
 
-            {/* Hero Preview */}
-            <div
-              className={`relative py-24 px-10 text-center flex flex-col items-center justify-center text-white bg-cover bg-center overflow-hidden ${selectedSection === 'hero' ? 'ring-2 ring-primary ring-inset' : ''}`}
-              style={{
-                backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${cmsData.hero.backgroundImage})`,
-              }}
-            >
-              <h1 className="text-4xl font-bold mb-4 z-10">
-                {cmsData.hero.title || 'Main Title Goes Here'}
-              </h1>
-              <p className="max-w-2xl mb-8 opacity-90 z-10">
-                {cmsData.hero.subtitle || 'Your subtitle or description.'}
-              </p>
-              <Button className="z-10">{cmsData.hero.buttonText || 'Action'}</Button>
-            </div>
+                {/* Hero Preview */}
+                <div
+                  className={`relative py-24 px-10 text-center flex flex-col items-center justify-center text-white bg-cover bg-center overflow-hidden ${selectedSection === 'hero' ? 'ring-2 ring-primary ring-inset' : ''}`}
+                  style={{
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${cmsData.hero?.backgroundImage})`,
+                  }}
+                >
+                  <h1 className="text-4xl font-bold mb-4 z-10">
+                    {cmsData.hero?.title || 'Main Title'}
+                  </h1>
+                  <p className="max-w-2xl mb-8 opacity-90 z-10">{cmsData.hero?.subtitle}</p>
+                  <Button className="z-10">{cmsData.hero?.buttonText || 'Action'}</Button>
+                </div>
 
-            {/* Feature Content Placeholder */}
-            <div className="p-12 bg-gray-50">
-              <div className="grid grid-cols-3 gap-6">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-32 bg-white rounded-lg border border-gray-200"></div>
-                ))}
-              </div>
-            </div>
-
-            {/* Contact Preview */}
-            <div
-              className={`p-12 border-t bg-white ${selectedSection === 'contact' ? 'ring-2 ring-primary ring-inset' : ''}`}
-            >
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <h3 className="font-bold text-lg mb-4">Contact Us</h3>
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <div className="flex items-center gap-2">
-                      <MapPin size={16} /> {cmsData.contact.address}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone size={16} /> {cmsData.contact.phone}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Mail size={16} /> {cmsData.contact.email}
+                {/* Contact Preview */}
+                <div
+                  className={`p-12 border-t bg-white ${selectedSection === 'contact' ? 'ring-2 ring-primary ring-inset' : ''}`}
+                >
+                  <div className="grid grid-cols-2 gap-8">
+                    <div>
+                      <h3 className="font-bold text-lg mb-4">Contact Us</h3>
+                      <div className="space-y-2 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <MapPin size={16} /> {cmsData.contact?.address} {cmsData.contact?.pincode}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Phone size={16} /> {cmsData.contact?.phone}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Mail size={16} /> {cmsData.contact?.email}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-4">Hours</h3>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Clock size={16} /> {cmsData.contact.workingHours}
+              </>
+            )}
+
+            {(selectedPage === 'about' ||
+              selectedPage === 'terms' ||
+              selectedPage === 'refund') && (
+              <div className="p-12">
+                <h1 className="text-3xl font-bold mb-6">
+                  {cmsData.main?.title || currentPage?.label}
+                </h1>
+                <div className="prose max-w-none text-gray-600 whitespace-pre-wrap">
+                  {cmsData.main?.content || 'Content goes here...'}
+                </div>
+              </div>
+            )}
+
+            {selectedPage === 'contact_page' && (
+              <div className="p-12">
+                <h1 className="text-3xl font-bold mb-8 text-center">Get in Touch</h1>
+                <div className="grid grid-cols-2 gap-12">
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="font-bold text-lg mb-2">Our Office</h3>
+                      <p className="text-gray-600">{cmsData.details?.address}</p>
+                      <p className="text-gray-600">PIN: {cmsData.details?.pincode}</p>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg mb-2">Contact</h3>
+                      <p className="text-gray-600">Phone: {cmsData.details?.phone}</p>
+                      <p className="text-gray-600">Email: {cmsData.details?.email}</p>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-lg mb-2">Hours</h3>
+                      <p className="text-gray-600">{cmsData.details?.workingHours}</p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
+                    Map Preview Placeholder
                   </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {selectedPage === 'global' && (
+              <div className="p-12 text-center">
+                <Globe className="h-16 w-16 mx-auto mb-4 text-primary opacity-20" />
+                <h2 className="text-2xl font-bold mb-2">Global Site Settings</h2>
+                <p className="text-gray-500">
+                  Configure settings that apply across your entire website.
+                </p>
+
+                <div className="mt-8 flex justify-center gap-4">
+                  {cmsData.social?.facebook && (
+                    <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
+                      F
+                    </div>
+                  )}
+                  {cmsData.social?.twitter && (
+                    <div className="h-10 w-10 rounded-full bg-sky-400 flex items-center justify-center text-white font-bold">
+                      T
+                    </div>
+                  )}
+                  {cmsData.social?.instagram && (
+                    <div className="h-10 w-10 rounded-full bg-pink-500 flex items-center justify-center text-white font-bold">
+                      I
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -244,7 +339,7 @@ export function CMSBuilderPage() {
                     Hero Title
                   </label>
                   <textarea
-                    value={cmsData.hero.title}
+                    value={cmsData.hero?.title}
                     onChange={(e) => updateContent('hero', 'title', e.target.value)}
                     className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none"
                     rows={3}
@@ -253,7 +348,7 @@ export function CMSBuilderPage() {
                 <div>
                   <label className="block text-sm font-medium text-on-surface mb-2">Subtitle</label>
                   <textarea
-                    value={cmsData.hero.subtitle}
+                    value={cmsData.hero?.subtitle}
                     onChange={(e) => updateContent('hero', 'subtitle', e.target.value)}
                     className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none"
                     rows={4}
@@ -264,7 +359,7 @@ export function CMSBuilderPage() {
                     Button Text
                   </label>
                   <Input
-                    value={cmsData.hero.buttonText}
+                    value={cmsData.hero?.buttonText}
                     onChange={(e) => updateContent('hero', 'buttonText', e.target.value)}
                   />
                 </div>
@@ -273,7 +368,7 @@ export function CMSBuilderPage() {
                     Background Image URL
                   </label>
                   <Input
-                    value={cmsData.hero.backgroundImage}
+                    value={cmsData.hero?.backgroundImage}
                     onChange={(e) => updateContent('hero', 'backgroundImage', e.target.value)}
                   />
                 </div>
@@ -287,7 +382,7 @@ export function CMSBuilderPage() {
                     Logo Text
                   </label>
                   <Input
-                    value={cmsData.navbar.logoText}
+                    value={cmsData.navbar?.logoText}
                     onChange={(e) => updateContent('navbar', 'logoText', e.target.value)}
                   />
                 </div>
@@ -296,7 +391,7 @@ export function CMSBuilderPage() {
                     Navigation Links
                   </label>
                   <div className="space-y-4">
-                    {cmsData.navbar.links?.map((link: any, i: number) => (
+                    {cmsData.navbar?.links?.map((link: any, i: number) => (
                       <div
                         key={i}
                         className="p-3 border border-outline rounded-lg bg-surface-container-lowest space-y-3 relative group"
@@ -338,7 +433,7 @@ export function CMSBuilderPage() {
                       fullWidth
                       onClick={() => {
                         const newLinks = [
-                          ...(cmsData.navbar.links || []),
+                          ...(cmsData.navbar?.links || []),
                           { label: 'New Link', href: '/' },
                         ];
                         updateContent('navbar', 'links', newLinks);
@@ -358,10 +453,17 @@ export function CMSBuilderPage() {
                     Physical Address
                   </label>
                   <textarea
-                    value={cmsData.contact.address}
+                    value={cmsData.contact?.address}
                     onChange={(e) => updateContent('contact', 'address', e.target.value)}
                     className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none"
                     rows={3}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">Pin Code</label>
+                  <Input
+                    value={cmsData.contact?.pincode}
+                    onChange={(e) => updateContent('contact', 'pincode', e.target.value)}
                   />
                 </div>
                 <div>
@@ -369,7 +471,7 @@ export function CMSBuilderPage() {
                     Phone Number
                   </label>
                   <Input
-                    value={cmsData.contact.phone}
+                    value={cmsData.contact?.phone}
                     onChange={(e) => updateContent('contact', 'phone', e.target.value)}
                   />
                 </div>
@@ -378,7 +480,7 @@ export function CMSBuilderPage() {
                     Email Address
                   </label>
                   <Input
-                    value={cmsData.contact.email}
+                    value={cmsData.contact?.email}
                     onChange={(e) => updateContent('contact', 'email', e.target.value)}
                   />
                 </div>
@@ -387,11 +489,121 @@ export function CMSBuilderPage() {
                     Working Hours
                   </label>
                   <Input
-                    value={cmsData.contact.workingHours}
+                    value={cmsData.contact?.workingHours}
                     onChange={(e) => updateContent('contact', 'workingHours', e.target.value)}
                   />
                 </div>
               </>
+            )}
+
+            {selectedSection === 'main' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">
+                    Page Title
+                  </label>
+                  <Input
+                    value={cmsData.main?.title}
+                    onChange={(e) => updateContent('main', 'title', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">Content</label>
+                  <textarea
+                    value={cmsData.main?.content}
+                    onChange={(e) => updateContent('main', 'content', e.target.value)}
+                    className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none"
+                    rows={15}
+                  />
+                </div>
+              </>
+            )}
+
+            {selectedSection === 'details' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">
+                    Office Address
+                  </label>
+                  <textarea
+                    value={cmsData.details?.address}
+                    onChange={(e) => updateContent('details', 'address', e.target.value)}
+                    className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none"
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">Pin Code</label>
+                  <Input
+                    value={cmsData.details?.pincode}
+                    onChange={(e) => updateContent('details', 'pincode', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">Phone</label>
+                  <Input
+                    value={cmsData.details?.phone}
+                    onChange={(e) => updateContent('details', 'phone', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">Email</label>
+                  <Input
+                    value={cmsData.details?.email}
+                    onChange={(e) => updateContent('details', 'email', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">
+                    Working Hours
+                  </label>
+                  <Input
+                    value={cmsData.details?.workingHours}
+                    onChange={(e) => updateContent('details', 'workingHours', e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            {selectedSection === 'social' && (
+              <div className="space-y-4">
+                {['facebook', 'twitter', 'instagram', 'linkedin', 'youtube'].map((platform) => (
+                  <div key={platform}>
+                    <label className="block text-sm font-medium text-on-surface mb-2 capitalize">
+                      {platform} URL
+                    </label>
+                    <Input
+                      value={cmsData.social?.[platform]}
+                      onChange={(e) => updateContent('social', platform, e.target.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {selectedSection === 'seo' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">
+                    Meta Title
+                  </label>
+                  <Input
+                    value={cmsData.seo?.metaTitle}
+                    onChange={(e) => updateContent('seo', 'metaTitle', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">
+                    Meta Description
+                  </label>
+                  <textarea
+                    value={cmsData.seo?.metaDescription}
+                    onChange={(e) => updateContent('seo', 'metaDescription', e.target.value)}
+                    className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none"
+                    rows={3}
+                  />
+                </div>
+              </div>
             )}
           </div>
         </div>

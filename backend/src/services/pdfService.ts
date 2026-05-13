@@ -23,21 +23,46 @@ export class PdfService {
 
     doc.fillColor('#000000').fontSize(20).text('TAX INVOICE', 400, 50, { align: 'right' });
     doc.fontSize(10).text(`Invoice #: ${order.order_number}`, 400, 80, { align: 'right' });
-    doc.text(`Date: ${new Date(order.created_at).toLocaleDateString()}`, 400, 95, { align: 'right' });
+    doc.text(`Date: ${new Date(order.created_at).toLocaleDateString()}`, 400, 95, {
+      align: 'right',
+    });
 
     doc.moveTo(50, 150).lineTo(550, 150).stroke();
 
     // --- Addresses ---
     doc.fontSize(12).font('Helvetica-Bold').text('Billed To:', 50, 170);
-    doc.fontSize(10).font('Helvetica').text(order.customer_name || 'Walk-in Customer', 50, 185);
-    doc.text(order.customer_email || '', 50, 200);
+    const billing = {
+      name: order.customer_name || 'Walk-in Customer',
+      email: order.customer_email || '',
+    };
+    doc.fontSize(10).font('Helvetica').text(billing.name, 50, 185);
+    doc.text(billing.email, 50, 200);
 
-    const shipping = order.addresses?.[0] || order.addresses;
+    // Shipping Address Resolution
+    let shipping = order.shipping_address;
+    if (!shipping && order.addresses) {
+      shipping = Array.isArray(order.addresses) ? order.addresses[0] : order.addresses;
+    }
+
     if (shipping) {
       doc.fontSize(12).font('Helvetica-Bold').text('Ship To:', 300, 170);
-      doc.fontSize(10).font('Helvetica').text(shipping.full_name, 300, 185);
-      doc.text(`${shipping.line_1}, ${shipping.line_2 || ''}`, 300, 200);
-      doc.text(`${shipping.city}, ${shipping.state} - ${shipping.postal_code}`, 300, 215);
+      doc
+        .fontSize(10)
+        .font('Helvetica')
+        .text(shipping.full_name || shipping.name || billing.name, 300, 185);
+      doc.text(
+        `${shipping.line_1 || ''}${shipping.line_2 ? `, ${shipping.line_2}` : ''}`,
+        300,
+        200
+      );
+      doc.text(
+        `${shipping.city || ''}, ${shipping.state || ''} - ${shipping.postal_code || ''}`,
+        300,
+        215
+      );
+      if (shipping.phone || shipping.mobile) {
+        doc.text(`Phone: ${shipping.phone || shipping.mobile}`, 300, 230);
+      }
     }
 
     doc.moveTo(50, 250).lineTo(550, 250).stroke();
@@ -51,7 +76,10 @@ export class PdfService {
     doc.text('Price', 400, y, { width: 70, align: 'right' });
     doc.text('Total', 480, y, { width: 70, align: 'right' });
 
-    doc.moveTo(50, y + 15).lineTo(550, y + 15).stroke();
+    doc
+      .moveTo(50, y + 15)
+      .lineTo(550, y + 15)
+      .stroke();
     y += 25;
 
     // --- Table Rows ---
@@ -77,10 +105,24 @@ export class PdfService {
     y += 10;
 
     doc.text('Subtotal:', 350, y, { width: 100, align: 'right' });
-    doc.text(`Rs ${Number(order.subtotal || order.total_amount * 0.82).toFixed(2)}`, 450, y, { width: 100, align: 'right' });
+    doc.text(
+      `Rs ${Number(order.subtotal || order.total_amount - (order.tax_amount || 0) - (order.shipping_amount || 0)).toFixed(2)}`,
+      450,
+      y,
+      { width: 100, align: 'right' }
+    );
     y += 15;
 
-    doc.text('Tax (GST 18%):', 350, y, { width: 100, align: 'right' });
+    if (order.shipping_amount > 0) {
+      doc.text('Shipping:', 350, y, { width: 100, align: 'right' });
+      doc.text(`Rs ${Number(order.shipping_amount).toFixed(2)}`, 450, y, {
+        width: 100,
+        align: 'right',
+      });
+      y += 15;
+    }
+
+    doc.text('GST (18%):', 350, y, { width: 100, align: 'right' });
     doc.text(`Rs ${Number(order.tax_amount).toFixed(2)}`, 450, y, { width: 100, align: 'right' });
     y += 20;
 
@@ -89,10 +131,16 @@ export class PdfService {
     doc.text(`Rs ${Number(order.total_amount).toFixed(2)}`, 450, y, { width: 100, align: 'right' });
 
     // --- Footer ---
-    doc.fillColor('#999999').fontSize(8).font('Helvetica').text(
-      'This is a computer generated document. Terms: 1. Goods once sold will not be taken back. 2. Subject to Mumbai Jurisdiction.',
-      50, 780, { align: 'center' }
-    );
+    doc
+      .fillColor('#999999')
+      .fontSize(8)
+      .font('Helvetica')
+      .text(
+        'This is a computer generated document. Terms: 1. Goods once sold will not be taken back. 2. Subject to Mumbai Jurisdiction.',
+        50,
+        780,
+        { align: 'center' }
+      );
 
     doc.end();
   }

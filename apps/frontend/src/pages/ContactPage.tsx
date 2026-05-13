@@ -2,8 +2,18 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { PageSeo } from '@/components/seo/PageSeo';
 import { Send, Phone, Mail, MapPin, Clock, Loader2, CheckCircle2 } from 'lucide-react';
+import { useCMS } from '@/features/cms/useCMS';
 
 export function ContactPage() {
+  const { data: cms } = useCMS('contact_page');
+  const details = cms?.details || {
+    address: 'Mumbai, Maharashtra, India',
+    pincode: '',
+    phone: '+91 98765 00000',
+    email: 'hello@byteevolvr.com',
+    workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -104,28 +114,32 @@ export function ContactPage() {
                 <MapPin className="h-5 w-5 text-accent mt-1" />
                 <div className="text-sm">
                   <p className="text-white font-medium">Visit Us</p>
-                  <p className="text-brand-muted">Mumbai, Maharashtra, India</p>
+                  <p className="text-brand-muted">
+                    {details.address} {details.pincode ? `- ${details.pincode}` : ''}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <Phone className="h-5 w-5 text-accent mt-1" />
                 <div className="text-sm">
                   <p className="text-white font-medium">Call Us</p>
-                  <p className="text-brand-muted">+91 98765 00000</p>
+                  <p className="text-brand-muted">{details.phone}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <Mail className="h-5 w-5 text-accent mt-1" />
                 <div className="text-sm">
                   <p className="text-white font-medium">Email Us</p>
-                  <p className="text-brand-muted">hello@byteevolvr.com</p>
+                  <p className="text-brand-muted">{details.email}</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
                 <Clock className="h-5 w-5 text-accent mt-1" />
                 <div className="text-sm">
                   <p className="text-white font-medium">Working Hours</p>
-                  <p className="text-brand-muted">Mon-Sat: 9:00 AM - 7:00 PM</p>
+                  <p className="text-brand-muted">
+                    {details.workingHours || 'Mon-Sat: 9:00 AM - 7:00 PM'}
+                  </p>
                 </div>
               </div>
 

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Footer as SharedFooter } from '@byteevolvr/ui';
 import { AppLogo } from '@/components/ui/AppLogo';
+import { useCMS } from '@/features/cms/useCMS';
 
 const footerSections = [
   {
@@ -31,6 +32,9 @@ const footerSections = [
 ];
 
 export function Footer() {
+  const { data: globalCms } = useCMS('global');
+  const { data: homeCms } = useCMS('home');
+
   return (
     <SharedFooter
       logo={<AppLogo size={32} />}
@@ -38,6 +42,8 @@ export function Footer() {
       sections={footerSections}
       copyright={`© ${new Date().getFullYear()} ByteeVolvr Enterprises. All rights reserved.`}
       LinkComponent={Link}
+      socialLinks={globalCms?.social}
+      contactInfo={homeCms?.contact}
     />
   );
 }

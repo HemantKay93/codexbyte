@@ -70,6 +70,49 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   next();
 };
 
+export const authenticateOptional = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return next();
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const {
+      data: { user: sbUser },
+      error: sbError,
+    } = await supabase.auth.getUser(token);
+
+    if (sbUser && !sbError) {
+      const admin = await getAdminClient();
+      const { data: profile } = await admin
+        .from('user_profiles')
+        .select('role, full_name')
+        .eq('id', sbUser.id)
+        .single();
+
+      req.user = {
+        ...sbUser,
+        role: profile?.role || 'user',
+        fullName: profile?.full_name || sbUser.email?.split('@')[0],
+      };
+    } else {
+      // Try local JWT fallback
+      const decoded: any = jwt.verify(token, JWT_SECRET);
+      req.user = {
+        id: decoded.id,
+        email: decoded.email,
+        role: decoded.role || 'user',
+        fullName: 'Main Admin',
+      };
+    }
+  } catch (err) {
+    // Ignore error and proceed as guest
+    logger.debug(`[Auth] Optional auth failed: ${(err as Error).message}`);
+  }
+  next();
+};
 export const authorize = (...roles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {

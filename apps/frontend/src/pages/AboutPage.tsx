@@ -1,8 +1,14 @@
 import { motion } from 'framer-motion';
 import { PageSeo } from '@/components/seo/PageSeo';
 import { Target, Users, Shield, Zap } from 'lucide-react';
+import { useCMS } from '@/features/cms/useCMS';
 
 export function AboutPage() {
+  const { data: cms } = useCMS('about');
+  const content = cms?.main || {
+    title: 'Empowering Business with Intelligent Technology Solutions.',
+    content: `Founded on the principles of trust and technical excellence, ByteeVolvr Enterprises has evolved from a specialized repair service into a comprehensive IT partner for businesses across India.\n\nWe understand that technology is the backbone of modern enterprise. Our mission is to ensure your infrastructure is robust, your supply chain is seamless, and your operations are never interrupted.`,
+  };
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -38,22 +44,16 @@ export function AboutPage() {
           variants={itemVariants}
           className="mb-10 max-w-4xl font-display text-5xl font-bold leading-tight text-white lg:text-6xl"
         >
-          Empowering Business with{' '}
-          <span className="text-primary-light">Intelligent Technology</span> Solutions.
+          {content.title}
         </motion.h1>
 
         <div className="grid gap-12 lg:grid-cols-2">
           <motion.div variants={itemVariants} className="space-y-6">
-            <p className="text-lg leading-relaxed text-brand-muted">
-              Founded on the principles of trust and technical excellence, ByteeVolvr Enterprises
-              has evolved from a specialized repair service into a comprehensive IT partner for
-              businesses across India.
-            </p>
-            <p className="text-lg leading-relaxed text-brand-muted">
-              We understand that technology is the backbone of modern enterprise. Our mission is to
-              ensure your infrastructure is robust, your supply chain is seamless, and your
-              operations are never interrupted.
-            </p>
+            {content.content.split('\n\n').map((para: string, i: number) => (
+              <p key={i} className="text-lg leading-relaxed text-brand-muted">
+                {para}
+              </p>
+            ))}
           </motion.div>
 
           <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
