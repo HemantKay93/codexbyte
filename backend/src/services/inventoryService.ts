@@ -34,7 +34,10 @@ export class InventoryService {
     const newQty = currentQty + data.quantity;
 
     if (newQty < 0) {
-      throw new AppError(`Insufficient stock in warehouse for product ${data.productId}`, 400);
+      throw new AppError(
+        `Insufficient stock in warehouse for product ${data.productId} (Current: ${currentQty}, Requested: ${Math.abs(data.quantity)})`,
+        400
+      );
     }
 
     logger.info(

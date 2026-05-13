@@ -108,9 +108,10 @@ export class OrderService {
         .eq('warehouse_id', warehouseId)
         .maybeSingle();
 
-      if (inv && inv.quantity < item.quantity) {
+      const currentQty = inv?.quantity || 0;
+      if (currentQty < item.quantity) {
         throw new AppError(
-          `Insufficient stock for product ${item.productId} in selected warehouse`,
+          `Insufficient stock for product ${item.productId} in selected warehouse (Available: ${currentQty})`,
           400
         );
       }
