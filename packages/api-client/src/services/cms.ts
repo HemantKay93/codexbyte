@@ -13,11 +13,7 @@ export const CMSService = {
   },
 
   updatePageContent: async (pageSlug: string, contentBySection: Record<string, any>) => {
-    const updates = await Promise.all(
-      Object.entries(contentBySection).map(([sectionKey, content]) =>
-        CMSService.updateContent(pageSlug, sectionKey, content)
-      )
-    );
-    return updates;
+    const response = await apiClient.put(`/cms/admin/${pageSlug}`, { contentBySection });
+    return response.data;
   },
 };

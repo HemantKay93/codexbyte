@@ -20,3 +20,16 @@ export const updateCmsContent = catchAsync(async (req: Request, res: Response) =
   const result = await cmsRepo.upsert(pageSlug, sectionKey, content);
   res.json(result);
 });
+
+export const updatePageContent = catchAsync(async (req: Request, res: Response) => {
+  const pageSlug = req.params.pageSlug as string;
+  const { contentBySection } = req.body;
+
+  const sections = Object.entries(contentBySection).map(([sectionKey, content]) => ({
+    sectionKey,
+    content,
+  }));
+
+  const result = await cmsRepo.upsertBulk(pageSlug, sections);
+  res.json(result);
+});
