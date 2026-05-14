@@ -26,9 +26,13 @@ export const updatePageContent = catchAsync(async (req: Request, res: Response) 
   const pageSlug = req.params.pageSlug as string;
   const { contentBySection } = req.body;
   console.log(
-    `[CMS] Received update for ${pageSlug}. Sections:`,
-    Object.keys(contentBySection || {})
+    `[CMS] Received update for ${pageSlug}. Payload:`,
+    JSON.stringify(contentBySection, null, 2)
   );
+
+  if (!contentBySection || typeof contentBySection !== 'object') {
+    return res.status(400).json({ message: 'Invalid content payload' });
+  }
 
   const sections = Object.entries(contentBySection).map(([sectionKey, content]) => ({
     sectionKey,

@@ -137,34 +137,44 @@ export function CMSBuilderPage() {
   };
 
   const handleSave = async () => {
-    if (dirtySections.size === 0) {
+    // Determine which sections have actually changed
+    const modifiedSections = Array.from(dirtySections);
+
+    if (modifiedSections.length === 0) {
       alert('No changes detected to save.');
       return;
     }
 
     setSaving(true);
-    // Only send sections that were actually modified
+
+    // Create payload with ONLY dirty sections
     const dataToSave: Record<string, any> = {};
-    dirtySections.forEach((section) => {
+    modifiedSections.forEach((section) => {
       dataToSave[section] = cmsData[section];
     });
 
-    console.log('[CMS] Publishing changes for page:', selectedPage, dataToSave);
+    console.log('[CMS] Publishing modified sections:', selectedPage, modifiedSections);
     try {
       await CMSService.updatePageContent(selectedPage, dataToSave);
-      setDirtySections(new Set()); // Clear dirty state after success
+      setDirtySections(new Set()); // Reset tracking after success
       await fetchCMSContent(selectedPage);
-      alert('Changes saved and published successfully!');
+      alert(`Successfully updated: ${modifiedSections.join(', ')}`);
     } catch (err) {
       console.error('Error saving CMS content:', err);
-      alert('Failed to save changes.');
+      alert('Failed to save changes. Please check backend logs.');
     } finally {
       setSaving(false);
     }
   };
 
   const updateContent = (section: string, field: string, value: any) => {
-    setDirtySections((prev) => new Set(prev).add(section));
+    // Mark this section as "dirty" (modified)
+    setDirtySections((prev) => {
+      const next = new Set(prev);
+      next.add(section);
+      return next;
+    });
+
     setCmsData((prev) => ({
       ...prev,
       [section]: {

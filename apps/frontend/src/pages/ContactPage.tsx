@@ -13,15 +13,31 @@ export function ContactPage() {
   const API_BASE_URL =
     (import.meta as any).env?.VITE_API_BASE_URL || 'https://codexbyte.onrender.com/api';
 
-  const contactData = contactPageCms?.details ||
-    globalCms?.contact ||
-    homeCms?.contact || {
-      address: 'Chaltakonda, Routhkhanda, Near Kali Mata Mandir, Joypur, Bankura, West Bengal',
-      pincode: '722138',
-      phone: '+91 78889 57575',
-      email: 'hello@byteevolvr.com',
-      workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
-    };
+  const contactPageDetails = contactPageCms?.details || {};
+  const globalContact = globalCms?.contact || {};
+  const homeContact = homeCms?.contact || {};
+
+  const contactData = {
+    address:
+      contactPageDetails.address ||
+      globalContact.address ||
+      homeContact.address ||
+      'Chaltakonda, Routhkhanda, Near Kali Mata Mandir, Joypur, Bankura, West Bengal',
+    pincode: contactPageDetails.pincode || globalContact.pincode || homeContact.pincode || '722138',
+    phone:
+      contactPageDetails.phone || globalContact.phone || homeContact.phone || '+91 78889 57575',
+    email:
+      contactPageDetails.email ||
+      globalContact.email ||
+      homeContact.email ||
+      'hello@byteevolvr.com',
+    workingHours:
+      contactPageDetails.workingHours ||
+      globalContact.workingHours ||
+      homeContact.workingHours ||
+      'Mon-Sat: 9:00 AM - 7:00 PM',
+    mapUrl: contactPageDetails.mapUrl || globalContact.mapUrl || homeContact.mapUrl || '',
+  };
 
   const details = contactData;
 
@@ -158,10 +174,18 @@ export function ContactPage() {
               {/* Google Maps Embed */}
               <div className="mt-8 overflow-hidden rounded-xl border border-white/5 bg-white/5 h-48 w-full grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
                 <iframe
-                  src={
-                    details.mapUrl ||
-                    `https://www.google.com/maps?q=${encodeURIComponent(details.address)}&output=embed`
-                  }
+                  src={(() => {
+                    const url = details.mapUrl;
+                    if (url && url.includes('google.com/maps')) {
+                      if (url.includes('embed') || url.includes('output=embed')) return url;
+                      // Convert standard search/place URL to embed
+                      return `https://www.google.com/maps?q=${encodeURIComponent(details.address)}&output=embed`;
+                    }
+                    return (
+                      url ||
+                      `https://www.google.com/maps?q=${encodeURIComponent(details.address)}&output=embed`
+                    );
+                  })()}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
