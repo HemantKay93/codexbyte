@@ -41,6 +41,7 @@ app.use(
   helmet({
     crossOriginResourcePolicy: false,
     crossOriginOpenerPolicy: false,
+    contentSecurityPolicy: false,
   })
 );
 app.use(
@@ -68,7 +69,14 @@ app.use(
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+    ],
     exposedHeaders: ['Content-Range', 'X-Content-Range'],
     maxAge: 86400, // 24 hours preflight cache
   })
