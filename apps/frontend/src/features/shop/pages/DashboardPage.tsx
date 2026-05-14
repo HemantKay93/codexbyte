@@ -19,14 +19,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { numberToWords } from '@/lib/utils';
-
-const formatPrice = (value: number) =>
-  new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(value);
+import { printInvoice, formatPrice } from '@byteevolvr/ui';
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -81,10 +74,19 @@ export function DashboardPage() {
 
   useEffect(() => {
     if (user) fetchData();
-  }, [user, location.key]); // Refresh on navigation/mount
 
-  const fetchData = async () => {
-    setLoading(true);
+    // Real-time updates: Poll for data every 10 seconds if page is visible
+    const interval = setInterval(() => {
+      if (user && document.visibilityState === 'visible') {
+        fetchData(true);
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [user, location.key]);
+
+  const fetchData = async (isSilent = false) => {
+    if (!isSilent) setLoading(true);
     try {
       const results = await Promise.allSettled([
         UserService.getProfile(),
@@ -95,30 +97,20 @@ export function DashboardPage() {
       if (results[0].status === 'fulfilled' && results[0].value) {
         setProfile(results[0].value);
         setFullName(results[0].value.full_name || '');
-      } else if (results[0].status === 'rejected') {
-        console.error('Profile fetch failed:', results[0].reason);
       }
 
       if (results[1].status === 'fulfilled' && results[1].value) {
         setOrders(results[1].value);
-      } else if (results[1].status === 'rejected') {
-        console.error('Orders fetch failed:', results[1].reason);
       }
 
       if (results[2].status === 'fulfilled' && results[2].value) {
         setAddresses(results[2].value);
-      } else if (results[2].status === 'rejected') {
-        console.error('Addresses fetch failed:', results[2].reason);
-      }
-
-      if (results.some((r) => r.status === 'rejected')) {
-        // alert('Some dashboard data could not be loaded. Please try again.');
       }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
-      alert('Failed to connect to the server. Please check your internet connection.');
+      if (!isSilent) alert('Failed to connect to the server.');
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   };
 
@@ -203,175 +195,7 @@ export function DashboardPage() {
   const handlePrintInvoice = async (order: any) => {
     try {
       const items = await OrderService.getOrderItems(order.id);
-
-      const printWindow = window.open('', '_blank');
-      if (printWindow) {
-        const cgst = (Number(order.tax_amount) || 0) / 2;
-        const sgst = (Number(order.tax_amount) || 0) / 2;
-        const totalInWords = numberToWords(Math.floor(Number(order.total_amount)));
-
-        const invoiceHtml = `
-          <html>
-            <head>
-              <title>Invoice - ${order.order_number}</title>
-              <style>
-                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-                body { font-family: 'Inter', sans-serif; padding: 20px; color: #1a1a1a; line-height: 1.4; font-size: 11px; }
-                .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-                .company-info h1 { margin: 0; font-size: 20px; color: #000; }
-                .company-info p { margin: 2px 0; color: #333; }
-                .tax-invoice-box { background: #3b82f6; color: white; padding: 10px 20px; border-radius: 4px; min-width: 250px; }
-                .tax-invoice-box h2 { margin: 0; font-size: 18px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 5px; }
-                .tax-invoice-box table { width: 100%; border-collapse: collapse; }
-                .tax-invoice-box td { color: white; border: none; padding: 2px 0; }
-                .address-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #ddd; margin-bottom: 0; }
-                .address-box { padding: 10px; border-right: 1px solid #ddd; }
-                .address-box:last-child { border-right: none; }
-                .section-title { font-weight: bold; background: #f3f4f6; padding: 5px 10px; border: 1px solid #ddd; border-bottom: none; }
-                .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #ddd; }
-                .items-table th { background: #3b82f6; color: white; text-align: center; padding: 8px; border: 1px solid #3b82f6; text-transform: uppercase; font-size: 10px; }
-                .items-table td { padding: 8px; border: 1px solid #ddd; vertical-align: top; }
-                .text-right { text-align: right; }
-                .text-center { text-align: center; }
-                .footer-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; margin-top: 0; border: 1px solid #ddd; border-top: none; }
-                .amount-words { padding: 15px; border-right: 1px solid #ddd; }
-                .totals-table { width: 100%; border-collapse: collapse; }
-                .totals-table td { padding: 5px 10px; border-bottom: 1px solid #eee; }
-                .total-bar { background: #3b82f6; color: white; font-weight: bold; font-size: 14px; }
-                .total-bar td { color: white; border: none; padding: 10px; }
-                .terms { padding: 15px; font-size: 9px; color: #666; border-top: 1px solid #ddd; margin-top: 20px; }
-                .signature { text-align: right; padding: 20px; margin-top: 20px; }
-                .signature-line { border-top: 1px solid #000; width: 200px; display: inline-block; margin-top: 40px; }
-              </style>
-            </head>
-            <body>
-              <div class="header">
-                <div class="company-info">
-                  <h1>ByteEvolvr</h1>
-                  <p>101, Tech Park, Andheri East<br/>Mumbai, MH 400069<br/>Phone: +91 99999 88888<br/>Email: sales@byteevolvr.in<br/>GSTIN: 27AABCB1234F1Z5</p>
-                </div>
-                <div class="tax-invoice-box">
-                  <h2>Tax Invoice</h2>
-                  <table>
-                    <tr><td>Invoice Number</td><td class="text-right">: <strong>${order.order_number}</strong></td></tr>
-                    <tr><td>Invoice Date</td><td class="text-right">: ${new Date(order.created_at).toLocaleDateString()}</td></tr>
-                    <tr><td>Print Date</td><td class="text-right">: ${new Date().toLocaleDateString()}</td></tr>
-                  </table>
-                </div>
-              </div>
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
-                <div class="section-title">Billed To</div>
-                <div class="section-title" style="border-left: none;">Billing & Shipping Address</div>
-              </div>
-              <div class="address-grid">
-                <div class="address-box">
-                  <p><strong>${order.customer_name || 'Customer'}</strong></p>
-                  <p>${order.customer_email || ''}</p>
-                  <p>POS: Maharashtra</p>
-                </div>
-                <div class="address-box">
-                  ${(() => {
-                    try {
-                      const addr =
-                        typeof order.shipping_address === 'string'
-                          ? JSON.parse(order.shipping_address)
-                          : order.shipping_address;
-
-                      if (!addr || !addr.full_name) return '<p>Address not available</p>';
-
-                      return `
-                        <p><strong>${addr.full_name}</strong></p>
-                        <p>${addr.line_1}</p>
-                        ${addr.line_2 ? `<p>${addr.line_2}</p>` : ''}
-                        <p>${addr.city}, ${addr.state} - ${addr.postal_code}</p>
-                        <p>Mobile: ${addr.phone}</p>
-                      `;
-                    } catch (e) {
-                      return '<p>Address not available</p>';
-                    }
-                  })()}
-                </div>
-              </div>
-
-              <table class="items-table">
-                <thead>
-                  <tr>
-                    <th style="width: 40px;">S.No</th>
-                    <th>Item Description</th>
-                    <th style="width: 60px;">Qty</th>
-                    <th style="width: 80px;">Rate (INR)</th>
-                    <th style="width: 80px;">Tax (%)</th>
-                    <th style="width: 100px;">Amount (INR)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${items
-                    .map(
-                      (item: any, i: number) => `
-                    <tr>
-                      <td class="text-center">${i + 1}</td>
-                      <td>
-                        <strong>${item.product_name}</strong><br/>
-                        <small style="color: #666">SKU: ${item.sku}</small>
-                      </td>
-                      <td class="text-center">${item.quantity} Nos</td>
-                      <td class="text-right">${Number(item.unit_price).toFixed(2)}</td>
-                      <td class="text-center">18%</td>
-                      <td class="text-right">${Number(item.total_price).toFixed(2)}</td>
-                    </tr>
-                  `
-                    )
-                    .join('')}
-                </tbody>
-              </table>
-
-              <div class="footer-grid">
-                <div class="amount-words">
-                  <p style="font-weight: bold; margin-bottom: 5px;">Amount in words:</p>
-                  <p>${totalInWords} Rupees Only</p>
-                  <p style="margin-top: 20px;">Thanks for your Business!</p>
-                </div>
-                <div>
-                  <table class="totals-table">
-                    <tr><td>Sub Total</td><td class="text-right">${Number(order.subtotal || 0).toFixed(2)}</td></tr>
-                    <tr><td>CGST 9%</td><td class="text-right">${cgst.toFixed(2)}</td></tr>
-                    <tr><td>SGST 9%</td><td class="text-right">${sgst.toFixed(2)}</td></tr>
-                    <tr><td>Shipping</td><td class="text-right">${Number(order.shipping_amount || 0).toFixed(2)}</td></tr>
-                    <tr><td>Round Off</td><td class="text-right">0.00</td></tr>
-                    <tr class="total-bar"><td>Total</td><td class="text-right">Rs ${Number(order.total_amount).toFixed(2)}</td></tr>
-                  </table>
-                </div>
-              </div>
-              
-              <div class="terms">
-                <strong>Terms & Conditions:</strong><br/>
-                1. Goods once sold will not be taken back or exchanged.<br/>
-                2. Any dispute subject to Mumbai Jurisdiction.<br/>
-                3. This is a computer generated invoice and requires no physical signature.
-              </div>
-              
-              <div class="signature">
-                <p>for <strong>ByteEvolvr</strong></p>
-                <div class="signature-line"></div>
-                <p>Authorized Signature</p>
-              </div>
-              
-              <div style="text-align: center; color: #999; font-size: 8px; margin-top: 20px;">
-                This is a computer generated document
-              </div>
-            </body>
-          </html>
-        `;
-        printWindow.document.write(invoiceHtml);
-        printWindow.document.close();
-
-        printWindow.onload = () => {
-          setTimeout(() => {
-            printWindow.print();
-          }, 500);
-        };
-      }
+      printInvoice(order, items);
     } catch (err) {
       console.error('Print failed:', err);
       alert('Could not generate invoice.');

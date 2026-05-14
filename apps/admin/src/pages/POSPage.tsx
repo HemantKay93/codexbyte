@@ -13,7 +13,7 @@ import {
   Printer,
 } from 'lucide-react';
 import { ProductService, AdminService } from '@byteevolvr/api-client';
-import { numberToWords } from '../lib/utils';
+import { printInvoice } from '@byteevolvr/ui';
 
 export function POSPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -138,128 +138,18 @@ export function POSPage() {
   const handlePrintReceipt = () => {
     if (!lastCreatedOrder) return;
     const order = lastCreatedOrder;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-
     const items =
       order.order_items && order.order_items.length > 0
         ? order.order_items
         : cart.map((item) => ({
             product_name: item.name,
+            sku: item.sku || '',
             quantity: item.qty,
             unit_price: item.price,
             total_price: Number(item.price) * item.qty,
           }));
-    const totalInWords = order.total_amount
-      ? numberToWords(Math.floor(Number(order.total_amount)))
-      : '';
-    const cgst = (Number(order.tax_amount) || 0) / 2;
-    const sgst = (Number(order.tax_amount) || 0) / 2;
 
-    const invoiceHtml = `
-      <html>
-        <head>
-          <title>Receipt - ${order.order_number}</title>
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-            body { font-family: 'Inter', sans-serif; padding: 20px; color: #1a1a1a; line-height: 1.4; font-size: 11px; }
-            .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-            .company-info h1 { margin: 0; font-size: 20px; color: #000; }
-            .company-info p { margin: 2px 0; color: #333; }
-            .tax-invoice-box { background: #3b82f6; color: white; padding: 10px 20px; border-radius: 4px; min-width: 250px; }
-            .tax-invoice-box h2 { margin: 0; font-size: 18px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 5px; }
-            .tax-invoice-box table { width: 100%; border-collapse: collapse; }
-            .tax-invoice-box td { color: white; border: none; padding: 2px 0; }
-            .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #ddd; }
-            .items-table th { background: #3b82f6; color: white; text-align: center; padding: 8px; border: 1px solid #3b82f6; text-transform: uppercase; font-size: 10px; }
-            .items-table td { padding: 8px; border: 1px solid #ddd; vertical-align: top; }
-            .text-right { text-align: right; }
-            .text-center { text-align: center; }
-            .footer-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; margin-top: 20px; border: 1px solid #ddd; }
-            .amount-words { padding: 15px; border-right: 1px solid #ddd; }
-            .totals-table { width: 100%; border-collapse: collapse; }
-            .totals-table td { padding: 5px 10px; border-bottom: 1px solid #eee; }
-            .total-bar { background: #3b82f6; color: white; font-weight: bold; font-size: 14px; }
-            .total-bar td { color: white; border: none; padding: 10px; }
-            .signature { text-align: right; padding: 20px; margin-top: 20px; }
-            .signature-line { border-top: 1px solid #000; width: 200px; display: inline-block; margin-top: 40px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="company-info">
-              <h1>ByteEvolvr</h1>
-              <p>101, Tech Park, Andheri East<br/>Mumbai, MH 400069<br/>GSTIN: 27AABCB1234F1Z5</p>
-            </div>
-            <div class="tax-invoice-box">
-              <h2>POS Receipt</h2>
-              <table>
-                <tr><td>Receipt No</td><td class="text-right">: <strong>${order.order_number}</strong></td></tr>
-                <tr><td>Date</td><td class="text-right">: ${new Date().toLocaleDateString()}</td></tr>
-              </table>
-            </div>
-          </div>
-          
-          <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; background: #f9fafb;">
-            <strong>Customer:</strong> ${order.customer_name || 'Walk-in Customer'}<br/>
-            <strong>Email:</strong> ${order.customer_email || 'N/A'}
-          </div>
-
-          <table class="items-table">
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th style="width: 40px;">Qty</th>
-                <th style="width: 80px;">Price</th>
-                <th style="width: 100px;">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${(items || [])
-                .map(
-                  (item: any) => `
-                <tr>
-                  <td>${item.product_name || item.name}</td>
-                  <td class="text-center">${item.quantity || item.qty}</td>
-                  <td class="text-right">${Number(item.unit_price || item.price).toFixed(2)}</td>
-                  <td class="text-right">${Number(item.total_price || item.price * item.qty).toFixed(2)}</td>
-                </tr>
-              `
-                )
-                .join('')}
-            </tbody>
-          </table>
-
-          <div class="footer-grid">
-            <div class="amount-words">
-              <p style="font-weight: bold; margin-bottom: 5px;">Amount in words:</p>
-              <p>${totalInWords} Rupees Only</p>
-            </div>
-            <div>
-              <table class="totals-table">
-                <tr><td>Sub Total</td><td class="text-right">${Number(order.subtotal).toFixed(2)}</td></tr>
-                <tr><td>Tax (GST)</td><td class="text-right">${Number(order.tax_amount).toFixed(2)}</td></tr>
-                <tr class="total-bar"><td>Total</td><td class="text-right">₹${Number(order.total_amount).toFixed(2)}</td></tr>
-              </table>
-            </div>
-          </div>
-          
-          <div class="signature">
-            <p>Authorized Signature</p>
-            <div class="signature-line"></div>
-          </div>
-        </body>
-      </html>
-    `;
-
-    printWindow.document.write(invoiceHtml);
-    printWindow.document.close();
-    printWindow.onload = () => {
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-      }, 500);
-    };
+    printInvoice(order, items);
   };
 
   const subtotal = cart.reduce((acc, item) => acc + Number(item.price) * item.qty, 0);

@@ -13,6 +13,7 @@ import {
   TableCell,
   Input,
 } from '../components/ui';
+import { printInvoice } from '@byteevolvr/ui';
 import {
   ArrowLeft,
   Printer,
@@ -32,7 +33,6 @@ import { AdminService } from '@byteevolvr/api-client';
 
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { OrderActivityLogs } from '../components/OrderActivityLogs';
-import { numberToWords } from '../lib/utils';
 
 export function OrderDetailPage() {
   const { id } = useParams();
@@ -55,9 +55,11 @@ export function OrderDetailPage() {
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [returnReason, setReturnReason] = useState('');
   const [returnRefundAmount, setReturnRefundAmount] = useState('');
-  const [returnItems, setReturnItems] = useState<{ productId: string; quantity: number; maxQty: number; name: string }[]>([]);
+  const [returnItems, setReturnItems] = useState<
+    { productId: string; quantity: number; maxQty: number; name: string }[]
+  >([]);
   const [isProcessingReturn, setIsProcessingReturn] = useState(false);
-
+  const [refreshLogsKey, setRefreshLogsKey] = useState(0);
 
   const loadData = async () => {
     if (!id) return;
@@ -82,6 +84,7 @@ export function OrderDetailPage() {
     try {
       await updateOrderStatus(id, { status, ...extra });
       await loadData();
+      setRefreshLogsKey((prev) => prev + 1);
       setShowFulfillModal(false);
     } catch (err) {
       console.error(err);
@@ -120,6 +123,7 @@ export function OrderDetailPage() {
       });
       setShowReturnModal(false);
       await loadData();
+      setRefreshLogsKey((prev) => prev + 1);
     } catch (err: any) {
       console.error('Return processing failed:', err);
       alert(err?.response?.data?.message || 'Failed to process return.');
@@ -128,173 +132,9 @@ export function OrderDetailPage() {
     }
   };
 
-
   const handlePrint = () => {
     if (!order) return;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-
-    const items = order.order_items || [];
-    const address = order.addresses?.[0] || order.addresses;
-    const totalInWords = order.total_amount
-      ? numberToWords(Math.floor(Number(order.total_amount)))
-      : '';
-    const cgst = (Number(order.tax_amount) || 0) / 2;
-    const sgst = (Number(order.tax_amount) || 0) / 2;
-
-    const invoiceHtml = `
-      <html>
-        <head>
-          <title>Invoice - ${order.order_number}</title>
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-            body { font-family: 'Inter', sans-serif; padding: 20px; color: #1a1a1a; line-height: 1.4; font-size: 11px; }
-            .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
-            .company-info h1 { margin: 0; font-size: 20px; color: #000; }
-            .company-info p { margin: 2px 0; color: #333; }
-            .tax-invoice-box { background: #3b82f6; color: white; padding: 10px 20px; border-radius: 4px; min-width: 250px; }
-            .tax-invoice-box h2 { margin: 0; font-size: 18px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 5px; margin-bottom: 5px; }
-            .tax-invoice-box table { width: 100%; border-collapse: collapse; }
-            .tax-invoice-box td { color: white; border: none; padding: 2px 0; }
-            .address-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #ddd; margin-bottom: 0; }
-            .address-box { padding: 10px; border-right: 1px solid #ddd; }
-            .address-box:last-child { border-right: none; }
-            .section-title { font-weight: bold; background: #f3f4f6; padding: 5px 10px; border: 1px solid #ddd; border-bottom: none; }
-            .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; border: 1px solid #ddd; }
-            .items-table th { background: #3b82f6; color: white; text-align: center; padding: 8px; border: 1px solid #3b82f6; text-transform: uppercase; font-size: 10px; }
-            .items-table td { padding: 8px; border: 1px solid #ddd; vertical-align: top; }
-            .text-right { text-align: right; }
-            .text-center { text-align: center; }
-            .footer-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; margin-top: 0; border: 1px solid #ddd; border-top: none; }
-            .amount-words { padding: 15px; border-right: 1px solid #ddd; }
-            .totals-table { width: 100%; border-collapse: collapse; }
-            .totals-table td { padding: 5px 10px; border-bottom: 1px solid #eee; }
-            .total-bar { background: #3b82f6; color: white; font-weight: bold; font-size: 14px; }
-            .total-bar td { color: white; border: none; padding: 10px; }
-            .terms { padding: 15px; font-size: 9px; color: #666; border-top: 1px solid #ddd; margin-top: 20px; }
-            .signature { text-align: right; padding: 20px; margin-top: 20px; }
-            .signature-line { border-top: 1px solid #000; width: 200px; display: inline-block; margin-top: 40px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="company-info">
-              <h1>ByteEvolvr</h1>
-              <p>101, Tech Park, Andheri East<br/>Mumbai, MH 400069<br/>Phone: +91 99999 88888<br/>Email: sales@byteevolvr.in<br/>GSTIN: 27AABCB1234F1Z5</p>
-            </div>
-            <div class="tax-invoice-box">
-              <h2>Tax Invoice</h2>
-              <table>
-                <tr><td>Invoice Number</td><td class="text-right">: <strong>${order.order_number}</strong></td></tr>
-                <tr><td>Invoice Date</td><td class="text-right">: ${new Date(order.created_at).toLocaleDateString()}</td></tr>
-                <tr><td>Print Date</td><td class="text-right">: ${new Date().toLocaleDateString()}</td></tr>
-              </table>
-            </div>
-          </div>
-          
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
-            <div class="section-title">Billed To</div>
-            <div class="section-title" style="border-left: none;">Billing & Shipping Address</div>
-          </div>
-          <div class="address-grid">
-            <div class="address-box">
-              <p><strong>${order.customer_name || 'Walk-in Customer'}</strong></p>
-              <p>${order.customer_email || ''}</p>
-              <p>GSTIN: N/A</p>
-              <p>POS: Maharashtra</p>
-            </div>
-            <div class="address-box">
-              ${
-                address
-                  ? `
-                <p><strong>${address.full_name}</strong></p>
-                <p>${address.line_1}</p>
-                ${address.line_2 ? `<p>${address.line_2}</p>` : ''}
-                <p>${address.city}, ${address.state} - ${address.postal_code}</p>
-                <p>Mobile: ${address.phone}</p>
-              `
-                  : `<p>${order.customer_name || 'Walk-in Customer'}</p><p>Counter Sale</p>`
-              }
-            </div>
-          </div>
-
-          <table class="items-table">
-            <thead>
-              <tr>
-                <th style="width: 40px;">S.No</th>
-                <th>Item Description</th>
-                <th style="width: 60px;">Qty</th>
-                <th style="width: 80px;">Rate (INR)</th>
-                <th style="width: 80px;">Tax (%)</th>
-                <th style="width: 100px;">Amount (INR)</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${items
-                .map(
-                  (item: any, i: number) => `
-                <tr>
-                  <td class="text-center">${i + 1}</td>
-                  <td>
-                    <strong>${item.product_name}</strong><br/>
-                    <small style="color: #666">SKU: ${item.sku}</small>
-                  </td>
-                  <td class="text-center">${item.quantity} Nos</td>
-                  <td class="text-right">${Number(item.unit_price).toFixed(2)}</td>
-                  <td class="text-center">18%</td>
-                  <td class="text-right">${Number(item.total_price).toFixed(2)}</td>
-                </tr>
-              `
-                )
-                .join('')}
-            </tbody>
-          </table>
-
-          <div class="footer-grid">
-            <div class="amount-words">
-              <p style="font-weight: bold; margin-bottom: 5px;">Amount in words:</p>
-              <p>${totalInWords} Rupees Only</p>
-              <p style="margin-top: 20px;">Thanks for your Business!</p>
-            </div>
-            <div>
-              <table class="totals-table">
-                <tr><td>Sub Total</td><td class="text-right">${Number(order.subtotal || order.total_amount * 0.82).toFixed(2)}</td></tr>
-                <tr><td>CGST 9%</td><td class="text-right">${cgst.toFixed(2)}</td></tr>
-                <tr><td>SGST 9%</td><td class="text-right">${sgst.toFixed(2)}</td></tr>
-                <tr><td>Round Off</td><td class="text-right">0.00</td></tr>
-                <tr class="total-bar"><td>Total</td><td class="text-right">Rs ${Number(order.total_amount).toFixed(2)}</td></tr>
-              </table>
-            </div>
-          </div>
-          
-          <div class="terms">
-            <strong>Terms & Conditions:</strong><br/>
-            1. Goods once sold will not be taken back or exchanged.<br/>
-            2. Any dispute subject to Mumbai Jurisdiction.<br/>
-            3. This is a computer generated invoice and requires no physical signature.
-          </div>
-          
-          <div class="signature">
-            <p>for <strong>ByteEvolvr</strong></p>
-            <div class="signature-line"></div>
-            <p>Authorized Signature</p>
-          </div>
-          
-          <div style="text-align: center; color: #999; font-size: 8px; margin-top: 20px;">
-            This is a computer generated document
-          </div>
-        </body>
-      </html>
-    `;
-
-    printWindow.document.write(invoiceHtml);
-    printWindow.document.close();
-    printWindow.onload = () => {
-      setTimeout(() => {
-        printWindow.print();
-        printWindow.close();
-      }, 500);
-    };
+    printInvoice(order, order.order_items || []);
   };
 
   if (loading || hookLoading) {
@@ -486,7 +326,7 @@ export function OrderDetailPage() {
               />
             </div>
             <CardContent className="p-8">
-              <OrderActivityLogs orderId={id!} />
+              <OrderActivityLogs orderId={id!} key={refreshLogsKey} />
             </CardContent>
           </Card>
         </div>
@@ -704,9 +544,7 @@ export function OrderDetailPage() {
             className="absolute inset-0 bg-slate-900/70 backdrop-blur-md"
             onClick={() => setShowReturnModal(false)}
           />
-          <div
-            className="relative bg-surface w-full max-w-[560px] shadow-2xl rounded-3xl border border-white/10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
-          >
+          <div className="relative bg-surface w-full max-w-[560px] shadow-2xl rounded-3xl border border-white/10 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Header */}
             <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-orange-50 dark:bg-orange-950/20">
               <div className="flex items-center gap-4">
@@ -735,7 +573,8 @@ export function OrderDetailPage() {
               <div className="flex items-start gap-3 p-4 bg-orange-50 dark:bg-orange-950/30 rounded-2xl border border-orange-200 dark:border-orange-800">
                 <AlertTriangle className="h-5 w-5 text-orange-500 shrink-0 mt-0.5" />
                 <p className="text-sm text-orange-700 dark:text-orange-300 font-medium">
-                  Items will be restocked to the selected warehouse. This action logs an audit trail and cannot be undone.
+                  Items will be restocked to the selected warehouse. This action logs an audit trail
+                  and cannot be undone.
                 </p>
               </div>
 
@@ -746,21 +585,46 @@ export function OrderDetailPage() {
                 </label>
                 <div className="space-y-2">
                   {returnItems.map((item, idx) => (
-                    <div key={item.productId} className="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl border border-outline-variant">
+                    <div
+                      key={item.productId}
+                      className="flex items-center justify-between p-4 bg-surface-container-low rounded-2xl border border-outline-variant"
+                    >
                       <div className="flex-1">
                         <p className="font-bold text-on-surface text-sm">{item.name}</p>
-                        <p className="text-[10px] text-on-surface-variant uppercase tracking-widest">Max: {item.maxQty} units</p>
+                        <p className="text-[10px] text-on-surface-variant uppercase tracking-widest">
+                          Max: {item.maxQty} units
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => setReturnItems(prev => prev.map((i, j) => j === idx ? { ...i, quantity: Math.max(0, i.quantity - 1) } : i))}
+                          onClick={() =>
+                            setReturnItems((prev) =>
+                              prev.map((i, j) =>
+                                j === idx ? { ...i, quantity: Math.max(0, i.quantity - 1) } : i
+                              )
+                            )
+                          }
                           className="h-8 w-8 rounded-xl bg-surface-container flex items-center justify-center font-bold hover:bg-surface-container-high transition-colors"
-                        >−</button>
-                        <span className="w-8 text-center font-black text-on-surface">{item.quantity}</span>
+                        >
+                          −
+                        </button>
+                        <span className="w-8 text-center font-black text-on-surface">
+                          {item.quantity}
+                        </span>
                         <button
-                          onClick={() => setReturnItems(prev => prev.map((i, j) => j === idx ? { ...i, quantity: Math.min(i.maxQty, i.quantity + 1) } : i))}
+                          onClick={() =>
+                            setReturnItems((prev) =>
+                              prev.map((i, j) =>
+                                j === idx
+                                  ? { ...i, quantity: Math.min(i.maxQty, i.quantity + 1) }
+                                  : i
+                              )
+                            )
+                          }
                           className="h-8 w-8 rounded-xl bg-surface-container flex items-center justify-center font-bold hover:bg-surface-container-high transition-colors"
-                        >+</button>
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -780,7 +644,9 @@ export function OrderDetailPage() {
                   >
                     <option value="">Select Warehouse</option>
                     {warehouses.map((w) => (
-                      <option key={w.id} value={w.id}>{w.name} — {w.location}</option>
+                      <option key={w.id} value={w.id}>
+                        {w.name} — {w.location}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-on-surface-variant pointer-events-none" />
@@ -835,7 +701,10 @@ export function OrderDetailPage() {
                   {isProcessingReturn ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
-                    <><RotateCcw className="h-4 w-4 mr-2" />Confirm Return</>
+                    <>
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      Confirm Return
+                    </>
                   )}
                 </Button>
               </div>
