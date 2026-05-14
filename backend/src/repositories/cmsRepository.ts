@@ -26,28 +26,16 @@ export class CmsRepository {
         },
         { onConflict: 'page_slug,section_key' }
       )
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
-  async upsertBulk(pageSlug: string, sections: { sectionKey: string; content: any }[]) {
-    const admin = await getAdminClient();
-    const rows = sections.map((s) => ({
-      page_slug: pageSlug,
-      section_key: s.sectionKey,
-      content: s.content,
-      updated_at: new Date().toISOString(),
-    }));
-
-    const { data, error } = await admin
-      .from('cms_content')
-      .upsert(rows, { onConflict: 'page_slug,section_key' })
       .select();
 
     if (error) throw error;
-    return data;
+    return data ? data[0] : null;
+  }
+
+  async upsertBulk(pageSlug: string, sections: { sectionKey: string; content: any }[]) {
+    const results = await Promise.all(
+      sections.map((s) => this.upsert(pageSlug, s.sectionKey, s.content))
+    );
+    return results;
   }
 }

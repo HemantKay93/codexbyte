@@ -92,6 +92,7 @@ export function CMSBuilderPage() {
     setSaving(true);
     try {
       await CMSService.updatePageContent(selectedPage, cmsData);
+      await fetchCMSContent(selectedPage);
       alert('Changes saved and published successfully!');
     } catch (err) {
       console.error('Error saving CMS content:', err);

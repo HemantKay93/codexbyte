@@ -25,6 +25,12 @@ export const updatePageContent = catchAsync(async (req: Request, res: Response) 
   const pageSlug = req.params.pageSlug as string;
   const { contentBySection } = req.body;
 
+  import('../services/logger.js').then((m) => {
+    m.default.info(
+      `[CMS] Updating page ${pageSlug} with ${Object.keys(contentBySection || {}).length} sections`
+    );
+  });
+
   const sections = Object.entries(contentBySection).map(([sectionKey, content]) => ({
     sectionKey,
     content,
