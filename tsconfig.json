@@ -17,6 +17,7 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
+      "@byteevolvr/ui": ["packages/ui/src/index.ts"],
       "@byteevolvr/ui/*": ["packages/ui/src/*"],
       "@byteevolvr/api-client": ["packages/api-client/src/index.ts"]
     }
