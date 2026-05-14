@@ -70,18 +70,20 @@ router.put('/cms/:pageSlug/:sectionKey', cmsController.updateCmsContent);
 // Reports
 router.get('/reports/invoice/:id', reportController.exportInvoice);
 
+import { AuditService } from '../services/auditService.js';
+
 // Audit
 router.get(
   '/audit-logs',
   catchAsync(async (req: Request, res: Response) => {
-    const { getAdminClient } = await import('../config/supabase.js');
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('audit_logs')
-      .select('*, user_profiles(full_name)')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (error) throw error;
+    const { page, limit, module, action, userId } = req.query;
+    const data = await AuditService.getLogs({
+      page: page ? Number(page) : undefined,
+      limit: limit ? Number(limit) : undefined,
+      module: module as string,
+      action: action as string,
+      userId: userId as string,
+    });
     res.json(data);
   })
 );

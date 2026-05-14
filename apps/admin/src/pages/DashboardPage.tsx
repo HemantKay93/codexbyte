@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '../components/ui';
 import { ArrowUpRight, DollarSign, ShoppingBag, Users, Activity, Loader2 } from 'lucide-react';
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
+import { SocketService } from '@byteevolvr/api-client';
 import {
   AreaChart,
   Area,
@@ -17,6 +18,23 @@ export function DashboardPage() {
 
   useEffect(() => {
     fetchDashboardData();
+
+    // Real-time updates for Admin
+    const socket = SocketService.connect('admin-session');
+
+    socket.on('admin:new_order', (data: any) => {
+      console.log('[Socket] New order detected:', data);
+      fetchDashboardData();
+    });
+
+    socket.on('admin:order_status_change', (data: any) => {
+      console.log('[Socket] Order status changed:', data);
+      fetchDashboardData();
+    });
+
+    return () => {
+      SocketService.disconnect();
+    };
   }, []);
 
   if (isLoading) {
@@ -43,7 +61,9 @@ export function DashboardPage() {
   // Ensure stats object exists with defaults
   const displayStats = {
     totalRevenue: Number(stats?.totalRevenue || 0),
+    revenueDelta: Number(stats?.revenueDelta || 0),
     salesCount: Number(stats?.salesCount || 0),
+    salesDelta: Number(stats?.salesDelta || 0),
     customerCount: Number(stats?.customerCount || 0),
     avgOrderValue: Number(stats?.avgOrderValue || 0),
   };
@@ -67,9 +87,15 @@ export function DashboardPage() {
               <div className="text-2xl font-bold">
                 ₹{displayStats.totalRevenue.toLocaleString()}
               </div>
-              <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                <ArrowUpRight className="h-3 w-3 mr-1" />
-                +12.5%
+              <div
+                className={`flex items-center text-xs px-2 py-1 rounded-full ${displayStats.revenueDelta >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50'}`}
+              >
+                {displayStats.revenueDelta >= 0 ? (
+                  <ArrowUpRight className="h-3 w-3 mr-1" />
+                ) : (
+                  <ArrowUpRight className="h-3 w-3 mr-1 rotate-90" />
+                )}
+                {Math.abs(displayStats.revenueDelta).toFixed(1)}%
               </div>
             </div>
             <p className="text-xs text-on-surface-variant mt-2">from last month</p>
@@ -84,9 +110,15 @@ export function DashboardPage() {
             </div>
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold">+{displayStats.salesCount}</div>
-              <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
-                <ArrowUpRight className="h-3 w-3 mr-1" />
-                +8.2%
+              <div
+                className={`flex items-center text-xs px-2 py-1 rounded-full ${displayStats.salesDelta >= 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50'}`}
+              >
+                {displayStats.salesDelta >= 0 ? (
+                  <ArrowUpRight className="h-3 w-3 mr-1" />
+                ) : (
+                  <ArrowUpRight className="h-3 w-3 mr-1 rotate-90" />
+                )}
+                {Math.abs(displayStats.salesDelta).toFixed(1)}%
               </div>
             </div>
             <p className="text-xs text-on-surface-variant mt-2">from last month</p>
@@ -103,7 +135,7 @@ export function DashboardPage() {
               <div className="text-2xl font-bold">+{displayStats.customerCount}</div>
               <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
-                +4.1%
+                Active
               </div>
             </div>
             <p className="text-xs text-on-surface-variant mt-2">lifetime unique users</p>
@@ -122,7 +154,7 @@ export function DashboardPage() {
               </div>
               <div className="flex items-center text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
                 <ArrowUpRight className="h-3 w-3 mr-1" />
-                +₹450
+                Target
               </div>
             </div>
             <p className="text-xs text-on-surface-variant mt-2">per transaction</p>

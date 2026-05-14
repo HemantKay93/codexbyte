@@ -3,40 +3,26 @@ import { motion } from 'framer-motion';
 import { PageSeo } from '@/components/seo/PageSeo';
 import { Send, Phone, Mail, MapPin, Clock, Loader2, CheckCircle2 } from 'lucide-react';
 import { useCMS } from '@/features/cms/useCMS';
+import { MarketingService } from '@byteevolvr/api-client';
 
 export function ContactPage() {
   const { data: contactPageCms } = useCMS('contact_page');
   const { data: globalCms } = useCMS('global');
-  const { data: homeCms } = useCMS('home');
-
-  // Helper to get the API base URL for lead submission
-  const API_BASE_URL =
-    (import.meta as any).env?.VITE_API_BASE_URL || 'https://codexbyte.onrender.com/api';
 
   const contactPageDetails = contactPageCms?.details || {};
   const globalContact = globalCms?.contact || {};
-  const homeContact = homeCms?.contact || {};
 
   const contactData = {
     address:
       contactPageDetails.address ||
       globalContact.address ||
-      homeContact.address ||
       'Chaltakonda, Routhkhanda, Near Kali Mata Mandir, Joypur, Bankura, West Bengal',
-    pincode: contactPageDetails.pincode || globalContact.pincode || homeContact.pincode || '722138',
-    phone:
-      contactPageDetails.phone || globalContact.phone || homeContact.phone || '+91 78889 57575',
-    email:
-      contactPageDetails.email ||
-      globalContact.email ||
-      homeContact.email ||
-      'hello@byteevolvr.com',
+    pincode: contactPageDetails.pincode || globalContact.pincode || '722138',
+    phone: contactPageDetails.phone || globalContact.phone || '+91 78889 57575',
+    email: contactPageDetails.email || globalContact.email || 'hello@byteevolvr.com',
     workingHours:
-      contactPageDetails.workingHours ||
-      globalContact.workingHours ||
-      homeContact.workingHours ||
-      'Mon-Sat: 9:00 AM - 7:00 PM',
-    mapUrl: contactPageDetails.mapUrl || globalContact.mapUrl || homeContact.mapUrl || '',
+      contactPageDetails.workingHours || globalContact.workingHours || 'Mon-Sat: 9:00 AM - 7:00 PM',
+    mapUrl: contactPageDetails.mapUrl || globalContact.mapUrl || '',
   };
 
   const details = contactData;
@@ -60,25 +46,13 @@ export function ContactPage() {
     setStatus('loading');
 
     try {
-      const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
-      const response = await fetch(`${baseUrl}/leads`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setStatus('success');
-        setMessage(data.message);
-        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-      } else {
-        setStatus('error');
-        setMessage(data.message || 'Something went wrong.');
-      }
-    } catch (error) {
+      const data = await MarketingService.submitLead(formData);
+      setStatus('success');
+      setMessage(data.message || 'Inquiry sent successfully!');
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (error: any) {
       setStatus('error');
-      setMessage('Failed to connect to the server.');
+      setMessage(error.customMessage || 'Failed to connect to the server.');
     }
   };
 

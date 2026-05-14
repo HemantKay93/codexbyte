@@ -13,3 +13,5 @@ export * from './services/admin';
 export * from './services/cms';
 export * from './services/auth';
 export * from './services/wishlist';
+export * from './services/marketing';
+export * from './services/socket';

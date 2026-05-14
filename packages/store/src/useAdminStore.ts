@@ -3,7 +3,9 @@ import { create } from 'zustand';
 interface AdminState {
   stats: {
     totalRevenue: number;
+    revenueDelta: number;
     salesCount: number;
+    salesDelta: number;
     customerCount: number;
     avgOrderValue: number;
   };
@@ -27,7 +29,9 @@ interface AdminState {
 export const useAdminStore = create<AdminState>((set) => ({
   stats: {
     totalRevenue: 0,
+    revenueDelta: 0,
     salesCount: 0,
+    salesDelta: 0,
     customerCount: 0,
     avgOrderValue: 0,
   },

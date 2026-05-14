@@ -47,7 +47,6 @@ app.use(
 app.use(
   cors({
     origin: function (origin, callback) {
-      console.log(`[CORS] Checking origin: ${origin}`);
       const allowedOrigins = [
         'http://localhost:3000',
         'http://localhost:5173',
@@ -62,16 +61,10 @@ app.use(
       const envOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map((o) => o.trim());
       const allAllowed = [...allowedOrigins, ...envOrigins].filter(Boolean);
 
-      const isVercel = origin?.endsWith('.vercel.app');
-
-      if (
-        !origin ||
-        allAllowed.includes(origin) ||
-        origin.startsWith('http://localhost:') ||
-        isVercel
-      ) {
+      if (!origin || allAllowed.includes(origin) || origin.startsWith('http://localhost:')) {
         callback(null, true);
       } else {
+        logger.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
         callback(new Error('Not allowed by CORS'));
       }
     },
@@ -121,34 +114,11 @@ app.get(
   reportController.exportReport
 );
 
-// Legacy Routes (for frontend compatibility)
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/cms', cmsRoutes);
-app.use('/api/wishlist', wishlistRoutes);
-app.use('/api/payments', paymentRoutes);
-app.use('/api/shipping', shippingRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/pos', posRoutes);
-app.use('/api/marketing', marketingRoutes);
-app.use('/api/warehouse', warehouseRoutes);
-
-app.get(
-  '/api/reports/export',
-  authenticate,
-  authorize('admin', 'super-admin'),
-  reportController.exportReport
-);
-
-// Additional Legacy Mappings
-app.get('/api/products/:productId/reviews', reviewRoutes);
-app.post('/api/products/:productId/reviews', reviewRoutes);
-app.get('/api/tracking/:trackingId', shippingRoutes);
+import { leadSchema } from './validators/leadValidator.js';
+import { validate } from './middlewares/validate.js';
 
 // Lead Generation (Contact Form)
-app.post(['/api/leads', '/api/v1/leads'], async (req, res) => {
+app.post(['/api/leads', '/api/v1/leads'], validate(leadSchema), async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
     const { supabase } = await import('./config/supabase.js');

@@ -33,4 +33,33 @@ export class AuditService {
       console.error('Order Activity Log Error:', error);
     }
   }
+
+  static async getLogs(
+    params: {
+      page?: number;
+      limit?: number;
+      module?: string;
+      action?: string;
+      userId?: string;
+    } = {}
+  ) {
+    const { page = 1, limit = 100, module, action, userId } = params;
+    const admin = await getAdminClient();
+    let query = admin
+      .from('audit_logs')
+      .select('*, user_profiles(full_name)')
+      .order('created_at', { ascending: false });
+
+    if (module) query = query.eq('module', module);
+    if (action) query = query.eq('action', action);
+    if (userId) query = query.eq('user_id', userId);
+
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+    query = query.range(from, to);
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return data;
+  }
 }

@@ -162,8 +162,8 @@ export const printInvoice = (order: any, items: any[]) => {
           <div class="company-info">
             <h1>ByteEvolvr</h1>
             <p>ByteEvolvr Technologies Pvt Ltd</p>
-            <p>101, Tech Park, Andheri East<br/>Mumbai, Maharashtra 400069</p>
-            <p>GSTIN: 27AABCU9603R1ZN | PAN: AABCU9603R</p>
+            <p>Chaltakonda, Routhkhanda, Near Kali Mata Mandir<br/>Joypur, Bankura, West Bengal - 722138</p>
+            <p>GSTIN: 19AABCU9603R1ZN | PAN: AABCU9603R</p>
           </div>
           <div class="invoice-details">
             <h2>Tax Invoice</h2>

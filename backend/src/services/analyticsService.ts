@@ -4,6 +4,28 @@ export class AnalyticsService {
   static async getDashboardStats() {
     const admin = await getAdminClient();
 
+    const now = new Date();
+    const lastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const twoMonthsAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+
+    // Helper for period stats
+    const getPeriodStats = async (start: Date, end: Date) => {
+      const { data: revenueData } = await admin
+        .from('orders')
+        .select('total_amount')
+        .gte('created_at', start.toISOString())
+        .lt('created_at', end.toISOString())
+        .in('status', ['confirmed', 'packed', 'shipped', 'delivered']);
+
+      const revenue =
+        revenueData?.reduce((sum: number, o: any) => sum + Number(o.total_amount), 0) || 0;
+      const count = revenueData?.length || 0;
+      return { revenue, count };
+    };
+
+    const currentPeriod = await getPeriodStats(lastMonth, now);
+    const previousPeriod = await getPeriodStats(twoMonthsAgo, lastMonth);
+
     // 1. Total Revenue (Confirmed/Delivered orders)
     const { data: revenueData } = await admin
       .from('orders')
@@ -12,6 +34,14 @@ export class AnalyticsService {
 
     const totalRevenue =
       revenueData?.reduce((sum: number, o: any) => sum + Number(o.total_amount), 0) || 0;
+
+    const calculateDelta = (current: number, previous: number) => {
+      if (previous === 0) return current > 0 ? 100 : 0;
+      return ((current - previous) / previous) * 100;
+    };
+
+    const revenueDelta = calculateDelta(currentPeriod.revenue, previousPeriod.revenue);
+    const salesDelta = calculateDelta(currentPeriod.count, previousPeriod.count);
 
     // 2. Order Counts
     const { count: totalOrders } = await admin
@@ -31,13 +61,15 @@ export class AnalyticsService {
     const { data: lowStock } = await admin
       .from('inventory')
       .select('*, products(name, sku)')
-      .lt('quantity', 10); // Hardcoded threshold for now, could be dynamic
+      .lt('quantity', 10);
 
     const avgOrderValue = totalOrders && totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
     return {
       totalRevenue,
+      revenueDelta,
       salesCount: totalOrders || 0,
+      salesDelta,
       pendingOrders: pendingOrders || 0,
       customerCount: totalUsers || 0,
       avgOrderValue,

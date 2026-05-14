@@ -12,7 +12,7 @@ export function useCMS(pageSlug: string, sectionKeys?: string[]) {
       });
       return contentMap;
     },
-    staleTime: 0,
-    refetchOnWindowFocus: true,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 }

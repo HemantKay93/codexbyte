@@ -4,7 +4,7 @@ import { InventoryService } from './inventoryService.js';
 import { AuditService } from './auditService.js';
 import { getAdminClient } from '../config/supabase.js';
 import logger from './logger.js';
-import { notificationQueue, emailQueue } from '../jobs/index.js';
+import { JobService } from './jobService.js';
 
 const orderRepo = new OrderRepository();
 
@@ -36,58 +36,12 @@ export class OrderService {
   }
 
   async createOrder(userId: string | undefined, orderData: any, userEmail?: string) {
-    const { items, totalAmount, shippingAddress } = orderData;
+    const { items, shippingAddress } = orderData;
     const paymentMethod = orderData.paymentMethod || orderData.payment_method;
-    if (!Array.isArray(items) || items.length === 0) {
-      throw new AppError('Order must include at least one item', 400);
-    }
-
-    const normalizedItems = items.map((item: any) => ({
-      productId: item.productId || item.product_id,
-      quantity: Number(item.quantity),
-    }));
-
-    for (const item of normalizedItems) {
-      if (!item.productId || !Number.isInteger(item.quantity) || item.quantity <= 0) {
-        throw new AppError('Invalid order item', 400);
-      }
-    }
 
     const admin = await getAdminClient();
-    const productIds = [...new Set(normalizedItems.map((item: any) => item.productId))];
-    const { data: products, error: productError } = await admin
-      .from('products')
-      .select('id, name, sku, price, status')
-      .in('id', productIds);
 
-    if (productError) throw productError;
-
-    const productById = new Map<string, any>(
-      (products || []).map((product: any) => [product.id, product])
-    );
-    const pricedItems = normalizedItems.map((item: any) => {
-      const product = productById.get(item.productId);
-      if (!product || product.status !== 'active') {
-        throw new AppError(`Product ${item.productId} is not available`, 400);
-      }
-
-      return {
-        productId: product.id,
-        name: product.name,
-        sku: product.sku,
-        price: Number(product.price),
-        quantity: item.quantity,
-      };
-    });
-
-    const subtotal = pricedItems.reduce(
-      (sum: number, item: any) => sum + item.price * item.quantity,
-      0
-    );
-    const tax = Math.round(subtotal * 0.18 * 100) / 100;
-    const orderNumber = orderData.order_number || `ORD-${Date.now()}`;
-
-    // 0. Get Default Warehouse if not provided
+    // Determine warehouse
     let warehouseId = orderData.warehouseId;
     if (!warehouseId) {
       const { data: defaultWh } = await admin
@@ -99,60 +53,37 @@ export class OrderService {
       warehouseId = defaultWh?.id;
     }
 
-    // 1. Pre-validate stock availability
-    for (const item of pricedItems) {
-      const { data: inv } = await admin
-        .from('inventory')
-        .select('quantity')
-        .eq('product_id', item.productId)
-        .eq('warehouse_id', warehouseId)
-        .maybeSingle();
+    const orderNumber = orderData.order_number || `ORD-${Date.now()}`;
 
-      const currentQty = inv?.quantity || 0;
-      if (currentQty < item.quantity) {
-        throw new AppError(
-          `Insufficient stock for product ${item.productId} in selected warehouse (Available: ${currentQty})`,
-          400
-        );
-      }
-    }
-
-    const dbOrderData = {
-      user_id: userId || null,
-      order_number: orderNumber,
-      status: orderData.status || 'pending',
-      payment_status: 'pending',
-      subtotal,
-      tax_amount: tax,
-      shipping_amount: orderData.shippingFee || 0,
-      total_amount: subtotal + tax + (orderData.shippingFee || 0),
-      payment_method: paymentMethod || 'cash',
-      shipping_address: shippingAddress,
-      customer_name: shippingAddress?.full_name || shippingAddress?.name || 'Walk-in Customer',
-      customer_email:
+    // Use Transactional RPC for atomic creation
+    const { data: order, error } = await admin.rpc('create_checkout_order', {
+      p_user_id: userId || null,
+      p_order_number: orderNumber,
+      p_status: orderData.status || 'pending',
+      p_payment_status: 'pending',
+      p_payment_method: paymentMethod || 'cash',
+      p_shipping_address: shippingAddress,
+      p_customer_name: shippingAddress?.full_name || shippingAddress?.name || 'Walk-in Customer',
+      p_customer_email:
         shippingAddress?.email || orderData.email || userEmail || 'walkin@customer.com',
-    };
+      p_shipping_amount: orderData.shippingFee || 0,
+      p_warehouse_id: warehouseId,
+      p_items: items.map((i: any) => ({
+        productId: i.productId || i.product_id,
+        quantity: Number(i.quantity),
+      })),
+    });
 
-    const order = await orderRepo.create(dbOrderData, pricedItems);
-
-    // 2. Inventory & Activity Tracking
-    for (const item of pricedItems) {
-      await InventoryService.adjustStock({
-        productId: item.productId,
-        warehouseId: warehouseId,
-        quantity: -item.quantity,
-        type: 'out',
-        referenceType: 'order',
-        referenceId: order.id,
-        userId: userId,
-      });
+    if (error) {
+      logger.error('[OrderService] RPC Error:', error);
+      throw new AppError(error.message, 400);
     }
 
     // 2. Log Activity
     await AuditService.logOrderActivity({
       order_id: order.id,
-      status: dbOrderData.status,
-      notes: 'Order created',
+      status: order.status,
+      notes: 'Order created via transactional RPC',
       performed_by: userId,
     });
 
@@ -162,15 +93,28 @@ export class OrderService {
       action: 'CREATE_ORDER',
       module: 'orders',
       entity_id: order.id,
-      new_data: { order_number: orderNumber, total: dbOrderData.total_amount },
+      new_data: { order_number: orderNumber, total: order.total_amount },
     });
 
-    // 4. Queue Customer Email (Phase 4 background job)
-    await emailQueue.add('order-confirmation', {
-      to: dbOrderData.customer_email,
-      subject: `Order Confirmed: ${orderNumber}`,
-      html: `<h1>Thank you for your order!</h1><p>Your order #${orderNumber} is being processed.</p>`,
-    });
+    // 4. Queue Customer Email
+    await JobService.sendEmail(
+      order.customer_email,
+      `Order Confirmed: ${orderNumber}`,
+      `<h1>Thank you for your order!</h1><p>Your order #${orderNumber} is being processed.</p>`
+    );
+
+    // 5. Emit Real-time events
+    try {
+      const { emitToRoom, notifyAdmins } = await import('../sockets/index.js');
+      notifyAdmins('new_order', {
+        id: order.id,
+        order_number: orderNumber,
+        total: order.total_amount,
+        customer_name: order.customer_name,
+      });
+    } catch (err) {
+      logger.error('[OrderService] Failed to emit socket event for new order:', err);
+    }
 
     return order;
   }
@@ -252,19 +196,39 @@ export class OrderService {
           logger.error('Failed to restock items on status change:', stockErr);
         }
 
-        // Queue Notification for critical status changes (Phase 4 background job)
+        // Queue Notification for critical status changes
         try {
           const isCritical = ['cancelled', 'returned'].includes(newStatus);
-          await notificationQueue.add('order-notification', {
+          await JobService.sendNotification({
             title: `Order ${newStatus.toUpperCase()}`,
             message: `Order #${order.order_number} has been ${newStatus}.${notes ? ` Note: ${notes}` : ''}`,
             type: isCritical ? 'error' : 'info',
             priority: isCritical ? 'high' : 'medium',
+            metadata: { module: 'orders', order_id: id },
           });
         } catch (notifErr) {
           logger.error('Failed to queue order notification:', notifErr);
         }
       }
+    }
+
+    // 5. Emit Real-time events
+    try {
+      const { emitToRoom, notifyAdmins } = await import('../sockets/index.js');
+      if (order.user_id) {
+        emitToRoom(`user:${order.user_id}`, 'order_updated', {
+          id: id,
+          status: status || order.status,
+          order_number: order.order_number,
+        });
+      }
+      notifyAdmins('order_status_change', {
+        id: id,
+        status: status || order.status,
+        order_number: order.order_number,
+      });
+    } catch (err) {
+      logger.error('[OrderService] Failed to emit socket event for order update:', err);
     }
 
     if (courier || trackingId) {

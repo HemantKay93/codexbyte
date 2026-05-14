@@ -6,7 +6,7 @@ const metaEnv = (
   }
 ).env;
 
-let BASE_URL = metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api';
+let BASE_URL = metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api/v1';
 if (BASE_URL.endsWith('/')) {
   BASE_URL = BASE_URL.slice(0, -1);
 }

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useUserStore } from '@byteevolvr/store';
-import { UserService, OrderService } from '@byteevolvr/api-client';
+import { UserService, OrderService, SocketService } from '@byteevolvr/api-client';
 import { Card, Badge, Button } from '@byteevolvr/ui';
 import {
   Package,
@@ -72,20 +72,7 @@ export function DashboardPage() {
   });
   const [savingAddress, setSavingAddress] = useState(false);
 
-  useEffect(() => {
-    if (user) fetchData();
-
-    // Real-time updates: Poll for data every 10 seconds if page is visible
-    const interval = setInterval(() => {
-      if (user && document.visibilityState === 'visible') {
-        fetchData(true);
-      }
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [user, location.key]);
-
-  const fetchData = async (isSilent = false) => {
+  const fetchData = useCallback(async (isSilent = false) => {
     if (!isSilent) setLoading(true);
     try {
       const results = await Promise.allSettled([
@@ -112,7 +99,25 @@ export function DashboardPage() {
     } finally {
       if (!isSilent) setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchData();
+
+      // Real-time updates via Socket.io
+      const socket = SocketService.connect(user.id);
+
+      socket.on('order_updated', (data: any) => {
+        console.log('[Socket] Order update received:', data);
+        fetchData(true); // Silently refresh data
+      });
+
+      return () => {
+        SocketService.disconnect();
+      };
+    }
+  }, [user, fetchData]);
 
   const handleSaveProfile = async () => {
     setSavingProfile(true);
@@ -459,15 +464,73 @@ export function DashboardPage() {
                       </Button>
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    {order.order_items?.map((item: any) => (
-                      <div key={item.id} className="flex justify-between items-center text-sm">
-                        <span>
-                          {item.quantity}x {item.product_name}
-                        </span>
-                        <span>{formatPrice(item.total_price)}</span>
+                  <div className="space-y-6">
+                    {/* Real-time Order Timeline */}
+                    <div className="py-4">
+                      <div className="relative flex justify-between items-center w-full">
+                        {/* Progress Bar Background */}
+                        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -translate-y-1/2 z-0" />
+
+                        {/* Active Progress Line */}
+                        <div
+                          className="absolute top-1/2 left-0 h-0.5 bg-accent -translate-y-1/2 z-0 transition-all duration-500"
+                          style={{
+                            width:
+                              order.status === 'pending'
+                                ? '0%'
+                                : order.status === 'confirmed'
+                                  ? '33%'
+                                  : order.status === 'shipped'
+                                    ? '66%'
+                                    : order.status === 'delivered'
+                                      ? '100%'
+                                      : '0%',
+                          }}
+                        />
+
+                        {['pending', 'confirmed', 'shipped', 'delivered'].map((step, idx) => {
+                          const steps = ['pending', 'confirmed', 'shipped', 'delivered'];
+                          const currentIdx = steps.indexOf(order.status);
+                          const isCompleted = idx <= currentIdx;
+                          const isActive = idx === currentIdx;
+
+                          return (
+                            <div
+                              key={step}
+                              className="relative z-10 flex flex-col items-center gap-2"
+                            >
+                              <div
+                                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                                  isCompleted
+                                    ? 'bg-accent shadow-[0_0_10px_rgba(59,123,248,0.5)]'
+                                    : 'bg-white/10'
+                                } ${isActive ? 'scale-125 ring-4 ring-accent/20' : ''}`}
+                              />
+                              <span
+                                className={`text-[10px] font-bold uppercase tracking-wider ${
+                                  isCompleted ? 'text-accent' : 'text-brand-muted'
+                                }`}
+                              >
+                                {step}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="space-y-3">
+                      {order.order_items?.map((item: any) => (
+                        <div key={item.id} className="flex justify-between items-center text-sm">
+                          <span className="text-brand-muted">
+                            {item.quantity}x {item.product_name}
+                          </span>
+                          <span className="font-medium text-white">
+                            {formatPrice(item.total_price)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   <div className="border-t border-white/10 pt-4 flex justify-between items-center font-bold">
                     <span>Total Amount</span>

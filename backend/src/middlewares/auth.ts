@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { supabase, getAdminClient } from '../config/supabase.js';
 import { AppError } from './error.js';
 import logger from '../services/logger.js';
+import { redis } from '../config/redis.js';
 
 const jwtSecret = process.env.JWT_SECRET;
 
@@ -37,21 +38,48 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 
     if (sbUser && !sbError) {
       user = sbUser;
-      try {
-        const admin = await getAdminClient();
-        const { data: profile } = await admin
-          .from('user_profiles')
-          .select('role, full_name')
-          .eq('id', user.id)
-          .single();
 
-        role = profile?.role || 'user';
-        fullName = profile?.full_name || user.email?.split('@')[0];
-      } catch (profileError) {
-        logger.error(`[Auth] Profile fetch failed: ${profileError.message}`);
-        // Fallback to basic user info
-        role = 'user';
-        fullName = user.email?.split('@')[0];
+      // Try Redis Cache for Profile
+      const cacheKey = `user_profile:${user.id}`;
+      let cachedProfile: any = null;
+
+      try {
+        if (redis.status === 'ready') {
+          const data = await redis.get(cacheKey);
+          if (data) cachedProfile = JSON.parse(data);
+        }
+      } catch (cacheErr) {
+        // Silently continue if Redis fails
+      }
+
+      if (cachedProfile) {
+        role = cachedProfile.role;
+        fullName = cachedProfile.fullName;
+      } else {
+        try {
+          const admin = await getAdminClient();
+          const { data: profile } = await admin
+            .from('user_profiles')
+            .select('role, full_name')
+            .eq('id', user.id)
+            .single();
+
+          role = profile?.role || 'user';
+          fullName = profile?.full_name || user.email?.split('@')[0];
+
+          // Save to Cache
+          try {
+            if (redis.status === 'ready') {
+              await redis.set(cacheKey, JSON.stringify({ role, fullName }), 'EX', 3600); // 1 hour
+            }
+          } catch (e) {
+            /* ignore */
+          }
+        } catch (profileError: any) {
+          logger.error(`[Auth] Profile fetch failed: ${profileError.message}`);
+          role = 'user';
+          fullName = user.email?.split('@')[0];
+        }
       }
     } else {
       // 2. Try Local JWT (for hardcoded admin)
@@ -95,25 +123,53 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
     } = await supabase.auth.getUser(token);
 
     if (sbUser && !sbError) {
-      try {
-        const admin = await getAdminClient();
-        const { data: profile } = await admin
-          .from('user_profiles')
-          .select('role, full_name')
-          .eq('id', sbUser.id)
-          .single();
+      const cacheKey = `user_profile:${sbUser.id}`;
+      let cachedProfile: any = null;
 
+      try {
+        if (redis.status === 'ready') {
+          const data = await redis.get(cacheKey);
+          if (data) cachedProfile = JSON.parse(data);
+        }
+      } catch (_e) {
+        /* ignore cache errors */
+      }
+
+      if (cachedProfile) {
         req.user = {
           ...sbUser,
-          role: profile?.role || 'user',
-          fullName: profile?.full_name || sbUser.email?.split('@')[0],
+          role: cachedProfile.role,
+          fullName: cachedProfile.fullName,
         };
-      } catch (profileErr) {
-        req.user = {
-          ...sbUser,
-          role: 'user',
-          fullName: sbUser.email?.split('@')[0],
-        };
+      } else {
+        try {
+          const admin = await getAdminClient();
+          const { data: profile } = await admin
+            .from('user_profiles')
+            .select('role, full_name')
+            .eq('id', sbUser.id)
+            .single();
+
+          const role = profile?.role || 'user';
+          const fullName = profile?.full_name || sbUser.email?.split('@')[0];
+
+          req.user = { ...sbUser, role, fullName };
+
+          // Cache it
+          try {
+            if (redis.status === 'ready') {
+              await redis.set(cacheKey, JSON.stringify({ role, fullName }), 'EX', 3600);
+            }
+          } catch (_e) {
+            /* ignore cache errors */
+          }
+        } catch (_profileErr: any) {
+          req.user = {
+            ...sbUser,
+            role: 'user',
+            fullName: sbUser.email?.split('@')[0],
+          };
+        }
       }
     } else {
       // Try local JWT fallback

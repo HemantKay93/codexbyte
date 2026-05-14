@@ -1,12 +1,122 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Input, Button } from '../components/ui';
+import { CMSService } from '@byteevolvr/api-client';
+import { Loader2, Save } from 'lucide-react';
 
 export function SettingsPage() {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [settings, setSettings] = useState({
+    storeName: '',
+    supportEmail: '',
+    phone: '',
+    address: '',
+    currency: 'INR (₹)',
+  });
+
+  const [apiConfig, setApiConfig] = useState({
+    publicKey: '',
+    secretKey: '',
+  });
+
+  useEffect(() => {
+    fetchSettings();
+    fetchApiConfig();
+  }, []);
+
+  const fetchApiConfig = async () => {
+    try {
+      const data = await CMSService.getContent('global');
+      const api = data?.find((s: any) => s.section_key === 'api_config')?.content || {};
+      setApiConfig({
+        publicKey: api.publicKey || `pk_live_${Math.random().toString(36).substring(2, 15)}`,
+        secretKey: api.secretKey || `sk_live_${Math.random().toString(36).substring(2, 15)}`,
+      });
+    } catch (err) {
+      console.error('Failed to fetch API config:', err);
+    }
+  };
+
+  const handleRegenerateKeys = () => {
+    const newPk = `pk_live_${crypto.randomUUID().replace(/-/g, '')}`;
+    const newSk = `sk_live_${crypto.randomUUID().replace(/-/g, '')}`;
+    setApiConfig({ publicKey: newPk, secretKey: newSk });
+  };
+
+  const handleSaveApi = async () => {
+    setSaving(true);
+    try {
+      await CMSService.updateContent('global', 'api_config', {
+        publicKey: apiConfig.publicKey,
+        secretKey: apiConfig.secretKey,
+        updatedAt: new Date().toISOString(),
+      });
+      alert('API Configuration saved successfully!');
+    } catch (err) {
+      console.error('Failed to save API config:', err);
+      alert('Failed to save API config.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const fetchSettings = async () => {
+    setLoading(true);
+    try {
+      const data = await CMSService.getContent('global');
+      const contact = data?.find((s: any) => s.section_key === 'contact')?.content || {};
+
+      setSettings({
+        storeName: contact.storeName || 'ByteEvolvr Official Store',
+        supportEmail: contact.email || 'hello@byteevolvr.com',
+        phone: contact.phone || '+91 78889 57575',
+        address:
+          contact.address ||
+          'Chaltakonda, Routhkhanda, Near Kali Mata Mandir, Joypur, Bankura, West Bengal - 722138',
+        currency: 'INR (₹)',
+      });
+    } catch (err) {
+      console.error('Failed to fetch settings:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      // Update global contact section which is used for store details
+      await CMSService.updateContent('global', 'contact', {
+        storeName: settings.storeName,
+        email: settings.supportEmail,
+        phone: settings.phone,
+        address: settings.address,
+        workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM', // Preserve default
+      });
+      alert('Settings saved successfully!');
+    } catch (err) {
+      console.error('Failed to save settings:', err);
+      alert('Failed to save settings.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="text-display-sm font-semibold text-on-background">Platform Settings</h1>
-        <p className="text-body-sm text-on-surface-variant mt-1">Manage your store preferences and configurations</p>
+        <p className="text-body-sm text-on-surface-variant mt-1">
+          Manage your store preferences and configurations
+        </p>
       </div>
 
       <Card>
@@ -15,36 +125,80 @@ export function SettingsPage() {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input label="Store Name" defaultValue="ByteEvolvr Official Store" />
-            <Input label="Support Email" defaultValue="support@byteevolvr.com" type="email" />
-            <Input label="Phone Number" defaultValue="+1 (555) 123-4567" />
-            <Input label="Currency" defaultValue="USD ($)" disabled />
+            <Input
+              label="Store Name"
+              value={settings.storeName}
+              onChange={(e) => setSettings({ ...settings, storeName: e.target.value })}
+            />
+            <Input
+              label="Support Email"
+              value={settings.supportEmail}
+              type="email"
+              onChange={(e) => setSettings({ ...settings, supportEmail: e.target.value })}
+            />
+            <Input
+              label="Phone Number"
+              value={settings.phone}
+              onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
+            />
+            <Input label="Currency" value={settings.currency} disabled />
           </div>
           <div>
-            <label className="block text-label-md text-on-surface-variant mb-1 font-medium">Store Address</label>
-            <textarea 
+            <label className="block text-label-md text-on-surface-variant mb-1 font-medium">
+              Store Address
+            </label>
+            <textarea
               className="w-full rounded-md border border-outline bg-surface px-3 py-2 text-body-md text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-colors min-h-[100px]"
-              defaultValue="123 Commerce St.\nSuite 400\nSan Francisco, CA 94107"
+              value={settings.address}
+              onChange={(e) => setSettings({ ...settings, address: e.target.value })}
             ></textarea>
           </div>
           <div className="flex justify-end">
-            <Button>Save Changes</Button>
+            <Button onClick={handleSave} disabled={saving} className="gap-2">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              Save Changes
+            </Button>
           </div>
         </CardContent>
       </Card>
-      
+
       <Card>
         <CardHeader>
           <CardTitle>API Configuration</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div>
-            <Input label="Public API Key" defaultValue="pk_live_51M..." type="password" />
-            <p className="text-xs text-on-surface-variant mt-1">Used for frontend integrations</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Input
+                label="Public API Key"
+                value={apiConfig.publicKey}
+                type="text"
+                readOnly
+                className="font-mono text-xs"
+              />
+              <p className="text-xs text-on-surface-variant mt-1">Used for frontend integrations</p>
+            </div>
+            <div>
+              <Input
+                label="Secret API Key"
+                value={apiConfig.secretKey}
+                type="password"
+                readOnly
+                className="font-mono text-xs"
+              />
+              <p className="text-xs text-on-surface-variant mt-1">
+                Keep this key private and secure
+              </p>
+            </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="outline">Regenerate Keys</Button>
-            <Button>Save Settings</Button>
+            <Button variant="outline" onClick={handleRegenerateKeys} disabled={saving}>
+              Regenerate Keys
+            </Button>
+            <Button onClick={handleSaveApi} disabled={saving}>
+              {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Save Configuration
+            </Button>
           </div>
         </CardContent>
       </Card>
