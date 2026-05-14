@@ -27,6 +27,47 @@ interface CmsContentRow {
   content: any;
 }
 
+const DEFAULT_SECTION_CONTENT: Record<string, any> = {
+  details: {
+    address: 'Chaltakonda, Routhkhanda,Near Kali Mata Mandir, Joypur, Bankura, West Bengal',
+    pincode: '722138',
+    phone: '+91 78889 57575',
+    email: 'hello@byteevolvr.com',
+    workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
+  },
+  contact: {
+    address: 'Chaltakonda, Routhkhanda,Near Kali Mata Mandir, Joypur, Bankura, West Bengal',
+    pincode: '722138',
+    phone: '+91 78889 57575',
+    email: 'hello@byteevolvr.com',
+    workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
+  },
+  social: {
+    facebook: 'https://facebook.com/byteevolvr',
+    twitter: 'https://twitter.com/byteevolvr',
+    instagram: 'https://instagram.com/byteevolvr',
+    linkedin: 'https://linkedin.com/company/byteevolvr',
+    whatsapp: '+917888957575',
+  },
+  hero: {
+    title: 'Modern IT Solutions for Growing Businesses',
+    subtitle:
+      'From infrastructure management to specialized hardware trading, we provide end-to-end technology services.',
+    buttonText: 'Get Started',
+  },
+  seo: {
+    title: 'ByteeVolvr - Technology Trading & IT Consulting',
+    description:
+      'Expert infrastructure management, specialized repair services, and premium technology supply.',
+    keywords: 'IT Consulting, Hardware Trading, Network Infrastructure, Server Repair',
+  },
+  main: {
+    title: 'Page Content',
+    content: 'Welcome to ByteeVolvr. We are committed to providing the best technology services.',
+    lastUpdated: new Date().toLocaleDateString(),
+  },
+};
+
 export function CMSBuilderPage() {
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop');
   const [loading, setLoading] = useState(true);
@@ -70,12 +111,12 @@ export function CMSBuilderPage() {
       const pageInfo = PAGES.find((p) => p.id === page);
       const formattedData: any = {};
 
-      // Initialize all expected sections with empty objects
+      // Initialize with defaults if available
       pageInfo?.sections.forEach((s) => {
-        formattedData[s] = {};
+        formattedData[s] = DEFAULT_SECTION_CONTENT[s] || {};
       });
 
-      // Populate with actual data from DB
+      // Overwrite with actual data from DB
       data?.forEach((item: CmsContentRow) => {
         formattedData[item.section_key] = item.content;
       });
