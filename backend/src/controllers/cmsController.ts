@@ -10,6 +10,7 @@ export const getCmsContent = catchAsync(async (req: Request, res: Response) => {
     ? (req.query.sectionKeys as string).split(',')
     : undefined;
   const content = await cmsRepo.findBySlug(pageSlug, sectionKeys);
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.json(content);
 });
 
