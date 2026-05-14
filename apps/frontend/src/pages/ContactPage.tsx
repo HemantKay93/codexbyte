@@ -9,9 +9,9 @@ export function ContactPage() {
   const { data: globalCms } = useCMS('global');
   const { data: homeCms } = useCMS('home');
 
-  const contactData = globalCms?.contact ||
-    homeCms?.contact ||
-    contactPageCms?.details || {
+  const contactData = contactPageCms?.details ||
+    globalCms?.contact ||
+    homeCms?.contact || {
       address: 'Mumbai, Maharashtra, India',
       pincode: '',
       phone: '+91 98765 00000',

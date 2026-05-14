@@ -43,6 +43,10 @@ export class CmsRepository {
   }
 
   async upsertBulk(pageSlug: string, sections: { sectionKey: string; content: any }[]) {
+    if (!sections || sections.length === 0) {
+      console.warn(`[CMS] upsertBulk called with NO sections for page: ${pageSlug}`);
+      return [];
+    }
     const results = await Promise.all(
       sections.map((s) => this.upsert(pageSlug, s.sectionKey, s.content))
     );

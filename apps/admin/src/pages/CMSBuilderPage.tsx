@@ -63,16 +63,19 @@ export function CMSBuilderPage() {
 
   const fetchCMSContent = async (page: string) => {
     setLoading(true);
+    setCmsData({}); // Clear current state to prevent bleeding between pages
     try {
       const data = await CMSService.getContent(page);
 
       const pageInfo = PAGES.find((p) => p.id === page);
-      const defaultData: any = {};
+      const formattedData: any = {};
+
+      // Initialize all expected sections with empty objects
       pageInfo?.sections.forEach((s) => {
-        defaultData[s] = cmsData[s] || {};
+        formattedData[s] = {};
       });
 
-      const formattedData: any = { ...defaultData };
+      // Populate with actual data from DB
       data?.forEach((item: CmsContentRow) => {
         formattedData[item.section_key] = item.content;
       });
