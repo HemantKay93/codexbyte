@@ -171,15 +171,15 @@ export function Footer({
               <ul className="space-y-4">
                 <li className="flex items-center gap-3 text-sm text-brand-muted">
                   <Mail className="h-4 w-4 text-accent" />
-                  {contactInfo?.email || 'hello@byteevolvr.com'}
+                  {contactInfo?.email}
                 </li>
                 <li className="flex items-center gap-3 text-sm text-brand-muted">
                   <Phone className="h-4 w-4 text-accent" />
-                  {contactInfo?.phone || '+91 98765 00000'}
+                  {contactInfo?.phone}
                 </li>
                 <li className="flex items-center gap-3 text-sm text-brand-muted">
                   <MapPin className="h-4 w-4 text-accent" />
-                  {contactInfo?.address || 'Mumbai, India'}
+                  {contactInfo?.address}
                 </li>
               </ul>
             </div>

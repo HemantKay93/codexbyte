@@ -24,8 +24,8 @@ export function Header() {
 
   const contact = globalCms?.contact ||
     homeCms?.contact || {
-      email: 'support@byteevolvr.com',
-      phone: '+91 98765 00000',
+      email: 'hello@byteevolvr.com',
+      phone: '+91 78889 57575',
     };
 
   return (

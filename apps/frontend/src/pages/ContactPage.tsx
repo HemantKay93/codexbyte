@@ -40,7 +40,7 @@ export function ContactPage() {
     setStatus('loading');
 
     try {
-      const response = await fetch('http://localhost:8080/api/leads', {
+      const response = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -153,7 +153,10 @@ export function ContactPage() {
               {/* Google Maps Embed */}
               <div className="mt-8 overflow-hidden rounded-xl border border-white/5 bg-white/5 h-48 w-full grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120650.6222851219!2d72.774994!3d19.082198!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1714040000000!5m2!1sen!2sin"
+                  src={
+                    details.mapUrl ||
+                    `https://www.google.com/maps?q=${encodeURIComponent(details.address)}&output=embed`
+                  }
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
