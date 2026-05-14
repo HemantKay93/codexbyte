@@ -24,6 +24,10 @@ export const updateCmsContent = catchAsync(async (req: Request, res: Response) =
 export const updatePageContent = catchAsync(async (req: Request, res: Response) => {
   const pageSlug = req.params.pageSlug as string;
   const { contentBySection } = req.body;
+  console.log(
+    `[CMS] Received update for ${pageSlug}. Sections:`,
+    Object.keys(contentBySection || {})
+  );
 
   const sections = Object.entries(contentBySection).map(([sectionKey, content]) => ({
     sectionKey,

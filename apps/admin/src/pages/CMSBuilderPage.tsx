@@ -90,6 +90,7 @@ export function CMSBuilderPage() {
 
   const handleSave = async () => {
     setSaving(true);
+    console.log('[CMS] Publishing changes for page:', selectedPage, cmsData);
     try {
       await CMSService.updatePageContent(selectedPage, cmsData);
       await fetchCMSContent(selectedPage);

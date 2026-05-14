@@ -19,6 +19,7 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPA
 if (!supabaseUrl) {
   throw new Error('CRITICAL: SUPABASE_URL is missing in environment variables.');
 }
+console.log(`[Supabase] Connecting to URL: ${supabaseUrl.substring(0, 15)}...`);
 if (!supabaseKey) {
   throw new Error('CRITICAL: SUPABASE_KEY (anon key) is missing in environment variables.');
 }
@@ -33,12 +34,14 @@ export const getAdminClient = async () => {
   // 1. Preferred: Service Role Key (Bypasses RLS)
   if (serviceRoleKey) {
     if (!adminClient || adminClient.supabaseKey !== serviceRoleKey) {
+      console.log('[Supabase] Initializing Admin Client with Service Role Key');
       adminClient = createClient(supabaseUrl!, serviceRoleKey, {
         auth: { persistSession: false },
       });
     }
     return adminClient;
   }
+  console.warn('[Supabase] Service Role Key missing. Falling back to Admin Auth.');
 
   // 2. Fallback: Authenticate as Admin user using env variables
   const adminEmail = process.env.ADMIN_EMAIL;
