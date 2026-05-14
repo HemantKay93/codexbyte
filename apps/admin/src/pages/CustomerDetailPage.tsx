@@ -1,7 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
-import { ArrowLeft, Edit, Mail, MapPin, ShoppingBag, CreditCard, Star, Loader2, Phone, Calendar } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  Button,
+  Badge,
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui';
+import { ArrowLeft, Edit, Mail, MapPin, ShoppingBag, Star, Loader2, Calendar } from 'lucide-react';
 import { AdminService } from '@byteevolvr/api-client';
 
 export function CustomerDetailPage() {
@@ -14,7 +25,7 @@ export function CustomerDetailPage() {
     totalSpent: 0,
     orderCount: 0,
     avgOrderValue: 0,
-    reviewsCount: 0
+    reviewsCount: 0,
   });
 
   useEffect(() => {
@@ -32,20 +43,22 @@ export function CustomerDetailPage() {
 
       setCustomer(profile);
       setOrders(customerOrders || []);
-      
+
       const primaryAddress = addresses.find((a: any) => a.is_default) || addresses[0];
       setAddress(primaryAddress || null);
 
-      const totalSpent = (customerOrders || []).reduce((acc: number, o: any) => acc + Number(o.total_amount), 0);
+      const totalSpent = (customerOrders || []).reduce(
+        (acc: number, o: any) => acc + Number(o.total_amount),
+        0
+      );
       const orderCount = (customerOrders || []).length;
 
       setStats({
         totalSpent,
         orderCount,
         avgOrderValue: orderCount > 0 ? totalSpent / orderCount : 0,
-        reviewsCount: reviewsCount || 0
+        reviewsCount: reviewsCount || 0,
       });
-
     } catch (err) {
       console.error('Error fetching customer detail:', err);
     } finally {
@@ -54,7 +67,7 @@ export function CustomerDetailPage() {
   }
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "success" | "info" | "warning" | "error" | "default"> = {
+    const variants: Record<string, 'success' | 'info' | 'warning' | 'error' | 'default'> = {
       delivered: 'success',
       shipped: 'info',
       processing: 'info',
@@ -62,7 +75,7 @@ export function CustomerDetailPage() {
       cancelled: 'error',
       refunded: 'error',
       paid: 'success',
-      confirmed: 'info'
+      confirmed: 'info',
     };
     return <Badge variant={variants[status.toLowerCase()] || 'default'}>{status}</Badge>;
   };
@@ -113,7 +126,9 @@ export function CustomerDetailPage() {
         <Card>
           <CardContent className="p-6">
             <div className="text-on-surface-variant font-medium text-sm mb-1">Total Spent</div>
-            <div className="text-3xl font-bold text-on-surface">₹{stats.totalSpent.toLocaleString()}</div>
+            <div className="text-3xl font-bold text-on-surface">
+              ₹{stats.totalSpent.toLocaleString()}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -125,7 +140,9 @@ export function CustomerDetailPage() {
         <Card>
           <CardContent className="p-6">
             <div className="text-on-surface-variant font-medium text-sm mb-1">Avg Order Value</div>
-            <div className="text-3xl font-bold text-on-surface">₹{Math.round(stats.avgOrderValue).toLocaleString()}</div>
+            <div className="text-3xl font-bold text-on-surface">
+              ₹{Math.round(stats.avgOrderValue).toLocaleString()}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -149,7 +166,9 @@ export function CustomerDetailPage() {
                 <Mail className="h-5 w-5 text-on-surface-variant shrink-0 mt-0.5" />
                 <div>
                   <div className="text-sm font-medium text-on-surface">Email Address</div>
-                  <div className="text-sm text-primary hover:underline cursor-pointer">{customer.email}</div>
+                  <div className="text-sm text-primary hover:underline cursor-pointer">
+                    {customer.email}
+                  </div>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -158,13 +177,19 @@ export function CustomerDetailPage() {
                   <div className="text-sm font-medium text-on-surface">Primary Address</div>
                   {address ? (
                     <div className="text-sm text-on-surface-variant mt-1">
-                      {address.full_name}<br/>
-                      {address.line_1}{address.line_2 ? `, ${address.line_2}` : ''}<br/>
-                      {address.city}, {address.state} {address.postal_code}<br/>
+                      {address.full_name}
+                      <br />
+                      {address.line_1}
+                      {address.line_2 ? `, ${address.line_2}` : ''}
+                      <br />
+                      {address.city}, {address.state} {address.postal_code}
+                      <br />
                       {address.country}
                     </div>
                   ) : (
-                    <div className="text-sm text-on-surface-variant mt-1 italic">No address saved</div>
+                    <div className="text-sm text-on-surface-variant mt-1 italic">
+                      No address saved
+                    </div>
                   )}
                 </div>
               </div>
@@ -172,23 +197,29 @@ export function CustomerDetailPage() {
                 <Calendar className="h-5 w-5 text-on-surface-variant shrink-0 mt-0.5" />
                 <div>
                   <div className="text-sm font-medium text-on-surface">Joined On</div>
-                  <div className="text-sm text-on-surface-variant mt-1">{new Date(customer.created_at).toLocaleDateString(undefined, { dateStyle: 'long' })}</div>
+                  <div className="text-sm text-on-surface-variant mt-1">
+                    {new Date(customer.created_at).toLocaleDateString(undefined, {
+                      dateStyle: 'long',
+                    })}
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <div className="p-4 border-b border-outline-variant">
               <h2 className="text-lg font-semibold text-on-surface">Internal Notes</h2>
             </div>
             <CardContent className="p-4">
-              <textarea 
-                className="w-full bg-surface-container-lowest border border-outline rounded p-3 text-sm focus:ring-1 focus:ring-primary focus:outline-none" 
+              <textarea
+                className="w-full bg-surface-container-lowest border border-outline rounded p-3 text-sm focus:ring-1 focus:ring-primary focus:outline-none"
                 rows={4}
                 placeholder="Add private notes about this customer..."
               />
-              <Button size="sm" className="mt-3 w-full">Save Note</Button>
+              <Button size="sm" className="mt-3 w-full">
+                Save Note
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -200,7 +231,9 @@ export function CustomerDetailPage() {
                 <ShoppingBag className="h-5 w-5" /> Recent Orders
               </h2>
               <Link to="/orders">
-                <Button variant="ghost" size="sm" className="text-primary">View All</Button>
+                <Button variant="ghost" size="sm" className="text-primary">
+                  View All
+                </Button>
               </Link>
             </div>
             <CardContent className="p-0">
@@ -220,18 +253,22 @@ export function CustomerDetailPage() {
                         No orders found for this customer.
                       </TableCell>
                     </TableRow>
-                  ) : orders.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell className="font-medium text-primary hover:underline cursor-pointer">
-                        <Link to={`/orders/${order.id}`}>#{order.order_number}</Link>
-                      </TableCell>
-                      <TableCell className="text-on-surface-variant">
-                        {new Date(order.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>{getStatusBadge(order.status)}</TableCell>
-                      <TableCell className="text-right font-medium">₹{Number(order.total_amount).toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
+                  ) : (
+                    orders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium text-primary hover:underline cursor-pointer">
+                          <Link to={`/orders/${order.id}`}>#{order.order_number}</Link>
+                        </TableCell>
+                        <TableCell className="text-on-surface-variant">
+                          {new Date(order.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>{getStatusBadge(order.status)}</TableCell>
+                        <TableCell className="text-right font-medium">
+                          ₹{Number(order.total_amount).toLocaleString()}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
             </CardContent>

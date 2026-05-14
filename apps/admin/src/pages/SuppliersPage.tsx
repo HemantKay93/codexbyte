@@ -1,11 +1,47 @@
-import React, { useState } from 'react';
-import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  Button,
+  Badge,
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  Input,
+} from '../components/ui';
 import { Search, Filter, Plus, Truck, Building2, ExternalLink } from 'lucide-react';
 
 const mockSuppliers = [
-  { id: '1', name: 'TechComponent Solutions', contact: 'Alice Chen', email: 'alice@techcomp.io', status: 'active', orders: 12, lastOrder: '2026-04-15' },
-  { id: '2', name: 'Global Peripherals Ltd', contact: 'Bob Martin', email: 'sales@globalperipherals.com', status: 'active', orders: 45, lastOrder: '2026-05-01' },
-  { id: '3', name: 'Premium Audio Co', contact: 'Diana Prince', email: 'orders@premiumaudio.co', status: 'pending', orders: 0, lastOrder: 'N/A' },
+  {
+    id: '1',
+    name: 'TechComponent Solutions',
+    contact: 'Alice Chen',
+    email: 'alice@techcomp.io',
+    status: 'active',
+    orders: 12,
+    lastOrder: '2026-04-15',
+  },
+  {
+    id: '2',
+    name: 'Global Peripherals Ltd',
+    contact: 'Bob Martin',
+    email: 'sales@globalperipherals.com',
+    status: 'active',
+    orders: 45,
+    lastOrder: '2026-05-01',
+  },
+  {
+    id: '3',
+    name: 'Premium Audio Co',
+    contact: 'Diana Prince',
+    email: 'orders@premiumaudio.co',
+    status: 'pending',
+    orders: 0,
+    lastOrder: 'N/A',
+  },
 ];
 
 export function SuppliersPage() {
@@ -16,7 +52,9 @@ export function SuppliersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-display-sm font-semibold text-on-background">Supplier Management</h1>
-          <p className="text-body-sm text-on-surface-variant mt-1">Manage vendor relationships and purchase orders</p>
+          <p className="text-body-sm text-on-surface-variant mt-1">
+            Manage vendor relationships and purchase orders
+          </p>
         </div>
         <Button className="gap-2">
           <Plus className="h-4 w-4" /> Add Supplier
@@ -27,7 +65,9 @@ export function SuppliersPage() {
         <Card>
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <div className="text-on-surface-variant font-medium text-sm mb-1">Active Suppliers</div>
+              <div className="text-on-surface-variant font-medium text-sm mb-1">
+                Active Suppliers
+              </div>
               <div className="text-3xl font-bold text-on-surface">24</div>
             </div>
             <Building2 className="h-8 w-8 text-on-surface-variant opacity-50" />
@@ -45,7 +85,9 @@ export function SuppliersPage() {
         <Card>
           <CardContent className="p-6 flex items-center justify-between">
             <div>
-              <div className="text-on-surface-variant font-medium text-sm mb-1">Delayed Shipments</div>
+              <div className="text-on-surface-variant font-medium text-sm mb-1">
+                Delayed Shipments
+              </div>
               <div className="text-3xl font-bold text-error">2</div>
             </div>
           </CardContent>
@@ -86,7 +128,9 @@ export function SuppliersPage() {
             <TableBody>
               {mockSuppliers.map((supplier) => (
                 <TableRow key={supplier.id}>
-                  <TableCell className="font-medium text-primary hover:underline cursor-pointer">{supplier.name}</TableCell>
+                  <TableCell className="font-medium text-primary hover:underline cursor-pointer">
+                    {supplier.name}
+                  </TableCell>
                   <TableCell>
                     <div className="text-sm text-on-surface">{supplier.contact}</div>
                     <div className="text-xs text-on-surface-variant">{supplier.email}</div>
@@ -97,7 +141,9 @@ export function SuppliersPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">{supplier.orders}</TableCell>
-                  <TableCell className="text-on-surface-variant text-sm">{supplier.lastOrder}</TableCell>
+                  <TableCell className="text-on-surface-variant text-sm">
+                    {supplier.lastOrder}
+                  </TableCell>
                   <TableCell>
                     <button className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-surface-container transition-colors">
                       <ExternalLink className="h-4 w-4" />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, Input, Button, Badge } from '../components/ui';
 import {
   Search,
@@ -12,7 +12,7 @@ import {
   CheckCircle2,
   Printer,
 } from 'lucide-react';
-import { ProductService, AdminService } from '@byteevolvr/api-client';
+import { AdminService } from '@byteevolvr/api-client';
 import { printInvoice } from '@byteevolvr/ui';
 
 export function POSPage() {

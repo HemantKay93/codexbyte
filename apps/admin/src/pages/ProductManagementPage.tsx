@@ -1,6 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Button, Badge, Input } from '../components/ui';
+import {
+  Card,
+  CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Button,
+  Badge,
+  Input,
+} from '../components/ui';
 import { Plus, MoreHorizontal, Filter, Search, UploadCloud } from 'lucide-react';
 import { BulkImportDialog } from '../components/BulkImportDialog';
 import { useProduct } from '../modules/product/hooks/useProduct';
@@ -8,7 +20,7 @@ import { useProduct } from '../modules/product/hooks/useProduct';
 export function ProductManagementPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const { products, isLoading, fetchProducts, deleteProduct } = useProduct();
+  const { products, isLoading, fetchProducts } = useProduct();
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -20,7 +32,9 @@ export function ProductManagementPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-display-sm font-semibold text-on-background">Products</h1>
-          <p className="text-body-sm text-on-surface-variant mt-1">Manage your product catalog and inventory</p>
+          <p className="text-body-sm text-on-surface-variant mt-1">
+            Manage your product catalog and inventory
+          </p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="gap-2" onClick={() => setIsImportDialogOpen(true)}>
@@ -34,10 +48,10 @@ export function ProductManagementPage() {
         </div>
       </div>
 
-      <BulkImportDialog 
-        isOpen={isImportDialogOpen} 
-        onClose={() => setIsImportDialogOpen(false)} 
-        onSuccess={fetchProducts} 
+      <BulkImportDialog
+        isOpen={isImportDialogOpen}
+        onClose={() => setIsImportDialogOpen(false)}
+        onSuccess={fetchProducts}
       />
 
       <Card>
@@ -65,7 +79,10 @@ export function ProductManagementPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-12 text-center">
-                  <input type="checkbox" className="rounded border-outline text-primary focus:ring-primary" />
+                  <input
+                    type="checkbox"
+                    className="rounded border-outline text-primary focus:ring-primary"
+                  />
                 </TableHead>
                 <TableHead>Product Name</TableHead>
                 <TableHead>SKU</TableHead>
@@ -78,46 +95,72 @@ export function ProductManagementPage() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-on-surface-variant">Loading products...</TableCell>
-                </TableRow>
-              ) : products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="text-center">
-                    <input type="checkbox" className="rounded border-outline text-primary focus:ring-primary" />
-                  </TableCell>
-                  <TableCell className="font-medium text-on-surface">{product.name}</TableCell>
-                  <TableCell className="text-on-surface-variant font-mono text-xs">{product.sku}</TableCell>
-                  <TableCell className="text-right text-on-surface">${Number(product.price).toFixed(2)}</TableCell>
-                  <TableCell className="text-right">
-                    <span className={product.stock_quantity === 0 ? 'text-error font-medium' : product.stock_quantity < 20 ? 'text-amber-600 font-medium' : 'text-on-surface'}>
-                      {product.stock_quantity}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        product.status === 'active' ? 'success' :
-                        product.status === 'out_of_stock' ? 'error' : 'warning'
-                      }
-                    >
-                      {product.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <button className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-surface-container transition-colors">
-                      <MoreHorizontal className="h-5 w-5" />
-                    </button>
+                  <TableCell colSpan={7} className="text-center py-8 text-on-surface-variant">
+                    Loading products...
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                products.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell className="text-center">
+                      <input
+                        type="checkbox"
+                        className="rounded border-outline text-primary focus:ring-primary"
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium text-on-surface">{product.name}</TableCell>
+                    <TableCell className="text-on-surface-variant font-mono text-xs">
+                      {product.sku}
+                    </TableCell>
+                    <TableCell className="text-right text-on-surface">
+                      ${Number(product.price).toFixed(2)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <span
+                        className={
+                          product.stock_quantity === 0
+                            ? 'text-error font-medium'
+                            : product.stock_quantity < 20
+                              ? 'text-amber-600 font-medium'
+                              : 'text-on-surface'
+                        }
+                      >
+                        {product.stock_quantity}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant={
+                          product.status === 'active'
+                            ? 'success'
+                            : product.status === 'out_of_stock'
+                              ? 'error'
+                              : 'warning'
+                        }
+                      >
+                        {product.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <button className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-surface-container transition-colors">
+                        <MoreHorizontal className="h-5 w-5" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
         <div className="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
           <div>Showing {products.length} products</div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled>Previous</Button>
-            <Button variant="outline" size="sm">Next</Button>
+            <Button variant="outline" size="sm" disabled>
+              Previous
+            </Button>
+            <Button variant="outline" size="sm">
+              Next
+            </Button>
           </div>
         </div>
       </Card>

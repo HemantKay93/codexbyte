@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Input, Button } from '../components/ui';
 import { CMSService } from '@byteevolvr/api-client';
 import { Loader2, Save } from 'lucide-react';

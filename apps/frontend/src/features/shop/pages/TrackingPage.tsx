@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { ShippingService } from '@byteevolvr/api-client';
 import { Button, Input, Card, Badge } from '@byteevolvr/ui';

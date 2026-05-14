@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { shopProducts, offerCards, secondaryOfferCards } from '../features/shop/data';
+import { offerCards, secondaryOfferCards } from '../features/shop/data';
 import { ShoppingCart, User, ArrowRight, Zap, ShieldCheck, Loader2 } from 'lucide-react';
-import { useUserStore, useCartStore } from '@byteevolvr/store';
+import { useCartStore } from '@byteevolvr/store';
 import { Card, Button, Badge } from '@byteevolvr/ui';
 import { ProductService, Product } from '@byteevolvr/api-client';
 
@@ -14,7 +14,6 @@ const formatPrice = (value: number) =>
   }).format(value);
 
 export function ShopPage() {
-  const { user } = useUserStore();
   const { addItem } = useCartStore();
   const navigate = useNavigate();
   const [products, setProducts] = React.useState<Product[]>([]);

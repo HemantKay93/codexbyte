@@ -1,13 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
+import { useState, useEffect } from 'react';
+import {
+  Card,
+  CardContent,
+  Button,
+  Badge,
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  Input,
+} from '../components/ui';
 import { Plus, Search, Filter, MoreHorizontal, Shield, Mail } from 'lucide-react';
 import { TeamService } from '@byteevolvr/api-client';
 
 const mockTeam = [
-  { id: '1', name: 'Admin User', email: 'admin@byteevolvr.com', role: 'Super Admin', status: 'active', lastActive: 'Just now' },
-  { id: '2', name: 'John Doe', email: 'john@byteevolvr.com', role: 'Store Manager', status: 'active', lastActive: '2 hours ago' },
-  { id: '3', name: 'Jane Smith', email: 'jane@byteevolvr.com', role: 'Support Agent', status: 'active', lastActive: 'Yesterday' },
-  { id: '4', name: 'Mike Ross', email: 'mike@byteevolvr.com', role: 'Support Agent', status: 'invited', lastActive: 'Never' },
+  {
+    id: '1',
+    name: 'Admin User',
+    email: 'admin@byteevolvr.com',
+    role: 'Super Admin',
+    status: 'active',
+    lastActive: 'Just now',
+  },
+  {
+    id: '2',
+    name: 'John Doe',
+    email: 'john@byteevolvr.com',
+    role: 'Store Manager',
+    status: 'active',
+    lastActive: '2 hours ago',
+  },
+  {
+    id: '3',
+    name: 'Jane Smith',
+    email: 'jane@byteevolvr.com',
+    role: 'Support Agent',
+    status: 'active',
+    lastActive: 'Yesterday',
+  },
+  {
+    id: '4',
+    name: 'Mike Ross',
+    email: 'mike@byteevolvr.com',
+    role: 'Support Agent',
+    status: 'invited',
+    lastActive: 'Never',
+  },
 ];
 
 export function TeamPage() {
@@ -26,7 +66,7 @@ export function TeamPage() {
             email: user.email,
             role: user.role === 'admin' ? 'Super Admin' : 'Store Manager',
             status: 'active',
-            lastActive: new Date(user.updated_at).toLocaleDateString()
+            lastActive: new Date(user.updated_at).toLocaleDateString(),
           }));
           setTeam(mapped);
         } else {
@@ -89,47 +129,51 @@ export function TeamPage() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-on-surface-variant">Loading team...</TableCell>
+                  <TableCell colSpan={5} className="text-center py-8 text-on-surface-variant">
+                    Loading team...
+                  </TableCell>
                 </TableRow>
-              ) : team.map((member) => (
-                <TableRow key={member.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">
-                        {member.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="font-medium text-on-surface">{member.name}</div>
-                        <div className="text-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
-                          <Mail className="h-3 w-3" />
-                          {member.email}
+              ) : (
+                team.map((member) => (
+                  <TableRow key={member.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-sm">
+                          {member.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-medium text-on-surface">{member.name}</div>
+                          <div className="text-sm text-on-surface-variant flex items-center gap-1 mt-0.5">
+                            <Mail className="h-3 w-3" />
+                            {member.email}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1.5 text-on-surface">
-                      <Shield className={`h-4 w-4 ${member.role === 'Super Admin' ? 'text-primary' : 'text-on-surface-variant'}`} />
-                      <span className={member.role === 'Super Admin' ? 'font-semibold' : ''}>{member.role}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={
-                        member.status === 'active' ? 'success' : 'warning'
-                      }
-                    >
-                      {member.status.charAt(0).toUpperCase() + member.status.slice(1)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-on-surface-variant">{member.lastActive}</TableCell>
-                  <TableCell>
-                    <button className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-surface-container transition-colors">
-                      <MoreHorizontal className="h-5 w-5" />
-                    </button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1.5 text-on-surface">
+                        <Shield
+                          className={`h-4 w-4 ${member.role === 'Super Admin' ? 'text-primary' : 'text-on-surface-variant'}`}
+                        />
+                        <span className={member.role === 'Super Admin' ? 'font-semibold' : ''}>
+                          {member.role}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={member.status === 'active' ? 'success' : 'warning'}>
+                        {member.status.charAt(0).toUpperCase() + member.status.slice(1)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-on-surface-variant">{member.lastActive}</TableCell>
+                    <TableCell>
+                      <button className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-surface-container transition-colors">
+                        <MoreHorizontal className="h-5 w-5" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>

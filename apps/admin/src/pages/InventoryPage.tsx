@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -12,18 +12,7 @@ import {
   TableCell,
   Input,
 } from '../components/ui';
-import {
-  Search,
-  Filter,
-  MoreHorizontal,
-  ArrowUpDown,
-  Download,
-  Upload,
-  Loader2,
-  Save,
-  UploadCloud,
-  Plus,
-} from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Download, Loader2, UploadCloud, Plus } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
 import { BulkImportDialog } from '../components/BulkImportDialog';

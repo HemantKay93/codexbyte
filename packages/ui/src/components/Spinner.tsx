@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   color?: string;
@@ -9,7 +7,7 @@ export function Spinner({ size = 'md', color = 'var(--color-primary)' }: Spinner
   const sizes = {
     sm: 20,
     md: 40,
-    lg: 60
+    lg: 60,
   };
 
   const dimension = sizes[size];
@@ -21,7 +19,7 @@ export function Spinner({ size = 'md', color = 'var(--color-primary)' }: Spinner
         height={dimension}
         viewBox="0 0 50 50"
         style={{
-          animation: 'spin 1s linear infinite'
+          animation: 'spin 1s linear infinite',
         }}
       >
         <circle

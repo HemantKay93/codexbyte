@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -22,7 +22,6 @@ import {
   CheckCircle2,
   Loader2,
   RefreshCcw,
-  ExternalLink,
   X,
   ChevronDown,
   RotateCcw,
@@ -159,7 +158,6 @@ export function OrderDetailPage() {
 
   const items = order.order_items || [];
   const address = order.addresses?.[0] || order.addresses;
-  const shipment = order.shipments?.[0] || order.shipments;
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-20">

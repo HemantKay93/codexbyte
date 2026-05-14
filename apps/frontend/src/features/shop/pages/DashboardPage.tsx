@@ -4,7 +4,6 @@ import { UserService, OrderService, SocketService } from '@byteevolvr/api-client
 import { Card, Badge, Button } from '@byteevolvr/ui';
 import {
   Package,
-  User,
   MapPin,
   LogOut,
   Edit2,
@@ -14,11 +13,8 @@ import {
   Phone,
   X,
   Printer,
-  Truck,
-  Calendar,
-  CreditCard,
 } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { printInvoice, formatPrice } from '@byteevolvr/ui';
 
 const inputStyle: React.CSSProperties = {
@@ -45,7 +41,6 @@ const labelStyle: React.CSSProperties = {
 export function DashboardPage() {
   const { user, logout } = useUserStore();
   const navigate = useNavigate();
-  const location = useLocation();
   const [orders, setOrders] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);

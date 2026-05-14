@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, Button, Badge, Input } from '../components/ui';
 import {
   ScanBarcode,
   PackageCheck,
-  Printer,
   AlertTriangle,
   Loader2,
   CheckCircle2,
@@ -12,8 +11,6 @@ import {
   MapPin,
   Plus,
   Edit2,
-  Settings2,
-  Package,
   X,
 } from 'lucide-react';
 import { AdminService } from '@byteevolvr/api-client';
@@ -89,7 +86,6 @@ export function WarehousePage() {
       setPickTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, picked: false } : t)));
     }
   };
-
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto pb-20">

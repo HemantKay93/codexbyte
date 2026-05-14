@@ -141,7 +141,7 @@ export function CheckoutPage() {
         totalAmount: finalTotalAmount,
       };
 
-      const result = await OrderService.createOrder(payload);
+      await OrderService.createOrder(payload);
 
       if (paymentMethod === 'razorpay') {
         // In a real implementation, you would open the Razorpay popup here

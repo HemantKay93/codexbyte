@@ -1,5 +1,4 @@
 import { numberToWords } from './numberToWords';
-import { formatPrice } from './format';
 
 export const printInvoice = (order: any, items: any[]) => {
   const printWindow = window.open('', '_blank');

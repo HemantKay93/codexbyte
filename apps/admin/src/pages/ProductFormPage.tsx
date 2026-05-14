@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Button, Input, Badge } from '../components/ui';
-import { ArrowLeft, Save, Image as ImageIcon, UploadCloud, X, Plus, Loader2, CheckCircle2 } from 'lucide-react';
+import { Card, CardContent, Button } from '../components/ui';
+import {
+  ArrowLeft,
+  Save,
+  Image as ImageIcon,
+  UploadCloud,
+  X,
+  Plus,
+  Loader2,
+  CheckCircle2,
+} from 'lucide-react';
 import { ProductService } from '@byteevolvr/api-client';
 
 export function ProductFormPage() {
@@ -22,10 +31,14 @@ export function ProductFormPage() {
     brand: '',
     status: 'active' as 'active' | 'draft' | 'out_of_stock',
     image_url: '',
-    images: [] as string[]
+    images: [] as string[],
   });
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isPrimary: boolean, index?: number) => {
+  const handleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    isPrimary: boolean,
+    index?: number
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -84,12 +97,10 @@ export function ProductFormPage() {
           <h1 className="text-display-sm font-semibold text-on-background">Add New Product</h1>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => navigate('/products')}>Discard</Button>
-          <Button 
-            className="gap-2 min-w-[140px]" 
-            onClick={handleSave} 
-            disabled={loading}
-          >
+          <Button variant="outline" onClick={() => navigate('/products')}>
+            Discard
+          </Button>
+          <Button className="gap-2 min-w-[140px]" onClick={handleSave} disabled={loading}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {success ? 'Saved!' : 'Save Product'}
           </Button>
@@ -118,22 +129,26 @@ export function ProductFormPage() {
             </div>
             <CardContent className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-1.5">Product Title</label>
-                <input 
-                  type="text" 
+                <label className="block text-sm font-medium text-on-surface mb-1.5">
+                  Product Title
+                </label>
+                <input
+                  type="text"
                   value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
-                  placeholder="e.g. Wireless Noise Cancelling Headphones" 
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
+                  placeholder="e.g. Wireless Noise Cancelling Headphones"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-1.5">Description</label>
-                <textarea 
-                  rows={6} 
+                <label className="block text-sm font-medium text-on-surface mb-1.5">
+                  Description
+                </label>
+                <textarea
+                  rows={6}
                   value={formData.description}
-                  onChange={e => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none" 
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none"
                   placeholder="Write a detailed product description..."
                 ></textarea>
               </div>
@@ -146,11 +161,17 @@ export function ProductFormPage() {
             </div>
             <CardContent className="p-6 space-y-6">
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-on-surface">Primary Image URL</label>
+                <label className="block text-sm font-medium text-on-surface">
+                  Primary Image URL
+                </label>
                 <div className="flex gap-4">
                   <div className="h-24 w-24 shrink-0 border border-outline rounded-lg overflow-hidden bg-surface-container">
                     {formData.image_url ? (
-                      <img src={formData.image_url} alt="Preview" className="h-full w-full object-cover" />
+                      <img
+                        src={formData.image_url}
+                        alt="Preview"
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-on-surface-variant">
                         <ImageIcon className="h-8 w-8" />
@@ -158,31 +179,35 @@ export function ProductFormPage() {
                     )}
                   </div>
                   <div className="flex-1 flex flex-col justify-center gap-2">
-                    <input 
-                      type="file" 
+                    <input
+                      type="file"
                       id="primary-image"
-                      className="hidden" 
+                      className="hidden"
                       accept="image/*"
                       onChange={(e) => handleImageUpload(e, true)}
                     />
-                    <label 
-                      htmlFor="primary-image" 
+                    <label
+                      htmlFor="primary-image"
                       className="flex items-center gap-2 px-4 h-10 border border-outline border-dashed rounded-md bg-surface-container hover:bg-surface-container-high cursor-pointer transition-colors text-sm font-medium text-primary"
                     >
                       <UploadCloud className="h-4 w-4" />
                       {uploading ? 'Uploading...' : 'Upload Primary Image'}
                     </label>
-                    <p className="text-xs text-on-surface-variant">Recommended size: 800x800px. Max 2MB.</p>
+                    <p className="text-xs text-on-surface-variant">
+                      Recommended size: 800x800px. Max 2MB.
+                    </p>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <label className="block text-sm font-medium text-on-surface">Additional Images (Up to 5)</label>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <label className="block text-sm font-medium text-on-surface">
+                    Additional Images (Up to 5)
+                  </label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     className="h-8 text-primary"
                     onClick={() => {
                       if (formData.images.length < 5) {
@@ -194,31 +219,35 @@ export function ProductFormPage() {
                     <Plus className="h-4 w-4 mr-1" /> Add Image
                   </Button>
                 </div>
-                
+
                 <div className="grid grid-cols-1 gap-3">
                   {formData.images.map((url, index) => (
                     <div key={index} className="flex gap-3 items-center">
                       <div className="h-12 w-12 shrink-0 border border-outline rounded-md overflow-hidden bg-surface-container">
                         {url ? (
-                          <img src={url} alt={`Preview ${index}`} className="h-full w-full object-cover" />
+                          <img
+                            src={url}
+                            alt={`Preview ${index}`}
+                            className="h-full w-full object-cover"
+                          />
                         ) : (
                           <div className="h-full w-full flex items-center justify-center text-on-surface-variant">
                             <ImageIcon className="h-5 w-5" />
                           </div>
                         )}
                       </div>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={url}
-                        onChange={e => {
+                        onChange={(e) => {
                           const newImages = [...formData.images];
                           newImages[index] = e.target.value;
                           setFormData({ ...formData, images: newImages });
                         }}
-                        className="flex-1 h-9 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none text-sm" 
-                        placeholder="Additional image URL..." 
+                        className="flex-1 h-9 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none text-sm"
+                        placeholder="Additional image URL..."
                       />
-                      <button 
+                      <button
                         onClick={() => {
                           const newImages = formData.images.filter((_, i) => i !== index);
                           setFormData({ ...formData, images: newImages });
@@ -246,33 +275,37 @@ export function ProductFormPage() {
             <CardContent className="p-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-on-surface mb-1.5">Price (₹)</label>
-                  <input 
-                    type="number" 
+                  <label className="block text-sm font-medium text-on-surface mb-1.5">
+                    Price (₹)
+                  </label>
+                  <input
+                    type="number"
                     value={formData.price}
-                    onChange={e => setFormData({ ...formData, price: e.target.value })}
-                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
-                    placeholder="0.00" 
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
+                    placeholder="0.00"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-on-surface mb-1.5">Stock Quantity</label>
-                  <input 
-                    type="number" 
+                  <label className="block text-sm font-medium text-on-surface mb-1.5">
+                    Stock Quantity
+                  </label>
+                  <input
+                    type="number"
                     value={formData.stock_quantity}
-                    onChange={e => setFormData({ ...formData, stock_quantity: e.target.value })}
-                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
-                    placeholder="0" 
+                    onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })}
+                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
+                    placeholder="0"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-on-surface mb-1.5">SKU</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={formData.sku}
-                    onChange={e => setFormData({ ...formData, sku: e.target.value })}
-                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
-                    placeholder="e.g. WH-1000XM4" 
+                    onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
+                    placeholder="e.g. WH-1000XM4"
                   />
                 </div>
               </div>
@@ -287,9 +320,9 @@ export function ProductFormPage() {
               <h2 className="text-lg font-semibold text-on-surface">Status</h2>
             </div>
             <CardContent className="p-6">
-              <select 
+              <select
                 value={formData.status}
-                onChange={e => setFormData({ ...formData, status: e.target.value as any })}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
                 className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
               >
                 <option value="active">Active</option>
@@ -306,9 +339,9 @@ export function ProductFormPage() {
             <CardContent className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-on-surface mb-1.5">Category</label>
-                <select 
+                <select
                   value={formData.category}
-                  onChange={e => setFormData({ ...formData, category: e.target.value })}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                   className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
                 >
                   <option>Laptops</option>
@@ -322,12 +355,12 @@ export function ProductFormPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-on-surface mb-1.5">Brand</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={formData.brand}
-                  onChange={e => setFormData({ ...formData, brand: e.target.value })}
-                  className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none" 
-                  placeholder="e.g. Sony" 
+                  onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                  className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
+                  placeholder="e.g. Sony"
                 />
               </div>
             </CardContent>

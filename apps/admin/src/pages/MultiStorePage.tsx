@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card, CardContent, Button, Badge } from '../components/ui';
 import { Plus, Globe, TrendingUp, TrendingDown, Store, MoreHorizontal } from 'lucide-react';
 
@@ -58,8 +57,12 @@ export function MultiStorePage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-display-sm font-semibold text-on-background">Multi-Store Management</h1>
-          <p className="text-body-sm text-on-surface-variant mt-1">Oversee and compare performance across all regional stores</p>
+          <h1 className="text-display-sm font-semibold text-on-background">
+            Multi-Store Management
+          </h1>
+          <p className="text-body-sm text-on-surface-variant mt-1">
+            Oversee and compare performance across all regional stores
+          </p>
         </div>
         <Button className="gap-2">
           <Plus className="h-4 w-4" /> Add New Store
@@ -79,13 +82,17 @@ export function MultiStorePage() {
         </Card>
         <Card>
           <CardContent className="p-6">
-            <div className="text-on-surface-variant font-medium text-sm mb-1">Combined Revenue (30d)</div>
+            <div className="text-on-surface-variant font-medium text-sm mb-1">
+              Combined Revenue (30d)
+            </div>
             <div className="text-3xl font-bold text-on-surface">$68,200</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6">
-            <div className="text-on-surface-variant font-medium text-sm mb-1">Total Orders (30d)</div>
+            <div className="text-on-surface-variant font-medium text-sm mb-1">
+              Total Orders (30d)
+            </div>
             <div className="text-3xl font-bold text-on-surface">3,016</div>
           </CardContent>
         </Card>
@@ -113,8 +120,12 @@ export function MultiStorePage() {
                     <Store className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-on-surface text-lg leading-tight">{store.name}</h3>
-                    <a href="#" className="text-sm text-primary hover:underline">{store.domain}</a>
+                    <h3 className="font-semibold text-on-surface text-lg leading-tight">
+                      {store.name}
+                    </h3>
+                    <a href="#" className="text-sm text-primary hover:underline">
+                      {store.domain}
+                    </a>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -129,7 +140,9 @@ export function MultiStorePage() {
 
               {store.status === 'setup' ? (
                 <div className="flex items-center justify-center h-24 text-on-surface-variant text-sm">
-                  <Button variant="outline" className="gap-2">Complete Store Setup →</Button>
+                  <Button variant="outline" className="gap-2">
+                    Complete Store Setup →
+                  </Button>
                 </div>
               ) : (
                 <div className="grid grid-cols-3 gap-4 pt-4 border-t border-outline-variant">
@@ -139,21 +152,34 @@ export function MultiStorePage() {
                   </div>
                   <div>
                     <div className="text-xs text-on-surface-variant mb-1">Orders (30d)</div>
-                    <div className="font-bold text-on-surface text-lg">{store.orders.toLocaleString()}</div>
+                    <div className="font-bold text-on-surface text-lg">
+                      {store.orders.toLocaleString()}
+                    </div>
                   </div>
                   <div>
                     <div className="text-xs text-on-surface-variant mb-1">MoM Growth</div>
-                    <div className={`font-bold text-lg flex items-center gap-1 ${store.trending === 'up' ? 'text-success' : 'text-error'}`}>
-                      {store.trending === 'up' ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                      {store.growth > 0 ? '+' : ''}{store.growth}%
+                    <div
+                      className={`font-bold text-lg flex items-center gap-1 ${store.trending === 'up' ? 'text-success' : 'text-error'}`}
+                    >
+                      {store.trending === 'up' ? (
+                        <TrendingUp className="h-4 w-4" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4" />
+                      )}
+                      {store.growth > 0 ? '+' : ''}
+                      {store.growth}%
                     </div>
                   </div>
                 </div>
               )}
 
               <div className="flex gap-2 mt-4 pt-4 border-t border-outline-variant">
-                <div className="text-xs text-on-surface-variant px-2 py-1 bg-surface-container rounded-full">{store.region}</div>
-                <div className="text-xs text-on-surface-variant px-2 py-1 bg-surface-container rounded-full">{store.currency}</div>
+                <div className="text-xs text-on-surface-variant px-2 py-1 bg-surface-container rounded-full">
+                  {store.region}
+                </div>
+                <div className="text-xs text-on-surface-variant px-2 py-1 bg-surface-container rounded-full">
+                  {store.currency}
+                </div>
               </div>
             </CardContent>
           </Card>

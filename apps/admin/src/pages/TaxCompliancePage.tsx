@@ -1,6 +1,16 @@
-import React from 'react';
-import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui';
-import { FileText, Download, Building, Landmark, PieChart } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  Button,
+  Badge,
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui';
+import { FileText, Building, Landmark, PieChart } from 'lucide-react';
 
 export function TaxCompliancePage() {
   return (
@@ -8,7 +18,9 @@ export function TaxCompliancePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-display-sm font-semibold text-on-background">Tax & Compliance</h1>
-          <p className="text-body-sm text-on-surface-variant mt-1">India GST reporting and compliance dashboard</p>
+          <p className="text-body-sm text-on-surface-variant mt-1">
+            India GST reporting and compliance dashboard
+          </p>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" className="gap-2">
@@ -25,7 +37,9 @@ export function TaxCompliancePage() {
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-2">
               <Landmark className="h-5 w-5 text-primary" />
-              <div className="text-primary font-medium text-sm">Total GST Collected (Current Month)</div>
+              <div className="text-primary font-medium text-sm">
+                Total GST Collected (Current Month)
+              </div>
             </div>
             <div className="text-3xl font-bold text-primary">₹1,42,500.00</div>
           </CardContent>
@@ -43,7 +57,9 @@ export function TaxCompliancePage() {
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-2">
               <PieChart className="h-5 w-5 text-on-surface-variant" />
-              <div className="text-on-surface-variant font-medium text-sm">CGST + SGST (Intra-state)</div>
+              <div className="text-on-surface-variant font-medium text-sm">
+                CGST + SGST (Intra-state)
+              </div>
             </div>
             <div className="text-3xl font-bold text-on-surface">₹57,500.00</div>
           </CardContent>
@@ -68,24 +84,48 @@ export function TaxCompliancePage() {
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium text-on-surface">Standard Rate 18%</TableCell>
-                <TableCell><Badge variant="default">18%</Badge></TableCell>
+                <TableCell>
+                  <Badge variant="default">18%</Badge>
+                </TableCell>
                 <TableCell className="font-mono text-sm text-on-surface-variant">8518</TableCell>
-                <TableCell className="text-on-surface-variant text-sm">Electronics, Headphones, Peripherals</TableCell>
-                <TableCell className="text-right"><Button variant="ghost" size="sm">Edit</Button></TableCell>
+                <TableCell className="text-on-surface-variant text-sm">
+                  Electronics, Headphones, Peripherals
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="sm">
+                    Edit
+                  </Button>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium text-on-surface">Reduced Rate 5%</TableCell>
-                <TableCell><Badge variant="default">5%</Badge></TableCell>
+                <TableCell>
+                  <Badge variant="default">5%</Badge>
+                </TableCell>
                 <TableCell className="font-mono text-sm text-on-surface-variant">6201</TableCell>
-                <TableCell className="text-on-surface-variant text-sm">Apparel (Value below ₹1000)</TableCell>
-                <TableCell className="text-right"><Button variant="ghost" size="sm">Edit</Button></TableCell>
+                <TableCell className="text-on-surface-variant text-sm">
+                  Apparel (Value below ₹1000)
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="sm">
+                    Edit
+                  </Button>
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium text-on-surface">Standard Rate 12%</TableCell>
-                <TableCell><Badge variant="default">12%</Badge></TableCell>
+                <TableCell>
+                  <Badge variant="default">12%</Badge>
+                </TableCell>
                 <TableCell className="font-mono text-sm text-on-surface-variant">6201</TableCell>
-                <TableCell className="text-on-surface-variant text-sm">Apparel (Value above ₹1000)</TableCell>
-                <TableCell className="text-right"><Button variant="ghost" size="sm">Edit</Button></TableCell>
+                <TableCell className="text-on-surface-variant text-sm">
+                  Apparel (Value above ₹1000)
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="sm">
+                    Edit
+                  </Button>
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>

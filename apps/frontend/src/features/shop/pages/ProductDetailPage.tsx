@@ -3,12 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ProductService, Product } from '@byteevolvr/api-client';
 import { Loader2, ArrowLeft, ShoppingCart, Truck, ShieldCheck, Star } from 'lucide-react';
 import { Button, Badge } from '@byteevolvr/ui';
-import { useUserStore, useCartStore } from '@byteevolvr/store';
+import { useCartStore } from '@byteevolvr/store';
 
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useUserStore();
+
   const { addItem: addToCart } = useCartStore();
 
   const [product, setProduct] = useState<Product | null>(null);

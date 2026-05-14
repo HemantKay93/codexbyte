@@ -1,0 +1,50 @@
+﻿
+> byteevolvr-platform@1.0.0 type-check
+> npm run type-check --workspaces --if-present
+
+
+> @byteevolvr/admin@1.0.0 type-check
+> tsc --noEmit
+
+src/pages/CMSBuilderPage.tsx(16,1): error TS1109: Expression expected.
+src/pages/CMSBuilderPage.tsx(16,3): error TS1434: Unexpected keyword or identifier.
+src/pages/CustomersPage.tsx(23,1): error TS1109: Expression expected.
+src/pages/CustomersPage.tsx(23,3): error TS1434: Unexpected keyword or identifier.
+src/pages/InventoryPage.tsx(22,1): error TS1109: Expression expected.
+src/pages/InventoryPage.tsx(22,3): error TS1434: Unexpected keyword or identifier.
+node.exe : npm error Lifecycle script `type-check` failed with error:
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm error Lifec...led with error::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+npm error code 2
+npm error path C:\website\codexbyte\byteevolvr-main\apps\admin
+npm error workspace @byteevolvr/admin@1.0.0
+npm error location C:\website\codexbyte\byteevolvr-main\apps\admin
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c tsc --noEmit
+
+
+> @byteevolvr/frontend@1.0.0 type-check
+> tsc --noEmit
+
+src/features/shop/pages/CheckoutPage.tsx(144,13): error TS6133: 'result' is declared but its value is never read.
+src/features/shop/pages/DashboardPage.tsx(7,3): error TS6133: 'User' is declared but its value is never read.
+src/features/shop/pages/DashboardPage.tsx(17,3): error TS6133: 'Truck' is declared but its value is never read.
+src/features/shop/pages/DashboardPage.tsx(18,3): error TS6133: 'Calendar' is declared but its value is never read.
+src/features/shop/pages/DashboardPage.tsx(19,3): error TS6133: 'CreditCard' is declared but its value is never read.
+src/features/shop/pages/DashboardPage.tsx(48,9): error TS6133: 'location' is declared but its value is never read.
+src/features/shop/pages/ProductDetailPage.tsx(11,9): error TS6133: 'user' is declared but its value is never read.
+src/features/shop/pages/TrackingPage.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/pages/ShopPage.tsx(3,10): error TS6133: 'shopProducts' is declared but its value is never read.
+src/pages/ShopPage.tsx(17,9): error TS6133: 'user' is declared but its value is never read.
+npm error Lifecycle script `type-check` failed with error:
+npm error code 2
+npm error path C:\website\codexbyte\byteevolvr-main\apps\frontend
+npm error workspace @byteevolvr/frontend@1.0.0
+npm error location C:\website\codexbyte\byteevolvr-main\apps\frontend
+npm error command failed
+npm error command C:\WINDOWS\system32\cmd.exe /d /s /c tsc --noEmit
+

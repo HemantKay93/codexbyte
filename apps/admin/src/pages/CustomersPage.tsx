@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Card,
@@ -13,16 +13,7 @@ import {
   Input,
   Badge,
 } from '../components/ui';
-import {
-  Search,
-  Download,
-  Filter,
-  MoreHorizontal,
-  Mail,
-  MapPin,
-  Loader2,
-  User,
-} from 'lucide-react';
+import { Search, Download, Filter, MoreHorizontal, Mail, Loader2, User } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
 
