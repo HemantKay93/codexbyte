@@ -30,6 +30,8 @@ let adminClient: any = null;
 let cachedAdminToken: string | null = null;
 let tokenExpiresAt = 0;
 
+let adminClientPromise: Promise<any> | null = null;
+
 export const getAdminClient = async () => {
   // 1. Preferred: Service Role Key (Bypasses RLS)
   if (serviceRoleKey) {
@@ -41,39 +43,52 @@ export const getAdminClient = async () => {
     }
     return adminClient;
   }
-  console.warn('[Supabase] Service Role Key missing. Falling back to Admin Auth.');
 
-  // 2. Fallback: Authenticate as Admin user using env variables
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const adminPassword = process.env.ADMIN_PASSWORD;
-
-  if (!adminEmail || !adminPassword) {
-    console.error(
-      'CRITICAL: Missing SUPABASE_SERVICE_ROLE_KEY and ADMIN_EMAIL/ADMIN_PASSWORD. Admin operations will fail.'
-    );
-    return supabase;
+  // 2. Fallback: Authenticate as Admin user
+  if (adminClient && cachedAdminToken && Date.now() < tokenExpiresAt) {
+    return adminClient;
   }
 
-  if (!cachedAdminToken || Date.now() > tokenExpiresAt) {
-    const tempClient = createClient(supabaseUrl!, supabaseKey!);
-    const { data, error } = await tempClient.auth.signInWithPassword({
-      email: adminEmail,
-      password: adminPassword,
-    });
+  // If already logging in, wait for that
+  if (adminClientPromise) {
+    return adminClientPromise;
+  }
 
-    if (error || !data.session) {
-      console.error('CRITICAL: Admin Supabase login failed. Falling back to ANON key.');
-      return supabase;
+  adminClientPromise = (async () => {
+    try {
+      console.warn('[Supabase] Service Role Key missing. Falling back to Admin Auth.');
+      const adminEmail = process.env.ADMIN_EMAIL;
+      const adminPassword = process.env.ADMIN_PASSWORD;
+
+      if (!adminEmail || !adminPassword) {
+        throw new Error('Missing Admin credentials');
+      }
+
+      const tempClient = createClient(supabaseUrl!, supabaseKey!);
+      const { data, error } = await tempClient.auth.signInWithPassword({
+        email: adminEmail,
+        password: adminPassword,
+      });
+
+      if (error || !data.session) {
+        throw error || new Error('Auth failed');
+      }
+
+      cachedAdminToken = data.session.access_token;
+      tokenExpiresAt = Date.now() + data.session.expires_in * 1000 - 60000;
+
+      adminClient = createClient(supabaseUrl!, supabaseKey!, {
+        global: { headers: { Authorization: `Bearer ${cachedAdminToken}` } },
+      });
+
+      return adminClient;
+    } catch (err) {
+      console.error('[Supabase] Admin login failed:', err);
+      return supabase; // Final fallback
+    } finally {
+      adminClientPromise = null;
     }
+  })();
 
-    cachedAdminToken = data.session.access_token;
-    tokenExpiresAt = Date.now() + data.session.expires_in * 1000 - 60000;
-
-    // Recreate client with new token
-    adminClient = createClient(supabaseUrl!, supabaseKey!, {
-      global: { headers: { Authorization: `Bearer ${cachedAdminToken}` } },
-    });
-  }
-
-  return adminClient || supabase;
+  return adminClientPromise;
 };

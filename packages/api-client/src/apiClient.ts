@@ -47,7 +47,7 @@ apiClient.interceptors.response.use(
       const delay = RETRY_DELAY * Math.pow(2, config._retryCount - 1); // Exponential backoff
 
       console.warn(
-        `[API] Retrying request (${config._retryCount}/${MAX_RETRIES}) in ${delay}ms...`
+        `[API] Retrying request (${config._retryCount}/${MAX_RETRIES}) in ${delay}ms... Status: ${error.response?.status || 'Network Error'}`
       );
       await new Promise((resolve) => setTimeout(resolve, delay));
       return apiClient(config);

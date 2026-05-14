@@ -147,4 +147,13 @@ httpServer.listen(Number(PORT), '0.0.0.0', () => {
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  logger.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
 export default app;
