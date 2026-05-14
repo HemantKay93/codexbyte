@@ -43,10 +43,10 @@ const DEFAULT_SECTION_CONTENT: Record<string, any> = {
     workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
   },
   social: {
-    facebook: 'https://facebook.com/byteevolvr',
-    twitter: 'https://twitter.com/byteevolvr',
-    instagram: 'https://instagram.com/byteevolvr',
-    linkedin: 'https://linkedin.com/company/byteevolvr',
+    facebook: 'https://www.facebook.com/BYTEEVOLVRENTERPRISE/',
+    twitter: 'https://x.com/byteevolvr73336',
+    instagram: 'https://www.instagram.com/byteevolvr/',
+    linkedin: 'https://www.linkedin.com/company/byteevolvr/',
     whatsapp: '+917888957575',
   },
   hero: {

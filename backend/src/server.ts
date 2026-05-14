@@ -147,6 +147,34 @@ app.get('/api/products/:productId/reviews', reviewRoutes);
 app.post('/api/products/:productId/reviews', reviewRoutes);
 app.get('/api/tracking/:trackingId', shippingRoutes);
 
+// Lead Generation (Contact Form)
+app.post(['/api/leads', '/api/v1/leads'], async (req, res) => {
+  try {
+    const { name, email, phone, subject, message } = req.body;
+    const { supabase } = await import('./config/supabase.js');
+
+    const { data, error } = await supabase.from('leads').insert([
+      {
+        name,
+        email,
+        phone,
+        subject,
+        message,
+        status: 'new',
+        created_at: new Date(),
+      },
+    ]);
+
+    if (error) throw error;
+
+    logger.info(`[Lead] New inquiry from ${email}`);
+    res.status(201).json({ success: true, message: 'Inquiry sent successfully!' });
+  } catch (err: any) {
+    logger.error(`[Lead] Error saving lead: ${err.message}`);
+    res.status(500).json({ success: false, message: 'Failed to save inquiry.' });
+  }
+});
+
 // Health Check
 app.get(['/health', '/api/health'], (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

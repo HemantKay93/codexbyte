@@ -9,12 +9,16 @@ export function ContactPage() {
   const { data: globalCms } = useCMS('global');
   const { data: homeCms } = useCMS('home');
 
+  // Helper to get the API base URL for lead submission
+  const API_BASE_URL =
+    (import.meta as any).env?.VITE_API_BASE_URL || 'https://codexbyte.onrender.com/api';
+
   const contactData = contactPageCms?.details ||
     globalCms?.contact ||
     homeCms?.contact || {
-      address: 'Mumbai, Maharashtra, India',
-      pincode: '',
-      phone: '+91 98765 00000',
+      address: 'Chaltakonda, Routhkhanda, Near Kali Mata Mandir, Joypur, Bankura, West Bengal',
+      pincode: '722138',
+      phone: '+91 78889 57575',
       email: 'hello@byteevolvr.com',
       workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
     };
@@ -40,7 +44,8 @@ export function ContactPage() {
     setStatus('loading');
 
     try {
-      const response = await fetch('/api/leads', {
+      const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+      const response = await fetch(`${baseUrl}/leads`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

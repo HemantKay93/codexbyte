@@ -35,6 +35,19 @@ export function Footer() {
   const { data: globalCms } = useCMS('global');
   const { data: homeCms } = useCMS('home');
 
+  const defaultContact = {
+    address: 'Chaltakonda, Routhkhanda, Near Kali Mata Mandir, Joypur, Bankura, West Bengal',
+    phone: '+91 78889 57575',
+    email: 'hello@byteevolvr.com',
+  };
+
+  const defaultSocial = {
+    facebook: 'https://www.facebook.com/BYTEEVOLVRENTERPRISE/',
+    twitter: 'https://x.com/byteevolvr73336',
+    instagram: 'https://www.instagram.com/byteevolvr/',
+    linkedin: 'https://www.linkedin.com/company/byteevolvr/',
+  };
+
   return (
     <SharedFooter
       logo={<AppLogo size={32} />}
@@ -42,8 +55,8 @@ export function Footer() {
       sections={footerSections}
       copyright={`© ${new Date().getFullYear()} ByteeVolvr Enterprises. All rights reserved.`}
       LinkComponent={Link}
-      socialLinks={globalCms?.social}
-      contactInfo={globalCms?.contact || homeCms?.contact}
+      socialLinks={globalCms?.social || defaultSocial}
+      contactInfo={globalCms?.contact || homeCms?.contact || defaultContact}
     />
   );
 }
