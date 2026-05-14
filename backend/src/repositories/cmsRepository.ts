@@ -2,7 +2,11 @@ import { supabase, getAdminClient } from '../config/supabase.js';
 
 export class CmsRepository {
   async findBySlug(pageSlug: string, sectionKeys?: string[]) {
-    let query = supabase.from('cms_content').select('*').eq('page_slug', pageSlug);
+    let query = supabase
+      .from('cms_content')
+      .select('*')
+      .eq('page_slug', pageSlug)
+      .order('updated_at', { ascending: true }); // Ensure newest data comes last to overwrite correctly in the frontend map
 
     if (sectionKeys && sectionKeys.length > 0) {
       query = query.in('section_key', sectionKeys);

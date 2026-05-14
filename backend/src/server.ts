@@ -54,6 +54,7 @@ app.use(
         'http://localhost:5174',
         'http://127.0.0.1:5173',
         'https://codexbyte-admin.vercel.app',
+        'https://codexbyte-frontend.vercel.app',
         'https://codexbyte.vercel.app',
         'https://byteevolvr.vercel.app',
       ];
@@ -61,7 +62,14 @@ app.use(
       const envOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map((o) => o.trim());
       const allAllowed = [...allowedOrigins, ...envOrigins].filter(Boolean);
 
-      if (!origin || allAllowed.includes(origin) || origin.startsWith('http://localhost:')) {
+      const isVercel = origin?.endsWith('.vercel.app');
+
+      if (
+        !origin ||
+        allAllowed.includes(origin) ||
+        origin.startsWith('http://localhost:') ||
+        isVercel
+      ) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
