@@ -34,6 +34,7 @@ const DEFAULT_SECTION_CONTENT: Record<string, any> = {
     phone: '+91 78889 57575',
     email: 'hello@byteevolvr.com',
     workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
+    mapUrl: '',
   },
   contact: {
     address: 'Chaltakonda, Routhkhanda,Near Kali Mata Mandir, Joypur, Bankura, West Bengal',
@@ -41,6 +42,7 @@ const DEFAULT_SECTION_CONTENT: Record<string, any> = {
     phone: '+91 78889 57575',
     email: 'hello@byteevolvr.com',
     workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
+    mapUrl: '',
   },
   social: {
     facebook: 'https://www.facebook.com/BYTEEVOLVRENTERPRISE/',
@@ -83,6 +85,7 @@ export function CMSBuilderPage() {
     social: { facebook: '', twitter: '', instagram: '', linkedin: '', youtube: '' },
     seo: { metaTitle: '', metaDescription: '', keywords: '' },
   });
+  const [dirtySections, setDirtySections] = useState<Set<string>>(new Set());
 
   const PAGES = [
     {
@@ -121,6 +124,7 @@ export function CMSBuilderPage() {
         formattedData[item.section_key] = item.content;
       });
       setCmsData(formattedData);
+      setDirtySections(new Set()); // Reset on fresh load
 
       if (pageInfo && !pageInfo.sections.includes(selectedSection)) {
         setSelectedSection(pageInfo.sections[0]);
@@ -133,10 +137,22 @@ export function CMSBuilderPage() {
   };
 
   const handleSave = async () => {
+    if (dirtySections.size === 0) {
+      alert('No changes detected to save.');
+      return;
+    }
+
     setSaving(true);
-    console.log('[CMS] Publishing changes for page:', selectedPage, cmsData);
+    // Only send sections that were actually modified
+    const dataToSave: Record<string, any> = {};
+    dirtySections.forEach((section) => {
+      dataToSave[section] = cmsData[section];
+    });
+
+    console.log('[CMS] Publishing changes for page:', selectedPage, dataToSave);
     try {
-      await CMSService.updatePageContent(selectedPage, cmsData);
+      await CMSService.updatePageContent(selectedPage, dataToSave);
+      setDirtySections(new Set()); // Clear dirty state after success
       await fetchCMSContent(selectedPage);
       alert('Changes saved and published successfully!');
     } catch (err) {
@@ -148,6 +164,7 @@ export function CMSBuilderPage() {
   };
 
   const updateContent = (section: string, field: string, value: any) => {
+    setDirtySections((prev) => new Set(prev).add(section));
     setCmsData((prev) => ({
       ...prev,
       [section]: {
@@ -334,8 +351,17 @@ export function CMSBuilderPage() {
                       <p className="text-gray-600">{cmsData.details?.workingHours}</p>
                     </div>
                   </div>
-                  <div className="bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
-                    Map Preview Placeholder
+                  <div className="overflow-hidden rounded-lg bg-gray-100 h-[300px]">
+                    <iframe
+                      src={
+                        cmsData.details?.mapUrl ||
+                        `https://www.google.com/maps?q=${encodeURIComponent(cmsData.details?.address || '')}&output=embed`
+                      }
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                    ></iframe>
                   </div>
                 </div>
               </div>
@@ -539,6 +565,18 @@ export function CMSBuilderPage() {
                     onChange={(e) => updateContent('contact', 'workingHours', e.target.value)}
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">
+                    Google Maps URL
+                  </label>
+                  <textarea
+                    value={cmsData.contact?.mapUrl}
+                    onChange={(e) => updateContent('contact', 'mapUrl', e.target.value)}
+                    placeholder="Paste Google Maps embed URL here"
+                    className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none text-xs"
+                    rows={4}
+                  />
+                </div>
               </>
             )}
 
@@ -606,6 +644,18 @@ export function CMSBuilderPage() {
                   <Input
                     value={cmsData.details?.workingHours}
                     onChange={(e) => updateContent('details', 'workingHours', e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-on-surface mb-2">
+                    Google Maps URL / Embed Link
+                  </label>
+                  <textarea
+                    value={cmsData.details?.mapUrl}
+                    onChange={(e) => updateContent('details', 'mapUrl', e.target.value)}
+                    placeholder="Paste Google Maps embed URL here"
+                    className="w-full p-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none resize-none text-xs"
+                    rows={4}
                   />
                 </div>
               </>
