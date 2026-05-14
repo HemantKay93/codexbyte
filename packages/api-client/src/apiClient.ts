@@ -6,7 +6,10 @@ const metaEnv = (
   }
 ).env;
 
-const BASE_URL = metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api';
+let BASE_URL = metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api';
+if (BASE_URL.endsWith('/')) {
+  BASE_URL = BASE_URL.slice(0, -1);
+}
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: BASE_URL,
