@@ -37,24 +37,39 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Security Middlewares
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+    crossOriginOpenerPolicy: false,
+  })
+);
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || origin.startsWith('http://localhost:')) {
+      const allowedOrigins = [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://127.0.0.1:5173',
+        'https://codexbyte-admin.vercel.app',
+        'https://codexbyte.vercel.app',
+        'https://byteevolvr.vercel.app',
+      ];
+
+      const envOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map((o) => o.trim());
+      const allAllowed = [...allowedOrigins, ...envOrigins].filter(Boolean);
+
+      if (!origin || allAllowed.includes(origin) || origin.startsWith('http://localhost:')) {
         callback(null, true);
       } else {
-        const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map((o) => o.trim());
-        if (allowedOrigins.includes(origin)) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
+        callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    maxAge: 86400, // 24 hours preflight cache
   })
 );
 app.use(express.json());

@@ -5,14 +5,21 @@ import { Send, Phone, Mail, MapPin, Clock, Loader2, CheckCircle2 } from 'lucide-
 import { useCMS } from '@/features/cms/useCMS';
 
 export function ContactPage() {
-  const { data: cms } = useCMS('contact_page');
-  const details = cms?.details || {
-    address: 'Mumbai, Maharashtra, India',
-    pincode: '',
-    phone: '+91 98765 00000',
-    email: 'hello@byteevolvr.com',
-    workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
-  };
+  const { data: contactPageCms } = useCMS('contact_page');
+  const { data: globalCms } = useCMS('global');
+  const { data: homeCms } = useCMS('home');
+
+  const contactData = globalCms?.contact ||
+    homeCms?.contact ||
+    contactPageCms?.details || {
+      address: 'Mumbai, Maharashtra, India',
+      pincode: '',
+      phone: '+91 98765 00000',
+      email: 'hello@byteevolvr.com',
+      workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
+    };
+
+  const details = contactData;
 
   const [formData, setFormData] = useState({
     name: '',

@@ -3,6 +3,7 @@ import { Navbar } from '@byteevolvr/ui';
 import { AppLogo } from '@/components/ui/AppLogo';
 import { Mail, Phone, ShoppingCart, User } from 'lucide-react';
 import { useUserStore, useCartStore } from '@byteevolvr/store';
+import { useCMS } from '@/features/cms/useCMS';
 
 const navLinks = [
   { label: 'Home', to: '/home' },
@@ -17,6 +18,15 @@ export function Header() {
   const itemCount = totalItems();
   const location = useLocation();
   const isShopRoute = location.pathname.startsWith('/shop');
+
+  const { data: globalCms } = useCMS('global');
+  const { data: homeCms } = useCMS('home');
+
+  const contact = globalCms?.contact ||
+    homeCms?.contact || {
+      email: 'support@byteevolvr.com',
+      phone: '+91 98765 00000',
+    };
 
   return (
     <Navbar
@@ -35,22 +45,22 @@ export function Header() {
         <div className="flex flex-col lg:flex-row lg:items-center gap-4">
           <div className="flex flex-col lg:flex-row lg:items-center gap-3 text-xs font-medium lg:border-r border-white/10 lg:pr-5">
             <a
-              href="mailto:support@byteevolvr.com"
+              href={`mailto:${contact.email}`}
               className="group flex items-center gap-2 hover:text-white transition-all py-1.5 lg:py-1 px-3 rounded-full bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/10 text-brand-muted"
             >
               <div className="p-1 rounded-full bg-accent/10 group-hover:bg-accent/20 transition-colors shrink-0">
                 <Mail className="h-3 w-3 text-accent" />
               </div>
-              support@byteevolvr.com
+              {contact.email}
             </a>
             <a
-              href="tel:+919876500000"
+              href={`tel:${contact.phone.replace(/\s+/g, '')}`}
               className="group flex items-center gap-2 hover:text-white transition-all py-1.5 lg:py-1 px-3 rounded-full bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/10 text-brand-muted"
             >
               <div className="p-1 rounded-full bg-accent/10 group-hover:bg-accent/20 transition-colors shrink-0">
                 <Phone className="h-3 w-3 text-accent" />
               </div>
-              +91 98765 00000
+              {contact.phone}
             </a>
           </div>
           <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:border-l border-white/10 lg:pl-5 pt-3 lg:pt-0 border-t lg:border-t-0">

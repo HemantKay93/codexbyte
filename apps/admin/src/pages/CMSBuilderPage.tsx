@@ -54,7 +54,7 @@ export function CMSBuilderPage() {
     { id: 'contact_page', label: 'Contact Page', icon: Phone, sections: ['details'] },
     { id: 'terms', label: 'Terms & Conditions', icon: Columns, sections: ['main'] },
     { id: 'refund', label: 'Refund Policy', icon: ArrowLeft, sections: ['main'] },
-    { id: 'global', label: 'Global Settings', icon: Globe, sections: ['social', 'seo'] },
+    { id: 'global', label: 'Global Settings', icon: Globe, sections: ['social', 'seo', 'contact'] },
   ];
 
   useEffect(() => {

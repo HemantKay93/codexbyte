@@ -43,7 +43,7 @@ export function Footer() {
       copyright={`© ${new Date().getFullYear()} ByteeVolvr Enterprises. All rights reserved.`}
       LinkComponent={Link}
       socialLinks={globalCms?.social}
-      contactInfo={homeCms?.contact}
+      contactInfo={globalCms?.contact || homeCms?.contact}
     />
   );
 }
