@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, Button } from '../components/ui';
 import {
   Download,
-  Calendar,
   TrendingUp,
   Users,
   ShoppingCart,
@@ -39,7 +38,7 @@ export function AnalyticsPage() {
       // 1. Fetch data from AdminService
       const stats = await AdminService.getDashboardStats();
       const orders = await AdminService.getOrders();
-      const customers = await AdminService.getCustomers();
+      await AdminService.getCustomers();
 
       // 3. Process Metrics
       setMetrics({

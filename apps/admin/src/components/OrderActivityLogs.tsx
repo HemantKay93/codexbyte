@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
-import { Loader2, Clock, User, MessageSquare } from 'lucide-react';
+import { Loader2, Clock, MessageSquare } from 'lucide-react';
 import { Badge } from './ui';
 
 interface ActivityLog {

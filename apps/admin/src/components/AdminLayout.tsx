@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import {
@@ -10,7 +10,6 @@ import {
   User,
   Settings,
   ChevronDown,
-  Package,
   AlertTriangle,
   CheckCircle2,
   Info,

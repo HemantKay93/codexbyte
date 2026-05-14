@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, Button, Input, Badge } from '../components/ui';
 import {
   LayoutTemplate,

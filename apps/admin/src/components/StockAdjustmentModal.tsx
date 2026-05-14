@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, Button, Input } from './ui';
+import { useState, useEffect } from 'react';
+import { Button, Input } from './ui';
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { Package, Warehouse, Info, Loader2, X, ChevronDown } from 'lucide-react';
 
