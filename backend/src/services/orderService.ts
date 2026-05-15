@@ -144,7 +144,7 @@ export class OrderService {
         throw new AppError(`Invalid status transition from ${currentStatus} to ${newStatus}`, 400);
       }
 
-      await orderRepo.update(id, { status: newStatus });
+      await orderRepo.update(id, { status: newStatus }, userId);
 
       // Audit Logging for ALL status changes
       await AuditService.logOrderActivity({

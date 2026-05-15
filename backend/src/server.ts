@@ -26,6 +26,7 @@ import warehouseRoutes from './routes/warehouseRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import posRoutes from './routes/posRoutes.js';
 import marketingRoutes from './routes/marketingRoutes.js';
+import leadRoutes from './routes/leadRoutes.js';
 
 import * as reportController from './controllers/reportController.js';
 import { authenticate, authorize } from './middlewares/auth.js';
@@ -106,6 +107,9 @@ app.use('/api/v1/warehouse', warehouseRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/pos', posRoutes);
 app.use('/api/v1/marketing', marketingRoutes);
+app.use('/api/v1/leads', leadRoutes);
+// Legacy compatibility
+app.use('/api/leads', leadRoutes);
 
 app.get(
   '/api/v1/reports/export',
@@ -113,37 +117,6 @@ app.get(
   authorize('admin', 'super-admin'),
   reportController.exportReport
 );
-
-import { leadSchema } from './validators/leadValidator.js';
-import { validate } from './middlewares/validate.js';
-
-// Lead Generation (Contact Form)
-app.post(['/api/leads', '/api/v1/leads'], validate(leadSchema), async (req, res) => {
-  try {
-    const { name, email, phone, subject, message } = req.body;
-    const { supabase } = await import('./config/supabase.js');
-
-    const { data, error } = await supabase.from('leads').insert([
-      {
-        name,
-        email,
-        phone,
-        subject,
-        message,
-        status: 'new',
-        created_at: new Date(),
-      },
-    ]);
-
-    if (error) throw error;
-
-    logger.info(`[Lead] New inquiry from ${email}`);
-    res.status(201).json({ success: true, message: 'Inquiry sent successfully!' });
-  } catch (err: any) {
-    logger.error(`[Lead] Error saving lead: ${err.message}`);
-    res.status(500).json({ success: false, message: 'Failed to save inquiry.' });
-  }
-});
 
 // Health Check
 app.get(['/health', '/api/health'], (req, res) => {

@@ -10,18 +10,27 @@ const adminRepo = new AdminRepository();
 
 export const getDashboardStats = catchAsync(async (req: Request, res: Response) => {
   const stats = await AnalyticsService.getDashboardStats();
-  res.json(stats);
+  res.json({
+    success: true,
+    data: stats,
+  });
 });
 
 export const getCustomers = catchAsync(async (req: Request, res: Response) => {
   const customers = await adminService.getCustomers();
-  res.json(customers);
+  res.json({
+    success: true,
+    data: customers,
+  });
 });
 
 export const getCustomerDetail = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const detail = await adminService.getCustomerDetail(id as string);
-  res.json(detail);
+  res.json({
+    success: true,
+    data: detail,
+  });
 });
 
 export const getSalesReport = catchAsync(async (req: Request, res: Response) => {
@@ -29,12 +38,18 @@ export const getSalesReport = catchAsync(async (req: Request, res: Response) => 
   const days = typeof daysQuery === 'string' ? parseInt(daysQuery) : 7;
   const report = await AnalyticsService.getSalesTrend(days);
 
-  res.json(report);
+  res.json({
+    success: true,
+    data: report,
+  });
 });
 
 export const getWarehouseTasks = catchAsync(async (req: Request, res: Response) => {
   const tasks = await adminService.getWarehouseTasks();
-  res.json(tasks);
+  res.json({
+    success: true,
+    data: tasks,
+  });
 });
 export const getOrderActivity = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -46,7 +61,10 @@ export const getOrderActivity = catchAsync(async (req: Request, res: Response) =
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  res.json(data);
+  res.json({
+    success: true,
+    data,
+  });
 });
 
 export const createWarehouse = catchAsync(async (req: Request, res: Response) => {
@@ -67,9 +85,12 @@ export const createWarehouse = catchAsync(async (req: Request, res: Response) =>
 
   if (error) {
     console.error(`[Admin] Database error creating warehouse:`, error);
-    return res.status(500).json({ message: `Database error: ${error.message}` });
+    return res.status(500).json({ success: false, message: `Database error: ${error.message}` });
   }
-  res.json(data);
+  res.status(201).json({
+    success: true,
+    data,
+  });
 });
 
 export const updateWarehouse = catchAsync(async (req: Request, res: Response) => {
@@ -106,10 +127,15 @@ export const updateWarehouse = catchAsync(async (req: Request, res: Response) =>
   }
 
   if (!data || data.length === 0) {
-    return res.status(404).json({ message: 'Warehouse not found or no changes made' });
+    return res
+      .status(404)
+      .json({ success: false, message: 'Warehouse not found or no changes made' });
   }
 
-  res.json(data[0]);
+  res.json({
+    success: true,
+    data: data[0],
+  });
 });
 
 export const getWarehouses = catchAsync(async (req: Request, res: Response) => {
@@ -120,7 +146,10 @@ export const getWarehouses = catchAsync(async (req: Request, res: Response) => {
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  res.json(data);
+  res.json({
+    success: true,
+    data,
+  });
 });
 
 export const getNotifications = catchAsync(async (req: Request, res: Response) => {
@@ -132,7 +161,10 @@ export const getNotifications = catchAsync(async (req: Request, res: Response) =
     .limit(50);
 
   if (error) throw error;
-  res.json(data);
+  res.json({
+    success: true,
+    data,
+  });
 });
 
 export const markNotificationRead = catchAsync(async (req: Request, res: Response) => {
@@ -146,5 +178,8 @@ export const markNotificationRead = catchAsync(async (req: Request, res: Respons
     .single();
 
   if (error) throw error;
-  res.json(data);
+  res.json({
+    success: true,
+    data,
+  });
 });

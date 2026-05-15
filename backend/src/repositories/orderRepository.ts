@@ -6,7 +6,8 @@ export class OrderRepository {
     const admin = await getAdminClient();
     let query = admin
       .from('orders')
-      .select('*, order_items(*), shipments(*), user_profiles(full_name, email)');
+      .select('*, order_items(*), shipments(*), user_profiles(full_name, email)')
+      .is('deleted_at', null);
 
     if (filters.status) {
       query = query.eq('status', filters.status.toLowerCase());
@@ -27,6 +28,7 @@ export class OrderRepository {
       .from('orders')
       .select('*, order_items(*), shipments(*), user_profiles(*), addresses(*)')
       .eq('id', id)
+      .is('deleted_at', null)
       .single();
 
     if (error) throw error;
@@ -45,6 +47,7 @@ export class OrderRepository {
       .from('orders')
       .select('*, order_items(*)')
       .or(`user_id.eq.${userId}${email ? `,customer_email.eq.${email}` : ''}`)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     const { data, error } = await query;
@@ -58,13 +61,17 @@ export class OrderRepository {
     return data;
   }
 
-  async create(orderData: any, items: any[]) {
+  async create(orderData: any, items: any[], userId?: string) {
     const admin = await getAdminClient();
 
     // 1. Create the order
     const { data: order, error: orderError } = await admin
       .from('orders')
-      .insert(orderData)
+      .insert({
+        ...orderData,
+        created_by: userId,
+        updated_at: new Date().toISOString(),
+      })
       .select()
       .single();
 
@@ -87,17 +94,35 @@ export class OrderRepository {
     return { ...order, order_items: orderItems };
   }
 
-  async update(id: string, updateData: any) {
+  async update(id: string, updateData: any, userId?: string) {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('orders')
-      .update(updateData)
+      .update({
+        ...updateData,
+        updated_by: userId,
+        updated_at: new Date().toISOString(),
+      })
       .eq('id', id)
       .select()
       .single();
 
     if (error) throw error;
     return data;
+  }
+
+  async delete(id: string, userId?: string) {
+    const admin = await getAdminClient();
+    const { error } = await admin
+      .from('orders')
+      .update({
+        deleted_at: new Date().toISOString(),
+        updated_by: userId,
+      })
+      .eq('id', id);
+
+    if (error) throw error;
+    return true;
   }
 
   async updateShipment(orderId: string, courier: string, trackingId: string) {

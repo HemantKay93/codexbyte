@@ -1,6 +1,7 @@
 import express from 'express';
 import * as productController from '../controllers/productController.js';
 import { authenticate, authorize } from '../middlewares/auth.js';
+import { requirePermission } from '../middlewares/permission.js';
 
 import { validate } from '../middlewares/validate.js';
 import { productSchema, productUpdateSchema } from '../validators/productValidator.js';
@@ -11,10 +12,20 @@ router.get('/', productController.getProducts);
 router.get('/:id', productController.getProduct);
 
 // Admin routes
-router.use(authenticate, authorize('admin', 'super-admin'));
+router.use(authenticate);
 
-router.post('/', validate(productSchema), productController.createProduct);
-router.put('/:id', validate(productUpdateSchema), productController.updateProduct);
-router.delete('/:id', productController.deleteProduct);
+router.post(
+  '/',
+  requirePermission('products:write'),
+  validate(productSchema),
+  productController.createProduct
+);
+router.put(
+  '/:id',
+  requirePermission('products:write'),
+  validate(productUpdateSchema),
+  productController.updateProduct
+);
+router.delete('/:id', requirePermission('products:delete'), productController.deleteProduct);
 
 export default router;

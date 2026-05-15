@@ -1,6 +1,7 @@
 import express from 'express';
 import * as orderController from '../controllers/orderController.js';
 import { authenticate, authorize, authenticateOptional } from '../middlewares/auth.js';
+import { requirePermission } from '../middlewares/permission.js';
 
 const router = express.Router();
 
@@ -10,17 +11,17 @@ router.get('/:id/items', authenticate, orderController.getOrderItems);
 router.post('/', authenticateOptional, orderController.createOrder);
 
 // Admin routes
-router.get('/admin', authenticate, authorize('admin', 'super-admin'), orderController.getAllOrders);
+router.get('/admin', authenticate, requirePermission('orders:read'), orderController.getAllOrders);
 router.get(
   '/admin/:id',
   authenticate,
-  authorize('admin', 'super-admin'),
+  requirePermission('orders:read'),
   orderController.getOrderById
 );
 router.put(
   '/admin/:id',
   authenticate,
-  authorize('admin', 'super-admin'),
+  requirePermission('orders:write'),
   orderController.updateOrder
 );
 

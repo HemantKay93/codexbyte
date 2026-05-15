@@ -17,7 +17,7 @@ export class ProductService {
     return product;
   }
 
-  async createProduct(data: any) {
+  async createProduct(data: any, userId?: string) {
     // Sanitize and map fields
     const sanitizedData = {
       name: data.name,
@@ -34,20 +34,18 @@ export class ProductService {
       tags: Array.isArray(data.tags) ? data.tags : [],
       slug: data.slug || generateSlug(data.name),
       variants: data.variants || [],
-      updated_at: new Date().toISOString(),
     };
 
-    return await productRepo.create(sanitizedData);
+    return await productRepo.create(sanitizedData, userId);
   }
-  async updateProduct(id: string, data: any) {
+
+  async updateProduct(id: string, data: any, userId?: string) {
     const existing = await productRepo.findById(id);
     if (!existing) {
       throw new AppError('Product not found', 404);
     }
 
-    const sanitizedData: any = {
-      updated_at: new Date().toISOString(),
-    };
+    const sanitizedData: any = {};
 
     if (data.name) sanitizedData.name = data.name;
     if (data.description) sanitizedData.description = data.description;
@@ -66,17 +64,18 @@ export class ProductService {
     if (data.tags) sanitizedData.tags = Array.isArray(data.tags) ? data.tags : [data.tags];
     if (data.variants) sanitizedData.variants = data.variants;
 
-    return await productRepo.update(id, sanitizedData);
+    return await productRepo.update(id, sanitizedData, userId);
   }
 
-  async deleteProduct(id: string) {
+  async deleteProduct(id: string, userId?: string) {
     const existing = await productRepo.findById(id);
     if (!existing) {
       throw new AppError('Product not found', 404);
     }
-    return await productRepo.delete(id);
+    return await productRepo.delete(id, userId);
   }
-  async bulkImportProducts(products: any[]) {
+
+  async bulkImportProducts(products: any[], userId?: string) {
     const timestamp = Date.now();
     const sanitizedProducts = products.map((data, index) => ({
       name: data.name,
@@ -93,9 +92,8 @@ export class ProductService {
       tags: Array.isArray(data.tags) ? data.tags : data.tags ? [data.tags] : [],
       slug: data.slug || generateSlug(data.name || 'product'),
       variants: data.variants || [],
-      updated_at: new Date().toISOString(),
     }));
 
-    return await productRepo.bulkCreate(sanitizedProducts);
+    return await productRepo.bulkCreate(sanitizedProducts, userId);
   }
 }

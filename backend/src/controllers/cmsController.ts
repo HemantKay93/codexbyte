@@ -11,7 +11,10 @@ export const getCmsContent = catchAsync(async (req: Request, res: Response) => {
     : undefined;
   const content = await cmsRepo.findBySlug(pageSlug, sectionKeys);
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.json(content);
+  res.json({
+    success: true,
+    data: content,
+  });
 });
 
 export const updateCmsContent = catchAsync(async (req: Request, res: Response) => {
@@ -19,19 +22,19 @@ export const updateCmsContent = catchAsync(async (req: Request, res: Response) =
   const sectionKey = req.params.sectionKey as string;
   const { content } = req.body;
   const result = await cmsRepo.upsert(pageSlug, sectionKey, content);
-  res.json(result);
+  res.json({
+    success: true,
+    message: 'Section updated successfully',
+    data: result,
+  });
 });
 
 export const updatePageContent = catchAsync(async (req: Request, res: Response) => {
   const pageSlug = req.params.pageSlug as string;
   const { contentBySection } = req.body;
-  console.log(
-    `[CMS] Received update for ${pageSlug}. Payload:`,
-    JSON.stringify(contentBySection, null, 2)
-  );
 
   if (!contentBySection || typeof contentBySection !== 'object') {
-    return res.status(400).json({ message: 'Invalid content payload' });
+    return res.status(400).json({ success: false, message: 'Invalid content payload' });
   }
 
   const sections = Object.entries(contentBySection).map(([sectionKey, content]) => ({
@@ -40,5 +43,9 @@ export const updatePageContent = catchAsync(async (req: Request, res: Response) 
   }));
 
   const result = await cmsRepo.upsertBulk(pageSlug, sections);
-  res.json(result);
+  res.json({
+    success: true,
+    message: 'Page content updated successfully',
+    data: result,
+  });
 });

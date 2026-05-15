@@ -142,4 +142,37 @@ export class InventoryService {
     if (error) throw error;
     return data;
   }
+
+  static async transferStock(data: {
+    productId: string;
+    fromWarehouseId: string;
+    toWarehouseId: string;
+    quantity: number;
+    notes?: string;
+    userId?: string;
+  }) {
+    logger.info(
+      `[Inventory] Transferring ${data.quantity} of product ${data.productId} from ${data.fromWarehouseId} to ${data.toWarehouseId}`
+    );
+
+    // 1. Remove from source
+    await this.adjustStock({
+      productId: data.productId,
+      warehouseId: data.fromWarehouseId,
+      quantity: -Math.abs(data.quantity),
+      type: 'transfer',
+      notes: data.notes || `Transfer to warehouse ${data.toWarehouseId}`,
+      userId: data.userId,
+    });
+
+    // 2. Add to destination
+    return await this.adjustStock({
+      productId: data.productId,
+      warehouseId: data.toWarehouseId,
+      quantity: Math.abs(data.quantity),
+      type: 'transfer',
+      notes: data.notes || `Transfer from warehouse ${data.fromWarehouseId}`,
+      userId: data.userId,
+    });
+  }
 }

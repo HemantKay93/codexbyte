@@ -35,9 +35,23 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor: Error Handling & Retry
+// Response Interceptor: Data Extraction & Error Handling
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Automatically extract 'data' if the response follows the { success, data } standard
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      response.data.success === true &&
+      response.data.data !== undefined
+    ) {
+      return {
+        ...response,
+        data: response.data.data,
+      };
+    }
+    return response;
+  },
   async (error: AxiosError) => {
     const config = error.config as InternalAxiosRequestConfig & { _retryCount?: number };
 

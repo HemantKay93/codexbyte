@@ -32,6 +32,7 @@ export function ProductFormPage() {
     status: 'active' as 'active' | 'draft' | 'out_of_stock',
     image_url: '',
     images: [] as string[],
+    variants: [] as any[],
   });
 
   const handleImageUpload = async (
@@ -309,6 +310,121 @@ export function ProductFormPage() {
                   />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <div className="p-4 border-b border-outline-variant flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-on-surface">Product Variants</h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-primary"
+                onClick={() => {
+                  setFormData({
+                    ...formData,
+                    variants: [
+                      ...(formData.variants || []),
+                      { name: '', value: '', price: '', stock_quantity: '', sku: '' },
+                    ],
+                  });
+                }}
+              >
+                <Plus className="h-4 w-4 mr-1" /> Add Variant
+              </Button>
+            </div>
+            <CardContent className="p-6 space-y-4">
+              {formData.variants?.map((variant: any, index: number) => (
+                <div
+                  key={index}
+                  className="p-4 border border-outline rounded-lg space-y-4 bg-surface-container-low"
+                >
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-sm font-bold text-on-surface">Variant #{index + 1}</h3>
+                    <button
+                      onClick={() => {
+                        const newVariants = [...formData.variants];
+                        newVariants.splice(index, 1);
+                        setFormData({ ...formData, variants: newVariants });
+                      }}
+                      className="text-on-surface-variant hover:text-error p-1"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">
+                        Type (e.g. Size)
+                      </label>
+                      <input
+                        type="text"
+                        value={variant.name}
+                        onChange={(e) => {
+                          const newVariants = [...formData.variants];
+                          newVariants[index].name = e.target.value;
+                          setFormData({ ...formData, variants: newVariants });
+                        }}
+                        className="w-full h-9 px-3 rounded-md border border-outline bg-surface text-sm"
+                        placeholder="Size"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">
+                        Value (e.g. XL)
+                      </label>
+                      <input
+                        type="text"
+                        value={variant.value}
+                        onChange={(e) => {
+                          const newVariants = [...formData.variants];
+                          newVariants[index].value = e.target.value;
+                          setFormData({ ...formData, variants: newVariants });
+                        }}
+                        className="w-full h-9 px-3 rounded-md border border-outline bg-surface text-sm"
+                        placeholder="XL"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">
+                        Price (Optional)
+                      </label>
+                      <input
+                        type="number"
+                        value={variant.price}
+                        onChange={(e) => {
+                          const newVariants = [...formData.variants];
+                          newVariants[index].price = e.target.value;
+                          setFormData({ ...formData, variants: newVariants });
+                        }}
+                        className="w-full h-9 px-3 rounded-md border border-outline bg-surface text-sm"
+                        placeholder="Override price"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">
+                        Stock (Optional)
+                      </label>
+                      <input
+                        type="number"
+                        value={variant.stock_quantity}
+                        onChange={(e) => {
+                          const newVariants = [...formData.variants];
+                          newVariants[index].stock_quantity = e.target.value;
+                          setFormData({ ...formData, variants: newVariants });
+                        }}
+                        className="w-full h-9 px-3 rounded-md border border-outline bg-surface text-sm"
+                        placeholder="Override stock"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {(!formData.variants || formData.variants.length === 0) && (
+                <div className="text-center py-8 border-2 border-dashed border-outline-variant rounded-xl text-on-surface-variant italic text-sm">
+                  No variants defined for this product.
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

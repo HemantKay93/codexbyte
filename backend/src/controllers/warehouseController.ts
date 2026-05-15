@@ -7,9 +7,16 @@ import { AuthRequest } from '../middlewares/auth.js';
 
 export const getAllWarehouses = catchAsync(async (req: Request, res: Response) => {
   const admin = await getAdminClient();
-  const { data, error } = await admin.from('warehouses').select('*').order('name');
+  const { data, error } = await admin
+    .from('warehouses')
+    .select('*')
+    .is('deleted_at', null)
+    .order('name');
   if (error) throw error;
-  res.json(data);
+  res.json({
+    success: true,
+    data,
+  });
 });
 
 export const createWarehouse = catchAsync(async (req: AuthRequest, res: Response) => {
@@ -25,7 +32,10 @@ export const createWarehouse = catchAsync(async (req: AuthRequest, res: Response
     new_data: data,
   });
 
-  res.status(201).json(data);
+  res.status(201).json({
+    success: true,
+    data,
+  });
 });
 
 export const adjustStock = catchAsync(async (req: AuthRequest, res: Response) => {
@@ -42,12 +52,38 @@ export const adjustStock = catchAsync(async (req: AuthRequest, res: Response) =>
     new_data: req.body,
   });
 
-  res.json(result);
+  res.json({
+    success: true,
+    data: result,
+  });
+});
+
+export const transferStock = catchAsync(async (req: AuthRequest, res: Response) => {
+  const result = await InventoryService.transferStock({
+    ...req.body,
+    userId: req.user?.id,
+  });
+
+  await AuditService.log({
+    user_id: req.user?.id,
+    action: 'TRANSFER_STOCK',
+    module: 'inventory',
+    entity_id: req.body.productId,
+    new_data: req.body,
+  });
+
+  res.json({
+    success: true,
+    data: result,
+  });
 });
 
 export const getWarehouseInventory = catchAsync(async (req: Request, res: Response) => {
   const data = await InventoryService.getWarehouseStock(req.params.id as string);
-  res.json(data);
+  res.json({
+    success: true,
+    data,
+  });
 });
 
 export const markTaskPicked = catchAsync(async (req: AuthRequest, res: Response) => {

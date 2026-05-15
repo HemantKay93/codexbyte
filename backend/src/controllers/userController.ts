@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { catchAsync } from '../middlewares/error.js';
 import { AuthRequest } from '../middlewares/auth.js';
 import { getAdminClient } from '../config/supabase.js';
+import { UserRepository } from '../repositories/userRepository.js';
+
+const userRepo = new UserRepository();
 
 export const getProfile = catchAsync(async (req: AuthRequest, res: Response) => {
   const admin = await getAdminClient();
@@ -67,7 +70,7 @@ export const addAddress = catchAsync(async (req: AuthRequest, res: Response) => 
 });
 
 export const updateAddress = catchAsync(async (req: AuthRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const admin = await getAdminClient();
   const { data, error } = await admin
     .from('addresses')
@@ -82,10 +85,40 @@ export const updateAddress = catchAsync(async (req: AuthRequest, res: Response) 
 });
 
 export const deleteAddress = catchAsync(async (req: AuthRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const admin = await getAdminClient();
   const { error } = await admin.from('addresses').delete().eq('id', id).eq('user_id', req.user.id);
 
   if (error) throw error;
   res.json({ success: true });
+});
+
+// Admin methods
+export const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const users = await userRepo.findAll();
+  res.json({
+    success: true,
+    data: users,
+  });
+});
+
+export const blockUser = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const { reason } = req.body;
+  const user = await userRepo.blockUser(id, reason || 'No reason provided');
+  res.json({
+    success: true,
+    message: 'User blocked successfully',
+    data: user,
+  });
+});
+
+export const unblockUser = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id as string;
+  const user = await userRepo.unblockUser(id);
+  res.json({
+    success: true,
+    message: 'User unblocked successfully',
+    data: user,
+  });
 });

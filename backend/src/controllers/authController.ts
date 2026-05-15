@@ -20,7 +20,11 @@ export const login = catchAsync(async (req: Request, res: Response) => {
       new_data: { email: result.user.email },
     });
 
-    res.json(result);
+    res.json({
+      success: true,
+      message: 'Login successful',
+      data: result,
+    });
   } catch (error: any) {
     console.warn(`[Auth] Login failed for: ${email}. Error: ${error.message}`);
     throw error;
@@ -42,7 +46,11 @@ export const adminLogin = catchAsync(async (req: Request, res: Response) => {
       new_data: { email: result.user.email },
     });
 
-    res.json(result);
+    res.json({
+      success: true,
+      message: 'Admin login successful',
+      data: result,
+    });
   } catch (error: any) {
     console.warn(`[Auth] Admin login failed for: ${email}. Error: ${error.message}`);
     throw error;
@@ -52,12 +60,19 @@ export const adminLogin = catchAsync(async (req: Request, res: Response) => {
 export const signup = catchAsync(async (req: Request, res: Response) => {
   const { email, password, name } = req.body;
   const result = await authService.customerSignup(email, password, name);
-  res.json(result);
+  res.json({
+    success: true,
+    message: 'Signup successful',
+    data: result,
+  });
 });
 
 export const getMe = catchAsync(async (req: any, res: Response) => {
   const user = await authService.getMe(req.user.id);
-  res.json({ user });
+  res.json({
+    success: true,
+    data: { user },
+  });
 });
 
 export const getAdminMe = catchAsync(async (req: any, res: Response) => {
@@ -66,5 +81,8 @@ export const getAdminMe = catchAsync(async (req: any, res: Response) => {
     res.status(403).json({ status: 'error', message: 'Admin access required' });
     return;
   }
-  res.json({ user });
+  res.json({
+    success: true,
+    data: { user },
+  });
 });

@@ -7,14 +7,16 @@ export class AdminRepository {
     // Total Revenue & Orders
     const { data: orders, error: ordersError } = await admin
       .from('orders')
-      .select('total_amount, status, created_at, order_number');
+      .select('total_amount, status, created_at, order_number')
+      .is('deleted_at', null);
 
     if (ordersError) throw ordersError;
 
     // Active Users
     const { count: userCount, error: userError } = await admin
       .from('user_profiles')
-      .select('*', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true })
+      .is('deleted_at', null);
 
     if (userError) throw userError;
 
@@ -22,7 +24,8 @@ export class AdminRepository {
     const { data: lowStock, error: stockError } = await admin
       .from('products')
       .select('name, stock_quantity')
-      .lt('stock_quantity', 10);
+      .lt('stock_quantity', 10)
+      .is('deleted_at', null);
 
     if (stockError) throw stockError;
 
@@ -46,13 +49,15 @@ export class AdminRepository {
     const { data: profiles, error: profilesError } = await admin
       .from('user_profiles')
       .select('*')
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     if (profilesError) throw profilesError;
 
     const { data: orders, error: ordersError } = await admin
       .from('orders')
-      .select('user_id, total_amount');
+      .select('user_id, total_amount')
+      .is('deleted_at', null);
 
     if (ordersError) throw ordersError;
 
