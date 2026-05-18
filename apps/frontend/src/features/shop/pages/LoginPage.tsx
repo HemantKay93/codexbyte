@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthService } from '@byteevolvr/api-client';
-import { useUserStore } from '@byteevolvr/store';
+import { useAuthStore } from '@byteevolvr/store';
 import { Button, Input, Card } from '@byteevolvr/ui';
 import { Loader2 } from 'lucide-react';
 
@@ -11,7 +11,7 @@ export function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setToken, setUser } = useUserStore();
+  const { setToken, setUser } = useAuthStore();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

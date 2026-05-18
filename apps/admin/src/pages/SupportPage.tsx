@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, Button, Badge } from '../components/ui';
 import { LifeBuoy, MoreVertical, MessageSquare, Loader2, RefreshCcw } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { SupportService } from '@byteevolvr/api-client';
 
 export function SupportPage() {
   const [tickets, setTickets] = useState<any[]>([]);
@@ -14,26 +14,15 @@ export function SupportPage() {
   async function fetchTickets() {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('support_tickets')
-        .select(
-          `
-          *,
-          user:user_id (
-            full_name
-          )
-        `
-        )
-        .order('updated_at', { ascending: false });
-
-      if (error) throw error;
-      setTickets(data || []);
+      const response = await SupportService.getAllTickets();
+      setTickets(response.data || []);
     } catch (error) {
       console.error('Error fetching tickets:', error);
     } finally {
       setLoading(false);
     }
   }
+
 
   const getStatusColor = (status: string) => {
     switch (status) {

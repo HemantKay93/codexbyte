@@ -2,10 +2,10 @@ import React, { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { AuthProvider } from './contexts/AuthContext';
 import { AdminLayout } from './components/AdminLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppErrorBoundary } from './components/AppErrorBoundary';
+import { useAuthStore } from '@byteevolvr/store';
 
 import './index.css';
 
@@ -88,53 +88,63 @@ const PageLoader = () => (
   </div>
 );
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+const Main = () => {
+  const { initialize } = useAuthStore();
+  
+  React.useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  return (
     <AppErrorBoundary>
       <ThemeProvider>
-        <AuthProvider>
-          <BrowserRouter>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route
-                  element={
-                    <ProtectedRoute>
-                      <AdminLayout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route path="/" element={<DashboardPage />} />
-                  <Route path="/analytics" element={<AnalyticsPage />} />
-                  <Route path="/pos" element={<POSPage />} />
-                  <Route path="/products" element={<ProductManagementPage />} />
-                  <Route path="/products/new" element={<ProductFormPage />} />
-                  <Route path="/inventory" element={<InventoryPage />} />
-                  <Route path="/orders" element={<OrderManagementPage />} />
-                  <Route path="/orders/:id" element={<OrderDetailPage />} />
-                  <Route path="/returns" element={<ReturnsPage />} />
-                  <Route path="/warehouse" element={<WarehousePage />} />
-                  <Route path="/customers" element={<CustomersPage />} />
-                  <Route path="/customers/:id" element={<CustomerDetailPage />} />
-                  <Route path="/reviews" element={<ReviewsPage />} />
-                  <Route path="/marketing" element={<MarketingPage />} />
-                  <Route path="/discounts" element={<DiscountsPage />} />
-                  <Route path="/cms" element={<CMSBuilderPage />} />
-                  <Route path="/invoice-template" element={<InvoiceTemplatePage />} />
-                  <Route path="/suppliers" element={<SuppliersPage />} />
-                  <Route path="/stores" element={<MultiStorePage />} />
-                  <Route path="/tax-compliance" element={<TaxCompliancePage />} />
-                  <Route path="/activity-log" element={<ActivityLogPage />} />
-                  <Route path="/developers" element={<DevelopersPage />} />
-                  <Route path="/team" element={<TeamPage />} />
-                  <Route path="/support" element={<SupportPage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                </Route>
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </AuthProvider>
+        <BrowserRouter>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/analytics" element={<AnalyticsPage />} />
+                <Route path="/pos" element={<POSPage />} />
+                <Route path="/products" element={<ProductManagementPage />} />
+                <Route path="/products/new" element={<ProductFormPage />} />
+                <Route path="/inventory" element={<InventoryPage />} />
+                <Route path="/orders" element={<OrderManagementPage />} />
+                <Route path="/orders/:id" element={<OrderDetailPage />} />
+                <Route path="/returns" element={<ReturnsPage />} />
+                <Route path="/warehouse" element={<WarehousePage />} />
+                <Route path="/customers" element={<CustomersPage />} />
+                <Route path="/customers/:id" element={<CustomerDetailPage />} />
+                <Route path="/reviews" element={<ReviewsPage />} />
+                <Route path="/marketing" element={<MarketingPage />} />
+                <Route path="/discounts" element={<DiscountsPage />} />
+                <Route path="/cms" element={<CMSBuilderPage />} />
+                <Route path="/invoice-template" element={<InvoiceTemplatePage />} />
+                <Route path="/suppliers" element={<SuppliersPage />} />
+                <Route path="/stores" element={<MultiStorePage />} />
+                <Route path="/tax-compliance" element={<TaxCompliancePage />} />
+                <Route path="/activity-log" element={<ActivityLogPage />} />
+                <Route path="/developers" element={<DevelopersPage />} />
+                <Route path="/team" element={<TeamPage />} />
+                <Route path="/support" element={<SupportPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+              </Route>
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
       </ThemeProvider>
     </AppErrorBoundary>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Main />
   </React.StrictMode>
 );

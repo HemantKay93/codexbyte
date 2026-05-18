@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { InventoryService } from '../inventoryService.js';
+import { InventoryService } from '../inventory.service.js';
 import { getAdminClient } from '../../config/supabase.js';
 import { NotificationService } from '../notificationService.js';
 

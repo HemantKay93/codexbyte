@@ -5,15 +5,16 @@ A modular monorepo architecture for ByteEvolvr Enterprises, featuring a business
 ## 🏗️ Project Structure
 
 - **/apps**
-  - `frontend`: Business website (React + Vite)
-  - `admin`: Administration panel (React + Vite)
-  - `shop`: E-commerce application (React + Vite)
+  - `frontend`: High-performance customer-facing website (React + Vite)
+  - `admin`: Enterprise-grade administrative dashboard (React + Vite)
 - **/backend**
-  - Node.js & Express API server
+  - **Modular Domain Architecture**: Decoupled feature modules (Auth, Order, Product, etc.)
+  - **Repository Pattern**: Centralized data access layer
 - **/packages**
-  - `ui`: Shared design system and components
-  - `api-client`: Shared API integration logic
-  - `config`: Shared ESLint, Prettier, and TypeScript configs
+  - `api-client`: Unified API communication layer
+  - `store`: Consolidated Zustand global state management
+  - `ui`: Premium design system components
+  - `config`: Shared project configurations
 - **/scripts**
   - Utility and deployment scripts
 

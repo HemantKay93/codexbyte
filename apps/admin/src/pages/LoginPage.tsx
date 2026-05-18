@@ -11,7 +11,8 @@ import {
   Package,
   Users,
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuthStore } from '@byteevolvr/store';
+import { AuthService } from '@byteevolvr/api-client';
 
 const stats = [
   { icon: TrendingUp, label: 'Performance', value: '+28.4%', color: 'text-blue-400' },
@@ -27,7 +28,7 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { signIn, user } = useAuth();
+  const { setUser, setToken, user } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as any)?.from?.pathname || '/';
@@ -42,20 +43,26 @@ export function LoginPage() {
     setIsLoading(true);
     setError('');
 
-    const { error } = await signIn(email, password);
-
-    if (error) {
-      console.error('Login error:', error);
-      if (error.includes('Invalid login credentials') || error.includes('invalid_credentials')) {
-        setError('Verification failed. Please check your system ID and access key.');
-      } else if (error.includes('Email not confirmed')) {
-        setError('System access pending. Please verify your identity via email.');
-      } else {
-        setError(error);
+    try {
+      const data = await AuthService.adminLogin(email, password);
+      const adminUser = data.user;
+      
+      if (adminUser?.role !== 'admin' && adminUser?.role !== 'super-admin') {
+        setError('Admin access required');
+        setIsLoading(false);
+        return;
       }
+
+      setToken(data.token, 'admin');
+      setUser(adminUser);
+      navigate(from, { replace: true });
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.customMessage || err.message || 'Login failed');
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen w-full flex bg-[#f8fafc] font-sans selection:bg-blue-100 selection:text-blue-900 overflow-hidden">

@@ -13,22 +13,23 @@ import { initSockets } from './sockets/index.js';
 import './jobs/index.js'; // Initialize background workers
 
 // Route Imports
-import productRoutes from './routes/productRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
-import authRoutes from './routes/authRoutes.js';
-import orderRoutes from './routes/orderRoutes.js';
-import reviewRoutes from './routes/reviewRoutes.js';
-import cmsRoutes from './routes/cmsRoutes.js';
-import wishlistRoutes from './routes/wishlistRoutes.js';
-import paymentRoutes from './routes/paymentRoutes.js';
-import shippingRoutes from './routes/shippingRoutes.js';
-import warehouseRoutes from './routes/warehouseRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import posRoutes from './routes/posRoutes.js';
-import marketingRoutes from './routes/marketingRoutes.js';
-import leadRoutes from './routes/leadRoutes.js';
+import productRoutes from './modules/product/product.routes.js';
+import adminRoutes from './modules/admin/admin.routes.js';
+import authRoutes from './modules/auth/auth.routes.js';
+import orderRoutes from './modules/order/order.routes.js';
+import reviewRoutes from './modules/review/review.routes.js';
+import cmsRoutes from './modules/cms/cms.routes.js';
+import wishlistRoutes from './modules/wishlist/wishlist.routes.js';
+import paymentRoutes from './modules/payment/payment.routes.js';
+import shippingRoutes from './modules/shipping/shipping.routes.js';
+import inventoryRoutes from './modules/inventory/inventory.routes.js';
+import userRoutes from './modules/user/user.routes.js';
+import posRoutes from './modules/pos/pos.routes.js';
+import marketingRoutes from './modules/marketing/marketing.routes.js';
+import leadRoutes from './modules/lead/lead.routes.js';
+import supportRoutes from './modules/support/support.routes.js';
 
-import * as reportController from './controllers/reportController.js';
+import * as reportController from './modules/admin/report.controller.js';
 import { authenticate, authorize } from './middlewares/auth.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -53,6 +54,8 @@ app.use(
         'http://localhost:5173',
         'http://localhost:5174',
         'http://127.0.0.1:5173',
+        'http://localhost:4031',
+        'http://127.0.0.1:4031',
         'https://codexbyte-admin.vercel.app',
         'https://codexbyte-frontend.vercel.app',
         'https://codexbyte.vercel.app',
@@ -103,11 +106,12 @@ app.use('/api/v1/cms', cmsRoutes);
 app.use('/api/v1/wishlist', wishlistRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/shipping', shippingRoutes);
-app.use('/api/v1/warehouse', warehouseRoutes);
+app.use('/api/v1/warehouse', inventoryRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/pos', posRoutes);
 app.use('/api/v1/marketing', marketingRoutes);
 app.use('/api/v1/leads', leadRoutes);
+app.use('/api/v1/support', supportRoutes);
 // Legacy compatibility
 app.use('/api/leads', leadRoutes);
 

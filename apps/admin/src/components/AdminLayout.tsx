@@ -16,7 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuthStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
 
 function formatRelativeTime(date: Date) {
@@ -31,7 +31,7 @@ function formatRelativeTime(date: Date) {
 
 export function AdminLayout() {
   const { theme, toggleTheme } = useTheme();
-  const { user, signOut } = useAuth();
+  const { user, logout: signOut } = useAuthStore();
   const navigate = useNavigate();
 
   const [userMenuOpen, setUserMenuOpen] = useState(false);

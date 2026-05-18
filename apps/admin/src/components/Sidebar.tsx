@@ -6,7 +6,7 @@ import {
   ChevronDown, ChevronRight, Boxes, RefreshCcw, Truck, Warehouse,
   FileClock, FileCheck, FileCode, Globe, Code2, Store
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuthStore } from '@byteevolvr/store';
 
 type NavItem = { name: string; href: string; icon: React.ElementType; roles?: string[] };
 type NavGroup = { name: string; icon: React.ElementType; items: NavItem[]; roles?: string[] };
@@ -98,7 +98,7 @@ function isGroup(item: NavItem | NavGroup): item is NavGroup {
 function NavGroupItem({ group }: { group: NavGroup }) {
   const [open, setOpen] = useState(false);
   const Icon = group.icon;
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const userRole = user?.role || user?.user_metadata?.role || 'user';
 
   // Filter group items based on role
@@ -152,7 +152,7 @@ function NavGroupItem({ group }: { group: NavGroup }) {
 }
 
 export function Sidebar() {
-  const { user } = useAuth();
+  const { user } = useAuthStore();
   const userRole = user?.role || user?.user_metadata?.role || 'user';
 
   // Filter top-level navigation based on role

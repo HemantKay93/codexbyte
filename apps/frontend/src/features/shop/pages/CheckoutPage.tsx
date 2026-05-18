@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCartStore, useUserStore } from '@byteevolvr/store';
-import { OrderService, ShippingService } from '@byteevolvr/api-client';
+import { useCartStore, useAuthStore } from '@byteevolvr/store';
+import { OrderService, ShippingService, UserService } from '@byteevolvr/api-client';
 import { ArrowLeft, Loader2, CreditCard, Banknote, MapPin, Truck } from 'lucide-react';
 import { Button } from '@byteevolvr/ui';
 
 export function CheckoutPage() {
   const { items, clearCart, totalAmount } = useCartStore();
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -78,25 +78,23 @@ export function CheckoutPage() {
   React.useEffect(() => {
     async function fetchLatestAddress() {
       if (!user) return;
-      const { supabase } = await import('@/lib/supabase');
-      const { data, error } = await supabase
-        .from('addresses')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+      try {
+        const response = await UserService.getAddresses();
+        const data = response.data?.[0];
 
-      if (data && !error) {
-        setShippingAddress((prev) => ({
-          ...prev,
-          full_name: data.full_name || prev.full_name,
-          phone: data.phone || prev.phone,
-          line_1: data.line_1 || prev.line_1,
-          city: data.city || prev.city,
-          state: data.state || prev.state,
-          postal_code: data.postal_code || prev.postal_code,
-        }));
+        if (data) {
+          setShippingAddress((prev) => ({
+            ...prev,
+            full_name: data.full_name || prev.full_name,
+            phone: data.phone || prev.phone,
+            line_1: data.line_1 || prev.line_1,
+            city: data.city || prev.city,
+            state: data.state || prev.state,
+            postal_code: data.postal_code || prev.postal_code,
+          }));
+        }
+      } catch (err) {
+        console.error('Failed to fetch latest address', err);
       }
     }
     fetchLatestAddress();

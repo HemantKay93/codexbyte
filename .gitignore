@@ -1,19 +1,17 @@
-# Node modules
 node_modules/
-package-lock.json
+dist/
+build/
+coverage/
+logs/
+*.log
+.env
+.env.*
+.vite/
+.cache/
 
 # Next.js build output
 .next/
 out/
-
-# Production build
-build/
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
 
 # OS-specific files
 .DS_Store
@@ -22,37 +20,15 @@ Thumbs.db
 # Vercel deployment
 .vercel/
 
-# Optional: if using TypeScript
+# TypeScript
 *.tsbuildinfo
 
-# Optional: if using testing tools
-coverage/
-jest-test-results.json
-
-# Optional: if using IDEs
+# IDEs
 .vscode/
 .idea/
 
-# Optional: if using TurboRepo or monorepo
+# Monorepo
 turbo/
 
-# Supabase large files
-supabase/migrations/consolidated_schema.sql
-
-# Logs
-*.log
-backend/logs/
-
-# Build
-dist/
-build/
-.next/
-out/
-
-# Scratch
-backend/scratch/
-
-# Environment files
-.env
-.env.local
-.env.*.local
+# Supabase
+supabase/migrations/consolidated_schema.sql

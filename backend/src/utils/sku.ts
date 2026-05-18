@@ -16,12 +16,3 @@ export const generateSKU = (product: { category: string; brand?: string; name: s
   return `${cat}-${brd}-${name}-${rand}`;
 };
 
-/**
- * Generates a slug for a product name.
- */
-export const generateSlug = (name: string) => {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '');
-};

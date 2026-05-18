@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useUserStore } from '@byteevolvr/store';
+import { useAuthStore } from '@byteevolvr/store';
 import { UserService, OrderService, SocketService } from '@byteevolvr/api-client';
 import { Card, Badge, Button } from '@byteevolvr/ui';
 import {
@@ -39,7 +39,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function DashboardPage() {
-  const { user, logout } = useUserStore();
+  const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);

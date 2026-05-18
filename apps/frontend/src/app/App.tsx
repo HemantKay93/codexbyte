@@ -40,7 +40,7 @@ const TrackingPage = lazy(() =>
 );
 
 import { useEffect } from 'react';
-import { useUserStore } from '@byteevolvr/store';
+import { useAuthStore } from '@byteevolvr/store';
 import { ProtectedRoute } from '@/features/shop/components/ProtectedRoute';
 
 function PageLoader() {
@@ -52,7 +52,7 @@ function PageLoader() {
 }
 
 export default function App() {
-  const { initialize } = useUserStore();
+  const { initialize } = useAuthStore();
 
   useEffect(() => {
     initialize();

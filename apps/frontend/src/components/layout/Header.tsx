@@ -2,7 +2,7 @@ import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Navbar } from '@byteevolvr/ui';
 import { AppLogo } from '@/components/ui/AppLogo';
 import { Mail, Phone, ShoppingCart, User } from 'lucide-react';
-import { useUserStore, useCartStore } from '@byteevolvr/store';
+import { useAuthStore, useCartStore } from '@byteevolvr/store';
 import { useCMS } from '@/features/cms/useCMS';
 
 const navLinks = [
@@ -13,7 +13,7 @@ const navLinks = [
 ];
 
 export function Header() {
-  const { user } = useUserStore();
+  const { user } = useAuthStore();
   const { totalItems } = useCartStore();
   const itemCount = totalItems();
   const location = useLocation();

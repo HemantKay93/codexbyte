@@ -1,0 +1,79 @@
+import { supabase, getAdminClient } from '../../config/supabase.js';
+
+export class UserRepository {
+  async findAll() {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('user_profiles')
+      .select('*')
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+  }
+
+  async findById(id: string) {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('user_profiles')
+      .select('*')
+      .eq('id', id)
+      .is('deleted_at', null)
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async update(id: string, userData: any) {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('user_profiles')
+      .update({
+        ...userData,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async blockUser(id: string, reason: string) {
+    const admin = await getAdminClient();
+    // Assuming we have a 'status' or 'is_blocked' field in user_profiles
+    const { data, error } = await admin
+      .from('user_profiles')
+      .update({
+        status: 'blocked',
+        block_reason: reason,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async unblockUser(id: string) {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('user_profiles')
+      .update({
+        status: 'active',
+        block_reason: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+}
