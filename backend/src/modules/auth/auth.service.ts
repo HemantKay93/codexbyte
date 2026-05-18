@@ -25,7 +25,13 @@ export class AuthService {
       });
       return {
         token,
-        user: { id: 'admin', email, full_name: 'Main Admin', role: 'admin' },
+        user: {
+          id: 'admin',
+          email,
+          full_name: 'Main Admin',
+          role: 'admin',
+          user_metadata: { full_name: 'Main Admin', role: 'admin' },
+        },
       };
     }
 
@@ -56,6 +62,7 @@ export class AuthService {
         email: data.user.email,
         full_name: profile?.full_name || data.user.user_metadata?.full_name,
         role,
+        user_metadata: data.user.user_metadata || { full_name: profile?.full_name, role },
       },
     };
   }
@@ -67,6 +74,7 @@ export class AuthService {
         email: 'admin@byteevolvr.com',
         full_name: 'Main Admin',
         role: 'admin',
+        user_metadata: { full_name: 'Main Admin', role: 'admin' },
       };
     }
 
@@ -91,6 +99,7 @@ export class AuthService {
       email: user.email,
       full_name: profile?.full_name || user.user_metadata?.full_name,
       role: profile?.role || 'user',
+      user_metadata: user.user_metadata || { full_name: profile?.full_name, role: profile?.role },
     };
   }
 

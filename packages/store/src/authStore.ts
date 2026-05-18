@@ -4,9 +4,14 @@ import { persist } from 'zustand/middleware';
 interface User {
   id: string;
   email: string;
-  role: 'admin' | 'user';
+  role: string;
   full_name?: string;
   avatar_url?: string;
+  user_metadata?: {
+    full_name?: string;
+    role?: string;
+    [key: string]: any;
+  };
 }
 
 interface AuthState {
@@ -15,7 +20,7 @@ interface AuthState {
   isAdmin: boolean;
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   setUser: (user: User | null) => void;
   setToken: (token: string | null, type: 'auth' | 'admin') => void;
@@ -32,10 +37,11 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       error: null,
 
-      setUser: (user) => set({ 
-        user, 
-        isAdmin: user?.role === 'admin' 
-      }),
+      setUser: (user) =>
+        set({
+          user,
+          isAdmin: user?.role === 'admin',
+        }),
 
       setToken: (token, type) => {
         if (token) {
@@ -55,7 +61,7 @@ export const useAuthStore = create<AuthState>()(
         const authToken = localStorage.getItem('auth_token');
         const token = adminToken || authToken;
         set({ token, isAdmin: !!adminToken });
-      }
+      },
     }),
     {
       name: 'byteevolvr-user-storage',
