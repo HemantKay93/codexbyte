@@ -22,7 +22,7 @@ const stats = [
 ];
 
 export function LoginPage() {
-  const [email, setEmail] = useState('admin@byteevolvr.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +46,7 @@ export function LoginPage() {
     try {
       const data = await AuthService.adminLogin(email, password);
       const adminUser = data.user;
-      
+
       if (adminUser?.role !== 'admin' && adminUser?.role !== 'super-admin') {
         setError('Admin access required');
         setIsLoading(false);
@@ -62,7 +62,6 @@ export function LoginPage() {
       setIsLoading(false);
     }
   };
-
 
   return (
     <div className="min-h-screen w-full flex bg-[#f8fafc] font-sans selection:bg-blue-100 selection:text-blue-900 overflow-hidden">

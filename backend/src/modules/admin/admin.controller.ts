@@ -53,7 +53,7 @@ export const getWarehouseTasks = catchAsync(async (req: Request, res: Response) 
 });
 export const getOrderActivity = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const data = await adminService.getOrderActivity(id);
+  const data = await adminService.getOrderActivity(id as string);
   res.json({
     success: true,
     data,
@@ -70,7 +70,7 @@ export const createWarehouse = catchAsync(async (req: Request, res: Response) =>
 
 export const updateWarehouse = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const data = await adminService.updateWarehouse(id, req.body);
+  const data = await adminService.updateWarehouse(id as string, req.body);
   res.json({
     success: true,
     data,
@@ -95,7 +95,7 @@ export const getNotifications = catchAsync(async (req: Request, res: Response) =
 
 export const markNotificationRead = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const data = await adminService.markNotificationRead(id);
+  const data = await adminService.markNotificationRead(id as string);
   res.json({
     success: true,
     data,
@@ -124,4 +124,3 @@ export const uploadFile = catchAsync(async (req: Request, res: Response) => {
     data: { url: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80' },
   });
 });
-

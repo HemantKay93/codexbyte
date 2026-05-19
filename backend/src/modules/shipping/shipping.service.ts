@@ -1,7 +1,7 @@
 import logger from '../../services/logger.js';
 import { getAdminClient } from '../../config/supabase.js';
 import { NotificationService } from '../../services/notificationService.js';
-import { OrderRepository } from './order.repository.js';
+import { OrderRepository } from '../order/order.repository.js';
 
 const orderRepo = new OrderRepository();
 

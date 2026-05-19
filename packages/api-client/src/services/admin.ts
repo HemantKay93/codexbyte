@@ -49,11 +49,6 @@ export const AdminService = {
     return response.data;
   },
 
-  getAnalytics: async () => {
-    const response = await apiClient.get('/admin/stats');
-    return response.data;
-  },
-
   getWarehouseTasks: async () => {
     const response = await apiClient.get('/admin/warehouse/tasks');
     return response.data;

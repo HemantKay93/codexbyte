@@ -6,6 +6,7 @@ import { AdminLayout } from './components/AdminLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppErrorBoundary } from './components/AppErrorBoundary';
 import { useAuthStore } from '@byteevolvr/store';
+import { Loader2 } from 'lucide-react';
 
 import './index.css';
 
@@ -84,13 +85,13 @@ const SupportPage = lazy(() =>
 
 const PageLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-background text-on-background">
-    Loading...
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
   </div>
 );
 
 const Main = () => {
   const { initialize } = useAuthStore();
-  
+
   React.useEffect(() => {
     initialize();
   }, [initialize]);

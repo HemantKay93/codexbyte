@@ -98,7 +98,7 @@ export class InventoryService {
     }
 
     // 4. Check for Low Stock Notification
-    if (newQty <= this.LOW_STOCK_THRESHOLD) {
+    if (newQty <= InventoryService.LOW_STOCK_THRESHOLD) {
       try {
         const { data: prod } = await admin
           .from('products')
@@ -165,14 +165,31 @@ export class InventoryService {
       userId: data.userId,
     });
 
-    // 2. Add to destination
-    return await this.adjustStock({
-      productId: data.productId,
-      warehouseId: data.toWarehouseId,
-      quantity: Math.abs(data.quantity),
-      type: 'transfer',
-      notes: data.notes || `Transfer from warehouse ${data.fromWarehouseId}`,
-      userId: data.userId,
-    });
+    try {
+      // 2. Add to destination
+      return await this.adjustStock({
+        productId: data.productId,
+        warehouseId: data.toWarehouseId,
+        quantity: Math.abs(data.quantity),
+        type: 'transfer',
+        notes: data.notes || `Transfer from warehouse ${data.fromWarehouseId}`,
+        userId: data.userId,
+      });
+    } catch (error) {
+      // Rollback: Add back to source
+      logger.error(
+        `[Inventory] Transfer failed, rolling back deduction from ${data.fromWarehouseId}`,
+        error
+      );
+      await this.adjustStock({
+        productId: data.productId,
+        warehouseId: data.fromWarehouseId,
+        quantity: Math.abs(data.quantity),
+        type: 'adjustment',
+        notes: `Rollback: Transfer to warehouse ${data.toWarehouseId} failed`,
+        userId: data.userId,
+      });
+      throw error;
+    }
   }
 }

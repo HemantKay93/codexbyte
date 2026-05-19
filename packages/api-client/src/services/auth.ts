@@ -12,7 +12,7 @@ export const AuthService = {
   adminLogin: async (email: string, password: string) => {
     const response = await apiClient.post('/auth/login', { email, password });
     if (response.data.token) {
-      localStorage.setItem('auth_token', response.data.token);
+      localStorage.setItem('admin_token', response.data.token);
     }
     return response.data;
   },

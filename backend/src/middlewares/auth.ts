@@ -199,7 +199,7 @@ export const authorize = (...roles: string[]) => {
       }
 
       if (!roles.includes(req.user.role)) {
-        console.warn(
+        logger.warn(
           `[Auth] Access denied for user ${req.user.id}. Role: ${req.user.role}. Required: ${roles.join(', ')}`
         );
         return next(new AppError('Forbidden: Access denied', 403));
