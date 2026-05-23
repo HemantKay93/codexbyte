@@ -1,0 +1,14 @@
+node_modules/
+.git/
+.env
+dist/
+build/
+.wwebjs_auth/
+.wwebjs_cache/
+apps/*/node_modules/
+apps/*/dist/
+packages/*/node_modules/
+packages/*/dist/
+backend/node_modules/
+backend/dist/
+*.log
