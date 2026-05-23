@@ -50,8 +50,20 @@ const CustomerDetailPage = lazy(() =>
 const ReviewsPage = lazy(() =>
   import('./pages/ReviewsPage').then((m) => ({ default: m.ReviewsPage }))
 );
-const MarketingPage = lazy(() =>
-  import('./pages/MarketingPage').then((m) => ({ default: m.MarketingPage }))
+const MarketingDashboard = lazy(() =>
+  import('./modules/marketing/MarketingDashboard').then((m) => ({ default: m.MarketingDashboard }))
+);
+const CampaignBuilder = lazy(() =>
+  import('./modules/marketing/CampaignBuilder').then((m) => ({ default: m.CampaignBuilder }))
+);
+const AudienceSegments = lazy(() =>
+  import('./modules/marketing/AudienceSegments').then((m) => ({ default: m.AudienceSegments }))
+);
+const AutomationFlows = lazy(() =>
+  import('./modules/marketing/AutomationFlows').then((m) => ({ default: m.AutomationFlows }))
+);
+const TemplateManager = lazy(() =>
+  import('./modules/marketing/TemplateManager').then((m) => ({ default: m.TemplateManager }))
 );
 const DiscountsPage = lazy(() =>
   import('./pages/DiscountsPage').then((m) => ({ default: m.DiscountsPage }))
@@ -135,7 +147,11 @@ const Main = () => {
                 <Route path="/customers" element={<CustomersPage />} />
                 <Route path="/customers/:id" element={<CustomerDetailPage />} />
                 <Route path="/reviews" element={<ReviewsPage />} />
-                <Route path="/marketing" element={<MarketingPage />} />
+                <Route path="/marketing" element={<MarketingDashboard />} />
+                <Route path="/marketing/campaigns" element={<CampaignBuilder />} />
+                <Route path="/marketing/segments" element={<AudienceSegments />} />
+                <Route path="/marketing/automations" element={<AutomationFlows />} />
+                <Route path="/marketing/templates" element={<TemplateManager />} />
                 <Route path="/discounts" element={<DiscountsPage />} />
                 <Route path="/cms" element={<CMSBuilderPage />} />
                 <Route path="/invoice-template" element={<InvoiceTemplatePage />} />

@@ -157,12 +157,12 @@ export const AdminService = {
 
   // Marketing & Coupons
   getCoupons: async () => {
-    const response = await apiClient.get('/admin/marketing/coupons');
+    const response = await apiClient.get('/marketing/coupons');
     return response.data;
   },
 
   createCoupon: async (data: any) => {
-    const response = await apiClient.post('/admin/marketing/coupons', data);
+    const response = await apiClient.post('/marketing/coupons', data);
     return response.data;
   },
 

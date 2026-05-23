@@ -12,7 +12,7 @@ import {
   TableCell,
   Input,
 } from '../components/ui';
-import { Search, Filter, Plus, Truck, Building2, ExternalLink } from 'lucide-react';
+import { Search, Filter, Plus, Truck, Building2, ExternalLink, Loader2, X } from 'lucide-react';
 
 import { AdminService } from '@byteevolvr/api-client';
 
@@ -24,8 +24,10 @@ export function SuppliersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    contact: '',
+    contact_name: '',
     email: '',
+    phone: '',
+    address: '',
     status: 'active'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,7 +58,7 @@ export function SuppliersPage() {
     try {
       await AdminService.createSupplier(formData);
       setIsModalOpen(false);
-      setFormData({ name: '', contact: '', email: '', status: 'active' });
+      setFormData({ name: '', contact_name: '', email: '', phone: '', address: '', status: 'active' });
       fetchData();
     } catch (err) {
       console.error('Failed to create supplier', err);
@@ -189,30 +191,35 @@ export function SuppliersPage() {
 
       {/* Add Supplier Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <Card className="w-full max-w-md p-6 bg-surface">
-            <h2 className="text-title-lg font-bold mb-4">Add New Supplier</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Company Name</label>
-                <Input value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="TechComponent Solutions" />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Primary Contact</label>
-                <Input value={formData.contact} onChange={(e) => setFormData({...formData, contact: e.target.value})} placeholder="Alice Chen" />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Email</label>
-                <Input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="alice@techcomp.io" />
-              </div>
-              <div className="flex justify-end gap-3 mt-6">
-                <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-                <Button onClick={handleCreate} disabled={isSubmitting}>
-                  {isSubmitting ? 'Adding...' : 'Add Supplier'}
-                </Button>
-              </div>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
+          <div className="relative bg-surface w-full max-w-[500px] shadow-xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            
+            <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+              <h2 className="text-xl font-bold text-on-surface">Add New Supplier</h2>
+              <Button variant="ghost" size="sm" onClick={() => setIsModalOpen(false)} className="rounded-full h-8 w-8 p-0">
+                <X className="h-5 w-5" />
+              </Button>
             </div>
-          </Card>
+
+            <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+              <Input label="Supplier Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Acme Corp" />
+              <div className="grid grid-cols-2 gap-4">
+                <Input label="Contact Name" value={formData.contact_name} onChange={(e) => setFormData({...formData, contact_name: e.target.value})} placeholder="John Doe" />
+                <Input label="Email" type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="john@acme.com" />
+              </div>
+              <Input label="Phone" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+1 555-0199" />
+              <Input label="Address" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} placeholder="123 Industrial Pkwy" />
+            </div>
+
+            <div className="p-6 border-t border-outline-variant bg-surface-container-low flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+              <Button onClick={handleCreate} disabled={isSubmitting || !formData.name}>
+                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+                Add Supplier
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

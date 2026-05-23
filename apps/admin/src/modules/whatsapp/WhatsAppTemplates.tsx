@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, Edit2, Trash2, Save } from 'lucide-react';
 import { toast } from 'sonner';
+import { Card, CardHeader, CardTitle, CardContent, Button } from '../../components/ui';
 import { apiClient } from '@byteevolvr/api-client';
 
 export function WhatsAppTemplates() {

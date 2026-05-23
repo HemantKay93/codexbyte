@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Card, CardHeader, CardTitle, CardContent, Button } from '../../components/ui';
 import { Play, Pause, RefreshCw, Trash2, AlertCircle, ListTodo, History } from 'lucide-react';
 import { apiClient } from '@byteevolvr/api-client';
 import { toast } from 'sonner';

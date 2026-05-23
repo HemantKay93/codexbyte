@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent, Button } from '../../components/ui';
 import { Loader2, RefreshCw, MessageCircle } from 'lucide-react';
 import { apiClient } from '@byteevolvr/api-client';
-import { toast } from 'sonner';
 import { toast } from 'sonner';
 
 export const WhatsAppDashboard = () => {

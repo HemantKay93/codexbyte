@@ -21,4 +21,44 @@ export const MarketingService = {
     const response = await apiClient.post('/marketing/coupons', data);
     return response.data;
   },
+
+  // Segments
+  getSegments: async () => {
+    const response = await apiClient.get('/marketing/segments');
+    return response.data;
+  },
+  createSegment: async (data: any) => {
+    const response = await apiClient.post('/marketing/segments', data);
+    return response.data;
+  },
+
+  // Automations
+  getAutomations: async () => {
+    const response = await apiClient.get('/marketing/automations');
+    return response.data;
+  },
+  createAutomation: async (data: any) => {
+    const response = await apiClient.post('/marketing/automations', data);
+    return response.data;
+  },
+
+  // Templates (Email)
+  getEmailTemplates: async () => {
+    const response = await apiClient.get('/marketing/templates/email');
+    return response.data;
+  },
+  createEmailTemplate: async (data: any) => {
+    const response = await apiClient.post('/marketing/templates/email', data);
+    return response.data;
+  },
+
+  // Templates (Push)
+  getPushTemplates: async () => {
+    const response = await apiClient.get('/marketing/templates/push');
+    return response.data;
+  },
+  createPushTemplate: async (data: any) => {
+    const response = await apiClient.post('/marketing/templates/push', data);
+    return response.data;
+  },
 };
