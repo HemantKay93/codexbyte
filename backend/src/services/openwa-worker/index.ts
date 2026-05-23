@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import express from 'express';
 import { Worker } from 'bullmq';
 import { redis } from '../../config/redis.js';
 import logger from '../logger.js';
@@ -59,6 +60,15 @@ async function bootstrap() {
 
     logger.info('[WhatsApp Bot] Listening for outgoing messages on "whatsapp-queue"...');
     
+    // 3. Hack: Start a dummy HTTP server so Render thinks this is a valid "Web Service"
+    // This allows deploying the worker on Render's free tier instead of paying for a Background Worker.
+    const app = express();
+    app.get('/', (req, res) => res.send('WhatsApp Worker is running!'));
+    const port = process.env.PORT || 10000;
+    app.listen(port, () => {
+      logger.info(`[WhatsApp Bot] Dummy HTTP Server listening on port ${port} (Render Bypass)`);
+    });
+
   } catch (error) {
     logger.error('[WhatsApp Bot] Critical Error during startup:', error);
     process.exit(1);
