@@ -86,6 +86,22 @@ export class WhatsAppRepository {
     }
   }
 
+  async updateMessageStatusByExternalId(externalId: string, status: 'sent' | 'failed' | 'delivered', errorLog?: string) {
+    const admin = await getAdminClient();
+    const { error } = await admin
+      .from('whatsapp_messages')
+      .update({
+        status,
+        error_log: errorLog || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('external_id', externalId);
+
+    if (error) {
+      logger.error(`[WhatsAppRepository] Failed to update message by external ID ${externalId} status:`, error);
+    }
+  }
+
   async logEvent(level: 'info' | 'error' | 'warn', message: string, meta?: any) {
     const admin = await getAdminClient();
     await admin.from('whatsapp_logs').insert({
@@ -119,6 +135,11 @@ export class WhatsAppRepository {
       session: session || null,
       failedCount: failedCount || 0,
     };
+  }
+
+  async updateSessionLastActive() {
+    const admin = await getAdminClient();
+    await admin.from('whatsapp_sessions').update({ last_active: new Date().toISOString() }).eq('session_name', 'default');
   }
 
   // --- Templates Management ---

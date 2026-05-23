@@ -19,6 +19,13 @@ export function SettingsPage() {
     secretKey: '',
   });
 
+  const [whatsappConfig, setWhatsappConfig] = useState({
+    accessToken: '',
+    phoneNumberId: '',
+    businessAccountId: '',
+    webhookVerifyToken: '',
+  });
+
   useEffect(() => {
     fetchSettings();
     fetchApiConfig();
@@ -31,6 +38,14 @@ export function SettingsPage() {
       setApiConfig({
         publicKey: api.publicKey || `pk_live_${Math.random().toString(36).substring(2, 15)}`,
         secretKey: api.secretKey || `sk_live_${Math.random().toString(36).substring(2, 15)}`,
+      });
+
+      const wa = data?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
+      setWhatsappConfig({
+        accessToken: wa.accessToken || '',
+        phoneNumberId: wa.phoneNumberId || '',
+        businessAccountId: wa.businessAccountId || '',
+        webhookVerifyToken: wa.webhookVerifyToken || crypto.randomUUID().replace(/-/g, ''),
       });
     } catch (err) {
       console.error('Failed to fetch API config:', err);
@@ -51,10 +66,14 @@ export function SettingsPage() {
         secretKey: apiConfig.secretKey,
         updatedAt: new Date().toISOString(),
       });
-      alert('API Configuration saved successfully!');
+      await CMSService.updateContent('global', 'whatsapp_config', {
+        ...whatsappConfig,
+        updatedAt: new Date().toISOString(),
+      });
+      alert('Configurations saved successfully!');
     } catch (err) {
-      console.error('Failed to save API config:', err);
-      alert('Failed to save API config.');
+      console.error('Failed to save configurations:', err);
+      alert('Failed to save configurations.');
     } finally {
       setSaving(false);
     }
@@ -198,6 +217,47 @@ export function SettingsPage() {
             <Button onClick={handleSaveApi} disabled={saving}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Save Configuration
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>WhatsApp Cloud API Configuration</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 gap-6">
+            <Input
+              label="Permanent Access Token"
+              value={whatsappConfig.accessToken}
+              type="password"
+              onChange={(e) => setWhatsappConfig({ ...whatsappConfig, accessToken: e.target.value })}
+              placeholder="EAAI..."
+            />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              label="Phone Number ID"
+              value={whatsappConfig.phoneNumberId}
+              onChange={(e) => setWhatsappConfig({ ...whatsappConfig, phoneNumberId: e.target.value })}
+            />
+            <Input
+              label="Business Account ID"
+              value={whatsappConfig.businessAccountId}
+              onChange={(e) => setWhatsappConfig({ ...whatsappConfig, businessAccountId: e.target.value })}
+            />
+            <Input
+              label="Webhook Verify Token"
+              value={whatsappConfig.webhookVerifyToken}
+              onChange={(e) => setWhatsappConfig({ ...whatsappConfig, webhookVerifyToken: e.target.value })}
+              className="font-mono text-xs"
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button onClick={handleSaveApi} disabled={saving}>
+              {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Save WhatsApp Config
             </Button>
           </div>
         </CardContent>

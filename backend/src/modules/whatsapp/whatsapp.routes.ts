@@ -5,12 +5,19 @@ import {
   getTemplates, createTemplate, updateTemplate, deleteTemplate, generateQR,
   bulkEnqueueMessages
 } from './whatsapp.controller.js';
+import { webhookHealth, verifyWebhook, handleWebhookEvent } from './whatsapp.webhook.controller.js';
 import { authenticate, requireAdmin } from '../../middlewares/auth.js';
 
 const router = Router();
 
-// Protect all whatsapp routes, admin only
+// Public Webhook Routes (Meta API)
+router.get('/webhook', verifyWebhook);
+router.post('/webhook', handleWebhookEvent);
+
+// Protect all whatsapp dashboard routes, admin only
 router.use(authenticate, requireAdmin);
+
+router.get('/webhook/health', webhookHealth);
 
 router.get('/status', getStatus);
 router.get('/logs', getLogs);

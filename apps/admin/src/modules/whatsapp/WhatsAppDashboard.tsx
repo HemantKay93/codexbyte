@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/Button';
 import { Loader2, RefreshCw, MessageCircle } from 'lucide-react';
 import { apiClient } from '@byteevolvr/api-client';
 import { toast } from 'sonner';
-import { QRCodeSVG } from 'qrcode.react';
+import { toast } from 'sonner';
 
 export const WhatsAppDashboard = () => {
   const [status, setStatus] = useState<any>(null);
@@ -32,30 +32,17 @@ export const WhatsAppDashboard = () => {
     }
   };
 
-  const restart = async (e: React.MouseEvent) => {
+  const checkWebhook = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
-      const res = await apiClient.post('/whatsapp/reconnect');
-      if (res.data) {
-        toast.success('Restart initiated...');
-        setTimeout(() => fetchStatus(false), 3000);
+      const res = await apiClient.get('/whatsapp/webhook/health');
+      if (res.data?.success) {
+        toast.success('Webhook is healthy and connected to Meta!');
+      } else {
+        toast.error('Webhook health check failed.');
       }
     } catch (err) {
-      toast.error('Failed to initiate restart');
-    }
-  };
-
-  const generateQR = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!confirm('This will log you out and require you to scan a new QR code. Continue?')) return;
-    try {
-      const res = await apiClient.post('/whatsapp/generate-qr');
-      if (res.data) {
-        toast.success('Generating new QR code...');
-        setTimeout(() => fetchStatus(false), 3000);
-      }
-    } catch (err) {
-      toast.error('Failed to generate new QR');
+      toast.error('Failed to verify webhook. Check Meta settings.');
     }
   };
 
@@ -87,11 +74,17 @@ export const WhatsAppDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="bg-card">
           <CardHeader>
-            <CardTitle>Session Status</CardTitle>
+            <CardTitle>Cloud API Connection Status</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? <Loader2 className="animate-spin text-primary" /> : (
               <div className="space-y-4">
+                <div className="flex justify-between border-b border-border pb-2">
+                  <span className="text-muted-foreground">Provider</span>
+                  <span className="font-semibold text-blue-500">
+                    META CLOUD API
+                  </span>
+                </div>
                 <div className="flex justify-between border-b border-border pb-2">
                   <span className="text-muted-foreground">Status</span>
                   <span className={`font-semibold ${status?.session?.status === 'connected' ? 'text-green-500' : 'text-red-500'}`}>
@@ -99,46 +92,18 @@ export const WhatsAppDashboard = () => {
                   </span>
                 </div>
                 <div className="flex justify-between border-b border-border pb-2">
-                  <span className="text-muted-foreground">Session Name</span>
-                  <span>{status?.session?.session_name || 'N/A'}</span>
-                </div>
-                <div className="flex justify-between border-b border-border pb-2">
-                  <span className="text-muted-foreground">Last Active</span>
+                  <span className="text-muted-foreground">Last Webhook Event</span>
                   <span>{status?.session?.last_active ? new Date(status.session.last_active).toLocaleString() : 'N/A'}</span>
                 </div>
                 
-                {status?.session?.status !== 'connected' && status?.session?.status !== 'qr_ready' && (
-                  <div className="flex flex-col gap-2 mt-4">
-                    <Button onClick={restart} className="w-full">
-                      Restart Background Service
-                    </Button>
-                    <Button onClick={generateQR} variant="outline" className="w-full border-red-200 text-red-600 hover:bg-red-50">
-                      Force New QR / Logout
-                    </Button>
-                  </div>
-                )}
-                
-                {status?.session?.status === 'qr_ready' && status?.session?.qr_code && (
-                  <div className="mt-6 flex flex-col items-center bg-gray-50 border-2 border-dashed border-gray-300 p-8 rounded-xl shadow-inner">
-                    <div className="text-center mb-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">WhatsApp Web Login</h3>
-                      <p className="text-sm text-gray-600">Scan this code with the WhatsApp app on your phone to link your account.</p>
-                    </div>
-                    
-                    <div className="bg-white border border-gray-200 p-4 rounded-xl shadow-md mb-6 flex justify-center bg-white">
-                      <QRCodeSVG 
-                        value={status.session.qr_code} 
-                        size={256} 
-                        level="H" 
-                        includeMargin={true}
-                      />
-                    </div>
-                    
-                    <Button variant="outline" onClick={restart} className="w-full max-w-xs">
-                      Cancel & Restart
-                    </Button>
-                  </div>
-                )}
+                <div className="flex flex-col gap-2 mt-4">
+                  <Button onClick={checkWebhook} className="w-full">
+                    Verify Webhook Connection
+                  </Button>
+                  <Button variant="outline" className="w-full" onClick={() => window.location.href = '/settings'}>
+                    Configure API Credentials
+                  </Button>
+                </div>
               </div>
             )}
           </CardContent>
