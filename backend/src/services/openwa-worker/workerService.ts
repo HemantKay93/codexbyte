@@ -45,7 +45,13 @@ export class WhatsAppWorkerService {
             '--no-first-run',
             '--no-zygote',
             '--disable-gpu',
+            '--disable-extensions',
+            '--disable-software-rasterizer',
+            '--mute-audio',
           ],
+        },
+        webVersionCache: {
+          type: 'none',
         },
       });
 
