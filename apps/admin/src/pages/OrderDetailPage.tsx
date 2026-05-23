@@ -180,6 +180,19 @@ export function OrderDetailPage() {
               </h1>
               <Badge
                 variant={
+                  order.status === 'delivered' || order.status === 'refunded'
+                    ? 'success'
+                    : order.status === 'shipped' || order.status === 'packed' || order.status === 'confirmed'
+                      ? 'info'
+                      : order.status === 'cancelled'
+                        ? 'error'
+                        : 'warning'
+                }
+              >
+                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+              </Badge>
+              <Badge
+                variant={
                   order.payment_status === 'paid' || order.payment_status === 'captured'
                     ? 'success'
                     : 'warning'
@@ -202,9 +215,37 @@ export function OrderDetailPage() {
             Print Invoice
           </Button>
 
+          {['pending', 'confirmed', 'packed'].includes(order.status) && (
+            <Button
+              variant="outline"
+              className="gap-2 text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950/20"
+              onClick={() => {
+                if (window.confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+                  handleUpdateStatus('cancelled');
+                }
+              }}
+              disabled={isUpdating}
+            >
+              <X className="h-4 w-4" />
+              Cancel Order
+            </Button>
+          )}
+
+          {order.status === 'confirmed' && (
+            <Button
+              variant="outline"
+              className="gap-2 text-indigo-600 border-indigo-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/20"
+              onClick={() => handleUpdateStatus('packed')}
+              disabled={isUpdating}
+            >
+              <Package className="h-4 w-4" />
+              Mark as Packed
+            </Button>
+          )}
+
           {order.status === 'pending' && (
             <Button
-              className="gap-2 bg-blue-600 hover:bg-blue-700"
+              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
               onClick={() => handleUpdateStatus('confirmed')}
               disabled={isUpdating}
             >
@@ -213,14 +254,14 @@ export function OrderDetailPage() {
             </Button>
           )}
 
-          {['pending', 'confirmed'].includes(order.status) && (
+          {['pending', 'confirmed', 'packed'].includes(order.status) && (
             <Button
-              className="gap-2 bg-indigo-600 hover:bg-indigo-700"
+              className="gap-2 bg-indigo-600 hover:bg-indigo-700 text-white"
               onClick={() => setShowFulfillModal(true)}
               disabled={isUpdating}
             >
-              <Package className="h-4 w-4" />
-              Fulfill Order
+              <Truck className="h-4 w-4" />
+              Dispatch Order
             </Button>
           )}
 
@@ -239,7 +280,7 @@ export function OrderDetailPage() {
           {['delivered', 'shipped'].includes(order.status) && (
             <Button
               variant="outline"
-              className="gap-2 text-orange-600 border-orange-200 hover:bg-orange-50"
+              className="gap-2 text-orange-600 border-orange-200 hover:bg-orange-50 dark:hover:bg-orange-950/20"
               onClick={openReturnModal}
               disabled={isUpdating}
             >
@@ -247,8 +288,61 @@ export function OrderDetailPage() {
               Process Return
             </Button>
           )}
+
+          {order.status === 'returned' && (
+            <Button
+              variant="outline"
+              className="gap-2 text-green-600 border-green-200 hover:bg-green-50 dark:hover:bg-green-950/20"
+              onClick={() => handleUpdateStatus('refunded')}
+              disabled={isUpdating}
+            >
+              <DollarSign className="h-4 w-4" />
+              Process Refund
+            </Button>
+          )}
         </div>
       </div>
+
+      {/* Status Stepper */}
+      <Card className="border-none shadow-sm mb-6 bg-surface-container-lowest">
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between relative">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-outline-variant -z-10 rounded-full" />
+            
+            {/* Step 1: Confirmed */}
+            <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
+              <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['confirmed', 'packed', 'shipped', 'delivered'].includes(order.status) ? 'border-primary bg-primary text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}>
+                <CheckCircle2 className="h-5 w-5" />
+              </div>
+              <span className="text-sm font-bold">Confirmed</span>
+            </div>
+
+            {/* Step 2: Packed */}
+            <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
+              <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['packed', 'shipped', 'delivered'].includes(order.status) ? 'border-indigo-500 bg-indigo-500 text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}>
+                <Package className="h-5 w-5" />
+              </div>
+              <span className="text-sm font-bold">Packed</span>
+            </div>
+
+            {/* Step 3: Shipped */}
+            <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
+              <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['shipped', 'delivered'].includes(order.status) ? 'border-info bg-info text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}>
+                <Truck className="h-5 w-5" />
+              </div>
+              <span className="text-sm font-bold">Shipped</span>
+            </div>
+
+            {/* Step 4: Delivered */}
+            <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
+              <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['delivered'].includes(order.status) ? 'border-success bg-success text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}>
+                <CheckCircle2 className="h-5 w-5" />
+              </div>
+              <span className="text-sm font-bold">Delivered</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Details */}

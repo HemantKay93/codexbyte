@@ -64,12 +64,14 @@ export class OrderRepository {
   async create(orderData: any, items: any[], userId?: string) {
     const admin = await getAdminClient();
 
+    const validUserId = userId === '00000000-0000-0000-0000-000000000000' ? null : userId;
+
     // 1. Create the order
     const { data: order, error: orderError } = await admin
       .from('orders')
       .insert({
         ...orderData,
-        created_by: userId,
+        created_by: validUserId,
         updated_at: new Date().toISOString(),
       })
       .select()
@@ -96,13 +98,18 @@ export class OrderRepository {
 
   async update(id: string, updateData: any, userId?: string) {
     const admin = await getAdminClient();
+    const validUserId = userId === '00000000-0000-0000-0000-000000000000' ? null : userId;
+    const payload: any = {
+      ...updateData,
+      updated_at: new Date().toISOString(),
+    };
+    if (validUserId) {
+      payload.updated_by = validUserId;
+    }
+
     const { data, error } = await admin
       .from('orders')
-      .update({
-        ...updateData,
-        updated_by: userId,
-        updated_at: new Date().toISOString(),
-      })
+      .update(payload)
       .eq('id', id)
       .select()
       .single();
@@ -113,11 +120,12 @@ export class OrderRepository {
 
   async delete(id: string, userId?: string) {
     const admin = await getAdminClient();
+    const validUserId = userId === '00000000-0000-0000-0000-000000000000' ? null : userId;
     const { error } = await admin
       .from('orders')
       .update({
         deleted_at: new Date().toISOString(),
-        updated_by: userId,
+        ...(validUserId && { updated_by: validUserId }),
       })
       .eq('id', id);
 

@@ -124,9 +124,9 @@ export function CustomerDetailPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
-          <CardContent className="p-6">
-            <div className="text-on-surface-variant font-medium text-sm mb-1">Total Spent</div>
-            <div className="text-3xl font-bold text-on-surface">
+          <CardContent className="p-6 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20">
+            <div className="text-indigo-700 dark:text-indigo-300 font-black text-[10px] uppercase tracking-[0.2em] mb-1">Lifetime Value (LTV)</div>
+            <div className="text-3xl font-black text-indigo-700 dark:text-indigo-400">
               ₹{stats.totalSpent.toLocaleString()}
             </div>
           </CardContent>
@@ -271,6 +271,63 @@ export function CustomerDetailPage() {
                   )}
                 </TableBody>
               </Table>
+            </CardContent>
+          </Card>
+
+          {/* Customer Timeline */}
+          <Card>
+            <div className="p-4 border-b border-outline-variant">
+              <h2 className="text-lg font-semibold text-on-surface flex items-center gap-2">
+                <Calendar className="h-5 w-5" /> Customer Timeline
+              </h2>
+            </div>
+            <CardContent className="p-6">
+              {orders.length === 0 ? (
+                <p className="text-center text-on-surface-variant py-4 italic">No activity recorded yet.</p>
+              ) : (
+                <div className="relative space-y-6 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-outline-variant">
+                  {/* Account Creation Event */}
+                  <div className="relative flex items-start gap-4">
+                    <div className="absolute left-0 h-10 w-10 rounded-full border bg-primary/10 border-primary/20 flex items-center justify-center z-10 text-primary">
+                      <Star className="h-4 w-4" />
+                    </div>
+                    <div className="ml-12 pt-2">
+                      <div className="flex justify-between items-center w-full">
+                        <span className="font-bold text-on-surface">Account Created</span>
+                        <time className="text-xs text-on-surface-variant ml-4">{new Date(customer.created_at).toLocaleDateString()}</time>
+                      </div>
+                      <p className="text-sm text-on-surface-variant mt-1">Customer joined ByteEvolvr.</p>
+                    </div>
+                  </div>
+
+                  {/* Order Events mapped to timeline */}
+                  {orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map(order => (
+                    <div key={order.id} className="relative flex items-start gap-4">
+                      <div className={`absolute left-0 h-10 w-10 rounded-full border flex items-center justify-center z-10 
+                        ${order.status === 'refunded' ? 'bg-error/10 border-error/20 text-error' : 
+                          order.status === 'returned' ? 'bg-warning/10 border-warning/20 text-warning' : 
+                          'bg-surface-container border-outline-variant text-on-surface-variant'}`}
+                      >
+                        <ShoppingBag className="h-4 w-4" />
+                      </div>
+                      <div className="ml-12 pt-2 w-full">
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-on-surface">
+                            {order.status === 'refunded' ? 'Order Refunded' : 
+                             order.status === 'returned' ? 'Order Returned' : 
+                             'Placed Order'} <Link to={`/orders/${order.id}`} className="text-primary hover:underline">#{order.order_number}</Link>
+                          </span>
+                          <time className="text-xs text-on-surface-variant ml-4">{new Date(order.created_at).toLocaleDateString()}</time>
+                        </div>
+                        <p className="text-sm text-on-surface-variant mt-1">
+                          {order.status === 'refunded' ? `Refunded ₹${Number(order.total_amount).toLocaleString()}` :
+                           `Spent ₹${Number(order.total_amount).toLocaleString()}`}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

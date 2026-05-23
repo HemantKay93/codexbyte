@@ -26,7 +26,7 @@ export const AdminService = {
 
   getProducts: async () => {
     const response = await apiClient.get('/admin/products');
-    return response.data;
+    return response.data?.data || response.data;
   },
 
   getCustomers: async () => {
@@ -97,7 +97,23 @@ export const AdminService = {
     notes?: string;
   }) => {
     const response = await apiClient.post('/admin/warehouse/adjust-stock', data);
-    return response.data;
+    return response.data?.data;
+  },
+  
+  transferStock: async (data: {
+    productId: string;
+    fromWarehouseId: string;
+    toWarehouseId: string;
+    quantity: number;
+    notes?: string;
+  }) => {
+    const response = await apiClient.post('/admin/warehouse/transfer-stock', data);
+    return response.data?.data;
+  },
+  
+  getStockMovements: async (productId: string) => {
+    const response = await apiClient.get(`/admin/warehouse/movements/${productId}`);
+    return response.data?.data;
   },
 
   getOrderActivity: async (id: string) => {
@@ -147,6 +163,32 @@ export const AdminService = {
 
   createCoupon: async (data: any) => {
     const response = await apiClient.post('/admin/marketing/coupons', data);
+    return response.data;
+  },
+
+  // Suppliers & Purchase Orders
+  getSuppliers: async () => {
+    const response = await apiClient.get('/suppliers');
+    return response.data;
+  },
+
+  createSupplier: async (data: any) => {
+    const response = await apiClient.post('/suppliers', data);
+    return response.data;
+  },
+
+  getPurchaseOrders: async (supplierId?: string) => {
+    const response = await apiClient.get('/suppliers/po', { params: { supplierId } });
+    return response.data;
+  },
+
+  createPurchaseOrder: async (data: any) => {
+    const response = await apiClient.post('/suppliers/po', data);
+    return response.data;
+  },
+
+  receivePurchaseOrder: async (id: string, warehouseId: string) => {
+    const response = await apiClient.post(`/suppliers/po/${id}/receive`, { warehouseId });
     return response.data;
   },
 

@@ -12,7 +12,8 @@ import {
   TableCell,
   Input,
 } from '../components/ui';
-import { Plus, Search, Filter, MoreHorizontal, Shield, Mail } from 'lucide-react';
+} from '../components/ui';
+import { Plus, Search, Filter, MoreHorizontal, Shield, Mail, X, Check } from 'lucide-react';
 import { TeamService } from '@byteevolvr/api-client';
 
 const mockTeam = [
@@ -54,33 +55,68 @@ export function TeamPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [team, setTeam] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [inviteData, setInviteData] = useState({ email: '', full_name: '', role: 'manager' });
+  const [inviting, setInviting] = useState(false);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  const fetchTeam = async () => {
+    setLoading(true);
+    try {
+      const data = await TeamService.getTeamMembers();
+      if (data && data.length > 0) {
+        const mapped = data.map((user: any) => ({
+          id: user.id,
+          name: user.full_name || user.email.split('@')[0],
+          email: user.email,
+          role: user.role,
+          status: 'active',
+          lastActive: new Date(user.updated_at).toLocaleDateString(),
+        }));
+        setTeam(mapped);
+      } else {
+        setTeam(mockTeam);
+      }
+    } catch (error) {
+      console.warn('Failed to fetch team members, falling back to mock:', error);
+      setTeam(mockTeam);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTeam = async () => {
-      try {
-        const data = await TeamService.getTeamMembers();
-        if (data && data.length > 0) {
-          const mapped = data.map((user: any) => ({
-            id: user.id,
-            name: user.full_name || user.email.split('@')[0],
-            email: user.email,
-            role: user.role === 'admin' ? 'Super Admin' : 'Store Manager',
-            status: 'active',
-            lastActive: new Date(user.updated_at).toLocaleDateString(),
-          }));
-          setTeam(mapped);
-        } else {
-          setTeam(mockTeam);
-        }
-      } catch (error) {
-        console.warn('Failed to fetch team members, falling back to mock:', error);
-        setTeam(mockTeam);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTeam();
   }, []);
+
+  const handleInvite = async () => {
+    if (!inviteData.email) return;
+    setInviting(true);
+    try {
+      await TeamService.addTeamMember(inviteData);
+      setIsInviteModalOpen(false);
+      setInviteData({ email: '', full_name: '', role: 'manager' });
+      fetchTeam();
+    } catch (error) {
+      console.error('Failed to invite member', error);
+      alert('Failed to invite member');
+    } finally {
+      setInviting(false);
+    }
+  };
+
+  const handleRoleChange = async (id: string, newRole: string) => {
+    setUpdatingId(id);
+    try {
+      await TeamService.updateTeamMemberRole(id, newRole);
+      fetchTeam();
+    } catch (error) {
+      console.error('Failed to update role', error);
+      alert('Failed to update role');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -89,7 +125,7 @@ export function TeamPage() {
           <h1 className="text-display-sm font-semibold text-on-background">Team Management</h1>
           <p className="text-body-sm text-on-surface-variant mt-1">Manage staff access and roles</p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setIsInviteModalOpen(true)}>
           <Plus className="h-4 w-4" />
           Invite Member
         </Button>
@@ -152,12 +188,19 @@ export function TeamPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1.5 text-on-surface">
-                        <Shield
-                          className={`h-4 w-4 ${member.role === 'Super Admin' ? 'text-primary' : 'text-on-surface-variant'}`}
-                        />
-                        <span className={member.role === 'Super Admin' ? 'font-semibold' : ''}>
-                          {member.role}
-                        </span>
+                        <Shield className={`h-4 w-4 ${member.role === 'super-admin' ? 'text-primary' : 'text-on-surface-variant'}`} />
+                        <select
+                          className="bg-transparent text-sm border-none focus:ring-0 cursor-pointer"
+                          value={member.role}
+                          disabled={updatingId === member.id}
+                          onChange={(e) => handleRoleChange(member.id, e.target.value)}
+                        >
+                          <option value="super-admin">Super Admin</option>
+                          <option value="admin">Admin</option>
+                          <option value="manager">Manager</option>
+                          <option value="support">Support</option>
+                          <option value="warehouse-staff">Warehouse Staff</option>
+                        </select>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -178,6 +221,58 @@ export function TeamPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {isInviteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-surface rounded-xl shadow-xl w-full max-w-md overflow-hidden">
+            <div className="px-6 py-4 border-b border-outline-variant flex items-center justify-between">
+              <h2 className="text-title-lg font-semibold">Invite Team Member</h2>
+              <button onClick={() => setIsInviteModalOpen(false)} className="text-on-surface-variant hover:text-on-surface">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-on-surface">Email Address</label>
+                <Input 
+                  placeholder="colleague@example.com" 
+                  type="email"
+                  value={inviteData.email}
+                  onChange={(e) => setInviteData({ ...inviteData, email: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-on-surface">Full Name</label>
+                <Input 
+                  placeholder="John Doe" 
+                  value={inviteData.full_name}
+                  onChange={(e) => setInviteData({ ...inviteData, full_name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-on-surface">Role</label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  value={inviteData.role}
+                  onChange={(e) => setInviteData({ ...inviteData, role: e.target.value })}
+                >
+                  <option value="super-admin">Super Admin</option>
+                  <option value="admin">Admin</option>
+                  <option value="manager">Manager</option>
+                  <option value="support">Support</option>
+                  <option value="warehouse-staff">Warehouse Staff</option>
+                </select>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-outline-variant flex justify-end gap-3 bg-surface-container-lowest">
+              <Button variant="outline" onClick={() => setIsInviteModalOpen(false)}>Cancel</Button>
+              <Button onClick={handleInvite} disabled={inviting || !inviteData.email}>
+                {inviting ? 'Inviting...' : 'Send Invitation'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

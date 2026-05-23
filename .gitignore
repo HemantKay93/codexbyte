@@ -8,27 +8,33 @@ logs/
 .env.*
 .vite/
 .cache/
-
+.wwebjs_auth/
+.wwebjs_cache/
+*.tmp
+*.cache
 # Next.js build output
 .next/
 out/
-
 # OS-specific files
 .DS_Store
 Thumbs.db
-
 # Vercel deployment
 .vercel/
-
 # TypeScript
 *.tsbuildinfo
-
 # IDEs
 .vscode/
 .idea/
-
 # Monorepo
 turbo/
-
 # Supabase
-supabase/migrations/consolidated_schema.sql
+supabase/migrations/consolidated_schema.sql
+
+# managed
+**.data.json
+**.node-persist**
+**_IGNORE_**
+# end managed
+
+# Large archives
+packages.zip

@@ -82,6 +82,18 @@ const TeamPage = lazy(() => import('./pages/TeamPage').then((m) => ({ default: m
 const SupportPage = lazy(() =>
   import('./pages/SupportPage').then((m) => ({ default: m.SupportPage }))
 );
+const WhatsAppDashboard = lazy(() =>
+  import('./modules/whatsapp/WhatsAppDashboard').then((m) => ({ default: m.WhatsAppDashboard }))
+);
+const WhatsAppCampaigns = lazy(() =>
+  import('./modules/whatsapp/WhatsAppCampaigns').then((m) => ({ default: m.WhatsAppCampaigns }))
+);
+const WhatsAppTasks = lazy(() =>
+  import('./modules/whatsapp/WhatsAppTasks').then((m) => ({ default: m.WhatsAppTasks }))
+);
+const WhatsAppTemplates = lazy(() =>
+  import('./modules/whatsapp/WhatsAppTemplates').then((m) => ({ default: m.WhatsAppTemplates }))
+);
 
 const PageLoader = () => (
   <div className="flex min-h-screen items-center justify-center bg-background text-on-background">
@@ -134,6 +146,10 @@ const Main = () => {
                 <Route path="/developers" element={<DevelopersPage />} />
                 <Route path="/team" element={<TeamPage />} />
                 <Route path="/support" element={<SupportPage />} />
+                <Route path="/whatsapp" element={<WhatsAppDashboard />} />
+                <Route path="/whatsapp/campaigns" element={<WhatsAppCampaigns />} />
+                <Route path="/whatsapp/tasks" element={<WhatsAppTasks />} />
+                <Route path="/whatsapp/templates" element={<WhatsAppTemplates />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
             </Routes>

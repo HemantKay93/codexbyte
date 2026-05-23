@@ -33,12 +33,13 @@ export class ProductRepository {
 
   async create(productData: any, userId?: string) {
     const admin = await getAdminClient();
+    const validUserId = userId === '00000000-0000-0000-0000-000000000000' ? null : userId;
     const { data, error } = await admin
       .from('products')
       .insert([
         {
           ...productData,
-          created_by: userId,
+          created_by: validUserId,
           updated_at: new Date().toISOString(),
         },
       ])
@@ -51,11 +52,12 @@ export class ProductRepository {
 
   async update(id: string, productData: any, userId?: string) {
     const admin = await getAdminClient();
+    const validUserId = userId === '00000000-0000-0000-0000-000000000000' ? null : userId;
     const { data, error } = await admin
       .from('products')
       .update({
         ...productData,
-        updated_by: userId,
+        updated_by: validUserId,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -68,11 +70,12 @@ export class ProductRepository {
 
   async delete(id: string, userId?: string) {
     const admin = await getAdminClient();
+    const validUserId = userId === '00000000-0000-0000-0000-000000000000' ? null : userId;
     const { error } = await admin
       .from('products')
       .update({
         deleted_at: new Date().toISOString(),
-        updated_by: userId,
+        updated_by: validUserId,
       })
       .eq('id', id);
 
@@ -82,11 +85,12 @@ export class ProductRepository {
 
   async restore(id: string, userId?: string) {
     const admin = await getAdminClient();
+    const validUserId = userId === '00000000-0000-0000-0000-000000000000' ? null : userId;
     const { error } = await admin
       .from('products')
       .update({
         deleted_at: null,
-        updated_by: userId,
+        updated_by: validUserId,
       })
       .eq('id', id);
 
@@ -96,9 +100,10 @@ export class ProductRepository {
 
   async bulkCreate(products: any[], userId?: string) {
     const admin = await getAdminClient();
+    const validUserId = userId === '00000000-0000-0000-0000-000000000000' ? null : userId;
     const productsWithAudit = products.map((p) => ({
       ...p,
-      created_by: userId,
+      created_by: validUserId,
       updated_at: new Date().toISOString(),
     }));
 

@@ -5,6 +5,8 @@ import { AuditService } from '../../services/auditService.js';
 import { getAdminClient } from '../../config/supabase.js';
 import logger from '../../services/logger.js';
 import { JobService } from '../../services/jobService.js';
+import { AuthService } from '../auth/auth.service.js';
+import { NotificationWorkflow } from '../../workflows/notificationWorkflow.service.js';
 
 const orderRepo = new OrderRepository();
 
@@ -39,6 +41,24 @@ export class OrderService {
     const { items, shippingAddress } = orderData;
     const paymentMethod = orderData.paymentMethod || orderData.payment_method;
 
+    let finalUserId = userId;
+
+    // Handle Guest Checkout Auto-Account Creation
+    if (!finalUserId && orderData.email && orderData.password) {
+      try {
+        const authService = new AuthService();
+        const customerName = shippingAddress?.full_name || shippingAddress?.name || 'Guest User';
+        const newUser = await authService.customerSignup(orderData.email, orderData.password, customerName);
+        if (newUser?.user?.id) {
+          finalUserId = newUser.user.id;
+          logger.info(`[OrderService] Auto-created guest account: ${finalUserId}`);
+        }
+      } catch (err: any) {
+        logger.error(`[OrderService] Failed to auto-create guest account for ${orderData.email}:`, err);
+        // Proceed as pure anonymous guest if account creation fails (e.g., email exists)
+      }
+    }
+
     const admin = await getAdminClient();
 
     // Determine warehouse
@@ -57,7 +77,7 @@ export class OrderService {
 
     // Use Transactional RPC for atomic creation
     const { data: order, error } = await admin.rpc('create_checkout_order', {
-      p_user_id: userId || null,
+      p_user_id: finalUserId || null,
       p_order_number: orderNumber,
       p_status: orderData.status || 'pending',
       p_payment_status: 'pending',
@@ -96,12 +116,13 @@ export class OrderService {
       new_data: { order_number: orderNumber, total: order.total_amount },
     });
 
-    // 4. Queue Customer Email
-    await JobService.sendEmail(
-      order.customer_email,
-      `Order Confirmed: ${orderNumber}`,
-      `<h1>Thank you for your order!</h1><p>Your order #${orderNumber} is being processed.</p>`
-    );
+    // 4. Queue Notifications (Email, WhatsApp)
+    await NotificationWorkflow.notifyNewOrder({
+      orderNumber,
+      customerName: order.customer_name,
+      phone: shippingAddress?.phone || orderData.phone,
+      email: order.customer_email
+    });
 
     // 5. Emit Real-time events
     try {
@@ -118,6 +139,8 @@ export class OrderService {
 
     return order;
   }
+
+
 
   async updateOrderStatus(id: string, updateData: any, userId?: string) {
     const { status, courier, trackingId, notes } = updateData;
@@ -195,21 +218,17 @@ export class OrderService {
         } catch (stockErr) {
           logger.error('Failed to restock items on status change:', stockErr);
         }
-
-        // Queue Notification for critical status changes
-        try {
-          const isCritical = ['cancelled', 'returned'].includes(newStatus);
-          await JobService.sendNotification({
-            title: `Order ${newStatus.toUpperCase()}`,
-            message: `Order #${order.order_number} has been ${newStatus}.${notes ? ` Note: ${notes}` : ''}`,
-            type: isCritical ? 'error' : 'info',
-            priority: isCritical ? 'high' : 'medium',
-            metadata: { module: 'orders', order_id: id },
-          });
-        } catch (notifErr) {
-          logger.error('Failed to queue order notification:', notifErr);
-        }
       }
+
+      // Queue Notifications for ALL status changes
+      await NotificationWorkflow.notifyCustomerOrderUpdate({
+        orderNumber: order.order_number,
+        status: newStatus,
+        notes: notes,
+        phone: order.shipping_address?.phone || order.phone,
+        email: order.customer_email,
+        userId: order.user_id
+      });
     }
 
     // 5. Emit Real-time events
@@ -245,52 +264,5 @@ export class OrderService {
     return { success: true };
   }
 
-  async processReturn(
-    id: string,
-    data: {
-      items: { productId: string; quantity: number }[];
-      warehouseId: string;
-      reason: string;
-      refundAmount?: number;
-      userId: string;
-    }
-  ) {
-    const admin = await getAdminClient();
 
-    // 1. Update Order Status if needed (or keep as 'returned' / 'partially_returned')
-    const order = await orderRepo.getById(id);
-    if (!order) throw new AppError('Order not found', 404);
-
-    // 2. Restock items to warehouse
-    for (const item of data.items) {
-      await InventoryService.adjustStock({
-        productId: item.productId,
-        warehouseId: data.warehouseId,
-        quantity: item.quantity,
-        type: 'return',
-        referenceType: 'order',
-        referenceId: id,
-        notes: `Customer return: ${data.reason}`,
-        userId: data.userId,
-      });
-    }
-
-    // 3. Log Activity
-    await AuditService.logOrderActivity({
-      order_id: id,
-      status: 'returned',
-      notes: `Return processed for ${data.items.length} items. Reason: ${data.reason}`,
-      performed_by: data.userId,
-    });
-
-    // 4. Financial Reconciliation Placeholder
-    if (data.refundAmount && data.refundAmount > 0) {
-      // Here you would call Stripe/Razorpay refund API
-      logger.info(`Initiating refund of ₹${data.refundAmount} for order ${order.order_number}`);
-    }
-
-    await orderRepo.update(id, { status: 'returned' });
-
-    return { success: true };
-  }
 }

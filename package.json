@@ -8,7 +8,7 @@
     "backend"
   ],
   "scripts": {
-    "dev": "concurrently -n \"frontend,admin,backend\" -c \"blue,magenta,yellow\" \"npm run dev -w @byteevolvr/frontend\" \"npm run dev -w @byteevolvr/admin\" \"npm run dev -w @byteevolvr/backend\"",
+    "dev": "concurrently -n \"frontend,admin,backend,whatsapp\" -c \"blue,magenta,yellow,green\" \"npm run dev -w @byteevolvr/frontend\" \"npm run dev -w @byteevolvr/admin\" \"npm run dev -w @byteevolvr/backend\" \"npm run dev:whatsapp -w @byteevolvr/backend\"",
     "dev:frontend": "npm run dev --workspace @byteevolvr/frontend",
     "dev:admin": "npm run dev --workspace @byteevolvr/admin",
     "dev:backend": "npm run dev --workspace @byteevolvr/backend",
@@ -16,7 +16,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "type-check": "npm run type-check --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "prepare": "node scripts/prepare.js"
+    "prepare": "node tools/dev-scripts/prepare.js"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.59.2",

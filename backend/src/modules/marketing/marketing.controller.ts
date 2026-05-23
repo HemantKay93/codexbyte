@@ -3,6 +3,7 @@ import { AuthRequest } from '../../middlewares/auth.js';
 import { MarketingService } from './marketing.service.js';
 import { catchAsync } from '../../middlewares/error.js';
 import { AuditService } from '../../services/auditService.js';
+import { createResponse } from '../../utils/apiResponse.js';
 
 const marketingService = new MarketingService();
 
@@ -11,7 +12,7 @@ export const validateCoupon = catchAsync(async (req: AuthRequest, res: Response)
   const userId = req.user?.id;
 
   const result = await marketingService.validateCoupon(code, userId, orderAmount);
-  res.json(result);
+  res.json(createResponse(result, 'Coupon applied successfully'));
 });
 
 export const createCoupon = catchAsync(async (req: AuthRequest, res: Response) => {
@@ -25,10 +26,10 @@ export const createCoupon = catchAsync(async (req: AuthRequest, res: Response) =
     new_data: coupon,
   });
 
-  res.status(201).json(coupon);
+  res.status(201).json(createResponse(coupon, 'Coupon created successfully'));
 });
 
 export const getCoupons = catchAsync(async (req: AuthRequest, res: Response) => {
   const coupons = await marketingService.getCoupons();
-  res.json(coupons);
+  res.json(createResponse(coupons, 'Coupons fetched successfully'));
 });

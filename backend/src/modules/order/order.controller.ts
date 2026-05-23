@@ -3,6 +3,9 @@ import { OrderService } from './order.service.js';
 import { catchAsync } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';
 
+import { OrderWorkflow } from '../../workflows/orderWorkflow.service.js';
+import { InventoryWorkflow } from '../../workflows/inventoryWorkflow.service.js';
+
 const orderService = new OrderService();
 
 export const getAllOrders = catchAsync(async (req: Request, res: Response) => {
@@ -44,10 +47,9 @@ export const getMyOrders = catchAsync(async (req: AuthRequest, res: Response) =>
 });
 
 export const createOrder = catchAsync(async (req: AuthRequest, res: Response) => {
-  const order = await orderService.createOrder(req.user?.id as string, req.body, req.user?.email);
+  const order = await OrderWorkflow.processCheckout(req.user?.id, req.body, req.user?.email);
   res.status(201).json({
     success: true,
-    message: 'Order created successfully',
     data: order,
   });
 });
@@ -66,13 +68,9 @@ export const updateOrder = catchAsync(async (req: AuthRequest, res: Response) =>
 });
 
 export const processReturn = catchAsync(async (req: AuthRequest, res: Response) => {
-  const result = await orderService.processReturn(req.params.id as string, {
+  const result = await InventoryWorkflow.processReturn(req.params.id as string, {
     ...req.body,
-    userId: req.user?.id as string,
+    userId: req.user?.id,
   });
-  res.json({
-    success: true,
-    message: 'Return processed successfully',
-    data: result,
-  });
+  res.json(result);
 });

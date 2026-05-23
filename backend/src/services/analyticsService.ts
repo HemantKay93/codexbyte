@@ -93,4 +93,20 @@ export class AnalyticsService {
     if (error) throw error;
     return data;
   }
+
+  static async recordEvent(type: string, payload: any) {
+    // This function will be called by the analytics background worker
+    // For now, it could save events to a dedicated Supabase analytics table
+    // or push to a data warehouse.
+    const admin = await getAdminClient();
+    try {
+      await admin.from('analytics_events').insert({
+        event_type: type,
+        payload,
+      });
+    } catch (err: any) {
+       // Table might not exist yet, so we catch and log
+       console.log(`[Analytics] Table 'analytics_events' might not exist:`, err.message);
+    }
+  }
 }

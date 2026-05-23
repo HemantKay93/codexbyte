@@ -30,14 +30,18 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     let role: string = 'user';
     let fullName: string = '';
 
-    // 1. Try Supabase Auth
-    const {
-      data: { user: sbUser },
-      error: sbError,
-    } = await supabase.auth.getUser(token);
+    const decodedUnverified: any = jwt.decode(token);
+    const isSupabaseToken = decodedUnverified && decodedUnverified.iss && decodedUnverified.iss.includes('supabase');
 
-    if (sbUser && !sbError) {
-      user = sbUser;
+    if (isSupabaseToken) {
+      // 1. Try Supabase Auth
+      const {
+        data: { user: sbUser },
+        error: sbError,
+      } = await supabase.auth.getUser(token);
+
+      if (sbUser && !sbError) {
+        user = sbUser;
 
       // Try Redis Cache for Profile
       const cacheKey = `user_profile:${user.id}`;
@@ -81,6 +85,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
           fullName = user.email?.split('@')[0];
         }
       }
+      }
     } else {
       // 2. Try Local JWT (for hardcoded admin)
       try {
@@ -90,7 +95,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
         fullName = 'Main Admin';
       } catch (jwtError) {
         logger.warn(
-          `[Auth] Validation failed for ${req.path}: ${sbError?.message || (jwtError as Error).message}`
+          `[Auth] Validation failed for ${req.path}: ${(jwtError as Error).message}`
         );
         return next(new AppError('Invalid or expired token', 401));
       }
@@ -117,12 +122,16 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
     }
 
     const token = authHeader.split(' ')[1];
-    const {
-      data: { user: sbUser },
-      error: sbError,
-    } = await supabase.auth.getUser(token);
+    const decodedUnverified: any = jwt.decode(token);
+    const isSupabaseToken = decodedUnverified && decodedUnverified.iss && decodedUnverified.iss.includes('supabase');
 
-    if (sbUser && !sbError) {
+    if (isSupabaseToken) {
+      const {
+        data: { user: sbUser },
+        error: sbError,
+      } = await supabase.auth.getUser(token);
+
+      if (sbUser && !sbError) {
       const cacheKey = `user_profile:${sbUser.id}`;
       let cachedProfile: any = null;
 
@@ -171,6 +180,7 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
           };
         }
       }
+      }
     } else {
       // Try local JWT fallback
       try {
@@ -211,3 +221,9 @@ export const authorize = (...roles: string[]) => {
     }
   };
 };
+
+export const requireSuperAdmin = authorize('super-admin');
+export const requireAdmin = authorize('super-admin', 'admin');
+export const requireManager = authorize('super-admin', 'admin', 'manager');
+export const requireSupport = authorize('super-admin', 'admin', 'manager', 'support');
+export const requireWarehouse = authorize('super-admin', 'admin', 'manager', 'warehouse-staff');

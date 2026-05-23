@@ -1,4 +1,4 @@
-import { emailQueue, notificationQueue } from '../jobs/index.js';
+import { emailQueue, notificationQueue, analyticsQueue } from '../jobs/index.js';
 import { EmailService } from './email.js';
 import { NotificationService } from './notificationService.js';
 import logger from './logger.js';
@@ -55,5 +55,26 @@ export class JobService {
       `[JobService] Redis unavailable. Sending notification "${data.title}" synchronously.`
     );
     return NotificationService.send(data);
+  }
+
+  static async dispatchAnalyticsEvent(type: string, payload: any) {
+    if (this.isRedisAvailable()) {
+      try {
+        await analyticsQueue.add(
+          'record-event',
+          { type, payload },
+          {
+            attempts: 5,
+            backoff: { type: 'exponential', delay: 2000 },
+          }
+        );
+        logger.info(`[JobService] Analytics event '${type}' queued.`);
+        return;
+      } catch (err) {
+        logger.error('[JobService] Failed to queue analytics event:', err);
+      }
+    } else {
+      logger.warn(`[JobService] Redis unavailable. Analytics event '${type}' ignored.`);
+    }
   }
 }

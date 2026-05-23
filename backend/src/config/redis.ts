@@ -11,7 +11,10 @@ const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 export const redisConfig = {
   connection: new Redis(REDIS_URL, {
     maxRetriesPerRequest: null,
+    enableOfflineQueue: false,
+    connectTimeout: 5000,
     retryStrategy(times: number) {
+      if (times > 3) return null; // Stop retrying after 3 attempts
       const delay = Math.min(times * 50, 2000);
       return delay;
     },

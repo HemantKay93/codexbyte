@@ -58,8 +58,10 @@ export const adjustStock = catchAsync(async (req: AuthRequest, res: Response) =>
   });
 });
 
+import { InventoryWorkflow } from '../../workflows/inventoryWorkflow.service.js';
+
 export const transferStock = catchAsync(async (req: AuthRequest, res: Response) => {
-  const result = await InventoryService.transferStock({
+  const result = await InventoryWorkflow.transferStock({
     ...req.body,
     userId: req.user?.id,
   });
@@ -80,6 +82,14 @@ export const transferStock = catchAsync(async (req: AuthRequest, res: Response) 
 
 export const getWarehouseInventory = catchAsync(async (req: Request, res: Response) => {
   const data = await InventoryService.getWarehouseStock(req.params.id as string);
+  res.json({
+    success: true,
+    data,
+  });
+});
+
+export const getStockMovements = catchAsync(async (req: Request, res: Response) => {
+  const data = await InventoryService.getStockMovements(req.params.productId as string);
   res.json({
     success: true,
     data,

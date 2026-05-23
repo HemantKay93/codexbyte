@@ -10,7 +10,7 @@ const productService = new ProductService();
 export const getProducts = catchAsync(async (req: Request, res: Response) => {
   const cacheKey = `products:list:${JSON.stringify(req.query)}`;
   const cached = await CacheService.get(cacheKey);
-  if (cached) return res.json(cached);
+  if (cached) return res.json({ success: true, data: cached });
 
   const products = await productService.getAllProducts(req.query);
   await CacheService.set(cacheKey, products, 300); // 5 min cache
@@ -24,7 +24,7 @@ export const getProduct = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id as string;
   const cacheKey = `products:detail:${id}`;
   const cached = await CacheService.get(cacheKey);
-  if (cached) return res.json(cached);
+  if (cached) return res.json({ success: true, data: cached });
 
   const product = await productService.getProduct(id);
   await CacheService.set(cacheKey, product, 600); // 10 min cache

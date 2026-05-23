@@ -1,0 +1,1 @@
+// Validation schemas for cms module

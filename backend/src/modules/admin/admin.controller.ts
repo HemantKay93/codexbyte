@@ -124,3 +124,62 @@ export const uploadFile = catchAsync(async (req: Request, res: Response) => {
     data: { url: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80' },
   });
 });
+
+// Team Management
+export const getTeamMembers = catchAsync(async (req: Request, res: Response) => {
+  const admin = await getAdminClient();
+  const { data, error } = await admin
+    .from('user_profiles')
+    .select('*')
+    .neq('role', 'customer')
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  
+  res.json({
+    success: true,
+    data,
+  });
+});
+
+export const inviteTeamMember = catchAsync(async (req: Request, res: Response) => {
+  const { email, full_name, role } = req.body;
+  const admin = await getAdminClient();
+  
+  // Create user via Supabase Auth Admin
+  const { data: user, error: authError } = await admin.auth.admin.inviteUserByEmail(email, {
+    data: { full_name, role }
+  });
+  
+  if (authError) throw authError;
+
+  res.json({
+    success: true,
+    data: user,
+  });
+});
+
+export const updateTeamMemberRole = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { role } = req.body;
+  const admin = await getAdminClient();
+  
+  const { data, error } = await admin
+    .from('user_profiles')
+    .update({ role })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  
+  // Also update auth user metadata
+  await admin.auth.admin.updateUserById(id, {
+    user_metadata: { role }
+  });
+
+  res.json({
+    success: true,
+    data,
+  });
+});

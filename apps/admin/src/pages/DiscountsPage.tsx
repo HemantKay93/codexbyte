@@ -19,6 +19,17 @@ export function DiscountsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [discounts, setDiscounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    code: '',
+    discount_type: 'percentage',
+    discount_value: '',
+    min_order_amount: '0',
+    usage_limit: '',
+    end_date: '',
+    is_active: true
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchDiscounts();
@@ -27,7 +38,9 @@ export function DiscountsPage() {
   const fetchDiscounts = async () => {
     setLoading(true);
     try {
-      const data = await AdminService.getCoupons();
+      const response = await AdminService.getCoupons();
+      // Adjusting for the standardized API response envelope
+      const data = response?.data || response;
       if (data && data.length > 0) {
         const mapped = data.map((d: any) => ({
           id: d.id,
@@ -53,6 +66,27 @@ export function DiscountsPage() {
     }
   };
 
+  const handleCreate = async () => {
+    if (!formData.code || !formData.discount_value) return;
+    setIsSubmitting(true);
+    try {
+      await AdminService.createCoupon({
+        ...formData,
+        discount_value: Number(formData.discount_value),
+        min_order_amount: Number(formData.min_order_amount),
+        usage_limit: formData.usage_limit ? Number(formData.usage_limit) : null
+      });
+      setIsModalOpen(false);
+      setFormData({ code: '', discount_type: 'percentage', discount_value: '', min_order_amount: '0', usage_limit: '', end_date: '', is_active: true });
+      fetchDiscounts();
+    } catch (err) {
+      console.error('Failed to create discount', err);
+      alert('Failed to create discount. Please check inputs.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const filteredDiscounts = discounts.filter((d) =>
     d.code.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -66,7 +100,7 @@ export function DiscountsPage() {
             Manage coupon codes and automatic promotions
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => setIsModalOpen(true)}>
           <Plus className="h-4 w-4" />
           Create Discount
         </Button>
@@ -160,6 +194,48 @@ export function DiscountsPage() {
           {/* Pagination hidden until implemented */}
         </div>
       </Card>
+
+      {/* Basic Create Modal Overlay */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <Card className="w-full max-w-md p-6 bg-surface">
+            <h2 className="text-title-lg font-bold mb-4">Create New Discount</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium">Coupon Code</label>
+                <Input value={formData.code} onChange={(e) => setFormData({...formData, code: e.target.value})} placeholder="SUMMER2026" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Type</label>
+                  <select 
+                    className="w-full flex h-10 rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={formData.discount_type} 
+                    onChange={(e) => setFormData({...formData, discount_type: e.target.value})}
+                  >
+                    <option value="percentage">Percentage</option>
+                    <option value="fixed">Fixed Amount</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Value</label>
+                  <Input type="number" value={formData.discount_value} onChange={(e) => setFormData({...formData, discount_value: e.target.value})} placeholder={formData.discount_type === 'percentage' ? "20" : "500"} />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Minimum Order Amount (₹)</label>
+                <Input type="number" value={formData.min_order_amount} onChange={(e) => setFormData({...formData, min_order_amount: e.target.value})} placeholder="1000" />
+              </div>
+              <div className="flex justify-end gap-3 mt-6">
+                <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+                <Button onClick={handleCreate} disabled={isSubmitting}>
+                  {isSubmitting ? 'Creating...' : 'Create'}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

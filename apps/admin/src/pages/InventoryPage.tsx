@@ -12,11 +12,13 @@ import {
   TableCell,
   Input,
 } from '../components/ui';
-import { Search, Filter, MoreHorizontal, Download, Loader2, UploadCloud, Plus } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, Download, Loader2, UploadCloud, Plus, ArrowRightLeft } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
 import { BulkImportDialog } from '../components/BulkImportDialog';
 import { StockAdjustmentModal } from '../components/StockAdjustmentModal';
+import { StockMovementHistoryModal } from '../components/StockMovementHistoryModal';
+import { WarehouseTransferModal } from '../components/WarehouseTransferModal';
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
 
 export function InventoryPage() {
@@ -26,6 +28,8 @@ export function InventoryPage() {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
 
   useEffect(() => {
     fetchInventory();
@@ -108,15 +112,35 @@ export function InventoryPage() {
       />
 
       {selectedProduct && (
-        <StockAdjustmentModal
-          product={selectedProduct}
-          isOpen={isAdjustmentModalOpen}
-          onClose={() => {
-            setIsAdjustmentModalOpen(false);
-            setSelectedProduct(null);
-          }}
-          onSuccess={fetchInventory}
-        />
+        <>
+          <StockAdjustmentModal
+            product={selectedProduct}
+            isOpen={isAdjustmentModalOpen}
+            onClose={() => {
+              setIsAdjustmentModalOpen(false);
+              setSelectedProduct(null);
+            }}
+            onSuccess={fetchInventory}
+          />
+          <StockMovementHistoryModal
+            product={selectedProduct}
+            isOpen={isHistoryModalOpen}
+            onClose={() => {
+              setIsHistoryModalOpen(false);
+              setSelectedProduct(null);
+            }}
+          />
+          <WarehouseTransferModal
+            product={selectedProduct}
+            warehouses={useAdmin().warehouses} // Fetch warehouses from hook
+            isOpen={isTransferModalOpen}
+            onClose={() => {
+              setIsTransferModalOpen(false);
+              setSelectedProduct(null);
+            }}
+            onSuccess={fetchInventory}
+          />
+        </>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -260,6 +284,18 @@ export function InventoryPage() {
                         <Button
                           variant="ghost"
                           size="sm"
+                          className="h-8 w-8 p-0 rounded-lg hover:bg-indigo-500/10 hover:text-indigo-500"
+                          onClick={() => {
+                            setSelectedProduct(item);
+                            setIsTransferModalOpen(true);
+                          }}
+                          title="Transfer Stock"
+                        >
+                          <ArrowRightLeft className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10 hover:text-primary"
                           onClick={() => {
                             setSelectedProduct(item);
@@ -269,9 +305,18 @@ export function InventoryPage() {
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
-                        <button className="text-on-surface-variant hover:text-on-surface p-1.5 rounded-lg hover:bg-surface-container transition-colors">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
+                          onClick={() => {
+                            setSelectedProduct(item);
+                            setIsHistoryModalOpen(true);
+                          }}
+                          title="View History"
+                        >
                           <MoreHorizontal className="h-4 w-4" />
-                        </button>
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>

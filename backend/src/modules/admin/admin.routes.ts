@@ -11,6 +11,7 @@ import * as returnController from '../order/return.controller.js';
 import { authenticate, authorize } from '../../middlewares/auth.js';
 import { validate } from '../../middlewares/validate.js';
 import { catchAsync } from '../../middlewares/error.js';
+import { idempotencyMiddleware } from '../../middlewares/idempotency.middleware.js';
 import { productSchema, productUpdateSchema } from '../product/product.validator.js';
 
 const router = express.Router();
@@ -28,7 +29,7 @@ router.get('/orders', orderController.getAllOrders);
 router.get('/orders/:id', orderController.getOrderById);
 router.get('/orders/:id/activity', adminController.getOrderActivity);
 router.put('/orders/:id', orderController.updateOrder);
-router.post('/orders/:id/return', orderController.processReturn);
+router.post('/orders/:id/return', idempotencyMiddleware, orderController.processReturn);
 
 // Returns (RMA)
 router.get('/returns', returnController.getReturns);
@@ -52,7 +53,9 @@ router.get('/warehouse', adminController.getWarehouses);
 router.post('/warehouse', adminController.createWarehouse);
 router.get('/warehouse/tasks', adminController.getWarehouseTasks); // static: before /:id
 router.post('/warehouse/adjust-stock', warehouseController.adjustStock); // static: before /:id
+router.post('/warehouse/transfer-stock', warehouseController.transferStock); // static: before /:id
 router.post('/warehouse/tasks/pick', warehouseController.markTaskPicked); // static: before /:id
+router.get('/warehouse/movements/:productId', warehouseController.getStockMovements);
 router.get('/warehouse/:id/inventory', warehouseController.getWarehouseInventory);
 router.put('/warehouse/:id', adminController.updateWarehouse);
 
@@ -75,6 +78,11 @@ router.get('/audit-logs', adminController.getAuditLogs);
 
 // Upload
 router.post('/upload', adminController.uploadFile);
+
+// Team Management
+router.get('/team', adminController.getTeamMembers);
+router.post('/team/invite', adminController.inviteTeamMember);
+router.put('/team/:id/role', adminController.updateTeamMemberRole);
 
 export default router;
 

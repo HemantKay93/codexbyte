@@ -40,6 +40,15 @@ export const RolePermissions: Record<string, Permission[]> = {
     'analytics:read',
     'cms:write',
   ],
+  manager: [
+    'products:read',
+    'products:write',
+    'orders:read',
+    'orders:write',
+    'inventory:read',
+    'inventory:write',
+    'analytics:read',
+  ],
   staff: ['products:read', 'orders:read', 'orders:write', 'inventory:read', 'inventory:write'],
   customer: ['products:read'],
 };

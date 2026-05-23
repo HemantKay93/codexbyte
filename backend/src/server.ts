@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import logger from './services/logger.js';
+import { requestLogger } from './middlewares/requestLogger.js';
 import { errorHandler } from './middlewares/error.js';
 import { createServer } from 'http';
 import { initSockets } from './sockets/index.js';
@@ -28,6 +29,8 @@ import posRoutes from './modules/pos/pos.routes.js';
 import marketingRoutes from './modules/marketing/marketing.routes.js';
 import leadRoutes from './modules/lead/lead.routes.js';
 import supportRoutes from './modules/support/support.routes.js';
+import supplierRoutes from './modules/supplier/supplier.routes.js';
+import whatsappRoutes from './modules/whatsapp/whatsapp.routes.js';
 
 import * as reportController from './modules/admin/report.controller.js';
 import { authenticate, authorize } from './middlewares/auth.js';
@@ -88,10 +91,13 @@ app.use(
 );
 app.use(express.json());
 
+// Request Logging
+app.use(requestLogger);
+
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200,
+  max: 5000, // Increased from 200 to 5000 to allow for UI status polling
   message: 'Too many requests',
 });
 app.use('/api/', limiter);
@@ -112,6 +118,8 @@ app.use('/api/v1/pos', posRoutes);
 app.use('/api/v1/marketing', marketingRoutes);
 app.use('/api/v1/leads', leadRoutes);
 app.use('/api/v1/support', supportRoutes);
+app.use('/api/v1/suppliers', supplierRoutes);
+app.use('/api/v1/whatsapp', whatsappRoutes);
 // Legacy compatibility
 app.use('/api/leads', leadRoutes);
 

@@ -172,15 +172,13 @@ export function OrderManagementPage() {
                       <TableCell>
                         <Badge
                           variant={
-                            order.status === 'delivered'
+                            order.status === 'delivered' || order.status === 'refunded'
                               ? 'success'
-                              : order.status === 'shipped'
-                                ? 'success'
-                                : order.status === 'processing'
-                                  ? 'info'
-                                  : order.status === 'cancelled'
-                                    ? 'error'
-                                    : 'warning'
+                              : order.status === 'shipped' || order.status === 'packed' || order.status === 'confirmed'
+                                ? 'info'
+                                : order.status === 'cancelled'
+                                  ? 'error'
+                                  : 'warning'
                           }
                         >
                           {order.status.charAt(0).toUpperCase() + order.status.slice(1)}

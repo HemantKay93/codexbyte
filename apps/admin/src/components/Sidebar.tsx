@@ -4,7 +4,7 @@ import {
   LayoutDashboard, LineChart, MonitorSmartphone, Package, ShoppingCart, Users, Tag,
   LayoutTemplate, Megaphone, MessageSquare, LifeBuoy, Shield, Settings,
   ChevronDown, ChevronRight, Boxes, RefreshCcw, Truck, Warehouse,
-  FileClock, FileCheck, FileCode, Globe, Code2, Store
+  FileClock, FileCheck, FileCode, Globe, Code2, Store, Send, ListTodo, FileText
 } from 'lucide-react';
 import { useAuthStore } from '@byteevolvr/store';
 
@@ -12,13 +12,13 @@ type NavItem = { name: string; href: string; icon: React.ElementType; roles?: st
 type NavGroup = { name: string; icon: React.ElementType; items: NavItem[]; roles?: string[] };
 
 const navigation: (NavItem | NavGroup)[] = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard, roles: ['admin', 'support'] },
-  { name: 'Analytics', href: '/analytics', icon: LineChart, roles: ['admin'] },
-  { name: 'Point of Sale', href: '/pos', icon: MonitorSmartphone, roles: ['admin'] },
+  { name: 'Dashboard', href: '/', icon: LayoutDashboard, roles: ['admin', 'super-admin', 'support'] },
+  { name: 'Analytics', href: '/analytics', icon: LineChart, roles: ['admin', 'super-admin'] },
+  { name: 'Point of Sale', href: '/pos', icon: MonitorSmartphone, roles: ['admin', 'super-admin'] },
   {
     name: 'Catalog',
     icon: Package,
-    roles: ['admin'],
+    roles: ['admin', 'super-admin'],
     items: [
       { name: 'Products', href: '/products', icon: Package },
       { name: 'Add Product', href: '/products/new', icon: Package },
@@ -28,32 +28,32 @@ const navigation: (NavItem | NavGroup)[] = [
   {
     name: 'Orders',
     icon: ShoppingCart,
-    roles: ['admin', 'support'],
+    roles: ['admin', 'super-admin', 'support'],
     items: [
       { name: 'All Orders', href: '/orders', icon: ShoppingCart },
       { name: 'Returns & Refunds', href: '/returns', icon: RefreshCcw },
-      { name: 'Warehouse Ops', href: '/warehouse', icon: Warehouse, roles: ['admin'] },
+      { name: 'Warehouse Ops', href: '/warehouse', icon: Warehouse, roles: ['admin', 'super-admin'] },
     ],
   },
   {
     name: 'Customers',
     icon: Users,
-    roles: ['admin', 'support'],
+    roles: ['admin', 'super-admin', 'support'],
     items: [
       { name: 'Customer List', href: '/customers', icon: Users },
-      { name: 'Reviews', href: '/reviews', icon: MessageSquare, roles: ['admin'] },
+      { name: 'Reviews', href: '/reviews', icon: MessageSquare, roles: ['admin', 'super-admin'] },
     ],
   },
   {
     name: 'Support Hub',
     href: '/support',
     icon: LifeBuoy,
-    roles: ['admin', 'support']
+    roles: ['admin', 'super-admin', 'support']
   },
   {
     name: 'Marketing',
     icon: Megaphone,
-    roles: ['admin'],
+    roles: ['admin', 'super-admin'],
     items: [
       { name: 'Campaigns', href: '/marketing', icon: Megaphone },
       { name: 'Discounts', href: '/discounts', icon: Tag },
@@ -62,7 +62,7 @@ const navigation: (NavItem | NavGroup)[] = [
   {
     name: 'Content',
     icon: LayoutTemplate,
-    roles: ['admin'],
+    roles: ['admin', 'super-admin'],
     items: [
       { name: 'CMS Builder', href: '/cms', icon: LayoutTemplate },
       { name: 'Invoice Template', href: '/invoice-template', icon: FileCheck },
@@ -71,16 +71,27 @@ const navigation: (NavItem | NavGroup)[] = [
   {
     name: 'Operations',
     icon: Truck,
-    roles: ['admin'],
+    roles: ['admin', 'super-admin'],
     items: [
       { name: 'Suppliers', href: '/suppliers', icon: Truck },
       { name: 'Multi-Store', href: '/stores', icon: Globe },
     ],
   },
   {
+    name: 'WhatsApp Bot',
+    icon: Send,
+    roles: ['admin', 'super-admin'],
+    items: [
+      { name: 'Dashboard', href: '/whatsapp', icon: Send },
+      { name: 'Campaigns', href: '/whatsapp/campaigns', icon: Megaphone },
+      { name: 'Task Queue', href: '/whatsapp/tasks', icon: ListTodo },
+      { name: 'Templates', href: '/whatsapp/templates', icon: FileText },
+    ],
+  },
+  {
     name: 'System',
     icon: Settings,
-    roles: ['admin'],
+    roles: ['admin', 'super-admin'],
     items: [
       { name: 'Tax & Compliance', href: '/tax-compliance', icon: FileClock },
       { name: 'Activity Log', href: '/activity-log', icon: FileCode },

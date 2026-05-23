@@ -20,13 +20,13 @@ export class AuthService {
       ADMIN_PASSWORD_HASH &&
       bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)
     ) {
-      const token = jwt.sign({ id: 'admin', email, role: 'admin' }, JWT_SECRET, {
+      const token = jwt.sign({ id: '00000000-0000-0000-0000-000000000000', email, role: 'admin' }, JWT_SECRET, {
         expiresIn: '12h',
       });
       return {
         token,
         user: {
-          id: 'admin',
+          id: '00000000-0000-0000-0000-000000000000',
           email,
           full_name: 'Main Admin',
           role: 'admin',
@@ -68,9 +68,9 @@ export class AuthService {
   }
 
   async getMe(userId: string) {
-    if (userId === 'admin') {
+    if (userId === '00000000-0000-0000-0000-000000000000' || userId === 'admin') {
       return {
-        id: 'admin',
+        id: '00000000-0000-0000-0000-000000000000',
         email: 'admin@byteevolvr.com',
         full_name: 'Main Admin',
         role: 'admin',
