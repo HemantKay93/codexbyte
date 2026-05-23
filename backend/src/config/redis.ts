@@ -7,15 +7,18 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const isUpstashOrTls = REDIS_URL.startsWith('rediss://');
 
 export const redisConfig = {
   connection: new Redis(REDIS_URL, {
     maxRetriesPerRequest: null,
     enableOfflineQueue: false,
-    connectTimeout: 5000,
+    connectTimeout: 10000,
+    family: 0, // Critical for Upstash
+    ...(isUpstashOrTls && { tls: { rejectUnauthorized: false } }),
     retryStrategy(times: number) {
-      if (times > 3) return null; // Stop retrying after 3 attempts
-      const delay = Math.min(times * 50, 2000);
+      if (times > 10) return null; // Increase retry attempts for remote redis
+      const delay = Math.min(times * 100, 3000);
       return delay;
     },
   }),
