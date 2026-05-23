@@ -23,8 +23,13 @@ export class WhatsAppWorkerService {
       logger.info('[WhatsAppWorker] Initializing session via whatsapp-web.js...');
       await this.repository.updateSessionState('default', { status: 'authenticating', qr_code: '' });
 
+      const authPath = process.env.WWEBJS_AUTH_DIR || (await import('path')).join(process.cwd(), '.wwebjs_auth');
+      
       this.client = new Client({
-        authStrategy: new LocalAuth({ clientId: "byteevolvr-session" }),
+        authStrategy: new LocalAuth({ 
+          clientId: "byteevolvr-session",
+          dataPath: authPath
+        }),
         puppeteer: {
           headless: true,
           args: [
@@ -62,6 +67,15 @@ export class WhatsAppWorkerService {
         await this.repository.updateSessionState('default', { status: 'disconnected' });
         this.client = null;
         this.isInitializing = false;
+        // On fatal disconnect, restart the process to let PM2 recover
+        process.exit(1);
+      });
+
+      this.client.on('auth_failure', async (msg: string) => {
+        logger.error('[WhatsAppWorker] Authentication failure:', msg);
+        await this.repository.updateSessionState('default', { status: 'failed' as any });
+        // Wipe session on auth failure to force QR regeneration
+        await this.generateQR();
       });
 
       await this.client.initialize();
@@ -137,7 +151,8 @@ export class WhatsAppWorkerService {
     try {
       const fs = await import('fs');
       const path = await import('path');
-      const sessionDir = path.join(process.cwd(), '.wwebjs_auth');
+      const authPath = process.env.WWEBJS_AUTH_DIR || path.join(process.cwd(), '.wwebjs_auth');
+      const sessionDir = path.join(authPath, 'session-byteevolvr-session');
       if (fs.existsSync(sessionDir)) {
          fs.rmSync(sessionDir, { recursive: true, force: true });
       }
