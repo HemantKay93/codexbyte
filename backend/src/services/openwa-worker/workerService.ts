@@ -21,17 +21,22 @@ export class WhatsAppWorkerService {
 
     try {
       logger.info('[WhatsAppWorker] Initializing session via whatsapp-web.js...');
-      await this.repository.updateSessionState('default', { status: 'authenticating', qr_code: '' });
+      await this.repository.updateSessionState('default', {
+        status: 'authenticating',
+        qr_code: '',
+      });
 
-      const authPath = process.env.WWEBJS_AUTH_DIR || (await import('path')).join(process.cwd(), '.wwebjs_auth');
-      
+      const authPath =
+        process.env.WWEBJS_AUTH_DIR || (await import('path')).join(process.cwd(), '.wwebjs_auth');
+
       this.client = new Client({
-        authStrategy: new LocalAuth({ 
-          clientId: "byteevolvr-session",
-          dataPath: authPath
+        authStrategy: new LocalAuth({
+          clientId: 'byteevolvr-session',
+          dataPath: authPath,
         }),
         puppeteer: {
           headless: true,
+          executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
           args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
@@ -39,20 +44,23 @@ export class WhatsAppWorkerService {
             '--disable-accelerated-2d-canvas',
             '--no-first-run',
             '--no-zygote',
-            '--disable-gpu'
-          ]
-        }
+            '--disable-gpu',
+          ],
+        },
       });
 
       this.client.on('qr', async (qrStr: string) => {
         logger.info(`[WhatsAppWorker] QR Code received. Scan it in Admin UI or terminal!`);
-        qrcodeTerminal.generate(qrStr, { small: true }); 
-        
+        qrcodeTerminal.generate(qrStr, { small: true });
+
         try {
-            // Save raw string to avoid Base64 column length limits in Supabase
-            await this.repository.updateSessionState('default', { status: 'qr_ready', qr_code: qrStr });
+          // Save raw string to avoid Base64 column length limits in Supabase
+          await this.repository.updateSessionState('default', {
+            status: 'qr_ready',
+            qr_code: qrStr,
+          });
         } catch (err) {
-            logger.error('[WhatsAppWorker] Failed to save QR to DB:', err);
+          logger.error('[WhatsAppWorker] Failed to save QR to DB:', err);
         }
       });
 
@@ -79,7 +87,6 @@ export class WhatsAppWorkerService {
       });
 
       await this.client.initialize();
-
     } catch (error) {
       logger.error('[WhatsAppWorker] Failed to initialize:', error);
       await this.repository.updateSessionState('default', { status: 'failed' as any });
@@ -154,9 +161,9 @@ export class WhatsAppWorkerService {
       const authPath = process.env.WWEBJS_AUTH_DIR || path.join(process.cwd(), '.wwebjs_auth');
       const sessionDir = path.join(authPath, 'session-byteevolvr-session');
       if (fs.existsSync(sessionDir)) {
-         fs.rmSync(sessionDir, { recursive: true, force: true });
+        fs.rmSync(sessionDir, { recursive: true, force: true });
       }
-    } catch(e) {
+    } catch (e) {
       logger.debug('[WhatsAppWorker] Ignored error while cleaning auth dir:', e);
     }
 

@@ -63,6 +63,8 @@ app.use(
         'https://codexbyte-frontend.vercel.app',
         'https://codexbyte.vercel.app',
         'https://byteevolvr.vercel.app',
+        'https://admin.byteevolvr.com',
+        'https://shop.byteevolvr.com',
       ];
 
       const envOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map((o) => o.trim());
