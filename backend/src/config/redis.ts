@@ -18,7 +18,7 @@ const isUpstashOrTls = REDIS_URL.startsWith('rediss://');
 export const redisConfig = {
   connection: new Redis(REDIS_URL, {
     maxRetriesPerRequest: null,
-    enableOfflineQueue: false,
+    enableOfflineQueue: true, // Required for BullMQ on Upstash to prevent "Stream isn't writeable"
     enableReadyCheck: false, // Recommended for Upstash
     connectTimeout: 10000,
     family: 0, // Critical for Upstash
