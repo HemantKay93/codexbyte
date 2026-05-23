@@ -12,8 +12,7 @@ import {
   TableCell,
   Input,
 } from '../components/ui';
-} from '../components/ui';
-import { Plus, Search, Filter, MoreHorizontal, Shield, Mail, X, Check } from 'lucide-react';
+import { Plus, Search, Filter, MoreHorizontal, Shield, Mail, X } from 'lucide-react';
 import { TeamService } from '@byteevolvr/api-client';
 
 const mockTeam = [

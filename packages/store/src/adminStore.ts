@@ -8,6 +8,9 @@ interface AdminState {
     salesDelta: number;
     customerCount: number;
     avgOrderValue: number;
+    pendingOrders?: number;
+    lowStockAlertsCount?: number;
+    lowStockItems?: any[];
   };
   recentSales: any[];
   chartData: any[];
@@ -34,6 +37,9 @@ export const useAdminStore = create<AdminState>((set) => ({
     salesDelta: 0,
     customerCount: 0,
     avgOrderValue: 0,
+    pendingOrders: 0,
+    lowStockAlertsCount: 0,
+    lowStockItems: [],
   },
   recentSales: [],
   chartData: [],
