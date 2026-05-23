@@ -1,44 +1,71 @@
+version: '3.8'
+
 services:
-  backend:
+  redis:
+    image: redis:7-alpine
+    container_name: byteevolvr-redis
+    restart: always
+    command: redis-server --save 60 1 --loglevel warning --maxmemory-policy noeviction
+    volumes:
+      - redis_data:/data
+    networks:
+      - byteevolvr_net
+
+  api:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env
+    container_name: byteevolvr-api
+    restart: always
+    depends_on:
+      - redis
     environment:
       - PORT=8080
-      - NODE_ENV=development
       - REDIS_URL=redis://redis:6379
-    restart: always
-
-  admin:
-    build:
-      context: .
-      dockerfile: apps/admin/Dockerfile
-    ports:
-      - "4031:80"
+      # Will read remaining secrets from the VPS .env file
     env_file:
       - .env
-    depends_on:
-      - backend
-    restart: always
+    networks:
+      - byteevolvr_net
 
-  website:
+  whatsapp-worker:
     build:
       context: .
-      dockerfile: apps/frontend/Dockerfile
-    ports:
-      - "4028:80"
+      dockerfile: backend/Dockerfile.whatsapp
+    container_name: byteevolvr-whatsapp
+    restart: always
+    depends_on:
+      - redis
+      - api
+    environment:
+      - REDIS_URL=redis://redis:6379
     env_file:
       - .env
-    depends_on:
-      - backend
-    restart: always
+    networks:
+      - byteevolvr_net
 
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        # These must be set in your VPS .env file before building
+        - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+        - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY}
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL:-/api/v1}
+    container_name: byteevolvr-web
     restart: always
+    depends_on:
+      - api
+    ports:
+      - "80:80"   # Frontend maps to VPS port 80
+      - "4031:81" # Admin Panel maps to VPS port 4031
+    networks:
+      - byteevolvr_net
+
+volumes:
+  redis_data:
+
+networks:
+  byteevolvr_net:
+    driver: bridge
