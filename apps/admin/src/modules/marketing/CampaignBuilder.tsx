@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Input, Button } from '../../components/ui';
-import { Send, Clock, Users, LayoutTemplate, Loader2 } from 'lucide-react';
+import { Send, Clock, Users, Loader2 } from 'lucide-react';
 import { apiClient, MarketingService } from '@byteevolvr/api-client';
 
 export function CampaignBuilder() {

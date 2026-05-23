@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle, Button } from '../../components/ui';
-import { Mail, MessageCircle, Bell, Users, Zap, LayoutTemplate } from 'lucide-react';
+import { Card, CardContent } from '../../components/ui';
+import { Mail, Zap, Users, LayoutTemplate } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export function MarketingDashboard() {

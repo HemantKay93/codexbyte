@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, Button, Input } from '../../components/ui';
+import { Card, CardContent, Button, Input } from '../../components/ui';
 import { LayoutTemplate, Plus, Loader2, X } from 'lucide-react';
 import { MarketingService } from '@byteevolvr/api-client';
 
