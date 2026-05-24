@@ -12,7 +12,16 @@ import {
   TableCell,
   Input,
 } from '../components/ui';
-import { Search, Filter, MoreHorizontal, Download, Loader2, UploadCloud, Plus, ArrowRightLeft } from 'lucide-react';
+import {
+  Search,
+  Filter,
+  MoreHorizontal,
+  Download,
+  Loader2,
+  UploadCloud,
+  Plus,
+  ArrowRightLeft,
+} from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
 import { BulkImportDialog } from '../components/BulkImportDialog';
@@ -24,7 +33,7 @@ import { useAdmin } from '../modules/admin/hooks/useAdmin';
 export function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const { products, setProducts, isLoading, setLoading, setError } = useAdminStore();
-  const { fetchWarehouses } = useAdmin();
+  const { warehouses, fetchWarehouses } = useAdmin();
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
@@ -132,7 +141,7 @@ export function InventoryPage() {
           />
           <WarehouseTransferModal
             product={selectedProduct}
-            warehouses={useAdmin().warehouses} // Fetch warehouses from hook
+            warehouses={warehouses}
             isOpen={isTransferModalOpen}
             onClose={() => {
               setIsTransferModalOpen(false);
