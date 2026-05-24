@@ -20,10 +20,10 @@ export const verifyWebhook = async (req: Request, res: Response) => {
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
 
-    // Fetch expected token from global settings
+    // Fetch expected token from global settings OR environment variable fallback
     const settings = await CMSService.getContent('global');
     const waConfig = settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
-    const expectedToken = waConfig.webhookVerifyToken;
+    const expectedToken = waConfig.webhookVerifyToken || process.env.WHATSAPP_VERIFY_TOKEN;
 
     if (mode === 'subscribe' && token === expectedToken) {
       logger.info('[WhatsApp Webhook] Webhook verified successfully!');
@@ -50,12 +50,15 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
             for (const status of change.value.statuses) {
               const messageId = status.id;
               const deliveryStatus = status.status; // 'sent', 'delivered', 'read', 'failed'
-              
-              logger.info(`[WhatsApp Webhook] Message ${messageId} status updated to ${deliveryStatus}`);
-              
+
+              logger.info(
+                `[WhatsApp Webhook] Message ${messageId} status updated to ${deliveryStatus}`
+              );
+
               // Map Cloud API statuses to our DB statuses
               let mappedStatus: 'queued' | 'sent' | 'failed' | 'delivered' = 'sent';
-              if (deliveryStatus === 'delivered' || deliveryStatus === 'read') mappedStatus = 'delivered';
+              if (deliveryStatus === 'delivered' || deliveryStatus === 'read')
+                mappedStatus = 'delivered';
               if (deliveryStatus === 'failed') mappedStatus = 'failed';
 
               // Update the repository based on the external messageId
@@ -64,10 +67,10 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
           }
         }
       }
-      
+
       // Update session last active to keep dashboard connection status green
       await repository.updateSessionLastActive();
-      
+
       return res.sendStatus(200);
     } else {
       return res.sendStatus(404);
