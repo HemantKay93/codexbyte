@@ -6,6 +6,7 @@ import { AnalyticsService } from '../services/analyticsService.js';
 import logger from '../services/logger.js';
 import { whatsappQueue } from './whatsapp.queue.js';
 import { WhatsAppRepository } from '../modules/whatsapp/whatsapp.repository.js';
+import { automationWorker } from './automation.worker.js';
 
 // Define Queues
 export const emailQueue = new Queue('email-queue', { connection: redis });
@@ -89,6 +90,7 @@ const setupDLQ = (worker: Worker) => {
 setupDLQ(emailWorker);
 setupDLQ(notificationWorker);
 setupDLQ(analyticsWorker);
+setupDLQ(automationWorker);
 
 // Remove the internal whatsapp worker so it runs separately
 // export const whatsappWorker = new Worker(...)
@@ -102,6 +104,7 @@ export const shutdownJobs = async () => {
   await emailWorker.close();
   await notificationWorker.close();
   await analyticsWorker.close();
+  await automationWorker.close();
 };
 
 logger.info('[Jobs] Background workers initialized.');

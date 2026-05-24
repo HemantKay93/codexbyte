@@ -12,6 +12,10 @@ import { errorHandler } from './middlewares/error.js';
 import { createServer } from 'http';
 import { initSockets } from './sockets/index.js';
 import './jobs/index.js'; // Initialize background workers
+import { initializeEventSubscribers } from './core/events/EventSubscriber.js';
+
+// Initialize domain event listeners
+initializeEventSubscribers();
 
 // Route Imports
 import productRoutes from './modules/product/product.routes.js';

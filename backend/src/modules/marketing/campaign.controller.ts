@@ -34,7 +34,7 @@ export const createCampaign = catchAsync(async (req: Request, res: Response) => 
 
 export const enqueueCampaign = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  await campaignService.enqueueCampaign(id);
+  await campaignService.enqueueCampaign(id as string);
   
   res.json({
     success: true,

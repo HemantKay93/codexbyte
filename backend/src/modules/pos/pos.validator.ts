@@ -1,1 +1,0 @@
-// Validation schemas for pos module

@@ -6,7 +6,8 @@ import { getAdminClient } from '../../config/supabase.js';
 import logger from '../../services/logger.js';
 import { JobService } from '../../services/jobService.js';
 import { AuthService } from '../auth/auth.service.js';
-import { NotificationWorkflow } from '../../workflows/notificationWorkflow.service.js';
+import { eventBus } from '../../core/events/EventBus.js';
+import { DomainEvents } from '../../core/events/events.js';
 
 const orderRepo = new OrderRepository();
 
@@ -116,12 +117,15 @@ export class OrderService {
       new_data: { order_number: orderNumber, total: order.total_amount },
     });
 
-    // 4. Queue Notifications (Email, WhatsApp)
-    await NotificationWorkflow.notifyNewOrder({
-      orderNumber,
+    // 4. Publish Domain Event
+    eventBus.publish(DomainEvents.ORDER_CREATED, {
+      orderId: order.id,
+      orderNumber: orderNumber,
+      customerId: finalUserId || 'guest',
       customerName: order.customer_name,
+      email: order.customer_email,
       phone: shippingAddress?.phone || orderData.phone,
-      email: order.customer_email
+      totalAmount: order.total_amount
     });
 
     // 5. Emit Real-time events
@@ -220,15 +224,28 @@ export class OrderService {
         }
       }
 
-      // Queue Notifications for ALL status changes
-      await NotificationWorkflow.notifyCustomerOrderUpdate({
+      // Publish Domain Event for Status Change
+      eventBus.publish(DomainEvents.ORDER_STATUS_UPDATED, {
+        orderId: id,
         orderNumber: order.order_number,
         status: newStatus,
+        customerId: order.user_id || 'guest',
         notes: notes,
         phone: order.shipping_address?.phone || order.phone,
-        email: order.customer_email,
-        userId: order.user_id
+        email: order.customer_email
       });
+      
+      if (newStatus === 'delivered') {
+        eventBus.publish(DomainEvents.ORDER_COMPLETED, {
+          orderId: id,
+          customerId: order.user_id || 'guest'
+        });
+      } else if (newStatus === 'cancelled') {
+        eventBus.publish(DomainEvents.ORDER_CANCELLED, {
+          orderId: id,
+          reason: notes || 'User cancelled'
+        });
+      }
     }
 
     // 5. Emit Real-time events
