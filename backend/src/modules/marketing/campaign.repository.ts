@@ -1,4 +1,5 @@
 import { getAdminClient } from '../../config/supabase.js';
+import { CampaignState } from '../../core/fsm/CampaignStateMachine.js';
 import logger from '../../services/logger.js';
 
 export class CampaignRepository {
@@ -51,7 +52,7 @@ export class CampaignRepository {
   /**
    * Update campaign status
    */
-  async updateCampaignStatus(id: string, status: string, additionalData: any = {}) {
+  async updateCampaignStatus(id: string, status: CampaignState, additionalData: any = {}) {
     const admin = await getAdminClient();
     const { error } = await admin
       .from('campaigns')
@@ -70,10 +71,7 @@ export class CampaignRepository {
     if (errorLog !== undefined) updates.error_log = errorLog;
     if (externalId !== undefined) updates.external_id = externalId;
 
-    const { error } = await admin
-      .from('campaign_recipients')
-      .update(updates)
-      .eq('id', id);
+    const { error } = await admin.from('campaign_recipients').update(updates).eq('id', id);
 
     if (error) throw error;
   }

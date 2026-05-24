@@ -94,7 +94,7 @@ export class AnalyticsService {
     return data;
   }
 
-  static async recordEvent(type: string, payload: any) {
+  static async recordEvent(type: string, payload: Record<string, any>) {
     // This function will be called by the analytics background worker
     // For now, it could save events to a dedicated Supabase analytics table
     // or push to a data warehouse.
@@ -105,8 +105,8 @@ export class AnalyticsService {
         payload,
       });
     } catch (err: any) {
-       // Table might not exist yet, so we catch and log
-       console.log(`[Analytics] Table 'analytics_events' might not exist:`, err.message);
+      // Table might not exist yet, so we catch and log
+      console.log(`[Analytics] Table 'analytics_events' might not exist:`, err.message);
     }
   }
 }

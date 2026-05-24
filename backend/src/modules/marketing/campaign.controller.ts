@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { CampaignService } from './campaign.service.js';
+import { CampaignOrchestratorService } from './services/campaign-orchestrator.service.js';
 import { catchAsync } from '../../middlewares/error.js';
 
-const campaignService = new CampaignService();
+const campaignService = new CampaignOrchestratorService();
 
 export const getCampaigns = catchAsync(async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
@@ -17,14 +17,14 @@ export const getCampaigns = catchAsync(async (req: Request, res: Response) => {
       total: result.count,
       page: result.page,
       limit: result.limit,
-    }
+    },
   });
 });
 
 export const createCampaign = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const campaign = await campaignService.createCampaign(payload);
-  
+
   res.status(201).json({
     success: true,
     message: 'Campaign created successfully',
@@ -35,7 +35,7 @@ export const createCampaign = catchAsync(async (req: Request, res: Response) => 
 export const enqueueCampaign = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   await campaignService.enqueueCampaign(id as string);
-  
+
   res.json({
     success: true,
     message: 'Campaign queued successfully',

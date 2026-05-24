@@ -54,4 +54,19 @@ export class SocketGateway {
       logger.warn(`[SocketGateway] Failed to notify campaign failure: ${(error as any).message}`);
     }
   }
+
+  /**
+   * General system alert broadcast
+   */
+  static broadcastSystemAlert(event: string, message: string) {
+    try {
+      notifyAdmins('system_alert', {
+        event,
+        message,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      logger.warn(`[SocketGateway] Failed to broadcast system alert: ${(error as any).message}`);
+    }
+  }
 }

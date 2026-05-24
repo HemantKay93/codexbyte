@@ -6,6 +6,7 @@ import * as reviewController from '../review/review.controller.js';
 import * as cmsController from '../cms/cms.controller.js';
 import * as warehouseController from '../inventory/inventory.controller.js';
 import * as reportController from './report.controller.js';
+import * as dlqController from './dlq.controller.js';
 import * as returnController from '../order/return.controller.js';
 
 import { authenticate, authorize } from '../../middlewares/auth.js';
@@ -84,5 +85,9 @@ router.get('/team', adminController.getTeamMembers);
 router.post('/team/invite', adminController.inviteTeamMember);
 router.put('/team/:id/role', adminController.updateTeamMemberRole);
 
-export default router;
+// DLQ Endpoints
+router.get('/dlq', authorize('admin', 'super-admin'), dlqController.getDeadLetters);
+router.post('/dlq/:id/retry', authorize('admin', 'super-admin'), dlqController.retryDeadLetter);
+router.put('/dlq/:id/resolve', authorize('admin', 'super-admin'), dlqController.resolveDeadLetter);
 
+export default router;

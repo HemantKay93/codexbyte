@@ -5,7 +5,7 @@ export class WebhooksService {
   /**
    * Universal Webhook Handler
    */
-  async handleEvent(payload: any, provider: string): Promise<void> {
+  async handleEvent(payload: Record<string, any>, provider: string): Promise<void> {
     logger.info(`[WebhooksService] Received webhook from ${provider}:`, payload);
 
     switch (provider) {
@@ -23,7 +23,7 @@ export class WebhooksService {
     }
   }
 
-  private async handleResendEvent(payload: any) {
+  private async handleResendEvent(payload: Record<string, any>) {
     const { type, data } = payload;
     const recipientId = data?.tags?.find((t: any) => t.name === 'recipientId')?.value;
     const campaignId = data?.tags?.find((t: any) => t.name === 'campaignId')?.value;
@@ -57,7 +57,7 @@ export class WebhooksService {
     await this.updateRecipientStatus(recipientId, campaignId, status);
   }
 
-  private async handleBrevoEvent(payload: any) {
+  private async handleBrevoEvent(payload: Record<string, any>) {
     const { event, tags } = payload;
     const recipientId = tags?.find((t: string) => t.startsWith('recipientId:'))?.split(':')[1];
     const campaignId = tags?.find((t: string) => t.startsWith('campaignId:'))?.split(':')[1];
@@ -92,7 +92,7 @@ export class WebhooksService {
     await this.updateRecipientStatus(recipientId, campaignId, status);
   }
 
-  private async handleMetaWhatsAppEvent(payload: any) {
+  private async handleMetaWhatsAppEvent(payload: Record<string, any>) {
     // Meta sends a nested structure: entry[0].changes[0].value.statuses[0]
     const entries = payload.entry || [];
     for (const entry of entries) {

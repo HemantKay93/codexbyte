@@ -42,7 +42,7 @@ export class TemplateService {
   /**
    * Create an email template
    */
-  async createEmailTemplate(payload: any) {
+  async createEmailTemplate(payload: Record<string, any>) {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('email_templates')
@@ -57,7 +57,7 @@ export class TemplateService {
   /**
    * Create a push template
    */
-  async createPushTemplate(payload: any) {
+  async createPushTemplate(payload: Record<string, any>) {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('push_templates')

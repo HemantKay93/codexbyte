@@ -99,7 +99,7 @@ export class OrderRepository {
   async update(id: string, updateData: any, userId?: string) {
     const admin = await getAdminClient();
     const validUserId = userId === '00000000-0000-0000-0000-000000000000' ? null : userId;
-    const payload: any = {
+    const payload: Record<string, any> = {
       ...updateData,
       updated_at: new Date().toISOString(),
     };

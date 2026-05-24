@@ -57,7 +57,7 @@ export class JobService {
     return NotificationService.send(data);
   }
 
-  static async dispatchAnalyticsEvent(type: string, payload: any) {
+  static async dispatchAnalyticsEvent(type: string, payload: Record<string, any>) {
     if (this.isRedisAvailable()) {
       try {
         await analyticsQueue.add(

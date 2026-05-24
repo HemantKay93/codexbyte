@@ -10,11 +10,11 @@ export class AutomationEngine {
    * Listen for system events and trigger relevant automations
    * Example: evaluateTrigger('order.created', { customerId: '123', orderId: '456' })
    */
-  static async evaluateTrigger(eventName: string, payload: any) {
+  static async evaluateTrigger(eventName: string, payload: Record<string, any>) {
     logger.info(`[AutomationEngine] Evaluating trigger: ${eventName}`);
 
     const admin = await getAdminClient();
-    
+
     // Find all active flows listening to this event
     const { data: flows, error } = await admin
       .from('automation_flows')
@@ -36,7 +36,7 @@ export class AutomationEngine {
     for (const flow of flows) {
       // Evaluate conditions here before starting the run if trigger_conditions exist
       // For now, assume it passes the base trigger
-      
+
       const { data: run, error: runError } = await admin
         .from('automation_runs')
         .insert({

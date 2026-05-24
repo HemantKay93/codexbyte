@@ -19,9 +19,9 @@ export class SegmentService {
   /**
    * Create a new audience segment
    */
-  async createSegment(payload: any) {
+  async createSegment(payload: Record<string, any>) {
     const admin = await getAdminClient();
-    
+
     // Estimate count before saving
     const count = await this.estimateAudienceCount(payload.filter_rules);
 
@@ -44,19 +44,64 @@ export class SegmentService {
    */
   async estimateAudienceCount(filterRules: any): Promise<number> {
     const admin = await getAdminClient();
-    
-    // Simple mock logic for MVP. 
-    // Real implementation would build dynamic SQL queries based on filter rules
-    // For example: if rule is "has ordered > 0", query orders table.
-    // We will just return total users if rule is 'all', else 0.
-    
+
     if (filterRules?.type === 'all') {
       const { count } = await admin.from('users').select('*', { count: 'exact', head: true });
       return count || 0;
     }
 
-    // Default 0 for unknown rules until fully implemented query builder
-    return 0;
+    let query = admin.from('users').select('*', { count: 'exact', head: true });
+    query = this.applyRulesToQuery(query, filterRules);
+
+    const { count, error } = await query;
+    if (error) {
+      console.error('[SegmentService] Error estimating count:', error);
+      return 0;
+    }
+    return count || 0;
+  }
+
+  /**
+   * Translates JSON rules into Supabase PostgREST query builders
+   */
+  private applyRulesToQuery(query: any, filterRules: any) {
+    if (!filterRules || !filterRules.rules || !Array.isArray(filterRules.rules)) {
+      return query;
+    }
+
+    // Example rule format: { field: 'email', operator: 'like', value: '%@gmail.com' }
+    for (const rule of filterRules.rules) {
+      const { field, operator, value } = rule;
+      switch (operator) {
+        case 'eq':
+          query = query.eq(field, value);
+          break;
+        case 'neq':
+          query = query.neq(field, value);
+          break;
+        case 'gt':
+          query = query.gt(field, value);
+          break;
+        case 'gte':
+          query = query.gte(field, value);
+          break;
+        case 'lt':
+          query = query.lt(field, value);
+          break;
+        case 'lte':
+          query = query.lte(field, value);
+          break;
+        case 'like':
+          query = query.ilike(field, value); // Using case-insensitive like
+          break;
+        case 'in':
+          query = query.in(field, Array.isArray(value) ? value : [value]);
+          break;
+        default:
+          break;
+      }
+    }
+    return query;
   }
 
   /**
@@ -64,7 +109,7 @@ export class SegmentService {
    */
   async resolveSegmentUsers(segmentId: string): Promise<any[]> {
     const admin = await getAdminClient();
-    
+
     const { data: segment, error: segError } = await admin
       .from('audience_segments')
       .select('*')
@@ -75,16 +120,19 @@ export class SegmentService {
       throw new AppError('Segment not found', 404);
     }
 
-    // Example logic:
     if (segment.filter_rules?.type === 'all') {
-      // Just fetch all active users
-      // NOTE: In production, paginate or use a stream for huge datasets
-      const { data: users } = await admin
-        .from('users')
-        .select('id, email, phone, metadata');
+      const { data: users } = await admin.from('users').select('id, email, phone, metadata');
       return users || [];
     }
 
-    return [];
+    let query = admin.from('users').select('id, email, phone, metadata');
+    query = this.applyRulesToQuery(query, segment.filter_rules);
+
+    const { data: users, error: queryError } = await query;
+    if (queryError) {
+      throw new AppError(`Failed to resolve segment users: ${queryError.message}`, 500);
+    }
+
+    return users || [];
   }
 }

@@ -27,7 +27,7 @@ export interface WhatsAppMessageRecord {
   id: string;
   job_id?: string;
   recipient: string;
-  payload: any;
+  payload: Record<string, any>;
   status: 'queued' | 'sent' | 'failed' | 'delivered';
   error_log?: string;
   created_at: string;

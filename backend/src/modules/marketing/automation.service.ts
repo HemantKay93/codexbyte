@@ -1,4 +1,5 @@
 import { getAdminClient } from '../../config/supabase.js';
+import { AutomationFlow } from '../../core/contracts/index.js';
 import { Queue } from 'bullmq';
 
 import { AutomationEngine, automationQueue } from '../../core/automation/AutomationEngine.js';
@@ -14,7 +15,7 @@ export class AutomationService {
    * Listen for system events and trigger relevant automations
    * Example: triggerEvent('cart_abandoned', { userId: '123', cartId: '456' })
    */
-  async triggerEvent(eventName: string, payload: any) {
+  async triggerEvent(eventName: string, payload: Record<string, any>) {
     // Delegate to the central AutomationEngine
     await AutomationEngine.evaluateTrigger(eventName, payload);
   }
@@ -33,7 +34,7 @@ export class AutomationService {
   /**
    * Create a new automation flow
    */
-  async createFlow(payload: any) {
+  async createFlow(payload: Partial<AutomationFlow>) {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('automation_flows')
