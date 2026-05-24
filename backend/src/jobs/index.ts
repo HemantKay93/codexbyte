@@ -1,17 +1,19 @@
-import { Queue, Worker, Job } from 'bullmq';
+import { Worker, Job } from 'bullmq';
 import { redis } from '../config/redis.js';
 import { NotificationService } from '../services/notificationService.js';
 import { EmailService } from '../services/email.js';
 import { AnalyticsService } from '../services/analyticsService.js';
 import logger from '../services/logger.js';
-import { whatsappQueue } from './whatsapp.queue.js';
 import { WhatsAppRepository } from '../modules/whatsapp/whatsapp.repository.js';
 import { automationWorker } from './automation.worker.js';
-
-// Define Queues
-export const emailQueue = new Queue('email-queue', { connection: redis });
-export const notificationQueue = new Queue('notification-queue', { connection: redis });
-export const analyticsQueue = new Queue('analytics-queue', { connection: redis });
+import {
+  emailQueue,
+  notificationQueue,
+  analyticsQueue,
+  marketingAutomationQueue,
+  whatsappQueue,
+} from '../core/queues/index.js';
+import { SocketGateway } from '../core/notifications/SocketGateway.js';
 
 // Define Workers
 export const emailWorker = new Worker(
@@ -63,21 +65,21 @@ export const analyticsWorker = new Worker(
 const setupDLQ = (worker: Worker) => {
   worker.on('failed', async (job: Job | undefined, err: Error) => {
     if (!job) return;
-    
+
     // Check if it's permanently failed (exhausted retries)
     if (job.attemptsMade >= (job.opts.attempts || 1)) {
       logger.error(`[DLQ] Job ${job.id} in ${job.name} permanently failed. Moving to DLQ.`);
       try {
         const { getAdminClient } = await import('../config/supabase.js');
         const admin = await getAdminClient();
-        
+
         await admin.from('dlq_jobs').insert({
           queue_name: worker.name,
           job_name: job.name,
           payload: job.data,
           error_message: err.message,
           stack_trace: err.stack,
-          status: 'unresolved'
+          status: 'unresolved',
         });
         logger.info(`[DLQ] Job ${job.id} successfully recorded in dlq_jobs table.`);
       } catch (dlqErr) {
@@ -95,16 +97,43 @@ setupDLQ(automationWorker);
 // Remove the internal whatsapp worker so it runs separately
 // export const whatsappWorker = new Worker(...)
 
+// Telemetry loop for Admin Panel Dashboard
+const queues = [
+  emailQueue,
+  notificationQueue,
+  analyticsQueue,
+  marketingAutomationQueue,
+  whatsappQueue,
+];
+
+const telemetryInterval = setInterval(async () => {
+  for (const q of queues) {
+    try {
+      const counts = await q.getJobCounts();
+      SocketGateway.broadcastQueueStatus(q.name, {
+        waiting: counts.waiting,
+        active: counts.active,
+        failed: counts.failed,
+        completed: counts.completed,
+      });
+    } catch (e) {
+      // Ignore if redis goes down temporarily
+    }
+  }
+}, 5000);
+
 // Graceful shutdown
 export const shutdownJobs = async () => {
+  clearInterval(telemetryInterval);
   await emailQueue.close();
   await notificationQueue.close();
   await whatsappQueue.close();
   await analyticsQueue.close();
+  await marketingAutomationQueue.close();
   await emailWorker.close();
   await notificationWorker.close();
   await analyticsWorker.close();
   await automationWorker.close();
 };
 
-logger.info('[Jobs] Background workers initialized.');
+logger.info('[Jobs] Background workers initialized. Queue telemetry active.');

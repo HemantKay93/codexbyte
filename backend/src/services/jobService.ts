@@ -1,4 +1,4 @@
-import { emailQueue, notificationQueue, analyticsQueue } from '../jobs/index.js';
+import { emailQueue, notificationQueue, analyticsQueue } from '../core/queues/index.js';
 import { EmailService } from './email.js';
 import { NotificationService } from './notificationService.js';
 import logger from './logger.js';

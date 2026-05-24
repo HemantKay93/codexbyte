@@ -5,6 +5,7 @@ import { ProviderService } from '../../modules/marketing/providers/provider.serv
 import { TemplateService } from '../../modules/marketing/template.service.js';
 import { IProvider } from '../../core/providers/IProvider.js';
 import { TemplateEngine } from '../../core/template/TemplateEngine.js';
+import { SocketGateway } from '../../core/notifications/SocketGateway.js';
 import logger from '../logger.js';
 
 const campaignRepo = new CampaignRepository();
@@ -142,12 +143,15 @@ async function processCampaign(job: Job) {
       finished_at: new Date().toISOString(),
     });
 
+    SocketGateway.notifyCampaignSuccess(campaignId, campaign.name);
+
     logger.info(
       `[MarketingWorker] Campaign ${campaignId} completed. Success: ${successCount}, Fail: ${failCount}`
     );
   } catch (error: any) {
     logger.error(`[MarketingWorker] Error processing campaign ${campaignId}:`, error);
     await campaignRepo.updateCampaignStatus(campaignId, 'failed');
+    SocketGateway.notifyCampaignFailure(campaignId, 'Unknown Campaign', error.message);
     throw error;
   }
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { JobService } from '../jobService.js';
-import { emailQueue, notificationQueue, analyticsQueue } from '../../jobs/index.js';
+import { emailQueue, notificationQueue, analyticsQueue } from '../../core/queues/index.js';
 import logger from '../logger.js';
 import { redis } from '../../config/redis.js';
 
@@ -8,21 +8,21 @@ import { redis } from '../../config/redis.js';
 vi.mock('../../jobs/index.js', () => ({
   emailQueue: { add: vi.fn() },
   notificationQueue: { add: vi.fn() },
-  analyticsQueue: { add: vi.fn() }
+  analyticsQueue: { add: vi.fn() },
 }));
 
 vi.mock('../logger.js', () => ({
   default: {
     info: vi.fn(),
     error: vi.fn(),
-    warn: vi.fn()
-  }
+    warn: vi.fn(),
+  },
 }));
 
 vi.mock('../../config/redis.js', () => ({
   redis: {
-    status: 'ready'
-  }
+    status: 'ready',
+  },
 }));
 
 describe('JobService', () => {
