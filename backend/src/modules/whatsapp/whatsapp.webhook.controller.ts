@@ -15,7 +15,7 @@ export const webhookHealth = async (req: Request, res: Response) => {
       logger.warn('[WhatsApp Webhook] DB settings fetch failed in health check', e);
     }
     const waConfig = settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
-    const token = waConfig.systemAccessToken || process.env.WHATSAPP_TOKEN;
+    const token = waConfig.accessToken || process.env.WHATSAPP_TOKEN;
     const phoneId = waConfig.phoneNumberId || process.env.WHATSAPP_PHONE_ID;
 
     if (token && phoneId) {

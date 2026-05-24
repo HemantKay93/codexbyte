@@ -6,7 +6,7 @@ export class CmsRepository {
       .from('cms_content')
       .select('*')
       .eq('page_slug', pageSlug)
-      .order('updated_at', { ascending: true }); // Ensure newest data comes last to overwrite correctly in the frontend map
+      .order('updated_at', { ascending: false }); // Ensure newest data comes FIRST so find() gets the latest
 
     if (sectionKeys && sectionKeys.length > 0) {
       query = query.in('section_key', sectionKeys);
@@ -14,7 +14,20 @@ export class CmsRepository {
 
     const { data, error } = await query;
     if (error) throw error;
-    return data;
+
+    // The database might be missing the unique constraint and creating duplicates.
+    // Since we order by updated_at descending, the newest row is first.
+    // We deduplicate in memory to ensure only the latest row is returned.
+    const deduplicated: any[] = [];
+    const seen = new Set<string>();
+    for (const row of data || []) {
+      if (!seen.has(row.section_key)) {
+        seen.add(row.section_key);
+        deduplicated.push(row);
+      }
+    }
+
+    return deduplicated;
   }
 
   async upsert(pageSlug: string, sectionKey: string, content: any) {
