@@ -8,7 +8,7 @@ export const CMSService = {
   },
 
   updateContent: async (pageSlug: string, sectionKey: string, content: any) => {
-    const response = await apiClient.put(`/admin/cms/${pageSlug}/${sectionKey}`, { content });
+    const response = await apiClient.put(`/cms/admin/${pageSlug}/${sectionKey}`, { content });
     return response.data;
   },
 
