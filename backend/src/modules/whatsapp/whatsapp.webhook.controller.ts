@@ -21,15 +21,29 @@ export const verifyWebhook = async (req: Request, res: Response) => {
     const challenge = req.query['hub.challenge'];
 
     // Fetch expected token from global settings OR environment variable fallback
-    const settings = await CMSService.getContent('global');
-    const waConfig = settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
-    const expectedToken = waConfig.webhookVerifyToken || process.env.WHATSAPP_VERIFY_TOKEN;
+    let expectedToken = process.env.WHATSAPP_VERIFY_TOKEN; // Default to env
+    try {
+      const settings = await CMSService.getContent('global');
+      const waConfig =
+        settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
+      if (waConfig.webhookVerifyToken) {
+        expectedToken = waConfig.webhookVerifyToken;
+      }
+    } catch (e) {
+      logger.warn('[WhatsApp Webhook] Could not fetch config from DB, falling back to ENV', e);
+    }
+
+    logger.info(
+      `[WhatsApp Webhook] mode: ${mode}, token: ${token}, expectedToken: ${expectedToken}`
+    );
 
     if (mode === 'subscribe' && token === expectedToken) {
       logger.info('[WhatsApp Webhook] Webhook verified successfully!');
       return res.status(200).send(challenge);
     } else {
-      logger.warn('[WhatsApp Webhook] Webhook verification failed. Token mismatch.');
+      logger.warn(
+        `[WhatsApp Webhook] Webhook verification failed. Token mismatch. Received: ${token}, Expected: ${expectedToken}`
+      );
       return res.sendStatus(403);
     }
   } catch (error) {
