@@ -514,6 +514,20 @@ export function SettingsPage() {
             </>
           )}
 
+          {emailStatus && (
+            <div
+              className={`flex items-center gap-2 text-sm mt-2 ${
+                emailStatus.type === 'success' ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
+              {emailStatus.type === 'success' ? (
+                <CheckCircle2 className="h-4 w-4" />
+              ) : (
+                <XCircle className="h-4 w-4" />
+              )}
+              {emailStatus.msg}
+            </div>
+          )}
           <div className="flex justify-end gap-2 mt-6">
             <Button onClick={saveEmailConfig} disabled={saving}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
@@ -540,6 +554,20 @@ export function SettingsPage() {
               Required to send Web Push Notifications to your subscribed users.
             </p>
           </div>
+          {pushStatus && (
+            <div
+              className={`flex items-center gap-2 text-sm ${
+                pushStatus.type === 'success' ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
+              {pushStatus.type === 'success' ? (
+                <CheckCircle2 className="h-4 w-4" />
+              ) : (
+                <XCircle className="h-4 w-4" />
+              )}
+              {pushStatus.msg}
+            </div>
+          )}
           <div className="flex justify-end gap-2">
             <Button onClick={savePushConfig} disabled={saving}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
