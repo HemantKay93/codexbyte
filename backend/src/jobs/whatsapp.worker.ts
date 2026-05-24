@@ -58,6 +58,10 @@ export const whatsappWorker = new Worker(
   {
     connection: redis,
     concurrency: 5,
+    stalledInterval: 300_000, // Check stalled jobs every 5 min (default: 30s)
+    lockDuration: 600_000, // Hold job lock for 10 min
+    removeOnComplete: { count: 100 }, // Keep only last 100 completed jobs
+    removeOnFail: { count: 500 }, // Keep only last 500 failed jobs
   }
 );
 

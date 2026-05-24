@@ -17,6 +17,17 @@ import {
 import { SocketGateway } from '../core/notifications/SocketGateway.js';
 
 // Define Workers
+// REDIS OPTIMISATION: stalledInterval controls how often BullMQ polls for stalled jobs.
+// Default is 30s which generates many Redis commands. We set it to 300s (5 min).
+// lockDuration must be larger than stalledInterval.
+const WORKER_OPTIONS = {
+  connection: redis,
+  stalledInterval: 300_000, // Check for stalled jobs every 5 min (default: 30s)
+  lockDuration: 600_000, // Hold job lock for 10 min
+  removeOnComplete: { count: 100 }, // Keep only last 100 completed jobs in Redis
+  removeOnFail: { count: 500 }, // Keep only last 500 failed jobs
+};
+
 export const emailWorker = new Worker(
   'email-queue',
   async (job: Job) => {
@@ -26,10 +37,10 @@ export const emailWorker = new Worker(
       await EmailService.sendEmail(to, subject, html);
     } catch (err) {
       logger.error(`[Job] Email failed for ${to}:`, err);
-      throw err; // BullMQ will retry based on config
+      throw err;
     }
   },
-  { connection: redis }
+  WORKER_OPTIONS
 );
 
 export const notificationWorker = new Worker(
@@ -43,7 +54,7 @@ export const notificationWorker = new Worker(
       logger.error(`[Job] Notification failed:`, err);
     }
   },
-  { connection: redis }
+  WORKER_OPTIONS
 );
 
 export const analyticsWorker = new Worker(
@@ -59,7 +70,7 @@ export const analyticsWorker = new Worker(
       throw err;
     }
   },
-  { connection: redis }
+  WORKER_OPTIONS
 );
 
 // Dead-Letter Queue Logic
@@ -105,6 +116,9 @@ const queues = [
   whatsappQueue,
 ];
 
+// Telemetry broadcasts queue stats to the admin panel via WebSocket.
+// IMPORTANT: Reduced from 5s to 60s to stay within Upstash 500k commands/month free tier.
+// At 60s: 5 queues × 4 cmds × 1/min × 60 × 24 × 30 = ~43,200 cmds/month.
 const telemetryInterval = setInterval(async () => {
   for (const q of queues) {
     try {
@@ -119,7 +133,7 @@ const telemetryInterval = setInterval(async () => {
       // Ignore if redis goes down temporarily
     }
   }
-}, 5000);
+}, 60_000); // 60 seconds — was 5000ms, reduced to save Redis commands
 
 // Graceful shutdown
 export const shutdownJobs = async () => {
