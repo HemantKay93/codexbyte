@@ -6,6 +6,7 @@ import { AnalyticsService } from '../services/analyticsService.js';
 import logger from '../services/logger.js';
 import { WhatsAppRepository } from '../modules/whatsapp/whatsapp.repository.js';
 import { automationWorker } from './automation.worker.js';
+import { whatsappWorker } from './whatsapp.worker.js';
 import {
   emailQueue,
   notificationQueue,
@@ -93,9 +94,7 @@ setupDLQ(emailWorker);
 setupDLQ(notificationWorker);
 setupDLQ(analyticsWorker);
 setupDLQ(automationWorker);
-
-// Remove the internal whatsapp worker so it runs separately
-// export const whatsappWorker = new Worker(...)
+setupDLQ(whatsappWorker);
 
 // Telemetry loop for Admin Panel Dashboard
 const queues = [
@@ -134,6 +133,7 @@ export const shutdownJobs = async () => {
   await notificationWorker.close();
   await analyticsWorker.close();
   await automationWorker.close();
+  await whatsappWorker.close();
 };
 
 logger.info('[Jobs] Background workers initialized. Queue telemetry active.');
