@@ -3,7 +3,7 @@ import { redis } from '../../config/redis.js';
 import { CampaignRepository } from '../../modules/marketing/campaign.repository.js';
 import { ProviderService } from '../../modules/marketing/providers/provider.service.js';
 import { TemplateService } from '../../modules/marketing/template.service.js';
-import { IProvider } from '../../modules/marketing/providers/IProvider.js';
+import { IProvider } from '../../core/providers/IProvider.js';
 import logger from '../logger.js';
 
 const campaignRepo = new CampaignRepository();
@@ -87,7 +87,7 @@ async function processCampaign(job: Job) {
       // Prepare payloads
       const payloads = recipients.map((r: any) => {
         let body = campaign.custom_content || 'No Content';
-        
+
         // If template_id exists, we'd normally fetch it here.
         // For brevity in worker MVP, we interpolate variables into whatever content we have
         if (r.variables) {
@@ -98,18 +98,26 @@ async function processCampaign(job: Job) {
           to: r.contact_address,
           subject: campaign.name,
           body: body,
-          metadata: { recipientId: r.id }
+          metadata: { recipientId: r.id },
         };
       });
 
-      // Send via provider
-      const results = await provider.sendBulk(payloads);
+      // Use sendBulk if provider supports it, otherwise fallback to sequential send
+      let results;
+      if (provider.sendBulk) {
+        results = await provider.sendBulk(payloads);
+      } else {
+        results = [];
+        for (const p of payloads) {
+          results.push(await provider.sendMessage(p));
+        }
+      }
 
       // Update statuses
       for (let i = 0; i < results.length; i++) {
         const res = results[i];
         const rec = recipients[i];
-        
+
         if (res.success) {
           await campaignRepo.updateRecipientStatus(rec.id, 'sent', undefined, res.messageId);
           successCount++;
@@ -128,11 +136,12 @@ async function processCampaign(job: Job) {
 
     // Finished
     await campaignRepo.updateCampaignStatus(campaignId, 'completed', {
-      finished_at: new Date().toISOString()
+      finished_at: new Date().toISOString(),
     });
 
-    logger.info(`[MarketingWorker] Campaign ${campaignId} completed. Success: ${successCount}, Fail: ${failCount}`);
-
+    logger.info(
+      `[MarketingWorker] Campaign ${campaignId} completed. Success: ${successCount}, Fail: ${failCount}`
+    );
   } catch (error: any) {
     logger.error(`[MarketingWorker] Error processing campaign ${campaignId}:`, error);
     await campaignRepo.updateCampaignStatus(campaignId, 'failed');

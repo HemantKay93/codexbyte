@@ -4,11 +4,11 @@ import { redis } from '../../config/redis.js';
 import logger from '../logger.js';
 import { whatsappWorkerService } from './workerService.js';
 import { WhatsAppRepository } from '../../modules/whatsapp/whatsapp.repository.js';
-import { CloudApiProvider } from '../../modules/whatsapp/providers/cloudApiProvider.js';
+import { MetaWhatsAppProvider } from '../../core/providers/MetaWhatsAppProvider.js';
 import { CMSService } from '../../modules/cms/cms.service.js';
 
 const whatsappRepo = new WhatsAppRepository();
-const cloudApiProvider = new CloudApiProvider();
+const metaWhatsAppProvider = new MetaWhatsAppProvider();
 
 async function bootstrap() {
   logger.info('======================================');
@@ -23,7 +23,7 @@ async function bootstrap() {
 
     if (useCloudApi) {
       logger.info('[WhatsApp Worker] Booting in Cloud API Mode. OpenWA is disabled.');
-      await cloudApiProvider.initialize(waConfig);
+      await metaWhatsAppProvider.initialize();
     } else {
       logger.info('[WhatsApp Worker] Booting in Legacy OpenWA Mode.');
       await whatsappWorkerService.initialize();
@@ -49,22 +49,27 @@ async function bootstrap() {
         try {
           // Re-fetch config dynamically per job in case it was updated
           const currentSettings = await CMSService.getContent('global');
-          const currentWaConfig = currentSettings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
+          const currentWaConfig =
+            currentSettings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
           const isCloudApi = !!(currentWaConfig.accessToken && currentWaConfig.phoneNumberId);
 
           let result;
           if (isCloudApi) {
             // Hot-init provider in case credentials changed
-            await cloudApiProvider.initialize(currentWaConfig);
-            result = await cloudApiProvider.sendMessage(to, payload);
-            
+            await metaWhatsAppProvider.initialize();
+            result = await metaWhatsAppProvider.sendMessage({
+              to: to,
+              content: payload.content || '',
+              metadata: payload,
+            });
+
             if (!result.success) throw new Error(result.error);
             // If Cloud API succeeds, we don't necessarily update status to 'sent' here because the Webhook will handle 'delivered'!
             // But we mark it sent as an intermediate step.
             if (jobId) await whatsappRepo.updateMessageStatus(jobId, 'sent');
             // If we have an external message ID, we should save it. We'll update by external ID in webhook.
             if (jobId && result.messageId) {
-               // We would save the external ID here. For now, we update by job ID as sent.
+              // We would save the external ID here. For now, we update by job ID as sent.
             }
           } else {
             await whatsappWorkerService.sendMessage(to, payload);
@@ -83,8 +88,8 @@ async function bootstrap() {
         concurrency: 1,
         limiter: {
           max: 1,
-          duration: 3000
-        }
+          duration: 3000,
+        },
       }
     );
 
@@ -93,7 +98,6 @@ async function bootstrap() {
     });
 
     logger.info('[WhatsApp Bot] Listening for outgoing messages on "whatsapp-queue"...');
-    
   } catch (error) {
     logger.error('[WhatsApp Bot] Critical Error during startup:', error);
     process.exit(1);
