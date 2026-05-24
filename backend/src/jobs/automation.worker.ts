@@ -4,6 +4,7 @@ import logger from '../services/logger.js';
 import { getAdminClient } from '../config/supabase.js';
 import { JobService } from '../services/jobService.js';
 import { WhatsAppService } from '../modules/whatsapp/whatsapp.service.js';
+import { TemplateEngine } from '../core/template/TemplateEngine.js';
 
 export const automationWorker = new Worker(
   'marketing-automation',
@@ -40,7 +41,7 @@ export const automationWorker = new Worker(
     }
 
     const currentStep = steps[stepIndex];
-    let nextStepIndex = stepIndex + 1;
+    const nextStepIndex = stepIndex + 1;
     let delayMs = 0;
 
     try {
@@ -49,13 +50,18 @@ export const automationWorker = new Worker(
         case 'action_email': {
           const emailAddress = run.trigger_data?.email;
           if (emailAddress) {
+            const rawSubject = currentStep.config?.subject || 'Update from ByteEvolvr';
+            const rawContent = currentStep.config?.content || 'Here is your update.';
+
             await JobService.sendEmail(
               emailAddress,
-              currentStep.config?.subject || 'Update from ByteEvolvr',
-              currentStep.config?.content || 'Here is your update.'
+              TemplateEngine.render(rawSubject, run.trigger_data),
+              TemplateEngine.render(rawContent, run.trigger_data)
             );
           } else {
-            logger.warn(`[AutomationWorker] Run ${runId} - Email action failed: No email in trigger_data`);
+            logger.warn(
+              `[AutomationWorker] Run ${runId} - Email action failed: No email in trigger_data`
+            );
           }
           break;
         }
@@ -63,12 +69,16 @@ export const automationWorker = new Worker(
         case 'action_whatsapp': {
           const phone = run.trigger_data?.phone;
           if (phone) {
+            const rawContent = currentStep.config?.content || 'ByteEvolvr Notification';
+
             await WhatsAppService.enqueueMessage(phone, {
-              content: currentStep.config?.content || 'ByteEvolvr Notification',
-              type: 'text'
+              content: TemplateEngine.render(rawContent, run.trigger_data),
+              type: 'text',
             });
           } else {
-            logger.warn(`[AutomationWorker] Run ${runId} - WhatsApp action failed: No phone in trigger_data`);
+            logger.warn(
+              `[AutomationWorker] Run ${runId} - WhatsApp action failed: No phone in trigger_data`
+            );
           }
           break;
         }
@@ -87,7 +97,10 @@ export const automationWorker = new Worker(
       }
 
       // 3. Update Run Status and Enqueue Next Step
-      await admin.from('automation_runs').update({ current_step_index: nextStepIndex }).eq('id', runId);
+      await admin
+        .from('automation_runs')
+        .update({ current_step_index: nextStepIndex })
+        .eq('id', runId);
 
       if (nextStepIndex < steps.length) {
         const { automationQueue } = await import('../core/automation/AutomationEngine.js');
@@ -100,7 +113,6 @@ export const automationWorker = new Worker(
         await admin.from('automation_runs').update({ status: 'completed' }).eq('id', runId);
         logger.info(`[AutomationWorker] Flow run ${runId} completed.`);
       }
-
     } catch (err: any) {
       logger.error(`[AutomationWorker] Error executing step ${stepIndex} for run ${runId}:`, err);
       // Mark run as failed

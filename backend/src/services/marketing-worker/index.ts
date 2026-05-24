@@ -4,6 +4,7 @@ import { CampaignRepository } from '../../modules/marketing/campaign.repository.
 import { ProviderService } from '../../modules/marketing/providers/provider.service.js';
 import { TemplateService } from '../../modules/marketing/template.service.js';
 import { IProvider } from '../../core/providers/IProvider.js';
+import { TemplateEngine } from '../../core/template/TemplateEngine.js';
 import logger from '../logger.js';
 
 const campaignRepo = new CampaignRepository();
@@ -85,20 +86,22 @@ async function processCampaign(job: Job) {
       }
 
       // Prepare payloads
-      const payloads = recipients.map((r: any) => {
-        let body = campaign.custom_content || 'No Content';
+      const baseSubject = campaign.name;
+      const baseContent = campaign.custom_content || 'No Content';
 
-        // If template_id exists, we'd normally fetch it here.
-        // For brevity in worker MVP, we interpolate variables into whatever content we have
-        if (r.variables) {
-          body = TemplateService.interpolate(body, r.variables);
-        }
+      const payloads = recipients.map((r: any) => {
+        // Apply dynamic variable replacement using TemplateEngine
+        const finalSubject = TemplateEngine.render(baseSubject, r.variables || {});
+        const finalContent = TemplateEngine.render(baseContent, r.variables || {});
 
         return {
           to: r.contact_address,
-          subject: campaign.name,
-          body: body,
-          metadata: { recipientId: r.id },
+          subject: finalSubject,
+          content: finalContent,
+          metadata: {
+            recipientId: r.id,
+            campaignId: campaign.id,
+          },
         };
       });
 
