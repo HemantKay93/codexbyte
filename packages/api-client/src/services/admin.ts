@@ -61,7 +61,7 @@ export const AdminService = {
 
   getWarehouses: async () => {
     const response = await apiClient.get('/admin/warehouse');
-    return response.data;
+    return response.data?.data || response.data;
   },
 
   createWarehouse: async (data: any) => {
@@ -99,7 +99,7 @@ export const AdminService = {
     const response = await apiClient.post('/admin/warehouse/adjust-stock', data);
     return response.data?.data;
   },
-  
+
   transferStock: async (data: {
     productId: string;
     fromWarehouseId: string;
@@ -110,7 +110,7 @@ export const AdminService = {
     const response = await apiClient.post('/admin/warehouse/transfer-stock', data);
     return response.data?.data;
   },
-  
+
   getStockMovements: async (productId: string) => {
     const response = await apiClient.get(`/admin/warehouse/movements/${productId}`);
     return response.data?.data;
