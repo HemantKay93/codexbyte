@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import axios from 'axios';
 import logger from '../../services/logger.js';
 import { WhatsAppRepository } from './whatsapp.repository.js';
 import { CMSService } from '../cms/cms.service.js';
@@ -7,9 +8,43 @@ const repository = new WhatsAppRepository();
 
 export const webhookHealth = async (req: Request, res: Response) => {
   try {
-    // In a real scenario, you'd check if any messages were updated recently via webhook
-    res.json({ success: true, message: 'Webhook endpoint is active' });
+    let settings;
+    try {
+      settings = await CMSService.getContent('global');
+    } catch (e) {
+      logger.warn('[WhatsApp Webhook] DB settings fetch failed in health check', e);
+    }
+    const waConfig = settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
+    const token = waConfig.systemAccessToken || process.env.WHATSAPP_TOKEN;
+    const phoneId = waConfig.phoneNumberId || process.env.WHATSAPP_PHONE_ID;
+
+    if (token && phoneId) {
+      try {
+        const response = await axios.get(`https://graph.facebook.com/v17.0/${phoneId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.data && response.data.id) {
+          await repository.updateSessionState('default', { status: 'connected' });
+          return res.json({
+            success: true,
+            message: 'Webhook is active and connected to Meta Graph API!',
+          });
+        }
+      } catch (err: any) {
+        logger.error(
+          '[WhatsApp Webhook] Meta Graph API check failed:',
+          err?.response?.data || err.message
+        );
+      }
+    }
+
+    // Fallback if no token/phoneId or request fails but endpoint itself is up
+    res.json({
+      success: true,
+      message: 'Webhook endpoint is active (Meta Graph API not verified)',
+    });
   } catch (error) {
+    logger.error('[WhatsApp Webhook] Health check error:', error);
     res.status(500).json({ success: false, message: 'Failed to check webhook health' });
   }
 };
@@ -39,6 +74,10 @@ export const verifyWebhook = async (req: Request, res: Response) => {
 
     if (mode === 'subscribe' && token === expectedToken) {
       logger.info('[WhatsApp Webhook] Webhook verified successfully!');
+
+      // Update session status to connected since Meta just pinged us successfully!
+      await repository.updateSessionState('default', { status: 'connected' });
+
       return res.status(200).send(challenge);
     } else {
       logger.warn(
