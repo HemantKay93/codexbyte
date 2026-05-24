@@ -1,23 +1,32 @@
-import { supabase, getAdminClient } from '../../config/supabase.js';
+import { getAdminClient } from '../../config/supabase.js';
 
 export class CmsRepository {
+  /**
+   * IMPORTANT: We always use getAdminClient() (service role key) for BOTH reads
+   * and writes so that Row Level Security never silently blocks or filters data.
+   * The anon client (supabase) is subject to RLS which caused whatsapp_config and
+   * other settings rows saved via admin to be invisible on the next read.
+   */
   async findBySlug(pageSlug: string, sectionKeys?: string[]) {
-    let query = supabase
+    const admin = await getAdminClient();
+
+    let query = admin
       .from('cms_content')
       .select('*')
       .eq('page_slug', pageSlug)
-      .order('updated_at', { ascending: false }); // Ensure newest data comes FIRST so find() gets the latest
+      .order('updated_at', { ascending: false }); // Newest first
 
     if (sectionKeys && sectionKeys.length > 0) {
       query = query.in('section_key', sectionKeys);
     }
 
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      console.error(`[CMS] findBySlug ERROR for ${pageSlug}:`, error);
+      throw error;
+    }
 
-    // The database might be missing the unique constraint and creating duplicates.
-    // Since we order by updated_at descending, the newest row is first.
-    // We deduplicate in memory to ensure only the latest row is returned.
+    // Deduplicate — always keep the newest row per section_key
     const deduplicated: any[] = [];
     const seen = new Set<string>();
     for (const row of data || []) {

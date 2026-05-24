@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, Input, Button } from '../components/ui';
 import { CMSService } from '@byteevolvr/api-client';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
+
+type SaveStatus = { type: 'success' | 'error'; msg: string } | null;
 
 export function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [storeStatus, setStoreStatus] = useState<SaveStatus>(null);
+  const [waStatus, setWaStatus] = useState<SaveStatus>(null);
+  const [emailStatus, setEmailStatus] = useState<SaveStatus>(null);
+  const [pushStatus, setPushStatus] = useState<SaveStatus>(null);
   const [settings, setSettings] = useState({
     storeName: '',
     supportEmail: '',
@@ -50,10 +56,11 @@ export function SettingsPage() {
   const fetchApiConfig = async () => {
     try {
       const data = await CMSService.getContent('global');
+
       const api = data?.find((s: any) => s.section_key === 'api_config')?.content || {};
       setApiConfig({
-        publicKey: api.publicKey || `pk_live_${Math.random().toString(36).substring(2, 15)}`,
-        secretKey: api.secretKey || `sk_live_${Math.random().toString(36).substring(2, 15)}`,
+        publicKey: api.publicKey || '',
+        secretKey: api.secretKey || '',
       });
 
       const wa = data?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
@@ -61,7 +68,9 @@ export function SettingsPage() {
         accessToken: wa.accessToken || '',
         phoneNumberId: wa.phoneNumberId || '',
         businessAccountId: wa.businessAccountId || '',
-        webhookVerifyToken: wa.webhookVerifyToken || crypto.randomUUID().replace(/-/g, ''),
+        // IMPORTANT: Do NOT generate a random token here. Show blank if not saved.
+        // A random value here caused users to lose their real token on every page load.
+        webhookVerifyToken: wa.webhookVerifyToken || '',
       });
 
       const emailConf = data?.find((s: any) => s.section_key === 'email_config')?.content || {};
@@ -110,14 +119,17 @@ export function SettingsPage() {
 
   const saveWhatsappConfig = async () => {
     setSaving(true);
+    setWaStatus(null);
     try {
       await CMSService.updateContent('global', 'whatsapp_config', {
         ...whatsappConfig,
         updatedAt: new Date().toISOString(),
       });
-      alert('WhatsApp Configuration saved successfully!');
-    } catch (err) {
-      alert('Failed to save WhatsApp configuration.');
+      setWaStatus({ type: 'success', msg: 'WhatsApp configuration saved successfully!' });
+    } catch (err: any) {
+      const msg = err?.customMessage || err?.message || 'Failed to save WhatsApp configuration.';
+      setWaStatus({ type: 'error', msg });
+      console.error('[Settings] WhatsApp save error:', err);
     } finally {
       setSaving(false);
     }
@@ -125,14 +137,17 @@ export function SettingsPage() {
 
   const saveEmailConfig = async () => {
     setSaving(true);
+    setEmailStatus(null);
     try {
       await CMSService.updateContent('global', 'email_config', {
         ...emailConfig,
         updatedAt: new Date().toISOString(),
       });
-      alert('Email Configuration saved successfully!');
-    } catch (err) {
-      alert('Failed to save Email configuration.');
+      setEmailStatus({ type: 'success', msg: 'Email configuration saved successfully!' });
+    } catch (err: any) {
+      const msg = err?.customMessage || err?.message || 'Failed to save Email configuration.';
+      setEmailStatus({ type: 'error', msg });
+      console.error('[Settings] Email save error:', err);
     } finally {
       setSaving(false);
     }
@@ -140,14 +155,20 @@ export function SettingsPage() {
 
   const savePushConfig = async () => {
     setSaving(true);
+    setPushStatus(null);
     try {
       await CMSService.updateContent('global', 'push_config', {
         ...pushConfig,
         updatedAt: new Date().toISOString(),
       });
-      alert('Push Configuration saved successfully!');
-    } catch (err) {
-      alert('Failed to save Push configuration.');
+      setPushStatus({
+        type: 'success',
+        msg: 'Push notification configuration saved successfully!',
+      });
+    } catch (err: any) {
+      const msg = err?.customMessage || err?.message || 'Failed to save Push configuration.';
+      setPushStatus({ type: 'error', msg });
+      console.error('[Settings] Push save error:', err);
     } finally {
       setSaving(false);
     }
@@ -177,19 +198,20 @@ export function SettingsPage() {
 
   const handleSave = async () => {
     setSaving(true);
+    setStoreStatus(null);
     try {
-      // Update global contact section which is used for store details
       await CMSService.updateContent('global', 'contact', {
         storeName: settings.storeName,
         email: settings.supportEmail,
         phone: settings.phone,
         address: settings.address,
-        workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM', // Preserve default
+        workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
       });
-      alert('Settings saved successfully!');
-    } catch (err) {
-      console.error('Failed to save settings:', err);
-      alert('Failed to save settings.');
+      setStoreStatus({ type: 'success', msg: 'Store details saved successfully!' });
+    } catch (err: any) {
+      const msg = err?.customMessage || err?.message || 'Failed to save store details.';
+      setStoreStatus({ type: 'error', msg });
+      console.error('[Settings] Store save error:', err);
     } finally {
       setSaving(false);
     }
@@ -246,6 +268,20 @@ export function SettingsPage() {
               onChange={(e) => setSettings({ ...settings, address: e.target.value })}
             ></textarea>
           </div>
+          {storeStatus && (
+            <div
+              className={`flex items-center gap-2 text-sm ${
+                storeStatus.type === 'success' ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
+              {storeStatus.type === 'success' ? (
+                <CheckCircle2 className="h-4 w-4" />
+              ) : (
+                <XCircle className="h-4 w-4" />
+              )}
+              {storeStatus.msg}
+            </div>
+          )}
           <div className="flex justify-end">
             <Button onClick={handleSave} disabled={saving} className="gap-2">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
@@ -306,7 +342,9 @@ export function SettingsPage() {
               label="Permanent Access Token"
               value={whatsappConfig.accessToken}
               type="password"
-              onChange={(e) => setWhatsappConfig({ ...whatsappConfig, accessToken: e.target.value })}
+              onChange={(e) =>
+                setWhatsappConfig({ ...whatsappConfig, accessToken: e.target.value })
+              }
               placeholder="EAAI..."
             />
           </div>
@@ -314,23 +352,62 @@ export function SettingsPage() {
             <Input
               label="Phone Number ID"
               value={whatsappConfig.phoneNumberId}
-              onChange={(e) => setWhatsappConfig({ ...whatsappConfig, phoneNumberId: e.target.value })}
+              onChange={(e) =>
+                setWhatsappConfig({ ...whatsappConfig, phoneNumberId: e.target.value })
+              }
             />
             <Input
               label="Business Account ID"
               value={whatsappConfig.businessAccountId}
-              onChange={(e) => setWhatsappConfig({ ...whatsappConfig, businessAccountId: e.target.value })}
+              onChange={(e) =>
+                setWhatsappConfig({ ...whatsappConfig, businessAccountId: e.target.value })
+              }
             />
-            <Input
-              label="Webhook Verify Token"
-              value={whatsappConfig.webhookVerifyToken}
-              onChange={(e) => setWhatsappConfig({ ...whatsappConfig, webhookVerifyToken: e.target.value })}
-              className="font-mono text-xs"
-            />
+            <div>
+              <Input
+                label="Webhook Verify Token"
+                value={whatsappConfig.webhookVerifyToken}
+                onChange={(e) =>
+                  setWhatsappConfig({ ...whatsappConfig, webhookVerifyToken: e.target.value })
+                }
+                className="font-mono text-xs"
+                placeholder="Enter a secure token or generate one below"
+              />
+              <button
+                type="button"
+                onClick={() =>
+                  setWhatsappConfig({
+                    ...whatsappConfig,
+                    webhookVerifyToken: crypto.randomUUID().replace(/-/g, ''),
+                  })
+                }
+                className="mt-1 flex items-center gap-1 text-xs text-primary hover:underline"
+              >
+                <RefreshCw className="h-3 w-3" /> Generate new token
+              </button>
+            </div>
           </div>
+          {waStatus && (
+            <div
+              className={`flex items-center gap-2 text-sm mt-2 ${
+                waStatus.type === 'success' ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
+              {waStatus.type === 'success' ? (
+                <CheckCircle2 className="h-4 w-4" />
+              ) : (
+                <XCircle className="h-4 w-4" />
+              )}
+              {waStatus.msg}
+            </div>
+          )}
           <div className="flex justify-end gap-2">
             <Button onClick={saveWhatsappConfig} disabled={saving}>
-              {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              {saving ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Save className="h-4 w-4 mr-1" />
+              )}
               Save WhatsApp Config
             </Button>
           </div>
@@ -360,11 +437,13 @@ export function SettingsPage() {
             <Input
               label="Default 'From' Address"
               value={emailConfig.defaultFromAddress}
-              onChange={(e) => setEmailConfig({ ...emailConfig, defaultFromAddress: e.target.value })}
+              onChange={(e) =>
+                setEmailConfig({ ...emailConfig, defaultFromAddress: e.target.value })
+              }
               placeholder="noreply@byteevolvr.com"
             />
           </div>
-          
+
           {emailConfig.activeProvider === 'resend' && (
             <div className="grid grid-cols-1 gap-6">
               <Input
