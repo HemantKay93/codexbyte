@@ -6,6 +6,12 @@ import { CMSService } from '../cms/cms.service.js';
 
 const repository = new WhatsAppRepository();
 
+/**
+ * GET /whatsapp/webhook/health
+ * Called by the Admin Dashboard "Verify Webhook Connection" button.
+ * Performs a live Meta Graph API handshake using credentials from DB.
+ * Returns { success: true, connected: true/false, message, phoneInfo }
+ */
 export const webhookHealth = async (req: Request, res: Response) => {
   try {
     let settings;
@@ -14,49 +20,92 @@ export const webhookHealth = async (req: Request, res: Response) => {
     } catch (e) {
       logger.warn('[WhatsApp Webhook] DB settings fetch failed in health check', e);
     }
-    const waConfig = settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
-    const token = waConfig.accessToken || process.env.WHATSAPP_TOKEN;
-    const phoneId = waConfig.phoneNumberId || process.env.WHATSAPP_PHONE_ID;
 
-    if (token && phoneId) {
-      try {
-        const response = await axios.get(`https://graph.facebook.com/v17.0/${phoneId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (response.data && response.data.id) {
-          await repository.updateSessionState('default', { status: 'connected' });
-          return res.json({
-            success: true,
-            message: 'Webhook is active and connected to Meta Graph API!',
-          });
-        }
-      } catch (err: any) {
-        logger.error(
-          '[WhatsApp Webhook] Meta Graph API check failed:',
-          err?.response?.data || err.message
-        );
-      }
+    const waConfig = settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
+    const token =
+      waConfig.accessToken || process.env.WHATSAPP_ACCESS_TOKEN || process.env.WHATSAPP_TOKEN;
+    const phoneId =
+      waConfig.phoneNumberId ||
+      process.env.WHATSAPP_PHONE_NUMBER_ID ||
+      process.env.WHATSAPP_PHONE_ID;
+
+    // --- No credentials at all ---
+    if (!token || !phoneId) {
+      return res.json({
+        success: true,
+        connected: false,
+        message:
+          'WhatsApp credentials (Access Token / Phone Number ID) are not configured in Settings.',
+        phoneInfo: null,
+      });
     }
 
-    // Fallback if no token/phoneId or request fails but endpoint itself is up
-    res.json({
+    // --- Live Meta Graph API handshake ---
+    try {
+      const graphRes = await axios.get(`https://graph.facebook.com/v19.0/${phoneId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 8000,
+      });
+
+      if (graphRes.data && graphRes.data.id) {
+        // Mark session as connected in DB
+        await repository.updateSessionState('default', { status: 'connected' });
+
+        return res.json({
+          success: true,
+          connected: true,
+          message: 'Webhook is active and verified with Meta Graph API!',
+          phoneInfo: {
+            id: graphRes.data.id,
+            displayPhoneNumber: graphRes.data.display_phone_number,
+            verifiedName: graphRes.data.verified_name,
+          },
+        });
+      }
+    } catch (metaErr: any) {
+      const metaError = metaErr?.response?.data?.error || metaErr.message;
+      logger.error('[WhatsApp Webhook] Meta Graph API handshake failed:', metaError);
+
+      // Mark as disconnected
+      await repository.updateSessionState('default', { status: 'disconnected' }).catch(() => {});
+
+      return res.json({
+        success: true,
+        connected: false,
+        message: `Meta API Error: ${metaError?.message || JSON.stringify(metaError)}`,
+        phoneInfo: null,
+      });
+    }
+
+    // Fallback (should not reach here)
+    return res.json({
       success: true,
-      message: 'Webhook endpoint is active (Meta Graph API not verified)',
+      connected: false,
+      message: 'Unexpected response from Meta Graph API.',
+      phoneInfo: null,
     });
   } catch (error) {
     logger.error('[WhatsApp Webhook] Health check error:', error);
-    res.status(500).json({ success: false, message: 'Failed to check webhook health' });
+    res.status(500).json({
+      success: false,
+      connected: false,
+      message: 'Internal server error during health check',
+    });
   }
 };
 
+/**
+ * GET /whatsapp/webhook
+ * Called by Meta to verify the webhook subscription.
+ */
 export const verifyWebhook = async (req: Request, res: Response) => {
   try {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
 
-    // Fetch expected token from global settings OR environment variable fallback
-    let expectedToken = process.env.WHATSAPP_VERIFY_TOKEN; // Default to env
+    // Fetch expected token from global settings OR env fallback
+    let expectedToken = process.env.WHATSAPP_VERIFY_TOKEN;
     try {
       const settings = await CMSService.getContent('global');
       const waConfig =
@@ -69,19 +118,16 @@ export const verifyWebhook = async (req: Request, res: Response) => {
     }
 
     logger.info(
-      `[WhatsApp Webhook] mode: ${mode}, token: ${token}, expectedToken: ${expectedToken}`
+      `[WhatsApp Webhook] Verification attempt — mode: ${mode}, received token: ${token}, expected: ${expectedToken}`
     );
 
     if (mode === 'subscribe' && token === expectedToken) {
-      logger.info('[WhatsApp Webhook] Webhook verified successfully!');
-
-      // Update session status to connected since Meta just pinged us successfully!
+      logger.info('[WhatsApp Webhook] Webhook verified successfully by Meta!');
       await repository.updateSessionState('default', { status: 'connected' });
-
       return res.status(200).send(challenge);
     } else {
       logger.warn(
-        `[WhatsApp Webhook] Webhook verification failed. Token mismatch. Received: ${token}, Expected: ${expectedToken}`
+        `[WhatsApp Webhook] Verification FAILED. Received: "${token}", Expected: "${expectedToken}"`
       );
       return res.sendStatus(403);
     }
@@ -91,45 +137,65 @@ export const verifyWebhook = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * POST /whatsapp/webhook
+ * Receives incoming message events and delivery status updates from Meta.
+ */
 export const handleWebhookEvent = async (req: Request, res: Response) => {
+  // Always respond 200 immediately — Meta requires this within 20 seconds
+  res.sendStatus(200);
+
   try {
     const body = req.body;
 
-    // Check if it's a WhatsApp status update
-    if (body.object === 'whatsapp_business_account') {
-      for (const entry of body.entry) {
-        for (const change of entry.changes) {
-          if (change.value && change.value.statuses) {
-            for (const status of change.value.statuses) {
-              const messageId = status.id;
-              const deliveryStatus = status.status; // 'sent', 'delivered', 'read', 'failed'
+    if (body.object !== 'whatsapp_business_account') {
+      logger.warn('[WhatsApp Webhook] Received non-WhatsApp webhook event:', body.object);
+      return;
+    }
 
-              logger.info(
-                `[WhatsApp Webhook] Message ${messageId} status updated to ${deliveryStatus}`
-              );
+    for (const entry of body.entry || []) {
+      for (const change of entry.changes || []) {
+        const value = change.value;
 
-              // Map Cloud API statuses to our DB statuses
-              let mappedStatus: 'queued' | 'sent' | 'failed' | 'delivered' = 'sent';
-              if (deliveryStatus === 'delivered' || deliveryStatus === 'read')
-                mappedStatus = 'delivered';
-              if (deliveryStatus === 'failed') mappedStatus = 'failed';
+        // --- Delivery status updates (sent/delivered/read/failed) ---
+        if (value?.statuses) {
+          for (const status of value.statuses) {
+            const messageId = status.id;
+            const deliveryStatus = status.status;
 
-              // Update the repository based on the external messageId
-              await repository.updateMessageStatusByExternalId(messageId, mappedStatus);
-            }
+            logger.info(
+              `[WhatsApp Webhook] Status update — Message ${messageId}: ${deliveryStatus}`
+            );
+
+            let mappedStatus: 'queued' | 'sent' | 'failed' | 'delivered' = 'sent';
+            if (deliveryStatus === 'delivered' || deliveryStatus === 'read')
+              mappedStatus = 'delivered';
+            if (deliveryStatus === 'failed') mappedStatus = 'failed';
+
+            const errorLog =
+              deliveryStatus === 'failed'
+                ? status.errors?.[0]?.title || 'Unknown error from Meta'
+                : undefined;
+
+            await repository.updateMessageStatusByExternalId(messageId, mappedStatus, errorLog);
+          }
+        }
+
+        // --- Incoming messages (from customers) ---
+        if (value?.messages) {
+          for (const msg of value.messages) {
+            logger.info(
+              `[WhatsApp Webhook] Incoming message from ${msg.from}: ${msg.text?.body || '[media]'}`
+            );
+            // TODO: Route to support/chat module when ready
           }
         }
       }
-
-      // Update session last active to keep dashboard connection status green
-      await repository.updateSessionLastActive();
-
-      return res.sendStatus(200);
-    } else {
-      return res.sendStatus(404);
     }
+
+    // Keep session marked active
+    await repository.updateSessionLastActive();
   } catch (error) {
-    logger.error('[WhatsApp Webhook] Error handling event:', error);
-    res.sendStatus(500);
+    logger.error('[WhatsApp Webhook] Error processing webhook event:', error);
   }
 };
