@@ -273,22 +273,22 @@ export const getProviders = async (req: Request, res: Response) => {
 
 export const updateProvider = async (req: Request, res: Response) => {
   try {
-    const { provider_id, enabled, priority, credentials } = req.body;
-    if (!provider_id)
-      return res.status(400).json({ success: false, message: 'provider_id is required' });
+    const { provider_name, is_enabled, priority, config } = req.body;
+    if (!provider_name)
+      return res.status(400).json({ success: false, message: 'provider_name is required' });
 
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('provider_configs')
       .upsert(
         {
-          provider_id,
-          enabled,
+          provider_name,
+          is_enabled,
           priority,
-          credentials,
+          config,
           updated_at: new Date().toISOString(),
         },
-        { onConflict: 'provider_id' }
+        { onConflict: 'provider_name' }
       )
       .select()
       .single();
