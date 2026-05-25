@@ -1,18 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Badge,
-  Button,
-  Input,
-} from '../components/ui';
+import { Card, Badge, Button, Input } from '@byteevolvr/ui';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/Table';
 import { Search, Filter, Download, MoreHorizontal, Loader2 } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
@@ -20,14 +9,14 @@ import { AdminService } from '@byteevolvr/api-client';
 export function OrderManagementPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const { orders, setOrders, isLoading, setLoading, setError } = useAdminStore();
+  const { orders, setOrders, setError } = useAdminStore();
 
   useEffect(() => {
     fetchOrders();
   }, []);
 
   async function fetchOrders() {
-    setLoading(true);
+    
     try {
       const data = await AdminService.getOrders();
       // Map user_profiles to user for backward compatibility
@@ -40,7 +29,7 @@ export function OrderManagementPage() {
       console.error('Failed to fetch orders:', error);
       setError(error.customMessage || 'Failed to load orders');
     } finally {
-      setLoading(false);
+      
     }
   }
 
@@ -103,7 +92,7 @@ export function OrderManagementPage() {
                 placeholder="Search orders by ID or customer..."
                 className="pl-9"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e: any) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
@@ -114,7 +103,7 @@ export function OrderManagementPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -127,7 +116,7 @@ export function OrderManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
+              {false ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-12">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
@@ -175,7 +164,7 @@ export function OrderManagementPage() {
                             order.status === 'delivered' || order.status === 'refunded'
                               ? 'success'
                               : order.status === 'shipped' || order.status === 'packed' || order.status === 'confirmed'
-                                ? 'info'
+                                ? 'primary'
                                 : order.status === 'cancelled'
                                   ? 'error'
                                   : 'warning'
@@ -198,7 +187,7 @@ export function OrderManagementPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
         <div className="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
           <div>Showing {filteredOrders.length} orders</div>
           <div className="flex gap-2">

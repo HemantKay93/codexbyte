@@ -6,6 +6,11 @@ export const AdminService = {
     return response.data;
   },
 
+  getRevenueChart: async (months = 6) => {
+    const response = await apiClient.get('/admin/revenue-chart', { params: { months } });
+    return response.data;
+  },
+
   getOrders: async (params?: any) => {
     const response = await apiClient.get('/admin/orders', { params });
     return response.data;

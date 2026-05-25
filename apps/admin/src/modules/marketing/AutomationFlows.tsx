@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, Button, Input } from '../../components/ui';
+import { Card, Button, Input } from '@byteevolvr/ui';;
 import { GitBranch, Play, Settings, Plus, Loader2, X } from 'lucide-react';
 import { MarketingService } from '@byteevolvr/api-client';
 
@@ -79,20 +79,20 @@ export function AutomationFlows() {
         ) : (
           flows.map((flow) => (
             <Card key={flow.id}>
-              <CardHeader className="pb-3 border-b border-outline/50">
+              <div className="pb-3 border-b border-outline/50">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                       <GitBranch className="h-4 w-4" />
                     </div>
-                    <CardTitle className="text-title-md">{flow.name}</CardTitle>
+                    <div className="text-title-md">{flow.name}</div>
                   </div>
                   <div className={`px-2 py-0.5 rounded-full text-xs font-medium ${flow.is_active ? 'bg-success/10 text-success' : 'bg-surface text-on-surface-variant'}`}>
                     {flow.is_active ? 'Active' : 'Draft'}
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-4 space-y-4">
+              </div>
+              <div className="pt-4 space-y-4">
                 <p className="text-body-sm text-on-surface-variant line-clamp-2 h-10">
                   {flow.description || 'No description provided.'}
                 </p>
@@ -112,7 +112,7 @@ export function AutomationFlows() {
                     <Play className="h-4 w-4" />
                   </Button>
                 </div>
-              </CardContent>
+              </div>
             </Card>
           ))
         )}

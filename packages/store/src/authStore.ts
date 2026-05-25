@@ -60,6 +60,10 @@ export const useAuthStore = create<AuthState>()(
         const adminToken = localStorage.getItem('admin_token');
         const authToken = localStorage.getItem('auth_token');
         const token = adminToken || authToken;
+        if (!token) {
+          set({ user: null, token: null, isAdmin: false });
+          return;
+        }
         set({ token, isAdmin: !!adminToken });
       },
     }),

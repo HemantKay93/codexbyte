@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, Input, Button, Badge } from '../components/ui';
+import { Card, Input, Button, Badge } from '@byteevolvr/ui';;
 import {
   Search,
   ShoppingCart,
@@ -211,31 +211,35 @@ export function POSPage() {
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
                 {filteredProducts.map((product) => (
-                  <Card
+                  <div
                     key={product.id}
-                    className="cursor-pointer hover:border-primary hover:shadow-md transition-all h-36 flex flex-col justify-between p-4 group bg-surface"
+                    className="cursor-pointer"
                     onClick={() => addToCart(product)}
                   >
-                    <div>
-                      <div className="font-semibold text-on-surface line-clamp-2 group-hover:text-primary transition-colors text-sm">
-                        {product.name}
+                    <Card
+                      className="hover:border-primary hover:shadow-md transition-all h-36 flex flex-col justify-between p-4 group bg-surface"
+                    >
+                      <div>
+                        <div className="font-semibold text-on-surface line-clamp-2 group-hover:text-primary transition-colors text-sm">
+                          {product.name}
+                        </div>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-[10px] font-mono text-on-surface-variant uppercase">
+                            {product.sku}
+                          </span>
+                          <Badge
+                            variant={product.stock_quantity > 0 ? 'success' : 'error'}
+                            className="text-[10px]"
+                          >
+                            {product.stock_quantity}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between mt-2">
-                        <span className="text-[10px] font-mono text-on-surface-variant uppercase">
-                          {product.sku}
-                        </span>
-                        <Badge
-                          variant={product.stock_quantity > 0 ? 'success' : 'error'}
-                          className="text-[10px]"
-                        >
-                          {product.stock_quantity}
-                        </Badge>
+                      <div className="text-lg font-bold text-primary">
+                        ₹{Number(product.price).toLocaleString()}
                       </div>
-                    </div>
-                    <div className="text-lg font-bold text-primary">
-                      ₹{Number(product.price).toLocaleString()}
-                    </div>
-                  </Card>
+                    </Card>
+                  </div>
                 ))}
               </div>
             )}
@@ -249,7 +253,7 @@ export function POSPage() {
               <ShoppingCart className="h-5 w-5 text-primary" />
               <span className="font-semibold text-lg text-on-surface">Current Order</span>
             </div>
-            <Badge variant="info">{cart.reduce((a, b) => a + b.qty, 0)} items</Badge>
+            <Badge variant="primary">{cart.reduce((a, b) => a + b.qty, 0)} items</Badge>
           </div>
 
           <div className="flex items-center gap-2 mb-4 bg-surface p-2 rounded border border-outline-variant">
@@ -383,7 +387,7 @@ export function POSPage() {
                 &times;
               </button>
             </div>
-            <CardContent className="p-6 space-y-6">
+            <div className="p-6 space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
                   Full Name
@@ -391,9 +395,8 @@ export function POSPage() {
                 <Input
                   value={tempCustomer.name}
                   onChange={(e) => setTempCustomer({ ...tempCustomer, name: e.target.value })}
-                  className="h-11"
+                  className="h-11 w-full"
                   placeholder="Customer Name"
-                  fullWidth
                 />
               </div>
               <div className="space-y-2">
@@ -404,9 +407,8 @@ export function POSPage() {
                   type="email"
                   value={tempCustomer.email}
                   onChange={(e) => setTempCustomer({ ...tempCustomer, email: e.target.value })}
-                  className="h-11"
+                  className="h-11 w-full"
                   placeholder="email@example.com"
-                  fullWidth
                 />
               </div>
               <div className="space-y-2">
@@ -416,9 +418,8 @@ export function POSPage() {
                 <Input
                   value={tempCustomer.phone}
                   onChange={(e) => setTempCustomer({ ...tempCustomer, phone: e.target.value })}
-                  className="h-11"
+                  className="h-11 w-full"
                   placeholder="00000 00000"
-                  fullWidth
                 />
               </div>
               <div className="pt-4 flex gap-3">
@@ -433,7 +434,7 @@ export function POSPage() {
                   Save Details
                 </Button>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </div>
       )}

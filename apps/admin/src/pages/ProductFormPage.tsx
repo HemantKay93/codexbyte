@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Button } from '../components/ui';
+import { Card, Button } from '@byteevolvr/ui';;
 import {
   ArrowLeft,
   Save,
@@ -128,7 +128,7 @@ export function ProductFormPage() {
             <div className="p-4 border-b border-outline-variant">
               <h2 className="text-lg font-semibold text-on-surface">General Information</h2>
             </div>
-            <CardContent className="p-6 space-y-4">
+            <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-on-surface mb-1.5">
                   Product Title
@@ -153,14 +153,14 @@ export function ProductFormPage() {
                   placeholder="Write a detailed product description..."
                 ></textarea>
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           <Card>
             <div className="p-4 border-b border-outline-variant flex items-center justify-between">
               <h2 className="text-lg font-semibold text-on-surface">Media</h2>
             </div>
-            <CardContent className="p-6 space-y-6">
+            <div className="p-6 space-y-6">
               <div className="space-y-4">
                 <label className="block text-sm font-medium text-on-surface">
                   Primary Image URL
@@ -266,14 +266,14 @@ export function ProductFormPage() {
                   )}
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           <Card>
             <div className="p-4 border-b border-outline-variant">
               <h2 className="text-lg font-semibold text-on-surface">Inventory & Pricing</h2>
             </div>
-            <CardContent className="p-6">
+            <div className="p-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-on-surface mb-1.5">
@@ -310,7 +310,7 @@ export function ProductFormPage() {
                   />
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           <Card>
@@ -333,7 +333,7 @@ export function ProductFormPage() {
                 <Plus className="h-4 w-4 mr-1" /> Add Variant
               </Button>
             </div>
-            <CardContent className="p-6 space-y-4">
+            <div className="p-6 space-y-4">
               {formData.variants?.map((variant: any, index: number) => (
                 <div
                   key={index}
@@ -425,7 +425,7 @@ export function ProductFormPage() {
                   No variants defined for this product.
                 </div>
               )}
-            </CardContent>
+            </div>
           </Card>
         </div>
 
@@ -435,7 +435,7 @@ export function ProductFormPage() {
             <div className="p-4 border-b border-outline-variant">
               <h2 className="text-lg font-semibold text-on-surface">Status</h2>
             </div>
-            <CardContent className="p-6">
+            <div className="p-6">
               <select
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
@@ -445,14 +445,14 @@ export function ProductFormPage() {
                 <option value="draft">Draft</option>
                 <option value="out_of_stock">Out of Stock</option>
               </select>
-            </CardContent>
+            </div>
           </Card>
 
           <Card>
             <div className="p-4 border-b border-outline-variant">
               <h2 className="text-lg font-semibold text-on-surface">Organization</h2>
             </div>
-            <CardContent className="p-6 space-y-4">
+            <div className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-on-surface mb-1.5">Category</label>
                 <select
@@ -479,7 +479,7 @@ export function ProductFormPage() {
                   placeholder="e.g. Sony"
                 />
               </div>
-            </CardContent>
+            </div>
           </Card>
         </div>
       </div>

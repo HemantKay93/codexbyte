@@ -19,8 +19,8 @@ export class WhatsAppService {
       status: 'queued'
     });
 
-    // Add to BullMQ
-    const job = await whatsappQueue.add(
+    // Add to BullMQ — use record.id as the unique jobId to prevent duplicates
+    await whatsappQueue.add(
       'send-message',
       {
         jobId: record.id,
@@ -28,9 +28,10 @@ export class WhatsAppService {
         payload: { ...payload, to }
       },
       {
+        jobId: `wa-${record.id}`, // Dedup key: BullMQ will reject any duplicate with the same ID
         priority,
-        attempts: 3,
-        backoff: { type: 'exponential', delay: 2000 }
+        attempts: 2,             // 1 try + 1 retry — 3 was showing as 4 entries in queue
+        backoff: { type: 'exponential', delay: 3000 }
       }
     );
 

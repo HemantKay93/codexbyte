@@ -1,17 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Input,
-} from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import { Search, Filter, Plus, Truck, Building2, ExternalLink, Loader2, X } from 'lucide-react';
 
 import { AdminService } from '@byteevolvr/api-client';
@@ -84,7 +73,7 @@ export function SuppliersPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
-          <CardContent className="p-6 flex items-center justify-between">
+          <div className="p-6 flex items-center justify-between">
             <div>
               <div className="text-on-surface-variant font-medium text-sm mb-1">
                 Active Suppliers
@@ -92,26 +81,26 @@ export function SuppliersPage() {
               <div className="text-3xl font-bold text-on-surface">{suppliers.length}</div>
             </div>
             <Building2 className="h-8 w-8 text-on-surface-variant opacity-50" />
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6 flex items-center justify-between">
+          <div className="p-6 flex items-center justify-between">
             <div>
               <div className="text-on-surface-variant font-medium text-sm mb-1">Pending POs</div>
               <div className="text-3xl font-bold text-primary">{purchaseOrders.filter(po => po.status === 'pending').length}</div>
             </div>
             <Truck className="h-8 w-8 text-primary opacity-50" />
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6 flex items-center justify-between">
+          <div className="p-6 flex items-center justify-between">
             <div>
               <div className="text-on-surface-variant font-medium text-sm mb-1">
                 Delayed Shipments
               </div>
               <div className="text-3xl font-bold text-error">2</div>
             </div>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -134,7 +123,7 @@ export function SuppliersPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -186,7 +175,7 @@ export function SuppliersPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
       </Card>
 
       {/* Add Supplier Modal */}

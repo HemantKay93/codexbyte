@@ -1,32 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Button,
-  Input,
-  Badge,
-} from '../components/ui';
+import { Card, Button, Input, Badge } from '@byteevolvr/ui';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/Table';;
 import { Search, Download, Filter, MoreHorizontal, Mail, Loader2, User } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
 
 export function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const { customers, setCustomers, isLoading, setLoading, setError } = useAdminStore();
+  const { customers, setCustomers, setError } = useAdminStore();
 
   useEffect(() => {
     fetchCustomers();
   }, []);
 
   async function fetchCustomers() {
-    setLoading(true);
+    
     try {
       const data = await AdminService.getCustomers();
       setCustomers(data || []);
@@ -34,7 +23,7 @@ export function CustomersPage() {
       console.error('Error fetching customers:', err);
       setError(err.customMessage || 'Failed to load customers');
     } finally {
-      setLoading(false);
+      
     }
   }
 
@@ -104,7 +93,7 @@ export function CustomersPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -123,7 +112,7 @@ export function CustomersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
+              {false ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
@@ -180,7 +169,7 @@ export function CustomersPage() {
                       ₹{(customer.totalSpent || 0).toLocaleString()}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={customer.role === 'admin' ? 'info' : 'default'}>
+                      <Badge variant={customer.role === 'admin' ? 'primary' : 'secondary'}>
                         {(customer.role || 'user').charAt(0).toUpperCase() +
                           (customer.role || 'user').slice(1)}
                       </Badge>
@@ -195,7 +184,7 @@ export function CustomersPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
         <div className="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
           <div>Showing {filteredCustomers.length} customers</div>
           <div className="flex gap-2">

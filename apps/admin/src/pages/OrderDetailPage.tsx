@@ -1,18 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Input,
-} from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import { printInvoice } from '@byteevolvr/ui';
 import {
   ArrowLeft,
@@ -183,7 +172,7 @@ export function OrderDetailPage() {
                   order.status === 'delivered' || order.status === 'refunded'
                     ? 'success'
                     : order.status === 'shipped' || order.status === 'packed' || order.status === 'confirmed'
-                      ? 'info'
+                      ? 'primary'
                       : order.status === 'cancelled'
                         ? 'error'
                         : 'warning'
@@ -305,7 +294,7 @@ export function OrderDetailPage() {
 
       {/* Status Stepper */}
       <Card className="border-none shadow-sm mb-6 bg-surface-container-lowest">
-        <CardContent className="p-6">
+        <div className="p-6">
           <div className="flex items-center justify-between relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-outline-variant -z-10 rounded-full" />
             
@@ -341,7 +330,7 @@ export function OrderDetailPage() {
               <span className="text-sm font-bold">Delivered</span>
             </div>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -353,7 +342,7 @@ export function OrderDetailPage() {
               <h2 className="text-lg font-bold text-on-surface">Order Items ({items.length})</h2>
               <Package className="h-5 w-5 text-on-surface-variant" />
             </div>
-            <CardContent className="p-0">
+            <div className="p-0">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-surface-container-lowest">
@@ -405,7 +394,7 @@ export function OrderDetailPage() {
                   ))}
                 </TableBody>
               </Table>
-            </CardContent>
+            </div>
           </Card>
 
           {/* Activity Logs Timeline */}
@@ -417,9 +406,9 @@ export function OrderDetailPage() {
                 onClick={() => loadData()}
               />
             </div>
-            <CardContent className="p-8">
+            <div className="p-8">
               <OrderActivityLogs orderId={id!} key={refreshLogsKey} />
-            </CardContent>
+            </div>
           </Card>
         </div>
 
@@ -430,7 +419,7 @@ export function OrderDetailPage() {
             <div className="p-6 border-b border-outline-variant">
               <h2 className="text-lg font-bold text-on-surface">Customer Detail</h2>
             </div>
-            <CardContent className="p-6 space-y-6">
+            <div className="p-6 space-y-6">
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black text-xl">
                   {(order.customer_name || 'C').charAt(0)}
@@ -463,7 +452,7 @@ export function OrderDetailPage() {
                   <p className="text-sm text-on-surface-variant italic">No address specified</p>
                 )}
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           {/* Payment Summary */}
@@ -471,7 +460,7 @@ export function OrderDetailPage() {
             <div className="p-6 border-b border-outline-variant">
               <h2 className="text-lg font-bold text-on-surface">Billing Overview</h2>
             </div>
-            <CardContent className="p-6 space-y-4">
+            <div className="p-6 space-y-4">
               <div className="flex justify-between text-sm">
                 <span className="text-on-surface-variant font-medium">Subtotal</span>
                 <span className="text-on-surface font-bold">
@@ -498,7 +487,7 @@ export function OrderDetailPage() {
                   ₹{Number(order.total_amount).toLocaleString()}
                 </span>
               </div>
-            </CardContent>
+            </div>
           </Card>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
-import { Card, CardContent, Button, Badge, Table, TableHeader, TableRow, TableHead, TableBody, TableCell, Input } from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import { Plus, Search, Filter, MoreHorizontal, Tag, Loader2, X } from 'lucide-react';
 
 export function DiscountsPage() {
@@ -118,7 +119,7 @@ export function DiscountsPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -180,7 +181,7 @@ export function DiscountsPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
         <div className="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
           <div>Showing {filteredDiscounts.length} discounts</div>
         </div>

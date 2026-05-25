@@ -23,17 +23,22 @@ export class AnalyticsService {
       return { revenue, count };
     };
 
-    const currentPeriod = await getPeriodStats(lastMonth, now);
-    const previousPeriod = await getPeriodStats(twoMonthsAgo, lastMonth);
+    const [currentPeriod, previousPeriod, revenueResult, totalOrdersResult, pendingOrdersResult, totalUsersResult, lowStockResult] = await Promise.all([
+      getPeriodStats(lastMonth, now),
+      getPeriodStats(twoMonthsAgo, lastMonth),
+      admin.from('orders').select('total_amount').in('status', ['confirmed','packed','shipped','delivered']),
+      admin.from('orders').select('*', { count: 'exact', head: true }),
+      admin.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+      admin.from('user_profiles').select('*', { count: 'exact', head: true }),
+      admin.from('inventory').select('*, products(name, sku)').lt('quantity', 10),
+    ]);
 
-    // 1. Total Revenue (Confirmed/Delivered orders)
-    const { data: revenueData } = await admin
-      .from('orders')
-      .select('total_amount')
-      .in('status', ['confirmed', 'packed', 'shipped', 'delivered']);
-
-    const totalRevenue =
-      revenueData?.reduce((sum: number, o: any) => sum + Number(o.total_amount), 0) || 0;
+    const revenueData = revenueResult.data;
+    const totalOrders = totalOrdersResult.count;
+    const pendingOrders = pendingOrdersResult.count;
+    const totalUsers = totalUsersResult.count;
+    const lowStock = lowStockResult.data;
+    const totalRevenue = revenueData?.reduce((sum: number, o: any) => sum + Number(o.total_amount), 0) || 0;
 
     const calculateDelta = (current: number, previous: number) => {
       if (previous === 0) return current > 0 ? 100 : 0;
@@ -43,28 +48,7 @@ export class AnalyticsService {
     const revenueDelta = calculateDelta(currentPeriod.revenue, previousPeriod.revenue);
     const salesDelta = calculateDelta(currentPeriod.count, previousPeriod.count);
 
-    // 2. Order Counts
-    const { count: totalOrders } = await admin
-      .from('orders')
-      .select('*', { count: 'exact', head: true });
-    const { count: pendingOrders } = await admin
-      .from('orders')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'pending');
-
-    // 3. User Counts
-    const { count: totalUsers } = await admin
-      .from('user_profiles')
-      .select('*', { count: 'exact', head: true });
-
-    // 4. Low Stock Alerts
-    const { data: lowStock } = await admin
-      .from('inventory')
-      .select('*, products(name, sku)')
-      .lt('quantity', 10);
-
     const avgOrderValue = totalOrders && totalOrders > 0 ? totalRevenue / totalOrders : 0;
-
     return {
       totalRevenue,
       revenueDelta,
@@ -92,6 +76,43 @@ export class AnalyticsService {
 
     if (error) throw error;
     return data;
+  }
+
+  static async getRevenueChart(months: number = 6) {
+    const admin = await getAdminClient();
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - months);
+    
+    // Set to first day of that month for complete coverage
+    startDate.setDate(1);
+    startDate.setHours(0, 0, 0, 0);
+
+    const { data, error } = await admin
+      .from('orders')
+      .select('created_at, total_amount')
+      .gte('created_at', startDate.toISOString())
+      .in('status', ['confirmed', 'packed', 'shipped', 'delivered']);
+
+    if (error) throw error;
+
+    const grouped = (data || []).reduce((acc: Record<string, number>, order: any) => {
+      const d = new Date(order.created_at);
+      const monthStr = d.toLocaleString('default', { month: 'short' });
+      acc[monthStr] = (acc[monthStr] || 0) + (Number(order.total_amount) || 0);
+      return acc;
+    }, {});
+
+    const result = [];
+    for (let i = months - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setMonth(d.getMonth() - i);
+      const monthStr = d.toLocaleString('default', { month: 'short' });
+      result.push({
+        name: monthStr,
+        total: grouped[monthStr] || 0
+      });
+    }
+    return result;
   }
 
   static async recordEvent(type: string, payload: Record<string, any>) {

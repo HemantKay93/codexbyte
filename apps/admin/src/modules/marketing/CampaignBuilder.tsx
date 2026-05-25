@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, Input, Button } from '../../components/ui';
+import { Card, Input, Button } from '@byteevolvr/ui';;
 import { Send, Clock, Users, Loader2 } from 'lucide-react';
 import { apiClient, MarketingService } from '@byteevolvr/api-client';
 
@@ -80,10 +80,10 @@ export function CampaignBuilder() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Campaign Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+            <div>
+              <div>Campaign Details</div>
+            </div>
+            <div className="space-y-4">
               <Input
                 label="Campaign Name"
                 placeholder="e.g. Summer Sale Announcement"
@@ -135,16 +135,16 @@ export function CampaignBuilder() {
                   <p className="text-xs text-on-surface-variant mt-1">Supports variables like {'{{customer_name}}'}</p>
                 </div>
               )}
-            </CardContent>
+            </div>
           </Card>
         </div>
 
         <div className="space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Targeting & Schedule</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+            <div>
+              <div>Targeting & Schedule</div>
+            </div>
+            <div className="space-y-4">
               <div>
                 <label className="block text-label-md text-on-surface-variant mb-1 font-medium flex items-center gap-2">
                   <Users className="h-4 w-4" /> Audience Segment
@@ -171,11 +171,11 @@ export function CampaignBuilder() {
                   onChange={(e) => setCampaign({ ...campaign, scheduled_at: e.target.value })}
                 />
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           <Card>
-            <CardContent className="p-6 space-y-4">
+            <div className="p-6 space-y-4">
               <Button className="w-full gap-2" onClick={() => handleCreate(false)} disabled={loading || !campaign.segment_id}>
                 <Send className="h-4 w-4" />
                 Send Now
@@ -184,7 +184,7 @@ export function CampaignBuilder() {
                 <Clock className="h-4 w-4" />
                 Schedule
               </Button>
-            </CardContent>
+            </div>
           </Card>
         </div>
       </div>

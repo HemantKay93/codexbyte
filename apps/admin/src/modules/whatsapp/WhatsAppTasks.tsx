@@ -17,14 +17,21 @@ export function WhatsAppTasks() {
     try {
       if (activeTab === 'queue') {
         const res = await apiClient.get('/whatsapp/tasks');
-        if (res.data) {
-          setTasks(res.data);
-        }
+        // interceptor unwraps {success, data} → res.data is the array
+        setTasks(Array.isArray(res.data) ? res.data : []);
       } else {
         const res = await apiClient.get(`/whatsapp/logs?limit=${limit}&page=${page}`);
-        if (res.data) {
-          setHistoryLogs(res.data.data || []);
-          setTotalLogs(res.data.count || 0);
+        // getLogs returns {success, data:[...], count, page, limit}
+        // after interceptor unwrap: res.data = {data:[...], count, page, limit}
+        // BUT if interceptor sees {success:true, data:X} it returns X directly
+        // So res.data could be the array directly OR the full object
+        const payload = res.data;
+        if (Array.isArray(payload)) {
+          setHistoryLogs(payload);
+          setTotalLogs(payload.length);
+        } else {
+          setHistoryLogs(payload?.data || []);
+          setTotalLogs(payload?.count || 0);
         }
       }
     } catch (error) {

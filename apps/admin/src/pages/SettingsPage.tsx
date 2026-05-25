@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, Input, Button } from '../components/ui';
+import { Card, Input, Button } from '@byteevolvr/ui';;
 import { CMSService } from '@byteevolvr/api-client';
 import { Loader2, Save, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
 
@@ -235,10 +235,10 @@ export function SettingsPage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Store Details</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        <div>
+          <div>Store Details</div>
+        </div>
+        <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Store Name"
@@ -288,14 +288,14 @@ export function SettingsPage() {
               Save Changes
             </Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>API Configuration</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        <div>
+          <div>API Configuration</div>
+        </div>
+        <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Input
@@ -329,14 +329,14 @@ export function SettingsPage() {
               Save Configuration
             </Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>WhatsApp Cloud API Configuration</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        <div>
+          <div>WhatsApp Cloud API Configuration</div>
+        </div>
+        <div className="space-y-6">
           <div className="grid grid-cols-1 gap-6">
             <Input
               label="Permanent Access Token"
@@ -411,14 +411,14 @@ export function SettingsPage() {
               Save WhatsApp Config
             </Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Email Marketing Configuration</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        <div>
+          <div>Email Marketing Configuration</div>
+        </div>
+        <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-label-md text-on-surface-variant mb-1 font-medium">
@@ -534,14 +534,14 @@ export function SettingsPage() {
               Save Email Config
             </Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Push Notification Configuration</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        <div>
+          <div>Push Notification Configuration</div>
+        </div>
+        <div className="space-y-6">
           <div className="grid grid-cols-1 gap-6">
             <Input
               label="Firebase Server Key (Legacy FCM)"
@@ -574,7 +574,7 @@ export function SettingsPage() {
               Save Push Config
             </Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

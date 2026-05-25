@@ -17,7 +17,6 @@ interface AdminState {
   products: any[];
   customers: any[];
   orders: any[];
-  isLoading: boolean;
   error: string | null;
   setStats: (stats: any) => void;
   setRecentSales: (sales: any[]) => void;
@@ -25,7 +24,6 @@ interface AdminState {
   setProducts: (products: any[]) => void;
   setCustomers: (customers: any[]) => void;
   setOrders: (orders: any[]) => void;
-  setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
 
@@ -46,7 +44,6 @@ export const useAdminStore = create<AdminState>((set) => ({
   products: [],
   customers: [],
   orders: [],
-  isLoading: false,
   error: null,
 
   setStats: (stats) => set({ stats }),
@@ -55,6 +52,5 @@ export const useAdminStore = create<AdminState>((set) => ({
   setProducts: (products) => set({ products }),
   setCustomers: (customers) => set({ customers }),
   setOrders: (orders) => set({ orders }),
-  setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
 }));

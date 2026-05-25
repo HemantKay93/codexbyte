@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
 import { useAdminStore } from '@byteevolvr/store';
 
@@ -10,61 +10,35 @@ export const useAdmin = () => {
     setRecentSales,
     chartData,
     setChartData,
-    isLoading,
-    setLoading,
     error,
     setError,
   } = useAdminStore();
 
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDashboardLoading, setDashboardLoading] = useState(false);
 
-  const fetchDashboardData = async () => {
-    setLoading(true);
+  const fetchDashboardData = useCallback(async () => {
+    setDashboardLoading(true);
     setError(null);
     try {
       const statsData = await AdminService.getDashboardStats();
-      const orders = await AdminService.getOrders();
+      const [recentOrdersData, chartDataRaw] = await Promise.all([
+        AdminService.getOrders({ limit: 5 }),
+        AdminService.getRevenueChart(6),
+      ]);
 
       setStats(statsData);
-      setRecentSales(orders?.slice(0, 5) || []);
-
-      const months = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ];
-      const revenueByMonth: { [key: string]: number } = {};
-      orders?.forEach((o: any) => {
-        const date = new Date(o.created_at);
-        revenueByMonth[months[date.getMonth()]] =
-          (revenueByMonth[months[date.getMonth()]] || 0) + Number(o.total_amount);
-      });
-
-      const currentMonthIndex = new Date().getMonth();
-      const last6Months = [];
-      for (let i = 5; i >= 0; i--) {
-        const idx = (currentMonthIndex - i + 12) % 12;
-        last6Months.push({ name: months[idx], total: revenueByMonth[months[idx]] || 0 });
-      }
-      setChartData(last6Months);
+      setRecentSales(recentOrdersData?.data || recentOrdersData || []);
+      setChartData(chartDataRaw || []);
     } catch (err: any) {
       setError(err.customMessage || 'Failed to fetch dashboard data');
     } finally {
-      setLoading(false);
+      setDashboardLoading(false);
     }
-  };
+  }, [setError, setStats, setRecentSales, setChartData]);
 
   const fetchOrderDetail = async (id: string) => {
-    setLoading(true);
+    
     try {
       const orderData = await AdminService.getOrderDetail(id);
       return orderData;
@@ -72,7 +46,7 @@ export const useAdmin = () => {
       setError(err.customMessage || 'Failed to fetch order details');
       return null;
     } finally {
-      setLoading(false);
+      
     }
   };
 
@@ -89,7 +63,7 @@ export const useAdmin = () => {
   };
 
   const getCustomers = async () => {
-    setLoading(true);
+    
     try {
       const data = await AdminService.getCustomers();
       return data;
@@ -97,7 +71,7 @@ export const useAdmin = () => {
       setError(err.customMessage || 'Failed to fetch customers');
       return [];
     } finally {
-      setLoading(false);
+      
     }
   };
 
@@ -130,7 +104,7 @@ export const useAdmin = () => {
     stats,
     recentSales,
     chartData,
-    isLoading,
+    isLoading: isDashboardLoading,
     error,
     warehouses,
     fetchDashboardData,

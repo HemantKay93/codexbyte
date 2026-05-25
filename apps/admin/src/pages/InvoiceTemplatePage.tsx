@@ -1,4 +1,4 @@
-import { Card, CardContent, Button, Input } from '../components/ui';
+import { Card, Button, Input } from '@byteevolvr/ui';;
 import { Save, Eye, Palette } from 'lucide-react';
 
 export function InvoiceTemplatePage() {
@@ -31,7 +31,7 @@ export function InvoiceTemplatePage() {
               <Building2Icon />
               <h3 className="font-semibold text-on-surface">Company Details</h3>
             </div>
-            <CardContent className="p-4 space-y-4">
+            <div className="p-4 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-on-surface-variant mb-1">
                   Company Name
@@ -60,7 +60,7 @@ export function InvoiceTemplatePage() {
                   defaultValue="101, Tech Park, Andheri East, Mumbai, Maharashtra 400069"
                 />
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           <Card>
@@ -68,7 +68,7 @@ export function InvoiceTemplatePage() {
               <Palette className="h-4 w-4 text-on-surface-variant" />
               <h3 className="font-semibold text-on-surface">Styling</h3>
             </div>
-            <CardContent className="p-4 space-y-4">
+            <div className="p-4 space-y-4">
               <div>
                 <label className="block text-xs font-medium text-on-surface-variant mb-1">
                   Primary Color
@@ -100,7 +100,7 @@ export function InvoiceTemplatePage() {
                   className="rounded text-primary focus:ring-primary"
                 />
               </div>
-            </CardContent>
+            </div>
           </Card>
         </div>
 

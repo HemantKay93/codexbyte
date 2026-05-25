@@ -1,28 +1,28 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
+import { cn } from '../utils/cn';
 
-interface CardProps {
-  children: React.ReactNode;
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   padding?: boolean;
   hoverable?: boolean;
-  style?: React.CSSProperties;
-  className?: string;
 }
 
-export const Card: React.FC<CardProps> = ({ children, padding = true, style, className }) => {
-  return (
-    <div
-      className={className}
-      style={{
-        background: 'var(--color-surface)',
-        borderRadius: 'var(--radius-xl)',
-        border: '1px solid var(--color-border)',
-        overflow: 'hidden',
-        transition: 'var(--transition-base)',
-        padding: padding ? 'var(--space-6)' : 0,
-        ...style,
-      }}
-    >
-      {children}
-    </div>
-  );
-};
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className = '', padding = true, hoverable = false, ...props }, ref) => {
+    const baseStyles = 'rounded-xl border border-outline-variant bg-surface text-on-surface shadow-card overflow-hidden';
+    
+    return (
+      <div 
+        ref={ref} 
+        className={cn(
+          baseStyles,
+          padding && 'p-6',
+          hoverable && 'transition-all hover:shadow-md hover:border-primary',
+          className
+        )} 
+        {...props} 
+      />
+    );
+  }
+);
+
+Card.displayName = 'Card';

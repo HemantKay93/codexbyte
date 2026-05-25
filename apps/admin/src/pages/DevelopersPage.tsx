@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, CardContent, Button, Badge, Input } from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';;
 import {
   Code2,
   Webhook,
@@ -93,7 +93,7 @@ export function DevelopersPage() {
             <Plus className="h-4 w-4" /> Generate New Key
           </Button>
         </div>
-        <CardContent className="p-6 space-y-4">
+        <div className="p-6 space-y-4">
           <div className="p-3 rounded-lg bg-warning-container/50 border border-warning/20 text-sm text-on-warning-container flex items-start gap-2">
             <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
             <span>
@@ -149,7 +149,7 @@ export function DevelopersPage() {
               </div>
             </div>
           ))}
-        </CardContent>
+        </div>
       </Card>
 
       {/* Webhooks Section */}
@@ -170,7 +170,7 @@ export function DevelopersPage() {
             <Plus className="h-4 w-4" /> Add Webhook
           </Button>
         </div>
-        <CardContent className="p-6 space-y-4">
+        <div className="p-6 space-y-4">
           {mockWebhooks.map((webhook) => (
             <div
               key={webhook.id}
@@ -243,7 +243,7 @@ export function DevelopersPage() {
             </div>
             <Button size="sm">Save Endpoint</Button>
           </div>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

@@ -22,7 +22,9 @@ export const getLogs = async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 50;
     const result = await WhatsAppService.getLogs(page, limit);
-    res.json({ success: true, data: result.data, count: result.count, page: result.page, limit: result.limit });
+    // Return entire result under 'data' so apiClient interceptor unwraps correctly
+    // Frontend receives: { data: [...], count, page, limit }
+    res.json({ success: true, data: result });
   } catch (error) {
     logger.error('[WhatsAppController] Error getting logs:', error);
     res.status(500).json({ success: false, message: 'Failed to get logs' });

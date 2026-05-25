@@ -1,74 +1,64 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
+import { cn } from '../utils/cn';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger';
   size?: 'sm' | 'md' | 'lg';
+  fullWidth?: boolean;
   isLoading?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  children,
-  variant = 'primary',
-  size = 'md',
-  isLoading,
-  style,
-  disabled,
-  ...props
-}) => {
-  const baseStyles: React.CSSProperties = {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 'var(--radius-md)',
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'var(--transition-base)',
-    border: 'none',
-    outline: 'none',
-    fontFamily: 'var(--font-display)',
-    gap: 'var(--space-2)',
-  };
-
-  const variants: Record<string, React.CSSProperties> = {
-    primary: {
-      background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-light))',
-      color: 'white',
-      boxShadow: 'var(--shadow-glow)',
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className = '',
+      variant = 'primary',
+      size = 'md',
+      fullWidth = false,
+      isLoading = false,
+      children,
+      disabled,
+      ...props
     },
-    secondary: {
-      background: 'var(--color-surface)',
-      color: 'var(--color-text)',
-      border: '1px solid var(--color-border)',
-    },
-    outline: {
-      background: 'transparent',
-      color: 'var(--color-primary-light)',
-      border: '1px solid var(--color-primary-light)',
-    },
-    ghost: {
-      background: 'transparent',
-      color: 'var(--color-text-muted)',
-    },
-  };
+    ref
+  ) => {
+    const baseStyles =
+      'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded';
 
-  const sizes: Record<string, React.CSSProperties> = {
-    sm: { padding: 'var(--space-2) var(--space-4)', fontSize: '0.875rem' },
-    md: { padding: 'var(--space-3) var(--space-6)', fontSize: '1rem' },
-    lg: { padding: 'var(--space-4) var(--space-8)', fontSize: '1.125rem' },
-  };
+    const variants = {
+      primary:
+        'bg-primary text-on-primary hover:bg-primary-container hover:text-on-primary-container',
+      secondary: 'bg-surface-container-high text-on-surface hover:bg-surface-variant',
+      ghost:
+        'bg-transparent text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface',
+      outline:
+        'bg-transparent border border-outline text-on-surface hover:bg-surface-container-high',
+      danger: 'bg-error text-on-error hover:bg-error-container hover:text-on-error-container',
+    };
 
-  const finalStyle = {
-    ...baseStyles,
-    ...variants[variant],
-    ...sizes[size],
-    opacity: disabled || isLoading ? 0.6 : 1,
-    cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
-    ...style,
-  };
+    const sizes = {
+      sm: 'px-3 py-1.5 text-sm',
+      md: 'px-4 py-2 text-base',
+      lg: 'px-6 py-3 text-lg',
+    };
 
-  return (
-    <button style={finalStyle} disabled={disabled || isLoading} {...props}>
-      {isLoading ? 'Loading...' : children}
-    </button>
-  );
-};
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          baseStyles,
+          variants[variant] || variants.primary,
+          sizes[size] || sizes.md,
+          fullWidth && 'w-full',
+          className
+        )}
+        disabled={disabled || isLoading}
+        {...props}
+      >
+        {isLoading ? 'Loading...' : children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';

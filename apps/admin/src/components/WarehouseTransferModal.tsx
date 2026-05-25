@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
 import { Loader2, X, ArrowRightLeft } from 'lucide-react';
-import { Button, Input } from './ui';
+import { Button, Input } from '@byteevolvr/ui';
 
 export function WarehouseTransferModal({
   product,

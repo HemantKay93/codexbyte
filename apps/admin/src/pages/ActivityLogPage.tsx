@@ -1,16 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  Button,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Input,
-} from '../components/ui';
+import { Card, Button, Input } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import {
   Search,
   Filter,
@@ -96,7 +86,7 @@ export function ActivityLogPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -164,7 +154,7 @@ export function ActivityLogPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, Button, Badge } from '../components/ui';
+import { Card, Button, Badge } from '@byteevolvr/ui';;
 import { LifeBuoy, MoreVertical, MessageSquare, Loader2, RefreshCcw } from 'lucide-react';
 import { SupportService } from '@byteevolvr/api-client';
 
@@ -74,7 +74,7 @@ export function SupportPage() {
                 <h3 className="font-semibold text-on-surface flex items-center gap-2 capitalize">
                   <div className={`w-2 h-2 rounded-full ${getStatusColor(columnStatus)}`}></div>
                   {columnStatus.replace('_', ' ')}
-                  <Badge variant="default" className="ml-2">
+                  <Badge variant="secondary" className="ml-2">
                     {tickets.filter((t) => t.status === columnStatus).length}
                   </Badge>
                 </h3>
@@ -95,7 +95,7 @@ export function SupportPage() {
                         key={ticket.id}
                         className="cursor-pointer hover:border-primary transition-all active:scale-[0.98]"
                       >
-                        <CardContent className="p-4">
+                        <div className="p-4">
                           <div className="flex justify-between items-start mb-2">
                             <span className="text-[10px] font-mono text-on-surface-variant uppercase">
                               #{ticket.id.substring(0, 8)}
@@ -104,7 +104,7 @@ export function SupportPage() {
                               variant={
                                 ticket.priority === 'high' || ticket.priority === 'urgent'
                                   ? 'error'
-                                  : 'default'
+                                  : 'secondary'
                               }
                               className="text-[9px] py-0 px-1.5 uppercase"
                             >
@@ -123,7 +123,7 @@ export function SupportPage() {
                               {new Date(ticket.updated_at).toLocaleDateString()}
                             </div>
                           </div>
-                        </CardContent>
+                        </div>
                       </Card>
                     ))
                 )}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, Button, Input } from '../../components/ui';
+import { Card, Button, Input } from '@byteevolvr/ui';;
 import { Filter, Users, Loader2, Plus, X } from 'lucide-react';
 import { MarketingService } from '@byteevolvr/api-client';
 
@@ -78,13 +78,13 @@ export function AudienceSegments() {
         ) : (
           segments.map((seg) => (
             <Card key={seg.id}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <div>
+                <div className="flex items-center gap-2">
                   <Users className="h-5 w-5 text-primary" />
                   {seg.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </div>
+              </div>
+              <div>
                 <p className="text-body-sm text-on-surface-variant h-10 line-clamp-2">
                   {seg.description || 'No description provided.'}
                 </p>
@@ -92,7 +92,7 @@ export function AudienceSegments() {
                   <span className="font-medium text-on-background">Est. Size: {seg.estimated_count}</span>
                   <Button variant="outline" size="sm">Edit Rules</Button>
                 </div>
-              </CardContent>
+              </div>
             </Card>
           ))
         )}

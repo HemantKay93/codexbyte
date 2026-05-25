@@ -1,17 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Input,
-} from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import { Star, MessageSquare, Check, X, Search, Filter, Loader2, RefreshCcw } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { ReviewService } from '@byteevolvr/api-client';
@@ -19,7 +8,7 @@ import { ReviewService } from '@byteevolvr/api-client';
 export function ReviewsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [reviews, setReviews] = useState<any[]>([]);
-  const { isLoading, setLoading, setError } = useAdminStore();
+  const { setError } = useAdminStore();
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,7 +16,7 @@ export function ReviewsPage() {
   }, []);
 
   async function fetchReviews() {
-    setLoading(true);
+    
     try {
       const data = await ReviewService.getAllReviews();
       setReviews(data || []);
@@ -35,7 +24,7 @@ export function ReviewsPage() {
       console.error('Error fetching reviews:', err);
       setError(err.customMessage || 'Failed to load reviews');
     } finally {
-      setLoading(false);
+      
     }
   }
 
@@ -88,33 +77,33 @@ export function ReviewsPage() {
             Moderate and respond to product reviews
           </p>
         </div>
-        <Button variant="outline" onClick={fetchReviews} disabled={isLoading}>
-          <RefreshCcw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+        <Button variant="outline" onClick={fetchReviews} disabled={false}>
+          <RefreshCcw className={`h-4 w-4 mr-2 ${false ? 'animate-spin' : ''}`} />
           Refresh
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
-          <CardContent className="p-6 flex items-center justify-between">
+          <div className="p-6 flex items-center justify-between">
             <div>
               <div className="text-on-surface-variant font-medium text-sm mb-1">Average Rating</div>
               <div className="text-3xl font-bold text-on-surface flex items-center gap-2">
-                {isLoading ? '...' : stats.avg}{' '}
+                {false ? '...' : stats.avg}{' '}
                 <Star className="h-6 w-6 text-amber-400 fill-amber-400" />
               </div>
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6 flex items-center justify-between">
+          <div className="p-6 flex items-center justify-between">
             <div>
               <div className="text-on-surface-variant font-medium text-sm mb-1">Total Reviews</div>
               <div className="text-3xl font-bold text-on-surface">
-                {isLoading ? '...' : stats.total}
+                {false ? '...' : stats.total}
               </div>
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card
           className={
@@ -123,17 +112,17 @@ export function ReviewsPage() {
               : ''
           }
         >
-          <CardContent className="p-6 flex items-center justify-between">
+          <div className="p-6 flex items-center justify-between">
             <div>
               <div className="font-medium text-sm mb-1 opacity-90">Pending Moderation</div>
-              <div className="text-3xl font-bold">{isLoading ? '...' : stats.pending}</div>
+              <div className="text-3xl font-bold">{false ? '...' : stats.pending}</div>
             </div>
             {stats.pending > 0 && (
               <Badge variant="warning" className="bg-warning text-on-warning">
                 Action Needed
               </Badge>
             )}
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -157,7 +146,7 @@ export function ReviewsPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -170,7 +159,7 @@ export function ReviewsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
+              {false ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-12">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
@@ -255,7 +244,7 @@ export function ReviewsPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

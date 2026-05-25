@@ -1,17 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import {
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '../components/ui';
+import { Card, Button, Badge } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import { ArrowLeft, Edit, Mail, MapPin, ShoppingBag, Star, Loader2, Calendar } from 'lucide-react';
 import { AdminService } from '@byteevolvr/api-client';
 
@@ -67,17 +57,17 @@ export function CustomerDetailPage() {
   }
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'success' | 'info' | 'warning' | 'error' | 'default'> = {
+    const variants: Record<string, 'success' | 'primary' | 'warning' | 'error' | 'secondary'> = {
       delivered: 'success',
-      shipped: 'info',
-      processing: 'info',
+      shipped: 'primary',
+      processing: 'primary',
       pending: 'warning',
       cancelled: 'error',
       refunded: 'error',
       paid: 'success',
-      confirmed: 'info',
+      confirmed: 'primary',
     };
-    return <Badge variant={variants[status.toLowerCase()] || 'default'}>{status}</Badge>;
+    return <Badge variant={variants[status.toLowerCase()] || 'secondary'}>{status}</Badge>;
   };
 
   if (loading) {
@@ -124,34 +114,34 @@ export function CustomerDetailPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
-          <CardContent className="p-6 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20">
+          <div className="p-6 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20">
             <div className="text-indigo-700 dark:text-indigo-300 font-black text-[10px] uppercase tracking-[0.2em] mb-1">Lifetime Value (LTV)</div>
             <div className="text-3xl font-black text-indigo-700 dark:text-indigo-400">
               ₹{stats.totalSpent.toLocaleString()}
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-on-surface-variant font-medium text-sm mb-1">Total Orders</div>
             <div className="text-3xl font-bold text-on-surface">{stats.orderCount}</div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-on-surface-variant font-medium text-sm mb-1">Avg Order Value</div>
             <div className="text-3xl font-bold text-on-surface">
               ₹{Math.round(stats.avgOrderValue).toLocaleString()}
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-on-surface-variant font-medium text-sm mb-1">Reviews Left</div>
             <div className="text-3xl font-bold text-on-surface flex items-center gap-2">
               {stats.reviewsCount} <Star className="h-5 w-5 text-amber-400 fill-amber-400" />
             </div>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -161,7 +151,7 @@ export function CustomerDetailPage() {
             <div className="p-4 border-b border-outline-variant">
               <h2 className="text-lg font-semibold text-on-surface">Customer Info</h2>
             </div>
-            <CardContent className="p-6 space-y-4">
+            <div className="p-6 space-y-4">
               <div className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-on-surface-variant shrink-0 mt-0.5" />
                 <div>
@@ -204,14 +194,14 @@ export function CustomerDetailPage() {
                   </div>
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
 
           <Card>
             <div className="p-4 border-b border-outline-variant">
               <h2 className="text-lg font-semibold text-on-surface">Internal Notes</h2>
             </div>
-            <CardContent className="p-4">
+            <div className="p-4">
               <textarea
                 className="w-full bg-surface-container-lowest border border-outline rounded p-3 text-sm focus:ring-1 focus:ring-primary focus:outline-none"
                 rows={4}
@@ -220,7 +210,7 @@ export function CustomerDetailPage() {
               <Button size="sm" className="mt-3 w-full">
                 Save Note
               </Button>
-            </CardContent>
+            </div>
           </Card>
         </div>
 
@@ -236,7 +226,7 @@ export function CustomerDetailPage() {
                 </Button>
               </Link>
             </div>
-            <CardContent className="p-0">
+            <div className="p-0">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -271,7 +261,7 @@ export function CustomerDetailPage() {
                   )}
                 </TableBody>
               </Table>
-            </CardContent>
+            </div>
           </Card>
 
           {/* Customer Timeline */}
@@ -281,7 +271,7 @@ export function CustomerDetailPage() {
                 <Calendar className="h-5 w-5" /> Customer Timeline
               </h2>
             </div>
-            <CardContent className="p-6">
+            <div className="p-6">
               {orders.length === 0 ? (
                 <p className="text-center text-on-surface-variant py-4 italic">No activity recorded yet.</p>
               ) : (
@@ -328,7 +318,7 @@ export function CustomerDetailPage() {
                   ))}
                 </div>
               )}
-            </CardContent>
+            </div>
           </Card>
         </div>
       </div>

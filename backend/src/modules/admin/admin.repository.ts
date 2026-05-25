@@ -1,74 +1,24 @@
 import { supabase, getAdminClient } from '../../config/supabase.js';
 
 export class AdminRepository {
-  async getStats() {
-    const admin = await getAdminClient();
 
-    // Total Revenue & Orders
-    const { data: orders, error: ordersError } = await admin
-      .from('orders')
-      .select('total_amount, status, created_at, order_number')
-      .is('deleted_at', null);
-
-    if (ordersError) throw ordersError;
-
-    // Active Users
-    const { count: userCount, error: userError } = await admin
-      .from('user_profiles')
-      .select('*', { count: 'exact', head: true })
-      .is('deleted_at', null);
-
-    if (userError) throw userError;
-
-    // Low Stock Alert
-    const { data: lowStock, error: stockError } = await admin
-      .from('products')
-      .select('name, stock_quantity')
-      .lt('stock_quantity', 10)
-      .is('deleted_at', null);
-
-    if (stockError) throw stockError;
-
-    const totalRevenue = orders.reduce((sum: number, o: any) => sum + Number(o.total_amount), 0);
-    const avgOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0;
-    const pendingOrders = orders.filter((o: any) => o.status === 'pending').length;
-
-    return {
-      totalRevenue,
-      salesCount: orders.length,
-      customerCount: userCount || 0,
-      avgOrderValue,
-      pendingOrders,
-      lowStockAlerts: lowStock || [],
-      recentOrders: orders.slice(0, 5),
-    };
-  }
 
   async getCustomers() {
     const admin = await getAdminClient();
-    const { data: profiles, error: profilesError } = await admin
+    const { data, error } = await admin
       .from('user_profiles')
-      .select('*')
+      .select('*, orders(total_amount)')
       .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
-    if (profilesError) throw profilesError;
+    if (error) throw error;
 
-    const { data: orders, error: ordersError } = await admin
-      .from('orders')
-      .select('user_id, total_amount')
-      .is('deleted_at', null);
-
-    if (ordersError) throw ordersError;
-
-    return profiles.map((profile: any) => {
-      const userOrders = orders.filter((o: any) => o.user_id === profile.id);
-      const totalSpent = userOrders.reduce(
-        (acc: number, o: any) => acc + Number(o.total_amount),
-        0
-      );
+    return (data || []).map((profile: any) => {
+      const userOrders: any[] = profile.orders || [];
+      const totalSpent = userOrders.reduce((acc: number, o: any) => acc + Number(o.total_amount), 0);
       return {
         ...profile,
+        orders: undefined,
         orderCount: userOrders.length,
         totalSpent,
       };

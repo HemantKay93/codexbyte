@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, Button, Badge, Input } from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';;
 import {
   ScanBarcode,
   PackageCheck,
@@ -160,7 +160,7 @@ export function WarehousePage() {
                       <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                         <Building2 className="h-6 w-6" />
                       </div>
-                      <Badge variant={w.is_active ? 'success' : 'default'}>
+                      <Badge variant={w.is_active ? 'success' : 'secondary'}>
                         {w.is_active ? 'ACTIVE' : 'INACTIVE'}
                       </Badge>
                     </div>
@@ -222,7 +222,7 @@ export function WarehousePage() {
                   key={task.id}
                   className={`border-none shadow-sm transition-all ${task.picked ? 'opacity-50 grayscale bg-surface-container' : 'hover:shadow-md'}`}
                 >
-                  <CardContent className="p-6 flex items-center justify-between">
+                  <div className="p-6 flex items-center justify-between">
                     <div className="flex items-center gap-6">
                       <div
                         className={`h-16 w-16 rounded-2xl flex items-center justify-center shrink-0 ${task.picked ? 'bg-success/10 text-success' : 'bg-surface-container border border-outline-variant text-on-surface'}`}
@@ -241,7 +241,7 @@ export function WarehousePage() {
                             {task.product_name}
                           </span>
                           <Badge
-                            variant="info"
+                            variant="primary"
                             className="font-mono text-[10px] tracking-tighter uppercase"
                           >
                             {task.order?.order_number}
@@ -269,7 +269,7 @@ export function WarehousePage() {
                         </Button>
                       )}
                     </div>
-                  </CardContent>
+                  </div>
                 </Card>
               ))
             )}

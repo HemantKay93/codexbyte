@@ -21,6 +21,7 @@ router.use(authenticate, authorize('admin', 'super-admin'));
 
 // Dashboard Stats
 router.get('/stats', adminController.getDashboardStats);
+router.get('/revenue-chart', adminController.getRevenueChart);
 
 // Analytics
 router.get('/sales-report', adminController.getSalesReport);

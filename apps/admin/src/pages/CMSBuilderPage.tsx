@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Input, Badge } from '../components/ui';
+import { Button, Input, Badge } from '@byteevolvr/ui';;
 import {
   LayoutTemplate,
   Type,
@@ -506,8 +506,7 @@ export function CMSBuilderPage() {
                     ))}
                     <Button
                       variant="outline"
-                      size="sm"
-                      fullWidth
+                      size="sm" className="w-full"
                       onClick={() => {
                         const newLinks = [
                           ...(cmsData.navbar?.links || []),

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, Button } from '../components/ui';
+import { Card, Button } from '@byteevolvr/ui';;
 import {
   Download,
   TrendingUp,
@@ -124,7 +124,7 @@ export function AnalyticsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2 text-on-surface-variant">
               <DollarSign className="h-5 w-5 text-primary" />
               <span className="font-medium text-sm uppercase tracking-wider">Total Revenue</span>
@@ -136,10 +136,10 @@ export function AnalyticsPage() {
               <TrendingUp className="h-3 w-3" />
               Live cumulative sales
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2 text-on-surface-variant">
               <ShoppingCart className="h-5 w-5 text-primary" />
               <span className="font-medium text-sm uppercase tracking-wider">Total Orders</span>
@@ -151,10 +151,10 @@ export function AnalyticsPage() {
               <TrendingUp className="h-3 w-3" />
               Successful transactions
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2 text-on-surface-variant">
               <Users className="h-5 w-5 text-primary" />
               <span className="font-medium text-sm uppercase tracking-wider">Unique Customers</span>
@@ -164,10 +164,10 @@ export function AnalyticsPage() {
               <TrendingUp className="h-3 w-3" />
               Verified user profiles
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2 text-on-surface-variant">
               <TrendingUp className="h-5 w-5 text-primary" />
               <span className="font-medium text-sm uppercase tracking-wider">Avg. Order Value</span>
@@ -179,7 +179,7 @@ export function AnalyticsPage() {
               <TrendingUp className="h-3 w-3" />
               Revenue per order
             </div>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -188,7 +188,7 @@ export function AnalyticsPage() {
           <div className="p-6 border-b border-outline-variant">
             <h2 className="text-lg font-semibold text-on-surface">Revenue Trend (Last 7 Days)</h2>
           </div>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={salesData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -234,14 +234,14 @@ export function AnalyticsPage() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </CardContent>
+          </div>
         </Card>
 
         <Card>
           <div className="p-6 border-b border-outline-variant">
             <h2 className="text-lg font-semibold text-on-surface">Top Selling Products</h2>
           </div>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -272,7 +272,7 @@ export function AnalyticsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </CardContent>
+          </div>
         </Card>
       </div>
     </div>

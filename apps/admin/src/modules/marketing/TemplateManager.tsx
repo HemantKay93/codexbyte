@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, CardContent, Button, Input } from '../../components/ui';
+import { Card, Button, Input } from '@byteevolvr/ui';;
 import { LayoutTemplate, Plus, Loader2, X } from 'lucide-react';
 import { MarketingService } from '@byteevolvr/api-client';
 
@@ -124,7 +124,7 @@ export function TemplateManager() {
         ) : (
           currentList.map((tpl) => (
             <Card key={tpl.id}>
-              <CardContent className="p-4">
+              <div className="p-4">
                 <div className="aspect-video bg-background border border-outline rounded-lg mb-4 flex items-center justify-center relative group">
                   <LayoutTemplate className="h-8 w-8 text-on-surface-variant opacity-20" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
@@ -137,7 +137,7 @@ export function TemplateManager() {
                 <p className="text-body-sm text-on-surface-variant truncate">
                   {activeTab === 'email' ? `Subject: ${tpl.subject}` : `Title: ${tpl.title}`}
                 </p>
-              </CardContent>
+              </div>
             </Card>
           ))
         )}

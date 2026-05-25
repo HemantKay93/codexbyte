@@ -4,9 +4,7 @@ import { AuditService } from '../../services/auditService.js';
 const adminRepo = new AdminRepository();
 
 export class AdminService {
-  async getDashboardData() {
-    return await adminRepo.getStats();
-  }
+
 
   async getSalesReport() {
     const data = await adminRepo.getSalesAnalytics();

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '../components/ui';
+import { Card, Badge, Button } from '@byteevolvr/ui';;
 import { ArrowUpRight, DollarSign, ShoppingBag, Users, Activity, Loader2 } from 'lucide-react';
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { SocketService } from '@byteevolvr/api-client';
@@ -22,19 +22,18 @@ export function DashboardPage() {
     // Real-time updates for Admin
     const socket = SocketService.connect('admin-session');
 
-    socket.on('admin:new_order', (data: any) => {
-      console.log('[Socket] New order detected:', data);
+    socket.on('admin:new_order', () => {
       fetchDashboardData();
     });
 
-    socket.on('admin:order_status_change', (data: any) => {
-      console.log('[Socket] Order status changed:', data);
+    socket.on('admin:order_status_change', () => {
       fetchDashboardData();
     });
 
     return () => {
       SocketService.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {
@@ -75,13 +74,13 @@ export function DashboardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-display-sm font-semibold text-on-background">Dashboard Overview</h1>
-        <Badge variant="info">Live Sync: Active</Badge>
+        <Badge variant="primary">Live Sync: Active</Badge>
       </div>
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center justify-between space-y-0 pb-2">
               <p className="text-sm font-medium text-on-surface-variant">Total Revenue</p>
               <DollarSign className="h-4 w-4 text-primary" />
@@ -102,11 +101,11 @@ export function DashboardPage() {
               </div>
             </div>
             <p className="text-xs text-on-surface-variant mt-2">from last month</p>
-          </CardContent>
+          </div>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center justify-between space-y-0 pb-2">
               <p className="text-sm font-medium text-on-surface-variant">Total Orders</p>
               <ShoppingBag className="h-4 w-4 text-primary" />
@@ -125,11 +124,11 @@ export function DashboardPage() {
               </div>
             </div>
             <p className="text-xs text-on-surface-variant mt-2">from last month</p>
-          </CardContent>
+          </div>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center justify-between space-y-0 pb-2">
               <p className="text-sm font-medium text-on-surface-variant">Total Customers</p>
               <Users className="h-4 w-4 text-primary" />
@@ -142,11 +141,11 @@ export function DashboardPage() {
               </div>
             </div>
             <p className="text-xs text-on-surface-variant mt-2">lifetime unique users</p>
-          </CardContent>
+          </div>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center justify-between space-y-0 pb-2">
               <p className="text-sm font-medium text-on-surface-variant">Avg. Order Value</p>
               <Activity className="h-4 w-4 text-primary" />
@@ -161,7 +160,7 @@ export function DashboardPage() {
               </div>
             </div>
             <p className="text-xs text-on-surface-variant mt-2">per transaction</p>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -169,15 +168,15 @@ export function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Pending Actions Widget */}
         <Card className="border-l-4 border-l-warning bg-warning/5">
-          <CardHeader className="pb-2">
+          <div className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-warning flex items-center gap-2">
+              <div className="text-warning flex items-center gap-2">
                 <Activity className="h-5 w-5" />
                 Pending Actions
-              </CardTitle>
+              </div>
             </div>
-          </CardHeader>
-          <CardContent>
+          </div>
+          <div>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-on-surface">{displayStats.pendingOrders}</p>
@@ -187,20 +186,20 @@ export function DashboardPage() {
                 Review Orders
               </Button>
             </div>
-          </CardContent>
+          </div>
         </Card>
 
         {/* Low Stock Alerts Widget */}
         <Card className="border-l-4 border-l-error bg-error/5">
-          <CardHeader className="pb-2">
+          <div className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-error flex items-center gap-2">
+              <div className="text-error flex items-center gap-2">
                 <ShoppingBag className="h-5 w-5" />
                 Inventory Alerts
-              </CardTitle>
+              </div>
             </div>
-          </CardHeader>
-          <CardContent>
+          </div>
+          <div>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-on-surface">{displayStats.lowStockAlertsCount}</p>
@@ -210,17 +209,17 @@ export function DashboardPage() {
                 Restock Now
               </Button>
             </div>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
       {/* Charts and Tables */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-7">
         <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Revenue Overview</CardTitle>
-          </CardHeader>
-          <CardContent className="pl-2">
+          <div>
+            <div>Revenue Overview</div>
+          </div>
+          <div className="pl-2">
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
@@ -266,14 +265,14 @@ export function DashboardPage() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </CardContent>
+          </div>
         </Card>
 
         <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Recent Sales</CardTitle>
-          </CardHeader>
-          <CardContent>
+          <div>
+            <div>Recent Sales</div>
+          </div>
+          <div>
             <div className="space-y-8">
               {!Array.isArray(recentSales) || recentSales.length === 0 ? (
                 <div className="text-center py-12 text-on-surface-variant italic">
@@ -300,7 +299,7 @@ export function DashboardPage() {
                 ))
               )}
             </div>
-          </CardContent>
+          </div>
         </Card>
       </div>
     </div>

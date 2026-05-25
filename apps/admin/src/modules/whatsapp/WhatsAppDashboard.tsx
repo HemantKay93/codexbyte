@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Button } from '../../components/ui';
+import { Card, Button } from '@byteevolvr/ui';;
 import {
   Loader2,
   RefreshCw,
@@ -134,6 +134,9 @@ export const WhatsAppDashboard = () => {
     }
   };
 
+  // Ref guard to prevent double-submissions from React StrictMode or rapid clicks
+  const sendingRef = React.useRef(false);
+
   // ── Send Test Message ──────────────────────────────────────────────────────
   const sendTestMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,6 +148,9 @@ export const WhatsAppDashboard = () => {
       return;
     }
 
+    // Guard: block if already in-flight
+    if (sendingRef.current) return;
+    sendingRef.current = true;
     setSending(true);
     try {
       await apiClient.post('/whatsapp/test-message', { to: phone, message });
@@ -155,6 +161,7 @@ export const WhatsAppDashboard = () => {
       const msg = err?.customMessage || err?.message || 'Failed to send test message.';
       toast.error(msg);
     } finally {
+      sendingRef.current = false;
       setSending(false);
     }
   };
@@ -191,13 +198,13 @@ export const WhatsAppDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Connection Status Card */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+          <div>
+            <div className="flex items-center gap-2">
               <Wifi className="h-4 w-4 text-green-500" />
               Cloud API Status
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </div>
+          </div>
+          <div className="space-y-4">
             {loading ? (
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -282,18 +289,18 @@ export const WhatsAppDashboard = () => {
                 </div>
               </>
             )}
-          </CardContent>
+          </div>
         </Card>
 
         {/* Test Message Card */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+          <div>
+            <div className="flex items-center gap-2">
               <Send className="h-4 w-4 text-blue-400" />
               Send Test Message
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+            </div>
+          </div>
+          <div>
             <form onSubmit={sendTestMessage} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-muted-foreground mb-1">
@@ -338,19 +345,19 @@ export const WhatsAppDashboard = () => {
                 {sending ? 'Sending...' : 'Send Test Message'}
               </Button>
             </form>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
       {/* Setup Instructions Card */}
       <Card className="border-amber-500/20 bg-amber-500/5">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-amber-400">
+        <div>
+          <div className="flex items-center gap-2 text-amber-400">
             <AlertCircle className="h-4 w-4" />
             Setup Checklist
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </div>
+        </div>
+        <div>
           <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
             <li>
               Go to <strong>Settings → WhatsApp Cloud API Configuration</strong> and save your
@@ -375,18 +382,18 @@ export const WhatsAppDashboard = () => {
               Use <strong>Send Test Message</strong> (above) to confirm end-to-end message delivery.
             </li>
           </ol>
-        </CardContent>
+        </div>
       </Card>
 
       {/* Recent Messages Log */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <div>
+          <div className="flex items-center gap-2">
             <MessageCircle className="h-4 w-4" />
             Recent Messages
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </div>
+        </div>
+        <div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
@@ -447,7 +454,7 @@ export const WhatsAppDashboard = () => {
               </tbody>
             </table>
           </div>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

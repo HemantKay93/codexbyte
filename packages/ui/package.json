@@ -5,7 +5,9 @@
   "type": "module",
   "main": "src/index.ts",
   "dependencies": {
+    "clsx": "^2.1.1",
     "framer-motion": "^12.38.0",
-    "lucide-react": "^1.11.0"
+    "lucide-react": "^1.11.0",
+    "tailwind-merge": "^3.6.0"
   }
 }

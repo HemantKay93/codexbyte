@@ -16,6 +16,12 @@ export const getDashboardStats = catchAsync(async (req: Request, res: Response) 
   });
 });
 
+export const getRevenueChart = catchAsync(async (req: Request, res: Response) => {
+  const months = Number(req.query.months) || 6;
+  const data = await AnalyticsService.getRevenueChart(months);
+  res.json({ success: true, data });
+});
+
 export const getCustomers = catchAsync(async (req: Request, res: Response) => {
   const customers = await adminService.getCustomers();
   res.json({

@@ -1,15 +1,5 @@
-import {
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '../components/ui';
+import { Card, Button, Badge } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import { FileText, Building, Landmark, PieChart } from 'lucide-react';
 
 export function TaxCompliancePage() {
@@ -34,7 +24,7 @@ export function TaxCompliancePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-primary/5 border-primary/20">
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2">
               <Landmark className="h-5 w-5 text-primary" />
               <div className="text-primary font-medium text-sm">
@@ -42,19 +32,19 @@ export function TaxCompliancePage() {
               </div>
             </div>
             <div className="text-3xl font-bold text-primary">₹1,42,500.00</div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2">
               <Building className="h-5 w-5 text-on-surface-variant" />
               <div className="text-on-surface-variant font-medium text-sm">IGST (Inter-state)</div>
             </div>
             <div className="text-3xl font-bold text-on-surface">₹85,000.00</div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2">
               <PieChart className="h-5 w-5 text-on-surface-variant" />
               <div className="text-on-surface-variant font-medium text-sm">
@@ -62,7 +52,7 @@ export function TaxCompliancePage() {
               </div>
             </div>
             <div className="text-3xl font-bold text-on-surface">₹57,500.00</div>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -70,7 +60,7 @@ export function TaxCompliancePage() {
         <div className="p-4 border-b border-outline-variant">
           <h2 className="text-lg font-semibold text-on-surface">Tax Rules Configuration</h2>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -85,7 +75,7 @@ export function TaxCompliancePage() {
               <TableRow>
                 <TableCell className="font-medium text-on-surface">Standard Rate 18%</TableCell>
                 <TableCell>
-                  <Badge variant="default">18%</Badge>
+                  <Badge variant="secondary">18%</Badge>
                 </TableCell>
                 <TableCell className="font-mono text-sm text-on-surface-variant">8518</TableCell>
                 <TableCell className="text-on-surface-variant text-sm">
@@ -100,7 +90,7 @@ export function TaxCompliancePage() {
               <TableRow>
                 <TableCell className="font-medium text-on-surface">Reduced Rate 5%</TableCell>
                 <TableCell>
-                  <Badge variant="default">5%</Badge>
+                  <Badge variant="secondary">5%</Badge>
                 </TableCell>
                 <TableCell className="font-mono text-sm text-on-surface-variant">6201</TableCell>
                 <TableCell className="text-on-surface-variant text-sm">
@@ -115,7 +105,7 @@ export function TaxCompliancePage() {
               <TableRow>
                 <TableCell className="font-medium text-on-surface">Standard Rate 12%</TableCell>
                 <TableCell>
-                  <Badge variant="default">12%</Badge>
+                  <Badge variant="secondary">12%</Badge>
                 </TableCell>
                 <TableCell className="font-mono text-sm text-on-surface-variant">6201</TableCell>
                 <TableCell className="text-on-surface-variant text-sm">
@@ -129,7 +119,7 @@ export function TaxCompliancePage() {
               </TableRow>
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

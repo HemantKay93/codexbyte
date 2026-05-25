@@ -1,4 +1,4 @@
-import { Card, CardContent, Button, Badge } from '../components/ui';
+import { Card, Button, Badge } from '@byteevolvr/ui';;
 import { Plus, Globe, TrendingUp, TrendingDown, Store, MoreHorizontal } from 'lucide-react';
 
 const mockStores = [
@@ -72,37 +72,37 @@ export function MultiStorePage() {
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="bg-primary/5 border-primary/20">
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-primary font-medium text-sm mb-1 flex items-center gap-2">
               <Globe className="h-4 w-4" /> Total Stores
             </div>
             <div className="text-3xl font-bold text-primary">4</div>
             <div className="text-xs text-primary/70 mt-1">3 active · 1 in setup</div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-on-surface-variant font-medium text-sm mb-1">
               Combined Revenue (30d)
             </div>
             <div className="text-3xl font-bold text-on-surface">$68,200</div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-on-surface-variant font-medium text-sm mb-1">
               Total Orders (30d)
             </div>
             <div className="text-3xl font-bold text-on-surface">3,016</div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-on-surface-variant font-medium text-sm mb-1">Avg. Growth Rate</div>
             <div className="text-3xl font-bold text-success flex items-center gap-1">
               +7.2% <TrendingUp className="h-5 w-5" />
             </div>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -113,7 +113,7 @@ export function MultiStorePage() {
             key={store.id}
             className={`hover:shadow-md transition-shadow cursor-pointer ${store.status === 'setup' ? 'border-dashed opacity-75' : ''}`}
           >
-            <CardContent className="p-6">
+            <div className="p-6">
               <div className="flex items-start justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-xl bg-primary-container text-primary flex items-center justify-center font-bold text-lg">
@@ -181,7 +181,7 @@ export function MultiStorePage() {
                   {store.currency}
                 </div>
               </div>
-            </CardContent>
+            </div>
           </Card>
         ))}
       </div>

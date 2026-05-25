@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, Button } from '../../components/ui';
+import { Card, Button } from '@byteevolvr/ui';;
 import { toast } from 'sonner';
 import { apiClient } from '@byteevolvr/api-client';
 import * as XLSX from 'xlsx';
@@ -14,6 +14,10 @@ export const WhatsAppCampaigns = () => {
   const [bulkPreview, setBulkPreview] = useState<any[]>([]);
   const [bulkManualNumbers, setBulkManualNumbers] = useState('');
   const [bulkMessage, setBulkMessage] = useState('');
+
+  // Ref guards to prevent double-submission from React StrictMode or rapid clicks
+  const singleSendingRef = React.useRef(false);
+  const bulkSendingRef = React.useRef(false);
 
   const updateManualPreview = (nums: string, msg: string) => {
     if (!nums.trim() || !msg.trim()) {
@@ -32,18 +36,19 @@ export const WhatsAppCampaigns = () => {
   const handleSendTest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!to || !message) return toast.error('Phone and message required');
-    
+    if (singleSendingRef.current) return;
+    singleSendingRef.current = true;
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await apiClient.post('/whatsapp/test-message', { to, message });
-      if (res.data) {
-        toast.success('Test message queued successfully!');
-        setTo('');
-        setMessage('');
-      }
-    } catch (err) {
-      toast.error('Failed to queue message');
+      await apiClient.post('/whatsapp/test-message', { to, message });
+      toast.success('✅ Message queued successfully! Check Task Queue for status.');
+      setTo('');
+      setMessage('');
+    } catch (err: any) {
+      const msg = err?.customMessage || err?.response?.data?.message || err?.message || 'Failed to queue message';
+      toast.error(`❌ ${msg}`);
     } finally {
+      singleSendingRef.current = false;
       setLoading(false);
     }
   };
@@ -84,20 +89,21 @@ export const WhatsAppCampaigns = () => {
 
   const handleSendBulk = async () => {
     if (bulkPreview.length === 0) return toast.error('No valid messages found to send');
-    
+    if (bulkSendingRef.current) return;
+    bulkSendingRef.current = true;
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await apiClient.post('/whatsapp/bulk-campaign', { messages: bulkPreview });
-      if (res.data) {
-        toast.success(`Successfully queued ${bulkPreview.length} messages for delivery!`);
-        setBulkFile(null);
-        setBulkPreview([]);
-        setBulkManualNumbers('');
-        setBulkMessage('');
-      }
-    } catch (err) {
-      toast.error('Failed to queue bulk campaign');
+      await apiClient.post('/whatsapp/bulk-campaign', { messages: bulkPreview });
+      toast.success(`✅ Queued ${bulkPreview.length} messages! Monitor progress in Task Queue.`);
+      setBulkFile(null);
+      setBulkPreview([]);
+      setBulkManualNumbers('');
+      setBulkMessage('');
+    } catch (err: any) {
+      const msg = err?.customMessage || err?.response?.data?.message || err?.message || 'Failed to queue bulk campaign';
+      toast.error(`❌ ${msg}`);
     } finally {
+      bulkSendingRef.current = false;
       setLoading(false);
     }
   };
@@ -128,10 +134,10 @@ export const WhatsAppCampaigns = () => {
       <Card className="bg-card max-w-2xl">
         {activeTab === 'single' ? (
           <>
-            <CardHeader>
-              <CardTitle>Send Manual Test Message</CardTitle>
-            </CardHeader>
-            <CardContent>
+            <div>
+              <div>Send Manual Test Message</div>
+            </div>
+            <div>
               <form onSubmit={handleSendTest} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground mb-1">Phone Number (with country code)</label>
@@ -156,14 +162,14 @@ export const WhatsAppCampaigns = () => {
                   {loading ? 'Queueing...' : 'Send Message'}
                 </Button>
               </form>
-            </CardContent>
+            </div>
           </>
         ) : (
           <>
-            <CardHeader>
-              <CardTitle>Upload Bulk List (Excel/CSV)</CardTitle>
-            </CardHeader>
-            <CardContent>
+            <div>
+              <div>Upload Bulk List (Excel/CSV)</div>
+            </div>
+            <div>
               <div className="space-y-6">
                 <div className="border-2 border-dashed border-outline-variant rounded-xl p-8 text-center hover:bg-surface-container transition-colors cursor-pointer relative">
                   <input 
@@ -246,7 +252,7 @@ export const WhatsAppCampaigns = () => {
                   {loading ? 'Queueing Campaign...' : `Launch Bulk Campaign (${bulkPreview.length} messages)`}
                 </Button>
               </div>
-            </CardContent>
+            </div>
           </>
         )}
       </Card>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
 import { Loader2, Clock, MessageSquare, CheckCircle2, Package, Truck, X, PlusCircle, RotateCcw, DollarSign } from 'lucide-react';
-import { Badge } from './ui';
+import { Badge } from '@byteevolvr/ui';
 
 interface ActivityLog {
   id: string;
@@ -81,7 +81,7 @@ export function OrderActivityLogs({ orderId }: { orderId: string }) {
               <div className="ml-10 flex-1 pt-0.5">
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <div className="flex items-center gap-2">
-                    <Badge variant={['delivered', 'refunded'].includes(log.status) ? 'success' : ['cancelled'].includes(log.status) ? 'error' : 'default'} className="capitalize">
+                    <Badge variant={['delivered', 'refunded'].includes(log.status) ? 'success' : ['cancelled'].includes(log.status) ? 'error' : 'secondary'} className="capitalize">
                       {log.status}
                     </Badge>
                     <span className="text-sm font-bold text-on-surface">

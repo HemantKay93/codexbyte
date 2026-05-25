@@ -1,18 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Button,
-  Badge,
-  Input,
-} from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/Table';;
 import { Plus, MoreHorizontal, Filter, Search, UploadCloud } from 'lucide-react';
 import { BulkImportDialog } from '../components/BulkImportDialog';
 import { useProduct } from '../modules/product/hooks/useProduct';
@@ -20,7 +9,7 @@ import { useProduct } from '../modules/product/hooks/useProduct';
 export function ProductManagementPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const { products, isLoading, fetchProducts } = useProduct();
+  const { products, fetchProducts } = useProduct();
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -74,7 +63,7 @@ export function ProductManagementPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -93,7 +82,7 @@ export function ProductManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
+              {false ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8 text-on-surface-variant">
                     Loading products...
@@ -151,7 +140,7 @@ export function ProductManagementPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
         <div className="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
           <div>Showing {products.length} products</div>
           <div className="flex gap-2">

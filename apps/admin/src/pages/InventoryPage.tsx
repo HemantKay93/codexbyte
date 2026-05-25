@@ -1,17 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Input,
-} from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import {
   Search,
   Filter,
@@ -32,7 +21,7 @@ import { useAdmin } from '../modules/admin/hooks/useAdmin';
 
 export function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
-  const { products, setProducts, isLoading, setLoading, setError } = useAdminStore();
+  const { products, setProducts, setError } = useAdminStore();
   const { warehouses, fetchWarehouses } = useAdmin();
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -46,7 +35,7 @@ export function InventoryPage() {
   }, []);
 
   async function fetchInventory() {
-    setLoading(true);
+    
     try {
       const data = await AdminService.getProducts();
       setProducts(data || []);
@@ -54,7 +43,7 @@ export function InventoryPage() {
       console.error('Error fetching inventory:', err);
       setError(err.customMessage || 'Failed to load inventory');
     } finally {
-      setLoading(false);
+      
     }
   }
 
@@ -154,44 +143,44 @@ export function InventoryPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="border-none shadow-sm bg-surface-container-lowest">
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-on-surface-variant font-black text-[10px] uppercase tracking-widest mb-2">
               Total SKUs
             </div>
             <div className="text-4xl font-black text-on-surface tracking-tighter">
               {stats.total}
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card className="border-none shadow-sm bg-warning/5 border-l-4 border-l-warning">
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-warning font-black text-[10px] uppercase tracking-widest mb-2">
               Low Stock Alerts
             </div>
             <div className="text-4xl font-black text-warning tracking-tighter">
               {stats.lowStock}
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card className="border-none shadow-sm bg-error/5 border-l-4 border-l-error">
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-error font-black text-[10px] uppercase tracking-widest mb-2">
               Out of Stock
             </div>
             <div className="text-4xl font-black text-error tracking-tighter">
               {stats.outOfStock}
             </div>
-          </CardContent>
+          </div>
         </Card>
         <Card className="border-none shadow-sm bg-primary/5 border-l-4 border-l-primary">
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="text-primary font-black text-[10px] uppercase tracking-widest mb-2">
               Inventory Value
             </div>
             <div className="text-4xl font-black text-primary tracking-tighter">
               ₹{stats.totalValue.toLocaleString()}
             </div>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -217,7 +206,7 @@ export function InventoryPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow className="bg-surface-container-lowest">
@@ -240,7 +229,7 @@ export function InventoryPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {isLoading ? (
+              {false ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-20">
                     <Loader2 className="h-10 w-10 animate-spin mx-auto text-primary" />
@@ -333,7 +322,7 @@ export function InventoryPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
         <div className="p-4 border-t border-outline-variant flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
           <div>
             Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}

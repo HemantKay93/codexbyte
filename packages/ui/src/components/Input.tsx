@@ -1,46 +1,38 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
+import { cn } from '../utils/cn';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
-  helperText?: string;
-  icon?: React.ReactNode;
+  fullWidth?: boolean;
+  label?: string;
 }
 
-export const Input: React.FC<InputProps> = ({ label, error, helperText, style, icon, ...props }) => {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)', width: '100%' }}>
-      {label && (
-        <label style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text-muted)' }}>
-          {label}
-        </label>
-      )}
-      <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-        {icon && (
-          <div style={{ position: 'absolute', left: 'var(--space-3)', color: 'var(--color-text-muted)', display: 'flex' }}>
-            {icon}
-          </div>
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ className = '', error, fullWidth = false, label, id, ...props }, ref) => {
+    const baseStyles = 'flex h-10 rounded-md border border-outline-variant bg-surface px-3 py-2 text-sm text-on-surface ring-offset-surface file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-on-surface-variant focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors';
+    
+    return (
+      <div className={cn(fullWidth && 'w-full')}>
+        {label && (
+          <label htmlFor={id} className="block text-sm font-medium text-on-surface mb-1">
+            {label}
+          </label>
         )}
-        <input
-          style={{
-            width: '100%',
-            padding: icon ? 'var(--space-3) var(--space-4) var(--space-3) 40px' : 'var(--space-3) var(--space-4)',
-            borderRadius: 'var(--radius-md)',
-            border: `1px solid ${error ? 'var(--color-error)' : 'var(--color-border)'}`,
-            background: 'var(--color-surface)',
-            color: 'var(--color-text)',
-            fontSize: '1rem',
-            outline: 'none',
-            transition: 'var(--transition-fast)',
-            ...style,
-          }}
-          {...props}
+        <input 
+          ref={ref} 
+          id={id}
+          className={cn(
+            baseStyles,
+            error && 'border-error focus-visible:ring-error',
+            fullWidth && 'w-full',
+            className
+          )} 
+          {...props} 
         />
+        {error && <p className="mt-1 text-xs text-error">{error}</p>}
       </div>
-      {error && <span style={{ fontSize: '0.75rem', color: 'var(--color-error)' }}>{error}</span>}
-      {!error && helperText && (
-        <span style={{ fontSize: '0.75rem', color: 'var(--color-text-subtle)' }}>{helperText}</span>
-      )}
-    </div>
-  );
-};
+    );
+  }
+);
+
+Input.displayName = 'Input';

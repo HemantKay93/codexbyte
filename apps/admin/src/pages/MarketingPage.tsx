@@ -1,15 +1,5 @@
-import {
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '../components/ui';
+import { Card, Button, Badge } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import { Plus, Zap, Send, MousePointerClick, TrendingUp, MoreHorizontal } from 'lucide-react';
 
 const workflows = [
@@ -65,44 +55,44 @@ export function MarketingPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2 text-on-surface-variant">
               <Send className="h-5 w-5 text-primary" />
               <span className="font-medium">Total Sent</span>
             </div>
             <div className="text-3xl font-bold text-on-surface">145k</div>
             <div className="text-xs text-emerald-600 mt-2 font-medium">+12% this month</div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2 text-on-surface-variant">
               <MousePointerClick className="h-5 w-5 text-primary" />
               <span className="font-medium">Avg. Open Rate</span>
             </div>
             <div className="text-3xl font-bold text-on-surface">34.2%</div>
             <div className="text-xs text-emerald-600 mt-2 font-medium">+2.1% this month</div>
-          </CardContent>
+          </div>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          <div className="p-6">
             <div className="flex items-center gap-3 mb-2 text-on-surface-variant">
               <TrendingUp className="h-5 w-5 text-primary" />
               <span className="font-medium">Revenue Attributed</span>
             </div>
             <div className="text-3xl font-bold text-on-surface">$12,450</div>
             <div className="text-xs text-emerald-600 mt-2 font-medium">+8% this month</div>
-          </CardContent>
+          </div>
         </Card>
         <Card className="bg-primary-container border-primary-container text-on-primary-container">
-          <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full">
+          <div className="p-6 flex flex-col items-center justify-center text-center h-full">
             <Zap className="h-8 w-8 mb-2 opacity-80" />
             <h3 className="font-bold mb-1">Boost Sales</h3>
             <p className="text-xs opacity-90 mb-3">Create a flash sale campaign</p>
             <Button variant="secondary" size="sm" className="w-full">
               Quick Start
             </Button>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -135,7 +125,7 @@ export function MarketingPage() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={wf.active ? 'success' : 'default'}>
+                  <Badge variant={wf.active ? 'success' : 'secondary'}>
                     {wf.active ? 'Active' : 'Paused'}
                   </Badge>
                 </TableCell>

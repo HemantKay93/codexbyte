@@ -1,15 +1,6 @@
 import React, { useState, useRef } from 'react';
-import {
-  Card,
-  CardContent,
-  Button,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from './ui';
+import { Card, Button } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from './ui/Table';
 import { Upload, X, Check, AlertCircle, FileText, Download, Loader2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { AdminService } from '@byteevolvr/api-client';
@@ -167,7 +158,7 @@ export function BulkImportDialog({ isOpen, onClose, onSuccess }: BulkImportDialo
           </button>
         </div>
 
-        <CardContent className="p-6 space-y-6">
+        <div className="p-6 space-y-6">
           {!file ? (
             <div
               className="border-2 border-dashed border-outline-variant rounded-xl p-12 text-center hover:bg-surface-container-low transition-colors cursor-pointer group"
@@ -286,7 +277,7 @@ export function BulkImportDialog({ isOpen, onClose, onSuccess }: BulkImportDialo
               )}
             </div>
           )}
-        </CardContent>
+        </div>
 
         <div className="flex items-center justify-end gap-3 p-4 border-t border-outline-variant bg-surface-container-low/50">
           <Button variant="outline" onClick={onClose} disabled={importing}>

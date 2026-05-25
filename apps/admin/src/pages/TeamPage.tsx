@@ -1,17 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Input,
-} from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import { Plus, Search, Filter, MoreHorizontal, Shield, Mail, X } from 'lucide-react';
 import { TeamService } from '@byteevolvr/api-client';
 
@@ -150,7 +139,7 @@ export function TeamPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -218,7 +207,7 @@ export function TeamPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
       </Card>
 
       {isInviteModalOpen && (

@@ -1,17 +1,6 @@
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  Button,
-  Badge,
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-  Input,
-} from '../components/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
 import {
   Search,
   Filter,
@@ -97,31 +86,31 @@ export function ReturnsPage() {
 
       <div className="flex gap-6 overflow-x-auto pb-2">
         <Card className="min-w-[250px] flex-1 border-primary/20 bg-primary/5">
-          <CardContent className="p-4 flex items-center justify-between">
+          <div className="p-4 flex items-center justify-between">
             <div>
               <div className="text-primary font-medium text-sm mb-1">Pending Approval</div>
               <div className="text-3xl font-bold text-primary">{stats.pending}</div>
             </div>
             <AlertCircle className="h-8 w-8 text-primary opacity-50" />
-          </CardContent>
+          </div>
         </Card>
         <Card className="min-w-[250px] flex-1">
-          <CardContent className="p-4 flex items-center justify-between">
+          <div className="p-4 flex items-center justify-between">
             <div>
               <div className="text-on-surface-variant font-medium text-sm mb-1">Approved</div>
               <div className="text-3xl font-bold text-on-surface">{stats.approved}</div>
             </div>
             <Check className="h-8 w-8 text-success opacity-50" />
-          </CardContent>
+          </div>
         </Card>
         <Card className="min-w-[250px] flex-1">
-          <CardContent className="p-4 flex items-center justify-between">
+          <div className="p-4 flex items-center justify-between">
             <div>
               <div className="text-on-surface-variant font-medium text-sm mb-1">Rejected</div>
               <div className="text-3xl font-bold text-on-surface">{stats.rejected}</div>
             </div>
             <X className="h-8 w-8 text-error opacity-50" />
-          </CardContent>
+          </div>
         </Card>
       </div>
 
@@ -144,7 +133,7 @@ export function ReturnsPage() {
             </Button>
           </div>
         </div>
-        <CardContent className="p-0">
+        <div className="p-0">
           <Table>
             <TableHeader>
               <TableRow>
@@ -259,7 +248,7 @@ export function ReturnsPage() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

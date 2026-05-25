@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
 import { Loader2, X, Clock, ArrowRightLeft, ArrowUpRight, ArrowDownRight, Info } from 'lucide-react';
-import { Button, Badge } from './ui';
+import { Button, Badge } from '@byteevolvr/ui';
 
 export function StockMovementHistoryModal({
   product,
@@ -42,10 +42,10 @@ export function StockMovementHistoryModal({
     switch (type) {
       case 'in': return 'success';
       case 'out': return 'error';
-      case 'transfer': return 'info';
+      case 'transfer': return 'primary';
       case 'adjustment': return 'warning';
       case 'return': return 'warning';
-      default: return 'default';
+      default: return 'secondary';
     }
   };
 
