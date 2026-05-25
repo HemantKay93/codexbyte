@@ -1,9 +1,23 @@
 import { Router } from 'express';
-import { 
-  getStatus, getLogs, reconnect, enqueueTestMessage,
-  getTasks, retryTask, cancelTask, pauseQueue, resumeQueue, bulkRetryFailed,
-  getTemplates, createTemplate, updateTemplate, deleteTemplate, generateQR,
-  bulkEnqueueMessages
+import {
+  getStatus,
+  getLogs,
+  reconnect,
+  enqueueTestMessage,
+  getTasks,
+  retryTask,
+  cancelTask,
+  pauseQueue,
+  resumeQueue,
+  bulkRetryFailed,
+  getTemplates,
+  createTemplate,
+  updateTemplate,
+  deleteTemplate,
+  generateQR,
+  bulkEnqueueMessages,
+  getProviders,
+  updateProvider,
 } from './whatsapp.controller.js';
 import { webhookHealth, verifyWebhook, handleWebhookEvent } from './whatsapp.webhook.controller.js';
 import { authenticate, requireAdmin } from '../../middlewares/auth.js';
@@ -39,5 +53,9 @@ router.get('/templates', getTemplates);
 router.post('/templates', createTemplate);
 router.put('/templates/:id', updateTemplate);
 router.delete('/templates/:id', deleteTemplate);
+
+// Provider Config Routes
+router.get('/providers', getProviders);
+router.post('/providers', updateProvider);
 
 export default router;

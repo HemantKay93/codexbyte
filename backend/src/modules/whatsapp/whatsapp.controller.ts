@@ -4,6 +4,7 @@ import logger from '../../services/logger.js';
 import { whatsappQueue } from '../../jobs/whatsapp.queue.js';
 import { WhatsAppRepository } from './whatsapp.repository.js';
 import { CacheService } from '../../services/cacheService.js';
+import { getAdminClient } from '../../config/supabase.js';
 
 const repository = new WhatsAppRepository();
 
@@ -71,9 +72,15 @@ export const enqueueTestMessage = async (req: Request, res: Response) => {
 
 export const getTasks = async (req: Request, res: Response) => {
   try {
-    const jobs = await whatsappQueue.getJobs(['waiting', 'active', 'completed', 'failed', 'delayed']);
+    const jobs = await whatsappQueue.getJobs([
+      'waiting',
+      'active',
+      'completed',
+      'failed',
+      'delayed',
+    ]);
     // Filter to only return necessary data to avoid giant payloads
-    const formattedJobs = jobs.map(j => ({
+    const formattedJobs = jobs.map((j) => ({
       id: j.id,
       name: j.name,
       data: j.data,
@@ -87,22 +94,24 @@ export const getTasks = async (req: Request, res: Response) => {
       failedReason: j.failedReason,
       stacktrace: j.stacktrace,
       attemptsMade: j.attemptsMade,
-      isFailed: !!j.failedReason
+      isFailed: !!j.failedReason,
     }));
-    
+
     // Determine status for UI
-    const result = await Promise.all(jobs.map(async (j) => {
-       const state = await j.getState();
-       return {
-         id: j.id,
-         name: j.name,
-         data: j.data,
-         state,
-         failedReason: j.failedReason,
-         timestamp: j.timestamp,
-         attemptsMade: j.attemptsMade
-       };
-    }));
+    const result = await Promise.all(
+      jobs.map(async (j) => {
+        const state = await j.getState();
+        return {
+          id: j.id,
+          name: j.name,
+          data: j.data,
+          state,
+          failedReason: j.failedReason,
+          timestamp: j.timestamp,
+          attemptsMade: j.attemptsMade,
+        };
+      })
+    );
     res.json({ success: true, data: result });
   } catch (error) {
     logger.error('[WhatsAppController] Error getting tasks:', error);
@@ -190,7 +199,11 @@ export const createTemplate = async (req: Request, res: Response) => {
     res.json({ success: true, data: template });
   } catch (error: any) {
     logger.error('[WhatsAppController] Failed to create template:', error);
-    res.status(500).json({ success: false, message: error?.message || 'Failed to create template', details: error?.details });
+    res.status(500).json({
+      success: false,
+      message: error?.message || 'Failed to create template',
+      details: error?.details,
+    });
   }
 };
 
@@ -201,7 +214,11 @@ export const updateTemplate = async (req: Request, res: Response) => {
     res.json({ success: true, data: template });
   } catch (error: any) {
     logger.error('[WhatsAppController] Failed to update template:', error);
-    res.status(500).json({ success: false, message: error?.message || 'Failed to update template', details: error?.details });
+    res.status(500).json({
+      success: false,
+      message: error?.message || 'Failed to update template',
+      details: error?.details,
+    });
   }
 };
 
@@ -221,15 +238,15 @@ export const bulkEnqueueMessages = async (req: Request, res: Response) => {
     if (!Array.isArray(messages)) {
       return res.status(400).json({ success: false, message: 'messages must be an array' });
     }
-    
+
     let enqueued = 0;
     for (const msg of messages) {
-       if (msg.to && msg.message) {
-           await WhatsAppService.enqueueMessage(msg.to, { content: msg.message, type: 'text' });
-           enqueued++;
-       }
+      if (msg.to && msg.message) {
+        await WhatsAppService.enqueueMessage(msg.to, { content: msg.message, type: 'text' });
+        enqueued++;
+      }
     }
-    
+
     res.json({ success: true, message: `Successfully queued ${enqueued} messages.` });
   } catch (error) {
     logger.error('[WhatsAppController] Bulk enqueue error:', error);
@@ -237,3 +254,49 @@ export const bulkEnqueueMessages = async (req: Request, res: Response) => {
   }
 };
 
+// --- Provider Settings ---
+
+export const getProviders = async (req: Request, res: Response) => {
+  try {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('provider_configs')
+      .select('*')
+      .order('priority', { ascending: true });
+    if (error) throw error;
+    res.json({ success: true, data });
+  } catch (error) {
+    logger.error('[WhatsAppController] Error getting providers:', error);
+    res.status(500).json({ success: false, message: 'Failed to get providers' });
+  }
+};
+
+export const updateProvider = async (req: Request, res: Response) => {
+  try {
+    const { provider_id, enabled, priority, credentials } = req.body;
+    if (!provider_id)
+      return res.status(400).json({ success: false, message: 'provider_id is required' });
+
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('provider_configs')
+      .upsert(
+        {
+          provider_id,
+          enabled,
+          priority,
+          credentials,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'provider_id' }
+      )
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json({ success: true, data });
+  } catch (error) {
+    logger.error('[WhatsAppController] Error updating provider:', error);
+    res.status(500).json({ success: false, message: 'Failed to update provider settings' });
+  }
+};
