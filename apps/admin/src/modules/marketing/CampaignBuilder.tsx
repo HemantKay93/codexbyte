@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Card, Input, Button } from '@byteevolvr/ui';;
+import { Card, Input, Button } from '@byteevolvr/ui';
 import { Send, Clock, Users, Loader2 } from 'lucide-react';
 import { apiClient, MarketingService } from '@byteevolvr/api-client';
 
 export function CampaignBuilder() {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-  
+
   const [segments, setSegments] = useState<any[]>([]);
   const [emailTemplates, setEmailTemplates] = useState<any[]>([]);
   const [pushTemplates, setPushTemplates] = useState<any[]>([]);
@@ -19,6 +19,7 @@ export function CampaignBuilder() {
     template_id: '',
     custom_content: '',
     scheduled_at: '',
+    whatsapp_provider_override: '',
   });
 
   useEffect(() => {
@@ -49,7 +50,9 @@ export function CampaignBuilder() {
         scheduled_at: schedule ? campaign.scheduled_at : null,
       };
       await apiClient.post('/marketing/campaigns', payload);
-      alert(schedule ? 'Campaign scheduled successfully!' : 'Campaign queued for immediate sending!');
+      alert(
+        schedule ? 'Campaign scheduled successfully!' : 'Campaign queued for immediate sending!'
+      );
     } catch (err) {
       console.error(err);
       alert('Failed to create campaign');
@@ -58,7 +61,8 @@ export function CampaignBuilder() {
     }
   };
 
-  const currentTemplates = campaign.type === 'email' ? emailTemplates : campaign.type === 'push' ? pushTemplates : [];
+  const currentTemplates =
+    campaign.type === 'email' ? emailTemplates : campaign.type === 'push' ? pushTemplates : [];
 
   if (fetching) {
     return (
@@ -97,13 +101,38 @@ export function CampaignBuilder() {
                 <select
                   className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-body-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   value={campaign.type}
-                  onChange={(e) => setCampaign({ ...campaign, type: e.target.value, template_id: '' })}
+                  onChange={(e) =>
+                    setCampaign({ ...campaign, type: e.target.value, template_id: '' })
+                  }
                 >
                   <option value="email">Email</option>
                   <option value="whatsapp">WhatsApp</option>
                   <option value="push">Push Notification</option>
                 </select>
               </div>
+
+              {campaign.type === 'whatsapp' && (
+                <div>
+                  <label className="block text-label-md text-on-surface-variant mb-1 font-medium">
+                    WhatsApp Provider (Optional Override)
+                  </label>
+                  <select
+                    className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-body-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                    value={campaign.whatsapp_provider_override}
+                    onChange={(e) =>
+                      setCampaign({ ...campaign, whatsapp_provider_override: e.target.value })
+                    }
+                  >
+                    <option value="">-- Use Default Provider --</option>
+                    <option value="meta">Meta Cloud API</option>
+                    <option value="evolution">Evolution API</option>
+                    <option value="openwa">OpenWA (Legacy)</option>
+                  </select>
+                  <p className="text-xs text-on-surface-variant mt-1">
+                    Leave empty to use the system default provider.
+                  </p>
+                </div>
+              )}
 
               <div>
                 <label className="block text-label-md text-on-surface-variant mb-1 font-medium">
@@ -116,7 +145,9 @@ export function CampaignBuilder() {
                 >
                   <option value="">-- Use Custom Content --</option>
                   {currentTemplates.map((tpl: any) => (
-                    <option key={tpl.id} value={tpl.id}>{tpl.name}</option>
+                    <option key={tpl.id} value={tpl.id}>
+                      {tpl.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -132,7 +163,9 @@ export function CampaignBuilder() {
                     value={campaign.custom_content}
                     onChange={(e) => setCampaign({ ...campaign, custom_content: e.target.value })}
                   />
-                  <p className="text-xs text-on-surface-variant mt-1">Supports variables like {'{{customer_name}}'}</p>
+                  <p className="text-xs text-on-surface-variant mt-1">
+                    Supports variables like {'{{customer_name}}'}
+                  </p>
                 </div>
               )}
             </div>
@@ -156,7 +189,9 @@ export function CampaignBuilder() {
                 >
                   <option value="">-- Select Segment --</option>
                   {segments.map((seg: any) => (
-                    <option key={seg.id} value={seg.id}>{seg.name} (~{seg.estimated_count} users)</option>
+                    <option key={seg.id} value={seg.id}>
+                      {seg.name} (~{seg.estimated_count} users)
+                    </option>
                   ))}
                 </select>
               </div>
@@ -176,11 +211,20 @@ export function CampaignBuilder() {
 
           <Card>
             <div className="p-6 space-y-4">
-              <Button className="w-full gap-2" onClick={() => handleCreate(false)} disabled={loading || !campaign.segment_id}>
+              <Button
+                className="w-full gap-2"
+                onClick={() => handleCreate(false)}
+                disabled={loading || !campaign.segment_id}
+              >
                 <Send className="h-4 w-4" />
                 Send Now
               </Button>
-              <Button variant="outline" className="w-full gap-2" onClick={() => handleCreate(true)} disabled={loading || !campaign.segment_id || !campaign.scheduled_at}>
+              <Button
+                variant="outline"
+                className="w-full gap-2"
+                onClick={() => handleCreate(true)}
+                disabled={loading || !campaign.segment_id || !campaign.scheduled_at}
+              >
                 <Clock className="h-4 w-4" />
                 Schedule
               </Button>

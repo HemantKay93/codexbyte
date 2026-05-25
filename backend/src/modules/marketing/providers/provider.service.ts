@@ -4,7 +4,7 @@ import { BrevoProvider } from '../../../core/providers/brevoProvider.js';
 import { SmtpProvider } from '../../../core/providers/smtpProvider.js';
 import { ProviderHealthService } from './provider-health.service.js';
 import { FirebaseProvider } from '../../../core/providers/firebaseProvider.js';
-import { MetaWhatsAppProvider } from '../../../core/providers/MetaWhatsAppProvider.js';
+import { MetaCloudProvider } from './whatsapp/metaCloudProvider.js';
 import { QueueJobPayload } from '../../../core/contracts/index.js';
 import { CMSService } from '../../cms/cms.service.js';
 
@@ -59,13 +59,13 @@ export class ProviderService {
     const settings = await CMSService.getContent('global');
     const waConfig = settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
 
-    const provider = new MetaWhatsAppProvider();
+    const provider = new MetaCloudProvider();
     await provider.initialize(waConfig);
 
     return {
       name: 'whatsapp-wrapper',
       initialize: async (config?: any) => provider.initialize(config),
-      isHealthy: async () => provider.isHealthy(),
+      isHealthy: async () => provider.healthCheck(),
       sendMessage: async (payload: SendMessagePayload) => {
         const res = await provider.sendMessage({
           to: Array.isArray(payload.to) ? payload.to[0] : payload.to,
@@ -76,7 +76,7 @@ export class ProviderService {
           success: res.success,
           messageId: res.messageId,
           error: res.error,
-          timestamp: res.timestamp,
+          timestamp: new Date().toISOString(),
         };
       },
       sendBulk: async (payloads: SendMessagePayload[]) => {
@@ -91,7 +91,7 @@ export class ProviderService {
             success: res.success,
             messageId: res.messageId,
             error: res.error,
-            timestamp: res.timestamp,
+            timestamp: new Date().toISOString(),
           });
         }
         return results;

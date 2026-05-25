@@ -2,31 +2,10 @@ import { Worker, Job } from 'bullmq';
 import { redis } from '../config/redis.js';
 import logger from '../services/logger.js';
 import { WhatsAppRepository } from '../modules/whatsapp/whatsapp.repository.js';
-import { MetaWhatsAppProvider } from '../core/providers/MetaWhatsAppProvider.js';
-import { CMSService } from '../modules/cms/cms.service.js';
+import { WhatsAppProviderFactory } from '../modules/marketing/providers/whatsapp/whatsappProviderFactory.js';
 
 const whatsappRepo = new WhatsAppRepository();
-const metaWhatsAppProvider = new MetaWhatsAppProvider();
-
-// ─── In-Memory Config Cache (5 min) ─────────────────────────────────────────
-// Without this, every queued message fetches CMS config from the DB.
-// 1,000 messages/day = 1,000 unnecessary DB round-trips. Cache it instead.
-interface WaConfigCache {
-  config: any;
-  expiresAt: number;
-}
-let waConfigCache: WaConfigCache | null = null;
-const WA_CONFIG_CACHE_MS = 5 * 60 * 1000; // 5 minutes
-
-const getWaConfig = async (): Promise<any> => {
-  if (waConfigCache && Date.now() < waConfigCache.expiresAt) {
-    return waConfigCache.config;
-  }
-  const settings = await CMSService.getContent('global');
-  const config = settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
-  waConfigCache = { config, expiresAt: Date.now() + WA_CONFIG_CACHE_MS };
-  return config;
-};
+const providerFactory = new WhatsAppProviderFactory();
 
 export const whatsappWorker = new Worker(
   'whatsapp-queue',
@@ -36,36 +15,63 @@ export const whatsappWorker = new Worker(
       return { success: true };
     }
 
-    const { to, payload, jobId } = job.data;
+    const { to, payload, jobId, providerOverride } = job.data;
     logger.info(`[WhatsApp Worker] Processing job ${job.id} to send message to ${to}`);
 
     try {
-      // Use cached config — avoids a DB round-trip on every message job
-      const currentWaConfig = await getWaConfig();
-      const isCloudApi = !!(currentWaConfig.accessToken && currentWaConfig.phoneNumberId);
+      // 1. Initialize/Re-fetch provider configs from DB
+      await providerFactory.initializeProviders();
 
-      if (!isCloudApi) {
-        throw new Error('WhatsApp Cloud API is not configured in settings.');
-      }
+      // 2. Identify message type
+      let type: 'text' | 'media' | 'template' = 'text';
+      if (payload.type === 'template') type = 'template';
+      if (payload.type === 'image' || payload.type === 'document') type = 'media';
 
-      // Hot-init provider with latest credentials from CMS
-      await metaWhatsAppProvider.initialize({
-        accessToken: currentWaConfig.accessToken,
-        phoneNumberId: currentWaConfig.phoneNumberId,
-      });
-
-      const result = await metaWhatsAppProvider.sendMessage({
-        to: to,
+      // 3. Prepare unified payload
+      const providerPayload: any = {
+        to,
         content: payload.content || '',
         metadata: payload,
-      });
+      };
 
-      if (!result.success) throw new Error(result.error);
+      if (type === 'media') {
+        providerPayload.mediaUrl = payload.mediaUrl;
+        providerPayload.caption = payload.content;
+        providerPayload.fileName = payload.fileName;
+        providerPayload.mimeType = payload.mimeType;
+      } else if (type === 'template') {
+        providerPayload.templateId = payload.templateId;
+        providerPayload.languageCode = payload.languageCode;
+        providerPayload.components = payload.components;
+      }
 
-      // Update DB Status
-      if (jobId) await whatsappRepo.updateMessageStatus(jobId, 'sent');
+      // 4. Send via Factory (automatically handles failover)
+      const result = await providerFactory.sendWithFailover(
+        providerPayload,
+        type,
+        providerOverride
+      );
 
-      return { success: true, messageId: result.messageId };
+      if (!result.success) {
+        throw new Error(result.error || 'Unknown provider error');
+      }
+
+      // 5. Update Legacy DB Status (Optional, keeping for dashboard backward compatibility)
+      if (jobId) {
+        await whatsappRepo.updateMessageStatus(jobId, 'sent');
+        // Update the new columns
+        const admin = await import('../config/supabase.js').then((m) => m.getAdminClient());
+        await admin
+          .from('whatsapp_messages')
+          .update({
+            provider_used: result.provider,
+            external_id: result.messageId,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', jobId);
+      }
+
+      return { success: true, messageId: result.messageId, providerUsed: result.provider };
     } catch (err: any) {
       logger.error(`[WhatsApp Worker] Failed to send message:`, err);
       if (jobId) await whatsappRepo.updateMessageStatus(jobId, 'failed', err.message);

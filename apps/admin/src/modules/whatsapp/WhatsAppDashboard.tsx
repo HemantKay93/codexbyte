@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Card, Button } from '@byteevolvr/ui';;
+import React, { useEffect, useState } from 'react';
+import { Card, Button } from '@byteevolvr/ui';
 import {
   Loader2,
   RefreshCw,
@@ -16,6 +16,8 @@ import {
 } from 'lucide-react';
 import { apiClient } from '@byteevolvr/api-client';
 import { toast } from 'sonner';
+import { useQuery } from '@tanstack/react-query';
+import { WhatsAppProviderSettings } from './WhatsAppProviderSettings';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface SessionStatus {
@@ -71,30 +73,30 @@ export const WhatsAppDashboard = () => {
   const [testMsg, setTestMsg] = useState('');
   const [sending, setSending] = useState(false);
 
-  // ── Fetch Status & Logs ────────────────────────────────────────────────────
-  const fetchStatus = useCallback(async (silent = false) => {
-    try {
-      if (!silent) setLoading(true);
-      const [statusRes, logRes] = await Promise.all([
-        apiClient.get(`/whatsapp/status?t=${Date.now()}`),
-        apiClient.get('/whatsapp/logs?limit=15'),
-      ]);
-      // apiClient interceptor unwraps { success, data } → res.data IS the data
-      if (statusRes.data && typeof statusRes.data === 'object') {
-        setStatus(statusRes.data);
-      }
-      if (logRes.data && Array.isArray(logRes.data)) {
-        setLogs(logRes.data);
-      }
-    } catch (err: any) {
-      if (!silent) {
-        const msg = err?.customMessage || err?.message || 'Failed to fetch WhatsApp status';
-        toast.error(msg);
-      }
-    } finally {
-      if (!silent) setLoading(false);
-    }
-  }, []);
+  // ── Fetch Status & Logs with TanStack Query ────────────────────────────────
+  const { data: statusData, refetch: fetchStatus } = useQuery({
+    queryKey: ['whatsapp_status'],
+    queryFn: async () => {
+      const res = await apiClient.get(`/whatsapp/status`);
+      return res.data;
+    },
+    refetchInterval: 15000,
+  });
+
+  const { data: logsData } = useQuery({
+    queryKey: ['whatsapp_logs'],
+    queryFn: async () => {
+      const res = await apiClient.get('/whatsapp/logs?limit=15');
+      return Array.isArray(res.data) ? res.data : [];
+    },
+    refetchInterval: 15000,
+  });
+
+  useEffect(() => {
+    if (statusData) setStatus(statusData);
+    if (logsData) setLogs(logsData);
+    setLoading(false);
+  }, [statusData, logsData]);
 
   // ── Verify Webhook Connection ──────────────────────────────────────────────
   const checkWebhook = async (e: React.MouseEvent) => {
@@ -117,7 +119,7 @@ export const WhatsAppDashboard = () => {
       setHealthResult({ connected: isConnected, message, phoneInfo });
 
       // Also refresh the session status to update the badge immediately
-      await fetchStatus(true);
+      await fetchStatus();
 
       if (isConnected) {
         toast.success(`✅ ${message}`);
@@ -156,7 +158,7 @@ export const WhatsAppDashboard = () => {
       await apiClient.post('/whatsapp/test-message', { to: phone, message });
       toast.success('Message queued successfully! Check Recent Messages below.');
       setTestMsg('');
-      setTimeout(() => fetchStatus(true), 2000);
+      setTimeout(() => fetchStatus(), 2000);
     } catch (err: any) {
       const msg = err?.customMessage || err?.message || 'Failed to send test message.';
       toast.error(msg);
@@ -166,11 +168,7 @@ export const WhatsAppDashboard = () => {
     }
   };
 
-  useEffect(() => {
-    fetchStatus();
-    const interval = setInterval(() => fetchStatus(true), 15000); // Poll every 15s
-    return () => clearInterval(interval);
-  }, [fetchStatus]);
+  // Removed manual interval polling, TanStack Query handles it via refetchInterval
 
   const sessionStatus = status?.session?.status || 'disconnected';
   const lastActive = status?.session?.last_active;
@@ -184,7 +182,7 @@ export const WhatsAppDashboard = () => {
           WhatsApp Integration
         </h1>
         <Button
-          onClick={() => fetchStatus(false)}
+          onClick={() => fetchStatus()}
           variant="outline"
           disabled={loading}
           className="gap-2"
@@ -349,41 +347,8 @@ export const WhatsAppDashboard = () => {
         </Card>
       </div>
 
-      {/* Setup Instructions Card */}
-      <Card className="border-amber-500/20 bg-amber-500/5">
-        <div>
-          <div className="flex items-center gap-2 text-amber-400">
-            <AlertCircle className="h-4 w-4" />
-            Setup Checklist
-          </div>
-        </div>
-        <div>
-          <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
-            <li>
-              Go to <strong>Settings → WhatsApp Cloud API Configuration</strong> and save your
-              <strong> Permanent Access Token</strong>, <strong>Phone Number ID</strong>, and
-              <strong> Business Account ID</strong>.
-            </li>
-            <li>
-              Copy the <strong>Webhook Callback URL</strong>:{' '}
-              <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
-                https://api.byteevolvr.com/api/v1/whatsapp/webhook
-              </code>
-            </li>
-            <li>
-              In your Meta App Dashboard → WhatsApp → Configuration, set the Callback URL above and
-              the <strong>Verify Token</strong> you saved in Settings.
-            </li>
-            <li>
-              Click <strong>"Verify Webhook Connection"</strong> above — it should show Green with
-              your phone number details.
-            </li>
-            <li>
-              Use <strong>Send Test Message</strong> (above) to confirm end-to-end message delivery.
-            </li>
-          </ol>
-        </div>
-      </Card>
+      {/* Multi-Provider Configuration */}
+      <WhatsAppProviderSettings />
 
       {/* Recent Messages Log */}
       <Card>
@@ -400,6 +365,7 @@ export const WhatsAppDashboard = () => {
                 <tr>
                   <th className="px-4 py-3">Recipient</th>
                   <th className="px-4 py-3">Message</th>
+                  <th className="px-4 py-3">Provider</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Time</th>
                   <th className="px-4 py-3">Error</th>
@@ -417,6 +383,9 @@ export const WhatsAppDashboard = () => {
                       title={log.payload?.content}
                     >
                       {log.payload?.content || '—'}
+                    </td>
+                    <td className="px-4 py-3 text-xs uppercase text-muted-foreground font-semibold">
+                      {log.provider_used || 'unknown'}
                     </td>
                     <td className="px-4 py-3">
                       <span
