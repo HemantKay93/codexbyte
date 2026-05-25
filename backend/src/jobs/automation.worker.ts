@@ -37,5 +37,11 @@ export const automationWorker = new Worker(
       throw err;
     }
   },
-  { connection: redis }
+  {
+    connection: redis,
+    stalledInterval: 300_000, // Check stalled jobs every 5 min (default: 30s)
+    lockDuration: 600_000, // Lock for 10 min (must exceed stalledInterval)
+    removeOnComplete: { count: 100 }, // Auto-cleanup completed jobs
+    removeOnFail: { count: 200 }, // Keep last 200 failures for debugging
+  }
 );

@@ -1,8 +1,37 @@
 import { Queue } from 'bullmq';
 import { redis } from '../../config/redis.js';
 
-export const emailQueue = new Queue('email-queue', { connection: redis });
-export const notificationQueue = new Queue('notification-queue', { connection: redis });
-export const analyticsQueue = new Queue('analytics-queue', { connection: redis });
-export const marketingAutomationQueue = new Queue('marketing-automation', { connection: redis });
-export const whatsappQueue = new Queue('whatsapp-queue', { connection: redis });
+// Default job options shared by all queues.
+// removeOnComplete/removeOnFail keep Redis memory lean at scale.
+// At 10k users, without cleanup, Redis would accumulate thousands of job keys.
+const DEFAULT_JOB_OPTIONS = {
+  removeOnComplete: { count: 100 }, // Keep last 100 completed jobs per queue
+  removeOnFail: { count: 200 }, // Keep last 200 failed jobs per queue
+  attempts: 3, // Retry 3 times before marking failed
+  backoff: { type: 'exponential' as const, delay: 2000 }, // 2s, 4s, 8s
+};
+
+export const emailQueue = new Queue('email-queue', {
+  connection: redis,
+  defaultJobOptions: DEFAULT_JOB_OPTIONS,
+});
+
+export const notificationQueue = new Queue('notification-queue', {
+  connection: redis,
+  defaultJobOptions: DEFAULT_JOB_OPTIONS,
+});
+
+export const analyticsQueue = new Queue('analytics-queue', {
+  connection: redis,
+  defaultJobOptions: { ...DEFAULT_JOB_OPTIONS, attempts: 1 }, // analytics failures are not retried
+});
+
+export const marketingAutomationQueue = new Queue('marketing-automation', {
+  connection: redis,
+  defaultJobOptions: DEFAULT_JOB_OPTIONS,
+});
+
+export const whatsappQueue = new Queue('whatsapp-queue', {
+  connection: redis,
+  defaultJobOptions: DEFAULT_JOB_OPTIONS,
+});

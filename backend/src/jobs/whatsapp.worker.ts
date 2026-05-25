@@ -8,6 +8,26 @@ import { CMSService } from '../modules/cms/cms.service.js';
 const whatsappRepo = new WhatsAppRepository();
 const metaWhatsAppProvider = new MetaWhatsAppProvider();
 
+// ─── In-Memory Config Cache (5 min) ─────────────────────────────────────────
+// Without this, every queued message fetches CMS config from the DB.
+// 1,000 messages/day = 1,000 unnecessary DB round-trips. Cache it instead.
+interface WaConfigCache {
+  config: any;
+  expiresAt: number;
+}
+let waConfigCache: WaConfigCache | null = null;
+const WA_CONFIG_CACHE_MS = 5 * 60 * 1000; // 5 minutes
+
+const getWaConfig = async (): Promise<any> => {
+  if (waConfigCache && Date.now() < waConfigCache.expiresAt) {
+    return waConfigCache.config;
+  }
+  const settings = await CMSService.getContent('global');
+  const config = settings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
+  waConfigCache = { config, expiresAt: Date.now() + WA_CONFIG_CACHE_MS };
+  return config;
+};
+
 export const whatsappWorker = new Worker(
   'whatsapp-queue',
   async (job: Job) => {
@@ -20,11 +40,8 @@ export const whatsappWorker = new Worker(
     logger.info(`[WhatsApp Worker] Processing job ${job.id} to send message to ${to}`);
 
     try {
-      // Re-fetch config dynamically per job
-      const currentSettings = await CMSService.getContent('global');
-      const currentWaConfig =
-        currentSettings?.find((s: any) => s.section_key === 'whatsapp_config')?.content || {};
-
+      // Use cached config — avoids a DB round-trip on every message job
+      const currentWaConfig = await getWaConfig();
       const isCloudApi = !!(currentWaConfig.accessToken && currentWaConfig.phoneNumberId);
 
       if (!isCloudApi) {
