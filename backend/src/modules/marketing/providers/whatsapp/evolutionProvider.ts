@@ -43,9 +43,7 @@ export class EvolutionProvider implements IWhatsAppProvider {
           delay: 1200,
           presence: 'composing',
         },
-        textMessage: {
-          text: payload.content || '',
-        },
+        text: payload.content || '',
       };
 
       const response = await axios.post(url, data, this.getHeaders());
