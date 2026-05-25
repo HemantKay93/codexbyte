@@ -7,6 +7,16 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppErrorBoundary } from './components/AppErrorBoundary';
 import { useAuthStore } from '@byteevolvr/store';
 import { Loader2 } from 'lucide-react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 import './index.css';
 
@@ -121,58 +131,60 @@ const Main = () => {
   }, [initialize]);
 
   return (
-    <AppErrorBoundary>
-      <ThemeProvider>
-        <BrowserRouter>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route
-                element={
-                  <ProtectedRoute>
-                    <AdminLayout />
-                  </ProtectedRoute>
-                }
-              >
-                <Route path="/" element={<DashboardPage />} />
-                <Route path="/analytics" element={<AnalyticsPage />} />
-                <Route path="/pos" element={<POSPage />} />
-                <Route path="/products" element={<ProductManagementPage />} />
-                <Route path="/products/new" element={<ProductFormPage />} />
-                <Route path="/inventory" element={<InventoryPage />} />
-                <Route path="/orders" element={<OrderManagementPage />} />
-                <Route path="/orders/:id" element={<OrderDetailPage />} />
-                <Route path="/returns" element={<ReturnsPage />} />
-                <Route path="/warehouse" element={<WarehousePage />} />
-                <Route path="/customers" element={<CustomersPage />} />
-                <Route path="/customers/:id" element={<CustomerDetailPage />} />
-                <Route path="/reviews" element={<ReviewsPage />} />
-                <Route path="/marketing" element={<MarketingDashboard />} />
-                <Route path="/marketing/campaigns" element={<CampaignBuilder />} />
-                <Route path="/marketing/segments" element={<AudienceSegments />} />
-                <Route path="/marketing/automations" element={<AutomationFlows />} />
-                <Route path="/marketing/templates" element={<TemplateManager />} />
-                <Route path="/discounts" element={<DiscountsPage />} />
-                <Route path="/cms" element={<CMSBuilderPage />} />
-                <Route path="/invoice-template" element={<InvoiceTemplatePage />} />
-                <Route path="/suppliers" element={<SuppliersPage />} />
-                <Route path="/stores" element={<MultiStorePage />} />
-                <Route path="/tax-compliance" element={<TaxCompliancePage />} />
-                <Route path="/activity-log" element={<ActivityLogPage />} />
-                <Route path="/developers" element={<DevelopersPage />} />
-                <Route path="/team" element={<TeamPage />} />
-                <Route path="/support" element={<SupportPage />} />
-                <Route path="/whatsapp" element={<WhatsAppDashboard />} />
-                <Route path="/whatsapp/campaigns" element={<WhatsAppCampaigns />} />
-                <Route path="/whatsapp/tasks" element={<WhatsAppTasks />} />
-                <Route path="/whatsapp/templates" element={<WhatsAppTemplates />} />
-                <Route path="/settings" element={<SettingsPage />} />
-              </Route>
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </ThemeProvider>
-    </AppErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AppErrorBoundary>
+        <ThemeProvider>
+          <BrowserRouter>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
+                <Route
+                  element={
+                    <ProtectedRoute>
+                      <AdminLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="/" element={<DashboardPage />} />
+                  <Route path="/analytics" element={<AnalyticsPage />} />
+                  <Route path="/pos" element={<POSPage />} />
+                  <Route path="/products" element={<ProductManagementPage />} />
+                  <Route path="/products/new" element={<ProductFormPage />} />
+                  <Route path="/inventory" element={<InventoryPage />} />
+                  <Route path="/orders" element={<OrderManagementPage />} />
+                  <Route path="/orders/:id" element={<OrderDetailPage />} />
+                  <Route path="/returns" element={<ReturnsPage />} />
+                  <Route path="/warehouse" element={<WarehousePage />} />
+                  <Route path="/customers" element={<CustomersPage />} />
+                  <Route path="/customers/:id" element={<CustomerDetailPage />} />
+                  <Route path="/reviews" element={<ReviewsPage />} />
+                  <Route path="/marketing" element={<MarketingDashboard />} />
+                  <Route path="/marketing/campaigns" element={<CampaignBuilder />} />
+                  <Route path="/marketing/segments" element={<AudienceSegments />} />
+                  <Route path="/marketing/automations" element={<AutomationFlows />} />
+                  <Route path="/marketing/templates" element={<TemplateManager />} />
+                  <Route path="/discounts" element={<DiscountsPage />} />
+                  <Route path="/cms" element={<CMSBuilderPage />} />
+                  <Route path="/invoice-template" element={<InvoiceTemplatePage />} />
+                  <Route path="/suppliers" element={<SuppliersPage />} />
+                  <Route path="/stores" element={<MultiStorePage />} />
+                  <Route path="/tax-compliance" element={<TaxCompliancePage />} />
+                  <Route path="/activity-log" element={<ActivityLogPage />} />
+                  <Route path="/developers" element={<DevelopersPage />} />
+                  <Route path="/team" element={<TeamPage />} />
+                  <Route path="/support" element={<SupportPage />} />
+                  <Route path="/whatsapp" element={<WhatsAppDashboard />} />
+                  <Route path="/whatsapp/campaigns" element={<WhatsAppCampaigns />} />
+                  <Route path="/whatsapp/tasks" element={<WhatsAppTasks />} />
+                  <Route path="/whatsapp/templates" element={<WhatsAppTemplates />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                </Route>
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </ThemeProvider>
+      </AppErrorBoundary>
+    </QueryClientProvider>
   );
 };
 
