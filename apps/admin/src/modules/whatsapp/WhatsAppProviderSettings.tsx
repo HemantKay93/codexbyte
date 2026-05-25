@@ -48,7 +48,10 @@ export function WhatsAppProviderSettings() {
       queryClient.invalidateQueries({ queryKey: ['provider_configs'] });
       alert('Provider settings updated successfully.');
     },
-    onError: () => alert('Failed to update provider settings (Endpoint may not exist yet)'),
+    onError: (error: any) =>
+      alert(
+        `Failed to update provider settings: ${error?.customMessage || error?.message || 'Unknown error'}`
+      ),
   });
 
   if (isLoading) return <div>Loading provider configuration...</div>;
