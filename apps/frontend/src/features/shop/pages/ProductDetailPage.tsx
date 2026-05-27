@@ -1,34 +1,32 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ProductService, Product } from '@byteevolvr/api-client';
-import { Loader2, ArrowLeft, ShoppingCart, Truck, ShieldCheck, Star } from 'lucide-react';
-import { Button, Badge } from '@byteevolvr/ui';
 import { useCartStore } from '@byteevolvr/store';
-
+import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
+import { Loader2, ZoomIn, Star, Cpu, Monitor, Zap, ChevronDown, Plus } from 'lucide-react';
 export function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-
-  const { addItem: addToCart } = useCartStore();
-
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [quantity, setQuantity] = useState(1);
-  const [addingToCart, setAddingToCart] = useState(false);
-  const [activeTab, setActiveTab] = useState<
-    'description' | 'specifications' | 'qna' | 'reviews' | 'tags'
-  >('description');
+  const { addItem } = useCartStore();
+  const currencySymbol = useStoreCurrency();
+  
+  const [activeTab, setActiveTab] = useState('description');
+  const [showFullDesc, setShowFullDesc] = useState(false);
+  const [selectedRam, setSelectedRam] = useState(16);
+  const [selectedStorage, setSelectedStorage] = useState(1);
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!id) return;
       try {
-        const data = await ProductService.getProduct(id);
-        setProduct(data);
+        setLoading(true);
+        if (id) {
+          const data = await ProductService.getProduct(id);
+          setProduct(data);
+        }
       } catch (err) {
-        console.error(err);
-        setError('Failed to load product details.');
+        console.error('Failed to fetch product', err);
       } finally {
         setLoading(false);
       }
@@ -37,315 +35,274 @@ export function ProductDetailPage() {
   }, [id]);
 
   const handleAddToCart = () => {
-    if (!product) return;
-    setAddingToCart(true);
-    addToCart(product, quantity);
-    setTimeout(() => {
-      setAddingToCart(false);
-    }, 400);
-  };
-
-  const handleBuyNow = () => {
-    handleAddToCart();
-    navigate('/shop/checkout'); // Placeholder
+    if (product) {
+      setAdding(true);
+      addItem(product);
+      setTimeout(() => setAdding(false), 500);
+    }
   };
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center bg-[#04080F]">
-        <Loader2 className="h-10 w-10 animate-spin text-accent" />
+      <div className="flex h-[calc(100vh-160px)] items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-stitch-primary" />
       </div>
     );
   }
 
-  if (error || !product) {
+  if (!product) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center bg-[#04080F] text-white">
-        <h2 className="text-2xl font-bold mb-4">{error || 'Product Not Found'}</h2>
-        <Button onClick={() => navigate('/shop')} variant="secondary">
-          Return to Shop
-        </Button>
+      <div className="flex h-[calc(100vh-160px)] flex-col items-center justify-center space-y-4">
+        <h2 className="text-2xl font-bold text-white">Product Not Found</h2>
+        <p className="text-stitch-on-surface-variant">The product you are looking for does not exist or has been removed.</p>
       </div>
     );
   }
-
-  const discount =
-    product.original_price && product.original_price > product.price
-      ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
-      : 0;
 
   return (
-    <div className="min-h-screen bg-[#04080F] text-white pt-32 pb-12 px-6">
-      <div className="max-w-[1200px] mx-auto">
-        <button
-          onClick={() => navigate('/shop')}
-          className="flex items-center gap-2 text-sm text-brand-muted hover:text-white transition-colors mb-8"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Shop
-        </button>
+    <div className="w-full">
+      <main className="pt-24 pb-32 w-full">
+        <div className="max-w-7xl mx-auto px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop grid grid-cols-1 lg:grid-cols-2 gap-stitch-gutter lg:gap-16">
+          
+          {/* Image Gallery Section */}
+          <section className="space-y-6">
+            <div className="relative group aspect-video md:aspect-square overflow-hidden rounded-xl stitch-glass-panel flex items-center justify-center bg-stitch-surface-container/20">
+              <img 
+                className="w-full h-full object-cover p-4 transform transition-transform duration-700 group-hover:scale-110" 
+                src={product.image_url || 'https://via.placeholder.com/150'} 
+                alt={product.name} 
+              />
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                <div className="w-2 h-2 rounded-full bg-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]"></div>
+                <div className="w-2 h-2 rounded-full bg-stitch-outline-variant"></div>
+                <div className="w-2 h-2 rounded-full bg-stitch-outline-variant"></div>
+              </div>
+                <ZoomIn className="w-4 h-4" />
+            </div>
+            
+            <div className="flex gap-4 overflow-x-auto pb-4 stitch-no-scrollbar">
+              <button className="flex-shrink-0 w-24 h-24 rounded-lg border-2 border-stitch-primary overflow-hidden bg-stitch-surface-container">
+                <img className="w-full h-full object-cover" src={product.image_url || 'https://via.placeholder.com/150'} alt="Thumbnail 1" />
+              </button>
+              <button className="flex-shrink-0 w-24 h-24 rounded-lg border border-stitch-outline-variant overflow-hidden bg-stitch-surface-container opacity-60 hover:opacity-100 transition-opacity">
+                <img className="w-full h-full object-cover grayscale opacity-50" src={product.image_url || 'https://via.placeholder.com/150'} alt="Thumbnail 2" />
+              </button>
+            </div>
+          </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-          {/* Left Column: Image */}
-          <div className="flex flex-col gap-6">
-            <div className="aspect-square bg-white/5 rounded-2xl border border-white/10 p-8 flex items-center justify-center relative overflow-hidden group">
-              {discount > 0 && (
-                <div className="absolute top-4 left-4 z-10">
-                  <Badge
-                    variant="error"
-                    className="text-xs bg-red-500/20 text-red-400 border-red-500/20"
+          {/* Product Details Section */}
+          <section className="flex flex-col gap-8">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="bg-stitch-secondary-container/20 text-stitch-secondary-fixed-dim px-3 py-1 rounded-full font-stitch-label-sm text-stitch-label-sm flex items-center gap-1 border border-stitch-secondary/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-stitch-secondary animate-pulse" style={{ animationDuration: '2s' }}></span>
+                  In Stock - Fast Shipping
+                </span>
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4 text-stitch-secondary fill-stitch-secondary" />
+                  <span className="font-stitch-label-sm text-stitch-label-sm text-stitch-on-surface">5.0 ({product.reviews?.length || 0} reviews)</span>
+                </div>
+              </div>
+              <h1 className="font-stitch-display-lg text-stitch-display-lg-mobile md:text-stitch-headline-lg tracking-tight text-white uppercase">{product.name}</h1>
+              <p className="font-stitch-headline-lg text-stitch-primary">{currencySymbol}{product.price.toFixed(2)}</p>
+            </div>
+
+            {/* Key Features Pills */}
+            <div className="flex flex-wrap gap-3">
+              <div className="stitch-glass-panel px-4 py-3 rounded-xl flex items-center gap-3">
+                <Cpu className="w-5 h-5 text-stitch-primary" />
+                <span className="font-stitch-label-sm text-stitch-label-sm">NVIDIA RTX 4080</span>
+              </div>
+              <div className="stitch-glass-panel px-4 py-3 rounded-xl flex items-center gap-3">
+                <Monitor className="w-5 h-5 text-stitch-primary" />
+                <span className="font-stitch-label-sm text-stitch-label-sm">144Hz Display</span>
+              </div>
+              <div className="stitch-glass-panel px-4 py-3 rounded-xl flex items-center gap-3">
+                <Zap className="w-5 h-5 text-stitch-primary" />
+                <span className="font-stitch-label-sm text-stitch-label-sm">Ultra-Slim Chassis</span>
+              </div>
+            </div>
+
+            {/* Variant Selection */}
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <label className="font-stitch-label-sm text-stitch-label-sm uppercase text-stitch-outline">System Memory (RAM)</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <button 
+                    onClick={() => setSelectedRam(16)}
+                    className={`stitch-glass-panel py-4 rounded-xl transition-all ${selectedRam === 16 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
                   >
-                    {discount}% OFF
-                  </Badge>
+                    <span className={`block font-bold ${selectedRam === 16 ? 'text-white' : 'text-stitch-on-surface-variant'}`}>16GB DDR5</span>
+                    <span className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline">Included</span>
+                  </button>
+                  <button 
+                    onClick={() => setSelectedRam(32)}
+                    className={`stitch-glass-panel py-4 rounded-xl transition-all ${selectedRam === 32 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
+                  >
+                    <span className={`block font-bold ${selectedRam === 32 ? 'text-white' : 'text-stitch-on-surface-variant'}`}>32GB DDR5</span>
+                    <span className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline">+{currencySymbol}199.00</span>
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <label className="font-stitch-label-sm text-stitch-label-sm uppercase text-stitch-outline">Storage Capacity</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <button 
+                    onClick={() => setSelectedStorage(1)}
+                    className={`stitch-glass-panel py-4 rounded-xl transition-all ${selectedStorage === 1 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
+                  >
+                    <span className={`block font-bold ${selectedStorage === 1 ? 'text-white' : 'text-stitch-on-surface-variant'}`}>1TB NVMe Gen4</span>
+                    <span className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline">Included</span>
+                  </button>
+                  <button 
+                    onClick={() => setSelectedStorage(2)}
+                    className={`stitch-glass-panel py-4 rounded-xl transition-all ${selectedStorage === 2 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
+                  >
+                    <span className={`block font-bold ${selectedStorage === 2 ? 'text-white' : 'text-stitch-on-surface-variant'}`}>2TB NVMe Gen4</span>
+                    <span className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline">+{currencySymbol}249.00</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Tabbed Info Section */}
+            <div className="space-y-6 pt-4">
+              <div className="border-b border-stitch-outline-variant/20">
+                <div className="flex gap-8 overflow-x-auto stitch-no-scrollbar scroll-smooth">
+                  <button onClick={() => setActiveTab('description')} className={`pb-4 font-stitch-label-sm text-stitch-label-sm uppercase tracking-wider transition-all border-b-2 ${activeTab === 'description' ? 'text-stitch-primary border-stitch-primary' : 'text-stitch-on-surface-variant border-transparent hover:text-stitch-primary'}`}>Description</button>
+                  <button onClick={() => setActiveTab('specifications')} className={`pb-4 font-stitch-label-sm text-stitch-label-sm uppercase tracking-wider transition-all border-b-2 ${activeTab === 'specifications' ? 'text-stitch-primary border-stitch-primary' : 'text-stitch-on-surface-variant border-transparent hover:text-stitch-primary'}`}>Specifications</button>
+                  <button onClick={() => setActiveTab('reviews')} className={`pb-4 font-stitch-label-sm text-stitch-label-sm uppercase tracking-wider transition-all border-b-2 ${activeTab === 'reviews' ? 'text-stitch-primary border-stitch-primary' : 'text-stitch-on-surface-variant border-transparent hover:text-stitch-primary'}`}>Reviews ({product.reviews?.length || 0})</button>
+                  <button onClick={() => setActiveTab('faq')} className={`pb-4 font-stitch-label-sm text-stitch-label-sm uppercase tracking-wider transition-all border-b-2 ${activeTab === 'faq' ? 'text-stitch-primary border-stitch-primary' : 'text-stitch-on-surface-variant border-transparent hover:text-stitch-primary'}`}>FAQ</button>
+                </div>
+              </div>
+              
+              {activeTab === 'description' && (
+                <div>
+                  <div className={`relative overflow-hidden transition-all duration-500 ${showFullDesc ? 'max-h-[1000px]' : 'max-h-24'}`}>
+                    <p className="text-stitch-on-surface-variant leading-relaxed">
+                      {product.description}
+                      <br/><br/>
+                      Experience the pinnacle of mobile gaming with this model. Engineered for those who demand uncompromising power without the bulk, this machine combines a high-performance processor with sheer graphics muscle.
+                    </p>
+                    {!showFullDesc && (
+                      <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-stitch-background to-transparent"></div>
+                    )}
+                  </div>
+                  <button onClick={() => setShowFullDesc(!showFullDesc)} className="mt-4 flex items-center gap-2 text-stitch-primary font-stitch-label-sm hover:gap-3 transition-all">
+                    <span>{showFullDesc ? 'SHOW LESS' : 'READ MORE'}</span>
+                    <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${showFullDesc ? 'rotate-180' : ''}`} />
+                  </button>
                 </div>
               )}
-              {product.image_url ? (
-                <img
-                  src={product.image_url}
-                  alt={product.name}
-                  className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105"
-                />
-              ) : (
-                <div className="w-32 h-32 bg-white/10 rounded-xl" />
+              
+              {activeTab === 'specifications' && (
+                <div className="grid grid-cols-2 gap-y-6">
+                  <div>
+                    <p className="font-stitch-label-sm text-stitch-outline text-[10px] uppercase mb-1">Category</p>
+                    <p className="text-white capitalize">{product.category}</p>
+                  </div>
+                  <div>
+                    <p className="font-stitch-label-sm text-stitch-outline text-[10px] uppercase mb-1">Inventory</p>
+                    <p className="text-white">Available</p>
+                  </div>
+                  <div>
+                    <p className="font-stitch-label-sm text-stitch-outline text-[10px] uppercase mb-1">Display</p>
+                    <p className="text-white">15.6" QHD 144Hz G-Sync</p>
+                  </div>
+                  <div>
+                    <p className="font-stitch-label-sm text-stitch-outline text-[10px] uppercase mb-1">Battery</p>
+                    <p className="text-white">99.9 Whr Lithium-ion</p>
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'reviews' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-white font-bold">Top Verified Reviews</p>
+                    <button className="text-stitch-primary text-xs font-stitch-label-sm underline">View all {product.reviews?.length || 0} reviews</button>
+                  </div>
+                  <div className="p-4 stitch-glass-panel rounded-xl">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="flex text-stitch-secondary scale-75">
+                        <Star className="w-4 h-4 text-stitch-secondary fill-stitch-secondary" />
+                        <Star className="w-4 h-4 text-stitch-secondary fill-stitch-secondary" />
+                        <Star className="w-4 h-4 text-stitch-secondary fill-stitch-secondary" />
+                        <Star className="w-4 h-4 text-stitch-secondary fill-stitch-secondary" />
+                        <Star className="w-4 h-4 text-stitch-secondary fill-stitch-secondary" />
+                      </div>
+                      <span className="text-sm font-bold text-white">Alex M.</span>
+                    </div>
+                    <p className="text-sm text-stitch-on-surface-variant italic">"This machine is a beast. Thermal management is surprisingly good given the slim profile."</p>
+                  </div>
+                </div>
+              )}
+              
+              {activeTab === 'faq' && (
+                <div className="space-y-4">
+                  <div className="p-4 stitch-glass-panel rounded-xl border-l-2 border-stitch-primary">
+                    <p className="font-bold text-sm mb-1 text-white">What is the warranty period?</p>
+                    <p className="text-sm text-stitch-outline">Every device comes with a 2-year precision warranty.</p>
+                  </div>
+                  <div className="p-4 stitch-glass-panel rounded-xl">
+                    <p className="font-bold text-sm mb-1 text-white">Can I upgrade the RAM later?</p>
+                    <p className="text-sm text-stitch-outline">Yes, features two user-accessible DDR5 slots.</p>
+                  </div>
+                </div>
               )}
             </div>
-
-            {/* Small image gallery placeholder */}
-            {product.image_url && (
-              <div className="flex gap-4">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className={`w-20 h-20 rounded-xl border ${i === 1 ? 'border-accent' : 'border-white/10'} bg-white/5 p-2 cursor-pointer hover:border-white/30 transition-colors`}
-                  >
-                    <img
-                      src={product.image_url}
-                      className="w-full h-full object-contain opacity-70"
-                      alt={`View ${i}`}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Right Column: Details */}
-          <div className="flex flex-col">
-            <div className="mb-6 border-b border-white/10 pb-6">
-              <div className="text-accent text-sm font-bold tracking-wider uppercase mb-2">
-                {product.brand || product.category}
-              </div>
-              <h1 className="text-3xl md:text-4xl font-display font-bold leading-tight mb-4">
-                {product.name}
-              </h1>
-              <div className="flex items-center gap-4 text-sm text-brand-muted mb-4">
-                <span className="flex items-center text-yellow-400">
-                  <Star className="h-4 w-4 fill-current mr-1" /> 4.8 (124 reviews)
-                </span>
-                <span>•</span>
-                <span>SKU: {product.sku || 'N/A'}</span>
-              </div>
-            </div>
-
-            <div className="mb-8">
-              <div className="flex items-end gap-4 mb-2">
-                <span className="text-4xl font-bold text-white">
-                  ₹{Number(product.price).toLocaleString('en-IN')}
-                </span>
-                {product.original_price && product.original_price > product.price && (
-                  <span className="text-xl text-brand-muted line-through mb-1">
-                    ₹{Number(product.original_price).toLocaleString('en-IN')}
-                  </span>
-                )}
-              </div>
-              <p className="text-sm text-green-400 font-medium mb-1">Inclusive of all taxes</p>
-            </div>
-
-            <div className="prose prose-invert max-w-none text-brand-muted mb-8 leading-relaxed">
-              <p>{product.description}</p>
-            </div>
-
-            {/* Actions */}
-            <div className="bg-[#070D1A] rounded-2xl border border-white/10 p-6 mb-8 shadow-2xl">
-              <div className="flex items-center justify-between mb-6">
-                <span
-                  className={`font-semibold ${product.stock_quantity > 0 ? 'text-green-400' : 'text-red-400'}`}
-                >
-                  {product.stock_quantity > 0 ? 'In Stock' : 'Out of Stock'}
-                </span>
-
-                {product.stock_quantity > 0 && (
-                  <div className="flex items-center border border-white/20 rounded-lg overflow-hidden bg-[#04080F]">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-4 py-2 text-white hover:bg-white/5 transition-colors"
-                    >
-                      -
-                    </button>
-                    <span className="px-4 py-2 font-bold text-white border-x border-white/20 min-w-[3rem] text-center">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => setQuantity(Math.min(product.stock_quantity, quantity + 1))}
-                      className="px-4 py-2 text-white hover:bg-white/5 transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Button
-                  onClick={handleAddToCart}
-                  disabled={product.stock_quantity === 0 || addingToCart}
-                  variant="secondary"
-                  className="w-full py-4 rounded-xl border border-white/20 bg-transparent hover:bg-white/5 flex justify-center items-center gap-2"
-                >
-                  {addingToCart ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <ShoppingCart className="h-5 w-5" />
-                  )}
-                  Add to Cart
-                </Button>
-                <Button
-                  onClick={handleBuyNow}
-                  disabled={product.stock_quantity === 0}
-                  variant="primary"
-                  className="w-full py-4 rounded-xl shadow-[0_0_15px_rgba(26,79,214,0.3)]"
-                >
-                  Buy Now
-                </Button>
-              </div>
-            </div>
-
-            {/* Perks */}
-            <div className="grid grid-cols-2 gap-4 text-sm text-brand-muted">
-              <div className="flex items-center gap-3 bg-white/5 p-4 rounded-xl border border-white/5">
-                <Truck className="h-5 w-5 text-accent" />
-                <span>Free delivery across India</span>
-              </div>
-              <div className="flex items-center gap-3 bg-white/5 p-4 rounded-xl border border-white/5">
-                <ShieldCheck className="h-5 w-5 text-accent" />
-                <span>1 Year Brand Warranty</span>
-              </div>
-            </div>
-          </div>
+          </section>
         </div>
-
-        {/* Product Details Tabs Section */}
-        <div className="mt-20 border-t border-white/10 pt-10">
-          <div className="flex flex-wrap gap-8 border-b border-white/10 mb-8">
-            {(['description', 'specifications', 'qna', 'reviews', 'tags'] as const).map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`pb-4 text-sm font-bold uppercase tracking-wider transition-colors ${
-                  activeTab === tab
-                    ? 'text-accent border-b-2 border-accent'
-                    : 'text-brand-muted hover:text-white'
-                }`}
+        
+        {/* Frequently Bought Together Section */}
+        <section className="max-w-7xl mx-auto px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop mt-stitch-section-gap">
+          <h2 className="font-stitch-headline-lg mb-8 text-white">Frequently Bought Together</h2>
+          <div className="stitch-glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-8 md:gap-16">
+            <div className="flex items-center gap-6">
+              <div className="w-24 h-24 rounded-xl bg-stitch-surface-container flex items-center justify-center p-2">
+                <img className="w-full h-full object-cover rounded-lg" src="https://images.unsplash.com/photo-1595225476474-87563907a212?q=80&w=200&auto=format&fit=crop" alt="Keyboard" />
+              </div>
+              <Plus className="w-6 h-6 text-stitch-outline" />
+              <div className="w-24 h-24 rounded-xl bg-stitch-surface-container flex items-center justify-center p-2">
+                <img className="w-full h-full object-cover rounded-lg" src="https://images.unsplash.com/photo-1615663245857-ac1eeb5366b4?q=80&w=200&auto=format&fit=crop" alt="Mouse" />
+              </div>
+            </div>
+            <div className="flex-1 text-center md:text-left">
+              <h3 className="font-stitch-headline-lg-mobile text-white">Upgrade your setup</h3>
+              <p className="text-stitch-outline">Add the Precision Mouse &amp; Mechanical Keyboard to your order.</p>
+            </div>
+            <div className="flex flex-col items-center md:items-end gap-2">
+              <p className="font-stitch-headline-lg text-stitch-secondary">+$348.00</p>
+              <button 
+                onClick={handleAddToCart}
+                className="bg-stitch-primary text-stitch-on-primary px-8 py-3 rounded-full font-stitch-cta-button hover:brightness-110 transition-all scale-95 active:scale-90"
               >
-                {tab === 'qna' ? 'Q & A' : tab}
-                {tab === 'reviews' && product.reviews && ` (${product.reviews.length})`}
+                Add Bundle
               </button>
-            ))}
+            </div>
           </div>
+        </section>
+      </main>
 
-          <div className="min-h-[300px]">
-            {activeTab === 'description' && (
-              <div className="prose prose-invert max-w-none text-brand-muted leading-relaxed">
-                <p className="whitespace-pre-wrap">{product.description}</p>
-              </div>
-            )}
-
-            {activeTab === 'specifications' && (
-              <div className="max-w-3xl">
-                {product.specifications && product.specifications.length > 0 ? (
-                  <table className="w-full text-left border-collapse">
-                    <tbody>
-                      {product.specifications.map((spec, i) => (
-                        <tr key={i} className="border-b border-white/10">
-                          <th className="py-4 font-medium text-brand-subtle w-1/3">{spec.key}</th>
-                          <td className="py-4 text-white">{spec.value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p className="text-brand-muted">No specifications available for this product.</p>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'qna' && (
-              <div className="max-w-3xl space-y-6">
-                {product.qna && product.qna.length > 0 ? (
-                  product.qna.map((item, i) => (
-                    <div key={i} className="bg-white/5 rounded-xl p-6 border border-white/5">
-                      <h4 className="font-bold text-white mb-2 flex gap-2">
-                        <span className="text-accent">Q:</span> {item.question}
-                      </h4>
-                      <p className="text-brand-muted flex gap-2">
-                        <span className="text-green-400 font-bold">A:</span> {item.answer}
-                      </p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-brand-muted">No questions and answers available yet.</p>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'reviews' && (
-              <div className="max-w-3xl space-y-6">
-                {product.reviews && product.reviews.length > 0 ? (
-                  product.reviews.map((review, i) => (
-                    <div key={i} className="border-b border-white/10 pb-6">
-                      <div className="flex items-center gap-4 mb-2">
-                        <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold">
-                          {review.user.charAt(0).toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="font-bold text-white">{review.user}</p>
-                          <div className="flex text-yellow-400 text-xs">
-                            {[...Array(5)].map((_, idx) => (
-                              <Star
-                                key={idx}
-                                className={idx < review.rating ? 'fill-current' : 'text-white/20'}
-                                size={14}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      <p className="text-brand-muted ml-14">{review.comment}</p>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-brand-muted">Be the first to review this product!</p>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'tags' && (
-              <div className="flex flex-wrap gap-2">
-                {product.tags && product.tags.length > 0 ? (
-                  product.tags.map((tag, i) => (
-                    <Badge
-                      key={i}
-                      variant="secondary"
-                      className="text-sm py-2 px-4 bg-white/5 border-white/10 text-brand-subtle"
-                    >
-                      {tag}
-                    </Badge>
-                  ))
-                ) : (
-                  <p className="text-brand-muted">No tags available.</p>
-                )}
-              </div>
-            )}
-          </div>
+      {/* Sticky Bottom Bar */}
+      <div className="fixed bottom-0 left-0 w-full z-[60] bg-stitch-surface-container/90 backdrop-blur-md border-t border-stitch-outline-variant/20 h-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex items-center justify-between px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop">
+        <div className="hidden md:flex flex-col">
+          <span className="font-stitch-label-sm text-stitch-outline text-[10px] uppercase">Current Config</span>
+          <span className="font-bold text-white">{product.name} — {selectedRam}GB / {selectedStorage}TB</span>
+        </div>
+        <div className="flex gap-4 w-full md:w-auto">
+          <button 
+            onClick={handleAddToCart}
+            className={`flex-1 md:w-48 py-3 rounded-full border ${adding ? 'bg-stitch-primary/30 border-stitch-primary text-white' : 'border-stitch-primary text-stitch-primary'} font-stitch-cta-button hover:bg-stitch-primary/10 transition-all scale-95 active:scale-90`}
+          >
+            {adding ? 'Added!' : 'Add to Cart'}
+          </button>
+          <button 
+            onClick={() => { handleAddToCart(); window.location.href='/shop/checkout'; }}
+            className="flex-1 md:w-48 py-3 rounded-full bg-stitch-primary text-stitch-on-primary font-stitch-cta-button hover:brightness-110 shadow-lg shadow-stitch-primary/20 transition-all scale-95 active:scale-90"
+          >
+            Buy Now
+          </button>
         </div>
       </div>
     </div>

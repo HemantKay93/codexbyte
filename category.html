@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NEON_CORE | Mechanical Keyboards</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ddb7ff",
+                    "on-background": "#e5e1e4",
+                    "surface-variant": "#353437",
+                    "surface-container": "#201f21",
+                    "primary-container": "#4d8eff",
+                    "surface-container-lowest": "#0e0e10",
+                    "outline": "#8c909f",
+                    "primary": "#adc6ff",
+                    "secondary-fixed-dim": "#2fd9f4",
+                    "surface-bright": "#39393b",
+                    "tertiary": "#ddb7ff",
+                    "tertiary-container": "#b76dff",
+                    "on-secondary-container": "#00515d",
+                    "on-tertiary-fixed": "#2c0051",
+                    "error": "#ffb4ab",
+                    "outline-variant": "#424754",
+                    "surface": "#131315",
+                    "surface-container-highest": "#353437",
+                    "on-tertiary-fixed-variant": "#6900b3",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#131315",
+                    "secondary": "#5de6ff",
+                    "surface-container-high": "#2a2a2c",
+                    "on-surface": "#e5e1e4",
+                    "secondary-container": "#00cbe6",
+                    "on-primary": "#002e6a",
+                    "on-secondary-fixed-variant": "#004e5a",
+                    "surface-tint": "#adc6ff",
+                    "on-tertiary": "#490080",
+                    "on-primary-fixed-variant": "#004395",
+                    "inverse-primary": "#005ac2",
+                    "on-tertiary-container": "#400071",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-secondary-fixed": "#001f25",
+                    "on-secondary": "#00363e",
+                    "on-primary-fixed": "#001a42",
+                    "tertiary-fixed": "#f0dbff",
+                    "background": "#131315",
+                    "on-primary-container": "#00285d",
+                    "surface-container-low": "#1b1b1d",
+                    "inverse-surface": "#e5e1e4",
+                    "inverse-on-surface": "#303032",
+                    "secondary-fixed": "#a2eeff",
+                    "on-surface-variant": "#c2c6d6",
+                    "primary-fixed": "#d8e2ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding-mobile": "20px",
+                    "section-gap": "80px",
+                    "container-padding-desktop": "64px",
+                    "gutter": "24px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Geist"],
+                    "label-sm": ["JetBrains Mono"],
+                    "display-lg": ["Geist"],
+                    "display-lg-mobile": ["Geist"],
+                    "cta-button": ["Geist"],
+                    "headline-lg": ["Geist"],
+                    "body-md": ["Geist"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "display-lg-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                    "cta-button": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(32, 31, 33, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(173, 198, 255, 0.1);
+        }
+        .product-glow:hover {
+            box-shadow: 0 0 25px rgba(93, 230, 255, 0.15);
+            border-color: rgba(93, 230, 255, 0.4);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #424754;
+            border-radius: 10px;
+        }
+        .tap-highlight-none { -webkit-tap-highlight-color: transparent; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background selection:bg-primary/30 font-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-2xl h-20 flex items-center justify-between px-container-padding-mobile md:px-container-padding-desktop">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary scale-95 active:scale-90 transition-transform md:hidden">menu</button>
+<span class="font-display-lg text-display-lg-mobile tracking-tighter text-primary uppercase">NEON_CORE</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-primary font-bold transition-colors duration-300" href="#">Laptops</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Gaming PCs</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Components</a>
+<a class="text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Peripherals</a>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">search</button>
+<div class="relative group">
+<button class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">shopping_cart</button>
+<span class="absolute -top-2 -right-2 bg-primary text-on-primary text-[10px] px-1.5 rounded-full font-bold">3</span>
+</div>
+</div>
+</nav>
+<!-- Sidebar (Desktop Filters) -->
+<aside class="hidden md:block fixed left-0 top-20 w-80 h-[calc(100vh-80px)] border-r border-outline-variant/30 bg-surface-container-lowest py-8 px-8 overflow-y-auto custom-scrollbar">
+<h2 class="font-headline-lg text-headline-lg-mobile uppercase text-primary mb-8">Filters</h2>
+<div class="space-y-10">
+<!-- Brand -->
+<section>
+<h3 class="font-label-sm text-label-sm text-outline uppercase mb-4">Brand</h3>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant bg-surface-container-high text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="group-hover:text-primary transition-colors">Logitech G</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant bg-surface-container-high text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="group-hover:text-primary transition-colors">Razer</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant bg-surface-container-high text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="group-hover:text-primary transition-colors">Keychron</span>
+</label>
+</div>
+</section>
+<!-- Price Range -->
+<section>
+<h3 class="font-label-sm text-label-sm text-outline uppercase mb-4">Price Range</h3>
+<input class="w-full h-1.5 bg-outline-variant rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+<div class="flex justify-between mt-2 font-label-sm text-label-sm text-outline">
+<span>$49</span>
+<span>$499</span>
+</div>
+</section>
+<!-- Switches -->
+<section>
+<h3 class="font-label-sm text-label-sm text-outline uppercase mb-4">Switch Type</h3>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full border border-outline-variant hover:border-primary text-label-sm transition-all bg-surface-container-high">Linear</button>
+<button class="px-3 py-1.5 rounded-full border border-primary text-primary text-label-sm bg-primary-container/10">Tactile</button>
+<button class="px-3 py-1.5 rounded-full border border-outline-variant hover:border-primary text-label-sm transition-all bg-surface-container-high">Clicky</button>
+</div>
+</section>
+<!-- Lighting -->
+<section>
+<h3 class="font-label-sm text-label-sm text-outline uppercase mb-4">RGB Lighting</h3>
+<div class="flex items-center justify-between p-3 glass-panel rounded-xl">
+<span class="text-body-md">Per-key RGB</span>
+<button class="w-10 h-5 bg-primary rounded-full relative transition-colors" onclick="this.classList.toggle('bg-primary'); this.classList.toggle('bg-outline-variant')">
+<span class="absolute right-1 top-1 w-3 h-3 bg-white rounded-full transition-all"></span>
+</button>
+</div>
+</section>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="pt-24 pb-20 md:ml-80 px-container-padding-mobile md:px-container-padding-desktop min-h-screen">
+<!-- Toolbar -->
+<header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Mechanical Keyboards</h1>
+<p class="text-outline font-label-sm">Displaying 24 of 128 items</p>
+</div>
+<div class="flex items-center gap-4">
+<!-- Grid Toggle -->
+<div class="hidden md:flex bg-surface-container p-1 rounded-lg border border-outline-variant/30">
+<button class="p-2 rounded hover:bg-surface-variant transition-colors text-outline" id="view-1col">
+<span class="material-symbols-outlined">view_agenda</span>
+</button>
+<button class="p-2 rounded bg-primary-container/20 text-primary transition-colors" id="view-2col">
+<span class="material-symbols-outlined">grid_view</span>
+</button>
+</div>
+<!-- Sticky Sort Trigger (Mobile Only) -->
+<button class="md:hidden flex items-center justify-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-full font-cta-button w-full shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">tune</span>
+                    Sort &amp; Filter
+                </button>
+<div class="hidden md:block relative">
+<select class="appearance-none bg-surface-container-high border border-outline-variant/30 rounded-xl px-6 py-3 pr-12 text-on-surface-variant focus:ring-primary focus:border-primary font-cta-button">
+<option>Sort: Best Match</option>
+<option>Price: Low to High</option>
+<option>Price: High to Low</option>
+<option>Top Rated</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+</header>
+<!-- Product Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-gutter transition-all duration-500" id="product-grid">
+<!-- Card 1 -->
+<div class="glass-panel rounded-2xl p-4 product-glow transition-all duration-300 group flex flex-col">
+<div class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-surface-container-high">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A high-end mechanical gaming keyboard with vibrant per-key RGB lighting in a neon cyberpunk room. The keyboard features transparent keycaps and a brushed aluminum plate, sitting on a dark grey felt desk mat. Dramatic side lighting from a cyan LED strip creates sharp reflections on the metal edges. The overall aesthetic is high-performance, futuristic, and premium." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMtROUzFOdbZONu_sSkRy07E8UDfn52GumN7iUzzXvsEq6c4a-zgwv-8_qJwJwIVFUau0EI5R6DAr4TtpgBhX4XzAaZp4N-qA-bB6QxS4tfLjxY2WJo2umMajEDcxSuziRFlDPL2WlA5bHWx-EMLzMbbbkii8JbLjIu6V18ays8apellb4pcs2sxjCwLOXQisuXgKRoCO7g0hUIDaWoGPcYdGslKXOh9moybkxvq6oGj1uM2dgzG6BWif3wjCvmesyLzAqgMUF2HC8"/>
+<div class="absolute top-3 left-3 flex flex-col gap-2">
+<span class="bg-primary text-on-primary text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Sale -15%</span>
+<span class="bg-secondary-container/80 backdrop-blur-md text-on-secondary-container text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Top Rated</span>
+</div>
+<button class="absolute top-3 right-3 p-2 bg-surface/40 backdrop-blur-xl rounded-full text-on-surface hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">favorite</span>
+</button>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-1 text-secondary mb-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm font-bold">4.9</span>
+<span class="text-outline font-normal">(1.2k)</span>
+</div>
+<h3 class="font-headline-lg-mobile text-on-surface mb-2 group-hover:text-primary transition-colors">NeonCore Pro X</h3>
+<p class="text-outline text-label-sm mb-4 line-clamp-1">Hot-swappable tactile switches • 2.4GHz Wireless</p>
+<div class="mb-4">
+<div class="flex items-baseline gap-2">
+<span class="text-headline-lg-mobile text-on-surface">$189.99</span>
+<span class="text-outline line-through text-label-sm">$224.00</span>
+</div>
+<p class="text-secondary text-label-sm">Starting at $16/mo</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+<label class="flex items-center gap-2 cursor-pointer group/comp">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface-container-high text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-label-sm text-outline group-hover/comp:text-on-surface transition-colors">Compare</span>
+</label>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-cta-button hover:brightness-110 active:scale-95 transition-all">Quick Add</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="glass-panel rounded-2xl p-4 product-glow transition-all duration-300 group flex flex-col">
+<div class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-surface-container-high">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A minimalist white mechanical keyboard with a 75 percent layout and solid walnut wood side panels. The lighting is soft and neutral, highlighting the matte finish of the PBT keycaps. It is placed on a clean white desk with a single succulent plant in the background. The mood is sophisticated and productive, using a professional minimalist aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB58bhgdl3ySSJ_wVd9bSRbRIvpF5D6uPPHav1geFhgS_rpg9thBEgk506Nb1pbNrWtD_KY5zVTJAS_DtUX4Ihxgrqkz38CEtH4vE42-8SABebXWKo-KtjpGnA6Nr50VgyQ64_1W0NfuMhxdhkxRcy_-p6oP6rJ1fX2ePh3lQvLlkHhkc-ug3Tp2zntkEnaQ-8XEEcjsa9w4z8MgmeusoDcdJ3EW7bPoWVEJArx-QvqX2GGCdJuLPbiw03tiXiclGglrC7yprbiG4Cm"/>
+<div class="absolute top-3 left-3">
+<span class="bg-tertiary-container/80 backdrop-blur-md text-on-tertiary-container text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">New Arrival</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-1 text-secondary mb-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm font-bold">4.8</span>
+<span class="text-outline font-normal">(842)</span>
+</div>
+<h3 class="font-headline-lg-mobile text-on-surface mb-2 group-hover:text-primary transition-colors">Logitech G Ghost 75</h3>
+<p class="text-outline text-label-sm mb-4 line-clamp-1">Linear Optical Switches • White PBT Caps</p>
+<div class="mb-4">
+<span class="text-headline-lg-mobile text-on-surface">$149.00</span>
+<p class="text-secondary text-label-sm">Starting at $13/mo</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+<label class="flex items-center gap-2 cursor-pointer group/comp">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface-container-high text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-label-sm text-outline">Compare</span>
+</label>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-cta-button hover:brightness-110 active:scale-95 transition-all">Quick Add</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="glass-panel rounded-2xl p-4 product-glow transition-all duration-300 group flex flex-col">
+<div class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-surface-container-high">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A heavy-duty mechanical keyboard with a matte black finish and industrial design elements. Exposed screws and a coiled aviation cable add to the technical look. The lighting is restricted to a deep red glow under the keys. The setting is a dark engineering workstation with blueprints in the background, creating an engineered luxury feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXd7SQiga0gPjyFMytXTH9RxMhKDom1J0ok07fYmJp0U_a8uRCIslp0a095VLx2yni2ZB2jIAD5NposMO3opVRARwYfkvApCy8mXlwa5njRu1S7wrmaMkCKXFWyWIrMEuzSAqvFSv32k0HeJURh_aEsDq-U115pu9s8fM526pmaxuVOUsHIydtU6qXQEgxWS0zNMYXjX_Doba3R_Rq9TPDLnGNye0QBtAw7SoprwPp-HYOJoZeopsnSbR9jyIDFkgDjt2eQy3t8QtF"/>
+<div class="absolute top-3 left-3">
+<span class="bg-error-container/80 backdrop-blur-md text-on-error-container text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Limited Edition</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-1 text-secondary mb-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm font-bold">5.0</span>
+<span class="text-outline font-normal">(12)</span>
+</div>
+<h3 class="font-headline-lg-mobile text-on-surface mb-2 group-hover:text-primary transition-colors">Keychron K8 Carbon</h3>
+<p class="text-outline text-label-sm mb-4 line-clamp-1">Gateron Blue Switches • CNC Aluminum</p>
+<div class="mb-4">
+<span class="text-headline-lg-mobile text-on-surface">$299.00</span>
+<p class="text-secondary text-label-sm">Starting at $25/mo</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+<label class="flex items-center gap-2 cursor-pointer group/comp">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface-container-high text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-label-sm text-outline">Compare</span>
+</label>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-cta-button hover:brightness-110 active:scale-95 transition-all">Quick Add</button>
+</div>
+</div>
+<!-- Card 4 (Sale) -->
+<div class="glass-panel rounded-2xl p-4 product-glow transition-all duration-300 group flex flex-col">
+<div class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-surface-container-high">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A compact 60 percent mechanical keyboard with custom lavender and mint green keycaps. The RGB lighting is set to a soft pastel cycle, reflecting off a glass desk surface. The environment is light and airy with high-key lighting, capturing a modern gaming lifestyle aesthetic. Every detail of the keycap texture is visible and sharp." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIN5i69zANX0d5RwQgbA3hY1_irsaSXwdFZ88ydWmTNktA6fd8Os2uxkYZfj95pzsHi_df4haeYvua3MU8rLztRvtd7Nj9_ZMhh628UDCtw8-rcjsQLUm8tpBUNIad1P20LwtOjCrQyezj-1bhquK2mZ53OIchWmQ4NYHXo7p4B7xPRU2P4b7gXjRkl1o4XuUhyRKz7vBIn07a5zeUWQj4JTmqF3ngbx1hiOoeeQhCZvgDk5oD5GO-sD385czqE9azeMjJmCbRE56j"/>
+<div class="absolute top-3 left-3">
+<span class="bg-primary text-on-primary text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Sale -30%</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-1 text-secondary mb-1">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm font-bold">4.7</span>
+<span class="text-outline font-normal">(328)</span>
+</div>
+<h3 class="font-headline-lg-mobile text-on-surface mb-2 group-hover:text-primary transition-colors">Razer Huntsman Mini</h3>
+<p class="text-outline text-label-sm mb-4 line-clamp-1">Purple Clicky Switches • Chroma RGB</p>
+<div class="mb-4">
+<div class="flex items-baseline gap-2">
+<span class="text-headline-lg-mobile text-on-surface">$89.99</span>
+<span class="text-outline line-through text-label-sm">$129.00</span>
+</div>
+<p class="text-secondary text-label-sm">Starting at $8/mo</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant/20">
+<label class="flex items-center gap-2 cursor-pointer group/comp">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface-container-high text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-label-sm text-outline">Compare</span>
+</label>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg font-cta-button hover:brightness-110 active:scale-95 transition-all">Quick Add</button>
+</div>
+</div>
+<!-- Card 5-8 repeated for layout (Placeholder Logic) -->
+<div class="glass-panel rounded-2xl p-4 opacity-70 group flex flex-col">
+<div class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-surface-container-high/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-4xl">inventory_2</span>
+</div>
+<div class="h-4 bg-surface-container-high rounded w-3/4 mb-2"></div>
+<div class="h-4 bg-surface-container-high rounded w-1/2 mb-4"></div>
+<div class="h-8 bg-surface-container-high rounded w-full mt-auto"></div>
+</div>
+<div class="glass-panel rounded-2xl p-4 opacity-70 group flex flex-col">
+<div class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-surface-container-high/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-4xl">inventory_2</span>
+</div>
+<div class="h-4 bg-surface-container-high rounded w-3/4 mb-2"></div>
+<div class="h-4 bg-surface-container-high rounded w-1/2 mb-4"></div>
+<div class="h-8 bg-surface-container-high rounded w-full mt-auto"></div>
+</div>
+<div class="glass-panel rounded-2xl p-4 opacity-70 group flex flex-col">
+<div class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-surface-container-high/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-4xl">inventory_2</span>
+</div>
+<div class="h-4 bg-surface-container-high rounded w-3/4 mb-2"></div>
+<div class="h-4 bg-surface-container-high rounded w-1/2 mb-4"></div>
+<div class="h-8 bg-surface-container-high rounded w-full mt-auto"></div>
+</div>
+<div class="glass-panel rounded-2xl p-4 opacity-70 group flex flex-col">
+<div class="relative aspect-square rounded-xl overflow-hidden mb-4 bg-surface-container-high/50 flex items-center justify-center">
+<span class="material-symbols-outlined text-outline text-4xl">inventory_2</span>
+</div>
+<div class="h-4 bg-surface-container-high rounded w-3/4 mb-2"></div>
+<div class="h-4 bg-surface-container-high rounded w-1/2 mb-4"></div>
+<div class="h-8 bg-surface-container-high rounded w-full mt-auto"></div>
+</div>
+</div>
+<!-- Infinite Scroll Loading State -->
+<div class="mt-20 py-10 flex flex-col items-center gap-4">
+<div class="flex gap-2">
+<span class="w-3 h-3 bg-primary rounded-full animate-bounce"></span>
+<span class="w-3 h-3 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+<span class="w-3 h-3 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+</div>
+<p class="text-outline font-label-sm uppercase tracking-widest">Loading more gear...</p>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full relative bg-surface-container-lowest border-t border-outline-variant/10 mt-20 pb-24 md:pb-8">
+<div class="max-w-7xl mx-auto px-container-padding-desktop py-section-gap flex flex-col md:flex-row justify-between gap-gutter">
+<div class="space-y-4">
+<span class="font-display-lg text-display-lg-mobile text-primary">NEON_CORE</span>
+<p class="text-outline max-w-sm">Engineered for absolute precision. The choice of world-class professionals and enthusiasts.</p>
+</div>
+<div class="flex flex-wrap gap-x-12 gap-y-8">
+<div class="flex flex-col gap-4">
+<h4 class="text-on-surface font-bold">RESOURCES</h4>
+<a class="text-outline hover:text-secondary-fixed-dim transition-all underline-offset-4 underline" href="#">Support</a>
+<a class="text-outline hover:text-secondary-fixed-dim transition-all underline-offset-4 underline" href="#">Warranty</a>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-on-surface font-bold">COMPANY</h4>
+<a class="text-outline hover:text-secondary-fixed-dim transition-all underline-offset-4 underline" href="#">Shipping</a>
+<a class="text-outline hover:text-secondary-fixed-dim transition-all underline-offset-4 underline" href="#">Privacy</a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-container-padding-desktop py-8 border-t border-outline-variant/5">
+<p class="text-outline font-body-md">© 2024 NEON_CORE PRECISI0N. ALL RIGHTS RESERVED.</p>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-16 pb-safe bg-surface-container/90 backdrop-blur-md border-t border-outline-variant/20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-outline transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-label-sm uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary brightness-125 transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">keyboard</span>
+<span class="text-[10px] font-label-sm uppercase mt-1">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="text-[10px] font-label-sm uppercase mt-1">Cart</span>
+</a>
+<a class="flex flex-col items-center justify-center text-outline transition-all active:scale-95" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-label-sm uppercase mt-1">Account</span>
+</a>
+</nav>
+<script>
+        const grid = document.getElementById('product-grid');
+        const view1 = document.getElementById('view-1col');
+        const view2 = document.getElementById('view-2col');
+
+        if(view1 && view2) {
+            view1.addEventListener('click', () => {
+                grid.classList.remove('lg:grid-cols-3', 'xl:grid-cols-4');
+                grid.classList.add('lg:grid-cols-1', 'xl:grid-cols-1', 'max-w-3xl', 'mx-auto');
+                view1.classList.add('bg-primary-container/20', 'text-primary');
+                view1.classList.remove('text-outline');
+                view2.classList.remove('bg-primary-container/20', 'text-primary');
+                view2.classList.add('text-outline');
+            });
+
+            view2.addEventListener('click', () => {
+                grid.classList.add('lg:grid-cols-3', 'xl:grid-cols-4');
+                grid.classList.remove('lg:grid-cols-1', 'xl:grid-cols-1', 'max-w-3xl', 'mx-auto');
+                view2.classList.add('bg-primary-container/20', 'text-primary');
+                view2.classList.remove('text-outline');
+                view1.classList.remove('bg-primary-container/20', 'text-primary');
+                view1.classList.add('text-outline');
+            });
+        }
+
+        // Add visual interest to the background
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+            document.body.style.backgroundImage = `radial-gradient(circle at ${x}% ${y}%, rgba(173, 198, 255, 0.05) 0%, transparent 50%)`;
+        });
+    </script>
+</body></html>

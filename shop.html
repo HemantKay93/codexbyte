@@ -1,0 +1,556 @@
+<html class="dark" lang="en"><head></head><body class="bg-background text-on-background selection:bg-primary selection:text-on-primary">```html
+
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(53, 52, 55, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(140, 144, 159, 0.2);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+        .glow-border:hover {
+            border-color: #adc6ff;
+            box-shadow: 0 0 15px rgba(173, 198, 255, 0.3);
+        }
+        .led-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.4; box-shadow: 0 0 0px #5de6ff; }
+            50% { opacity: 1; box-shadow: 0 0 8px #5de6ff; }
+            100% { opacity: 0.4; box-shadow: 0 0 0px #5de6ff; }
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #131315; }
+        ::-webkit-scrollbar-thumb { background: #353437; border-radius: 10px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ddb7ff",
+                    "on-background": "#e5e1e4",
+                    "surface-variant": "#353437",
+                    "surface-container": "#201f21",
+                    "primary-container": "#4d8eff",
+                    "surface-container-lowest": "#0e0e10",
+                    "outline": "#8c909f",
+                    "primary": "#adc6ff",
+                    "secondary-fixed-dim": "#2fd9f4",
+                    "surface-bright": "#39393b",
+                    "tertiary": "#ddb7ff",
+                    "tertiary-container": "#b76dff",
+                    "on-secondary-container": "#00515d",
+                    "on-tertiary-fixed": "#2c0051",
+                    "error": "#ffb4ab",
+                    "outline-variant": "#424754",
+                    "surface": "#131315",
+                    "surface-container-highest": "#353437",
+                    "on-tertiary-fixed-variant": "#6900b3",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#131315",
+                    "secondary": "#5de6ff",
+                    "surface-container-high": "#2a2a2c",
+                    "on-surface": "#e5e1e4",
+                    "secondary-container": "#00cbe6",
+                    "on-primary": "#002e6a",
+                    "on-secondary-fixed-variant": "#004e5a",
+                    "surface-tint": "#adc6ff",
+                    "on-tertiary": "#490080",
+                    "on-primary-fixed-variant": "#004395",
+                    "inverse-primary": "#005ac2",
+                    "on-tertiary-container": "#400071",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-secondary-fixed": "#001f25",
+                    "on-secondary": "#00363e",
+                    "on-primary-fixed": "#001a42",
+                    "tertiary-fixed": "#f0dbff",
+                    "background": "#131315",
+                    "on-primary-container": "#00285d",
+                    "surface-container-low": "#1b1b1d",
+                    "inverse-surface": "#e5e1e4",
+                    "inverse-on-surface": "#303032",
+                    "secondary-fixed": "#a2eeff",
+                    "on-surface-variant": "#c2c6d6",
+                    "primary-fixed": "#d8e2ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding-mobile": "20px",
+                    "section-gap": "80px",
+                    "container-padding-desktop": "64px",
+                    "gutter": "24px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Geist"],
+                    "label-sm": ["JetBrains Mono"],
+                    "display-lg": ["Geist"],
+                    "display-lg-mobile": ["Geist"],
+                    "cta-button": ["Geist"],
+                    "headline-lg": ["Geist"],
+                    "body-md": ["Geist"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "display-lg-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                    "cta-button": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<!-- Announcement Bar -->
+<div class="h-10 bg-primary-container text-on-primary-container flex items-center justify-center font-label-sm text-label-sm overflow-hidden sticky top-0 z-[60]">
+<div class="flex items-center gap-2 animate-pulse">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+<span>Flash Sale: Up to 40% off Gaming Laptops! Ends in 05:24:12</span>
+</div>
+</div>
+<!-- TopAppBar -->
+<header class="bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-2xl fixed top-10 w-full z-50 flex items-center justify-between px-container-padding-mobile md:px-container-padding-desktop h-20">
+<div class="flex items-center gap-gutter">
+<div class="font-display-lg text-display-lg-mobile md:text-display-lg tracking-tighter text-primary dark:text-primary-fixed-dim uppercase">
+                NEON_CORE
+            </div>
+<nav class="hidden lg:flex items-center gap-8 ml-8">
+<a class="text-primary dark:text-secondary-fixed-dim font-bold font-label-sm text-label-sm uppercase tracking-widest" href="#">Home</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-secondary transition-colors duration-300 font-label-sm text-label-sm uppercase tracking-widest" href="#">Laptops</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-secondary transition-colors duration-300 font-label-sm text-label-sm uppercase tracking-widest" href="#">Gaming PCs</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-secondary transition-colors duration-300 font-label-sm text-label-sm uppercase tracking-widest" href="#">Support</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center glass-card px-4 py-2 rounded-full border-outline-variant/20 focus-within:border-primary transition-all">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-sm font-label-sm placeholder:text-outline-variant w-40" placeholder="SEARCH CORE..." type="text"/>
+</div>
+<button class="relative p-2 scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-primary">shopping_cart</span>
+<span class="absolute top-0 right-0 bg-secondary text-on-secondary-container text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">3</span>
+</button>
+<button class="md:hidden p-2">
+<span class="material-symbols-outlined text-primary">menu</span>
+</button>
+</div>
+</header>
+<main class="pt-32">
+<!-- Hero Section -->
+<section class="relative h-[751px] w-full px-container-padding-mobile md:px-container-padding-desktop mb-section-gap overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover brightness-50" data-alt="A cinematic, high-angle shot of a sleek, ultra-thin gaming laptop with customizable RGB lighting glowing in vibrant electric blue. The laptop is placed on a dark, reflective obsidian surface in a futuristic, tech-minimalist environment. Sharp geometric shadows and subtle atmospheric haze enhance the high-performance aesthetic. The lighting is moody and focused, highlighting the premium metallic finish and engineering precision of the device." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBA4dUObnezm4UqgcZ9i2qdkPXsucj9G94-p18PYcHRKEY5gtb9Zog-Yt6AgqXBj0GmbwG-X9JMP_7Lpn3idTzVU1LCWa_lWa0fplAlY2ouxXBKvH83SmrC18AP8eqKLeRUeFDaW3gGZOYH9qsqYcEKSLpCXA4r7UfhEXCrcVRmoBouDhLCpWZUAOY5ApMyTVGMeLP4-QTw21qrKZOcnqPvllxnSmNEcmhcGTu4lsFFbkTy3bVp9r8WaAL_JqdU8YosX1cnBGdxOb2w"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+</div>
+<div class="relative z-10 flex flex-col justify-center h-full max-w-3xl">
+<div class="inline-flex items-center gap-2 mb-4 bg-primary/10 border border-primary/20 backdrop-blur-md px-3 py-1 rounded-full w-fit">
+<span class="w-2 h-2 rounded-full bg-secondary led-pulse"></span>
+<span class="text-secondary font-label-sm text-label-sm uppercase tracking-widest">Available Now</span>
+</div>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-6 leading-tight">
+                    UNLOCK <span class="text-primary italic">NEXT-GEN</span> PERFORMANCE
+                </h1>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-xl">
+                    Engineered for precision. Built for power. Experience the zenith of portable gaming with our all-new NEON series laptops.
+                </p>
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-4 bg-primary text-on-primary font-cta-button rounded-lg hover:brightness-110 transition-all shadow-lg shadow-primary/20 flex items-center gap-2">
+                        Shop Now <span class="material-symbols-outlined">trending_flat</span>
+</button>
+<button class="px-8 py-4 glass-card text-primary border border-primary/30 font-cta-button rounded-lg hover:bg-primary/10 transition-all">
+                        Technical Specs
+                    </button>
+</div>
+</div>
+</section>
+<!-- Amazon-Inspired Category Grid -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop mb-section-gap">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="glass-card p-6 rounded-xl flex flex-col items-center justify-center text-center group cursor-pointer border-outline-variant/10 hover:border-primary/50 transition-all">
+<div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-primary">laptop_mac</span>
+</div>
+<h3 class="font-label-sm text-label-sm font-bold uppercase tracking-widest mb-1">Laptops</h3>
+<span class="text-[10px] text-outline uppercase">Browse Systems</span>
+</div>
+<div class="glass-card p-6 rounded-xl flex flex-col items-center justify-center text-center group cursor-pointer border-outline-variant/10 hover:border-secondary/50 transition-all">
+<div class="w-20 h-20 rounded-full bg-secondary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-secondary">desktop_windows</span>
+</div>
+<h3 class="font-label-sm text-label-sm font-bold uppercase tracking-widest mb-1">Gaming PCs</h3>
+<span class="text-[10px] text-outline uppercase">Configure Tower</span>
+</div>
+<div class="glass-card p-6 rounded-xl flex flex-col items-center justify-center text-center group cursor-pointer border-outline-variant/10 hover:border-tertiary/50 transition-all">
+<div class="w-20 h-20 rounded-full bg-tertiary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-tertiary">keyboard_mouse</span>
+</div>
+<h3 class="font-label-sm text-label-sm font-bold uppercase tracking-widest mb-1">Accessories</h3>
+<span class="text-[10px] text-outline uppercase">Level Up Gear</span>
+</div>
+<div class="glass-card p-6 rounded-xl flex flex-col items-center justify-center text-center group cursor-pointer border-outline-variant/10 hover:border-primary-fixed-dim/50 transition-all">
+<div class="w-20 h-20 rounded-full bg-primary-fixed-dim/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl text-primary-fixed-dim">monitor</span>
+</div>
+<h3 class="font-label-sm text-label-sm font-bold uppercase tracking-widest mb-1">Monitors</h3>
+<span class="text-[10px] text-outline uppercase">Ultra-Wide Visuals</span>
+</div>
+</div>
+</section>
+<!-- Flash Sale / Deals of the Day -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop mb-section-gap">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<span class="flex h-3 w-3 bg-error rounded-full led-pulse"></span>
+<h2 class="font-headline-lg text-headline-lg uppercase tracking-tighter">DEALS OF THE DAY</h2>
+</div>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-widest">High-performance tech at legendary prices</p>
+</div>
+<div class="glass-card px-6 py-3 rounded-xl border-error/30 flex items-center gap-6">
+<span class="font-label-sm text-label-sm text-error uppercase font-bold tracking-widest">REMAINING:</span>
+<div class="flex gap-4 font-display-lg text-2xl text-on-surface">
+<div class="flex flex-col items-center">
+<span id="hours">05</span>
+<span class="text-[8px] text-outline uppercase">HRS</span>
+</div>
+<span>:</span>
+<div class="flex flex-col items-center">
+<span id="minutes">24</span>
+<span class="text-[8px] text-outline uppercase">MIN</span>
+</div>
+<span>:</span>
+<div class="flex flex-col items-center">
+<span id="seconds">12</span>
+<span class="text-[8px] text-outline uppercase">SEC</span>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Deal 1 -->
+<div class="glass-card rounded-2xl p-6 group relative overflow-hidden border-outline-variant/10">
+<div class="absolute top-4 right-4 bg-error text-on-error font-bold px-3 py-1 rounded text-label-sm z-10">-40% OFF</div>
+<div class="aspect-square bg-surface-container rounded-xl mb-6 overflow-hidden flex items-center justify-center p-8">
+<img class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" data-alt="High-end GPU with glowing fans" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz3dlSq6YJc9gXR9j6q8-sRO3xPiU88fROLafAb6mj0wB1n_9Z7d2tOxdjbkwReHa3K4nkCS_lZT39AmGGOBO7ZedyTquYqIz4_HBT1twGraR1gnjAYwFD0Tp9qYp6QGYwO8D9fM-2OgLshtqbeKZEsWQWB3BDEXOv2TF6SdrjYEJ9bo_XaxEDRPN26RZLvtj1Osup8D3W5HWZQxE4c-_Qku4BeAQMPQERcM1J0xgi2DmhKGUyI4QxVQCs6h0VYkYRTCjsoGAsK8xk"/>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-2">NEON RTX PRO-X 4090</h4>
+<div class="flex items-baseline gap-3 mb-6">
+<span class="text-2xl font-display-lg text-primary">$1,199.99</span>
+<span class="text-outline line-through text-label-sm">$1,999.99</span>
+</div>
+<button class="w-full py-3 bg-error text-on-error font-cta-button rounded-lg hover:brightness-110 transition-all uppercase tracking-widest">CLAIM DEAL</button>
+</div>
+<!-- Deal 2 -->
+<div class="glass-card rounded-2xl p-6 group relative overflow-hidden border-outline-variant/10">
+<div class="absolute top-4 right-4 bg-error text-on-error font-bold px-3 py-1 rounded text-label-sm z-10">-35% OFF</div>
+<div class="aspect-square bg-surface-container rounded-xl mb-6 overflow-hidden flex items-center justify-center p-8">
+<img class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" data-alt="Curved gaming monitor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1Ewir7ajjtVEkWAgCYYJJ_d_ee8fkycbWBK0QkMgCz1lst6okvBAUrgnTiyjr7vr0fco4NMuRcwADaZ3QnCSSAnIRZrDZelPM-k_AIZXp_6DOyQUglwLMB9fM7Xne1n2iXKWdevxJKMVCEv85tepHvRqwsSCa258oniV0SGMO3zUvOOK1Qn3qLliVYkfvdCXm_iOv4v9RqeIs7xv0ka4v8RUfUYAJtxI4l9JM3xIXnOko5WdLjFg_XSWryJl0to5gEGM0GTY44LSm"/>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-2">34" ODYSSEY CURVE Z</h4>
+<div class="flex items-baseline gap-3 mb-6">
+<span class="text-2xl font-display-lg text-primary">$454.00</span>
+<span class="text-outline line-through text-label-sm">$699.00</span>
+</div>
+<button class="w-full py-3 bg-error text-on-error font-cta-button rounded-lg hover:brightness-110 transition-all uppercase tracking-widest">CLAIM DEAL</button>
+</div>
+<!-- Deal 3 -->
+<div class="glass-card rounded-2xl p-6 group relative overflow-hidden border-outline-variant/10">
+<div class="absolute top-4 right-4 bg-error text-on-error font-bold px-3 py-1 rounded text-label-sm z-10">-25% OFF</div>
+<div class="aspect-square bg-surface-container rounded-xl mb-6 overflow-hidden flex items-center justify-center p-8">
+<img class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" data-alt="Wireless gaming headset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChGE1U1eXcxT37HYBesvMovUIsFI-GmKxRJ8MFO9wVuIFrC8XYHWvrUzeaQ7UYf9b4JVy-MNQaHPaQM65Ma7r0cQPMl184vWRdzZNiwflDJ8-M5JR8QxdurL7UXhatG_9MNZm5i77KQ-v1tHhc6GL2Km5Wl3fTievmjFIEQUFFHypkDRS_RevzFrVcr6y6nU2jp6KPxyrGl_JM5uNnDm4EsMehSh9C6iOeH07026pYwyvCt8-X4szh3FeM3mxB6FSSim_XLjStgqF1"/>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-2">SONIC EDGE V2 BLACK</h4>
+<div class="flex items-baseline gap-3 mb-6">
+<span class="text-2xl font-display-lg text-primary">$142.00</span>
+<span class="text-outline line-through text-label-sm">$189.50</span>
+</div>
+<button class="w-full py-3 bg-error text-on-error font-cta-button rounded-lg hover:brightness-110 transition-all uppercase tracking-widest">CLAIM DEAL</button>
+</div>
+</div>
+</section>
+<!-- New Arrivals Section -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop mb-section-gap">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-3 h-3 rounded-full bg-secondary led-pulse"></div>
+<h2 class="font-headline-lg text-headline-lg uppercase tracking-tighter">NEW ARRIVALS</h2>
+</div>
+<div class="flex gap-gutter overflow-x-auto pb-8 snap-x no-scrollbar">
+<!-- Product 1 -->
+<div class="min-w-[300px] md:min-w-[380px] snap-center">
+<div class="glass-card rounded-2xl p-6 group glow-border transition-all duration-300 relative overflow-hidden">
+<div class="absolute top-4 left-4 bg-secondary text-on-secondary-container px-3 py-1 rounded font-label-sm text-label-sm font-bold uppercase z-10 shadow-lg shadow-secondary/20">NEW</div>
+<div class="relative h-64 mb-6 rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center p-8">
+<img class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" data-alt="Neon Pro Mechanical Keyboard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkE7bNivcfaJRhpdN1KV8Z7J-lAXUWmiGC_fwXGr-D3T6u2N74v94j27sU--KMbYK80QmoqPM7OJM5d4WuJG3n-aJEDlb_6lKCz3eiWN1wPGRgxVdGXNi2HrruO3oiBnkCGxFG-k44p_ukthQfcLSbFrpNptL8gN9Q_Be8Q74gjMJvOpTpThdJbfqsLNLXLMa1aRjkoaf0kxVro4k7lgX2XVqeKfGRwmH4xeoHkcRcJL6kZYKMMloRsYbo85JWOp2RBK0CP_KbQQcL"/>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-2">Neon Pro Mechanical Keyboard</h4>
+<span class="font-display-lg text-headline-lg text-secondary block mb-6">$189.99</span>
+<button class="w-full py-3 bg-primary/10 text-primary border border-primary/30 rounded-lg font-cta-button hover:bg-primary hover:text-on-primary transition-all uppercase tracking-widest">ADD TO ARSENAL</button>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="min-w-[300px] md:min-w-[380px] snap-center">
+<div class="glass-card rounded-2xl p-6 group glow-border transition-all duration-300 relative overflow-hidden">
+<div class="absolute top-4 left-4 bg-secondary text-on-secondary-container px-3 py-1 rounded font-label-sm text-label-sm font-bold uppercase z-10 shadow-lg shadow-secondary/20">NEW</div>
+<div class="relative h-64 mb-6 rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center p-8">
+<img class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" data-alt="Ultra-Vision 4K Monitor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1Ewir7ajjtVEkWAgCYYJJ_d_ee8fkycbWBK0QkMgCz1lst6okvBAUrgnTiyjr7vr0fco4NMuRcwADaZ3QnCSSAnIRZrDZelPM-k_AIZXp_6DOyQUglwLMB9fM7Xne1n2iXKWdevxJKMVCEv85tepHvRqwsSCa258oniV0SGMO3zUvOOK1Qn3qLliVYkfvdCXm_iOv4v9RqeIs7xv0ka4v8RUfUYAJtxI4l9JM3xIXnOko5WdLjFg_XSWryJl0to5gEGM0GTY44LSm"/>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-2">Ultra-Vision 4K Monitor</h4>
+<span class="font-display-lg text-headline-lg text-secondary block mb-6">$749.00</span>
+<button class="w-full py-3 bg-primary/10 text-primary border border-primary/30 rounded-lg font-cta-button hover:bg-primary hover:text-on-primary transition-all uppercase tracking-widest">ADD TO ARSENAL</button>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="min-w-[300px] md:min-w-[380px] snap-center">
+<div class="glass-card rounded-2xl p-6 group glow-border transition-all duration-300 relative overflow-hidden">
+<div class="absolute top-4 left-4 bg-secondary text-on-secondary-container px-3 py-1 rounded font-label-sm text-label-sm font-bold uppercase z-10 shadow-lg shadow-secondary/20">NEW</div>
+<div class="relative h-64 mb-6 rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center p-8">
+<img class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" data-alt="Neon Stealth Carry Case" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz3dlSq6YJc9gXR9j6q8-sRO3xPiU88fROLafAb6mj0wB1n_9Z7d2tOxdjbkwReHa3K4nkCS_lZT39AmGGOBO7ZedyTquYqIz4_HBT1twGraR1gnjAYwFD0Tp9qYp6QGYwO8D9fM-2OgLshtqbeKZEsWQWB3BDEXOv2TF6SdrjYEJ9bo_XaxEDRPN26RZLvtj1Osup8D3W5HWZQxE4c-_Qku4BeAQMPQERcM1J0xgi2DmhKGUyI4QxVQCs6h0VYkYRTCjsoGAsK8xk"/>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-2">Neon Stealth Carry Case</h4>
+<span class="font-display-lg text-headline-lg text-secondary block mb-6">$59.99</span>
+<button class="w-full py-3 bg-primary/10 text-primary border border-primary/30 rounded-lg font-cta-button hover:bg-primary hover:text-on-primary transition-all uppercase tracking-widest">ADD TO ARSENAL</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Clearance Sale Section -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop mb-section-gap bg-surface-container-low/50 py-16 border-y border-outline-variant/10">
+<div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+<div>
+<h2 class="font-headline-lg text-headline-lg uppercase tracking-tighter text-secondary">LAST CHANCE CLEARANCE</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Discontinued lines and open-box specials. Once they're gone, they're gone.</p>
+</div>
+<button class="px-8 py-3 border border-secondary text-secondary hover:bg-secondary hover:text-on-secondary transition-all font-cta-button rounded-lg uppercase tracking-widest">View All Clearance</button>
+</div>
+<div class="flex gap-gutter overflow-x-auto pb-6 no-scrollbar snap-x">
+<!-- Clearance Item 1 -->
+<div class="min-w-[280px] snap-center glass-card rounded-xl p-4 border-dashed border-outline-variant/30 relative">
+<div class="absolute -top-2 -left-2 bg-secondary text-on-secondary px-2 py-1 text-[10px] font-bold rounded transform -rotate-12">FINAL STOCK</div>
+<div class="h-40 bg-background rounded-lg mb-4 flex items-center justify-center p-4">
+<img class="max-h-full object-contain grayscale hover:grayscale-0 transition-all" data-alt="Mechanical Keyboard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkE7bNivcfaJRhpdN1KV8Z7J-lAXUWmiGC_fwXGr-D3T6u2N74v94j27sU--KMbYK80QmoqPM7OJM5d4WuJG3n-aJEDlb_6lKCz3eiWN1wPGRgxVdGXNi2HrruO3oiBnkCGxFG-k44p_ukthQfcLSbFrpNptL8gN9Q_Be8Q74gjMJvOpTpThdJbfqsLNLXLMa1aRjkoaf0kxVro4k7lgX2XVqeKfGRwmH4xeoHkcRcJL6kZYKMMloRsYbo85JWOp2RBK0CP_KbQQcL"/>
+</div>
+<h5 class="font-label-sm text-label-sm font-bold uppercase mb-1">TITAN 60 LEGACY</h5>
+<div class="flex items-center justify-between">
+<span class="text-secondary font-display-lg text-lg">$89.00</span>
+<span class="text-[10px] text-error font-bold uppercase">Only 2 left</span>
+</div>
+</div>
+<!-- Clearance Item 2 -->
+<div class="min-w-[280px] snap-center glass-card rounded-xl p-4 border-dashed border-outline-variant/30 relative">
+<div class="h-40 bg-background rounded-lg mb-4 flex items-center justify-center p-4">
+<img class="max-h-full object-contain grayscale hover:grayscale-0 transition-all" data-alt="Gaming Mouse" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCvjtPagty1YjKXn_8Jctor6uUWAxgOFr3HR0qD4XLdAgLA6DmioDwXlw_Gzm7MA6AAJvIVUV52hZqRILFonbcDT4raIBPHcxhHgir9zeliNnIbAl6mUEQj2tHpx81RGU1Ia-tkchuwTcO9Sjqd99kkOdTEXJytH3jGLperot2olQHpWzwV0u-RFP5EzIy430lz_iy6r8Ijz9Qzl34OZF-ff6rmSXSyPkc2WgojENiJXRpac05LPclYARhwJRHF1SAhBMsIzADrmhy"/>
+</div>
+<h5 class="font-label-sm text-label-sm font-bold uppercase mb-1">NEON CORE MOUSE V1</h5>
+<div class="flex items-center justify-between">
+<span class="text-secondary font-display-lg text-lg">$35.00</span>
+<span class="text-[10px] text-error font-bold uppercase">Only 5 left</span>
+</div>
+</div>
+<!-- Clearance Item 3 -->
+<div class="min-w-[280px] snap-center glass-card rounded-xl p-4 border-dashed border-outline-variant/30 relative">
+<div class="h-40 bg-background rounded-lg mb-4 flex items-center justify-center p-4">
+<img class="max-h-full object-contain grayscale hover:grayscale-0 transition-all" data-alt="Internal Storage" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA5Ieh6nddsjMOB9rNbANHwt7JlvrUPuhfdPWSKwZTU1LFPPSl5IJyQltocphMOUXdVrR4YvV0LXaKEXyv5PYOe_TZqKENwpXPgYFuQba40g_GNcG8bJPiarzmoi8CKzX56hmoolSBy0wfIvlkY--tIicKPhDLnVo4w-zPi64dC-ivX569HT-LUf3Ckig-v-bdc6ydv4sZP0L_x9Eb9-Fsx7KZUdnmKELDDHTgj5IGAMdYyPI-61-2IFyHxGPO-WYSiFZvGkSV0yr1"/>
+</div>
+<h5 class="font-label-sm text-label-sm font-bold uppercase mb-1">2TB NVME GEN3</h5>
+<div class="flex items-center justify-between">
+<span class="text-secondary font-display-lg text-lg">$110.00</span>
+<span class="text-[10px] text-error font-bold uppercase">Only 1 left</span>
+</div>
+</div>
+<!-- Clearance Item 4 -->
+<div class="min-w-[280px] snap-center glass-card rounded-xl p-4 border-dashed border-outline-variant/30 relative">
+<div class="h-40 bg-background rounded-lg mb-4 flex items-center justify-center p-4">
+<img class="max-h-full object-contain grayscale hover:grayscale-0 transition-all" data-alt="Laptop bag" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAz3dlSq6YJc9gXR9j6q8-sRO3xPiU88fROLafAb6mj0wB1n_9Z7d2tOxdjbkwReHa3K4nkCS_lZT39AmGGOBO7ZedyTquYqIz4_HBT1twGraR1gnjAYwFD0Tp9qYp6QGYwO8D9fM-2OgLshtqbeKZEsWQWB3BDEXOv2TF6SdrjYEJ9bo_XaxEDRPN26RZLvtj1Osup8D3W5HWZQxE4c-_Qku4BeAQMPQERcM1J0xgi2DmhKGUyI4QxVQCs6h0VYkYRTCjsoGAsK8xk"/>
+</div>
+<h5 class="font-label-sm text-label-sm font-bold uppercase mb-1">CORE CARRY CASE M</h5>
+<div class="flex items-center justify-between">
+<span class="text-secondary font-display-lg text-lg">$24.00</span>
+<span class="text-[10px] text-error font-bold uppercase">Only 8 left</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Trending Products Carousel -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop mb-section-gap overflow-hidden">
+<div class="flex justify-between items-end mb-10">
+<div>
+<h2 class="font-headline-lg text-headline-lg uppercase tracking-tighter">Trending Hardware</h2>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-widest mt-2">Precision engineered components</p>
+</div>
+<div class="flex gap-2">
+<button class="w-12 h-12 flex items-center justify-center glass-card rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center glass-card rounded-full hover:bg-surface-variant transition-colors border-primary/40 border">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="flex gap-gutter overflow-x-auto pb-8 snap-x no-scrollbar">
+<!-- Product Card 1 -->
+<div class="min-w-[320px] md:min-w-[400px] snap-center">
+<div class="glass-card rounded-2xl p-6 group glow-border transition-all duration-300">
+<div class="relative h-64 mb-6 rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center">
+<span class="absolute top-4 left-4 bg-secondary text-on-secondary-container px-3 py-1 rounded font-label-sm text-label-sm font-bold uppercase">Best Seller</span>
+<img class="w-full h-full object-contain group-hover:scale-105 transition-transform" data-alt="A top-down detailed shot of a high-performance gaming mouse with an ergonomic design and intricate honeycomb shell texture. The mouse is illuminated by a subtle electric blue glow from its internal lighting system. It sits on a dark microfiber mousepad. The image is clean, sharp, and emphasizes the lightweight and professional-grade nature of the peripheral." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCvjtPagty1YjKXn_8Jctor6uUWAxgOFr3HR0qD4XLdAgLA6DmioDwXlw_Gzm7MA6AAJvIVUV52hZqRILFonbcDT4raIBPHcxhHgir9zeliNnIbAl6mUEQj2tHpx81RGU1Ia-tkchuwTcO9Sjqd99kkOdTEXJytH3jGLperot2olQHpWzwV0u-RFP5EzIy430lz_iy6r8Ijz9Qzl34OZF-ff6rmSXSyPkc2WgojENiJXRpac05LPclYARhwJRHF1SAhBMsIzADrmhy"/>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-2">Neon X Pro Mouse</h4>
+<div class="flex justify-between items-center">
+<span class="font-display-lg text-headline-lg text-primary">$129.99</span>
+<div class="flex gap-1 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined">star</span>
+</div>
+</div>
+<button class="w-full mt-6 py-3 bg-primary/10 text-primary border border-primary/30 rounded-lg font-cta-button hover:bg-primary hover:text-on-primary transition-all">ADD TO ARSENAL</button>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="min-w-[320px] md:min-w-[400px] snap-center">
+<div class="glass-card rounded-2xl p-6 group glow-border transition-all duration-300">
+<div class="relative h-64 mb-6 rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center">
+<span class="absolute top-4 left-4 bg-error text-on-error-container px-3 py-1 rounded font-label-sm text-label-sm font-bold uppercase">Limited Stock</span>
+<img class="w-full h-full object-contain group-hover:scale-105 transition-transform" data-alt="A high-end mechanical keyboard with custom blue artisan keycaps and a premium aluminum case. The RGB lighting creates a vibrant underglow effect in shades of cyan and indigo. The keyboard is photographed in a minimalist dark setup. The style is sharp, clean, and highlights the premium build quality and tactile appeal of the peripheral." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkE7bNivcfaJRhpdN1KV8Z7J-lAXUWmiGC_fwXGr-D3T6u2N74v94j27sU--KMbYK80QmoqPM7OJM5d4WuJG3n-aJEDlb_6lKCz3eiWN1wPGRgxVdGXNi2HrruO3oiBnkCGxFG-k44p_ukthQfcLSbFrpNptL8gN9Q_Be8Q74gjMJvOpTpThdJbfqsLNLXLMa1aRjkoaf0kxVro4k7lgX2XVqeKfGRwmH4xeoHkcRcJL6kZYKMMloRsYbo85JWOp2RBK0CP_KbQQcL"/>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-2">Titan 80 Keyboard</h4>
+<div class="flex justify-between items-center">
+<span class="font-display-lg text-headline-lg text-primary">$249.00</span>
+<div class="flex gap-1 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<button class="w-full mt-6 py-3 bg-primary/10 text-primary border border-primary/30 rounded-lg font-cta-button hover:bg-primary hover:text-on-primary transition-all">ADD TO ARSENAL</button>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="min-w-[320px] md:min-w-[400px] snap-center">
+<div class="glass-card rounded-2xl p-6 group glow-border transition-all duration-300">
+<div class="relative h-64 mb-6 rounded-xl overflow-hidden bg-surface-container-high flex items-center justify-center">
+<span class="absolute top-4 left-4 bg-primary text-on-primary-container px-3 py-1 rounded font-label-sm text-label-sm font-bold uppercase">New Arrival</span>
+<img class="w-full h-full object-contain group-hover:scale-105 transition-transform" data-alt="A futuristic wireless gaming headset with large over-ear cups, soft memory foam padding, and a retractable microphone. The cups are illuminated with a circular electric blue LED ring. The headset is floating in a dark, high-tech void with subtle lighting reflections on its matte black surface. The mood is high-performance and focused on professional audio quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuChGE1U1eXcxT37HYBesvMovUIsFI-GmKxRJ8MFO9wVuIFrC8XYHWvrUzeaQ7UYf9b4JVy-MNQaHPaQM65Ma7r0cQPMl184vWRdzZNiwflDJ8-M5JR8QxdurL7UXhatG_9MNZm5i77KQ-v1tHhc6GL2Km5Wl3fTievmjFIEQUFFHypkDRS_RevzFrVcr6y6nU2jp6KPxyrGl_JM5uNnDm4EsMehSh9C6iOeH07026pYwyvCt8-X4szh3FeM3mxB6FSSim_XLjStgqF1"/>
+</div>
+<h4 class="font-headline-lg text-headline-lg-mobile uppercase mb-2">Sonic Edge V2</h4>
+<div class="flex justify-between items-center">
+<span class="font-display-lg text-headline-lg text-primary">$189.50</span>
+<div class="flex gap-1 text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0.5;">star</span>
+</div>
+</div>
+<button class="w-full mt-6 py-3 bg-primary/10 text-primary border border-primary/30 rounded-lg font-cta-button hover:bg-primary hover:text-on-primary transition-all">ADD TO ARSENAL</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Brand Logos -->
+<section class="bg-surface-container-low py-12 mb-section-gap border-y border-outline-variant/10">
+<div class="px-container-padding-mobile md:px-container-padding-desktop flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-40 hover:opacity-100 transition-opacity">
+<span class="font-display-lg text-headline-lg-mobile grayscale">ASUS</span>
+<span class="font-display-lg text-headline-lg-mobile grayscale">DELL</span>
+<span class="font-display-lg text-headline-lg-mobile grayscale">LOGITECH</span>
+<span class="font-display-lg text-headline-lg-mobile grayscale">APPLE</span>
+</div>
+</section>
+<!-- Promotional Banner -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop mb-section-gap">
+<div class="relative rounded-3xl overflow-hidden h-[400px] flex items-center">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A wide-angle shot of a premium home office setup at night, with multiple monitors displaying coding and design tools. The workspace is illuminated by soft blue and purple backlighting from the desk and shelves. The desk features high-end peripherals including a mechanical keyboard, a wireless mouse, and a high-fidelity studio microphone. The atmosphere is professional, calm, and technologically advanced." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6GbGQmWo3xvMoPTzR0QEkSyB4c3ldLB2desIE-gCSjbmA9oEK59D6f81PR42USpHy0RPJvLDP-w0Y_I1INiU_Hek8xHe_bgy0TsrYFNgtKWxJ3pwLE2OGYqpPnUW8F48-mHEHrcVXzidLfLA3IGJuoyVlZ98c0tPZtHAh5T3A7qoQKR2Ix5vQIs2WTdMeiG5Gg9modSftRl2irJhXbzkequeQE0hPe9Ezwkrr2jr_9mT_RQBt9RT2ytEjXxtV5A1cVL6t3fkQ_Jsx"/>
+<div class="absolute inset-0 bg-surface-container-lowest/60 backdrop-blur-sm"></div>
+<div class="relative z-10 px-10 md:px-20 max-w-2xl">
+<h2 class="font-display-lg text-display-lg-mobile md:text-[48px] md:leading-tight mb-4 uppercase">UPGRADE YOUR HOME OFFICE</h2>
+<p class="font-body-md text-body-md text-on-surface mb-8">Explore essential peripherals designed for ultimate productivity and peak performance. Limited time offers on full setup bundles.</p>
+<button class="px-8 py-4 bg-secondary text-on-secondary-container font-cta-button rounded-lg hover:brightness-110 transition-all flex items-center gap-2">
+                        Explore Essentials <span class="material-symbols-outlined">arrow_right_alt</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Testimonials -->
+<section class="px-container-padding-mobile md:px-container-padding-desktop mb-section-gap">
+<div class="grid md:grid-cols-3 gap-gutter">
+<div class="glass-card p-8 rounded-2xl border-l-4 border-l-primary">
+<div class="flex text-secondary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md italic mb-6">"The performance of the Neon series is unmatched. Best gaming gear I've ever owned, definitely worth the investment."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A portrait of a young man with a modern haircut and focused expression, wearing tech-wear inspired clothing. The lighting is low-key with a subtle blue rim light on his shoulder, suggesting a high-tech environment. The style is professional and crisp." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvjPHRNx_EDMexZ84wokYU3kdVgg4alm8XX7YNs8PP2uupxb8jCUaJGHkJT8I7xnHjje_z_ryZ143QkSQUoJ8tgYxEV9eZTMrEARO538-4VaharShjK9k12MhAnFcbJZpKvjVIEA4C0RlyKXcEsPyPrIYLHBIeoUTHbbFT0SNTnfRGigGo9Ilz_wTo3BLpOhyq4wdQUt1tmaj8PzHXznsrhrhopEusIQajbJyuD1Wt-qDkbf3lLdNLOcHuktzcb3GP-1L1ZhOaSFDe"/>
+</div>
+<div>
+<p class="font-label-sm text-label-sm font-bold uppercase">Alex T.</p>
+<p class="text-[10px] text-outline uppercase tracking-widest">Verified Pro Gamer</p>
+</div>
+</div>
+</div>
+<div class="hidden md:block glass-card p-8 rounded-2xl border-l-4 border-l-secondary">
+<div class="flex text-secondary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md italic mb-6">"As a developer, the color accuracy and build quality of their laptops are exactly what I needed for my daily workflow."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a professional woman in a tech environment, with a confident smile. Soft ambient light from computer screens creates a modern office aesthetic. High-quality digital photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDb-S9ZCNbpt62vetCD-jJ6iydOS3GaGjsFZlvYUMMiAjTYzTsJgEC0YdQovexW8PwnBNbVbaskttIL_oy4R6w4hSShqkApjf126L_W_ZrcDCu4uUxcoEduuyqmc-01zqBhRK-PaNgiAJnYpVx_wFbJz3QTqEXQUyqAOON6ZKYHLM9psDCch9loeup_PR4mMNRMyv13j-s8HeUR3RfENey9LBvKy1GqUL-GQV8IjW5itlx9mjhbhaOMMFZUhIOsnEweT1x9JTRFy-Et"/>
+</div>
+<div>
+<p class="font-label-sm text-label-sm font-bold uppercase">Sarah M.</p>
+<p class="text-[10px] text-outline uppercase tracking-widest">Lead Engineer</p>
+</div>
+</div>
+</div>
+<div class="hidden md:block glass-card p-8 rounded-2xl border-l-4 border-l-tertiary">
+<div class="flex text-secondary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body-md text-body-md italic mb-6">"Neon Core doesn't just sell tech, they sell an experience. From packaging to performance, everything is premium."</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-variant overflow-hidden">
+</div></div></div></div></section></main></body></html>

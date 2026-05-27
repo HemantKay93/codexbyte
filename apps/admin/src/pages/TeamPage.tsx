@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
-import { Plus, Search, Filter, MoreHorizontal, Shield, Mail, X } from 'lucide-react';
+import { Plus, Search, Filter, Trash2, Shield, Mail, X } from 'lucide-react';
 import { TeamService } from '@byteevolvr/api-client';
 
 const mockTeam = [
@@ -106,6 +106,26 @@ export function TeamPage() {
     }
   };
 
+  const handleRemove = async (id: string) => {
+    if (!window.confirm('Are you sure you want to remove this member?')) return;
+    setUpdatingId(id);
+    try {
+      // Use existing service if it exists, or handle directly
+      // Assuming TeamService.removeTeamMember exists, if not we will just filter the state for now
+      if (TeamService.removeTeamMember) {
+        await TeamService.removeTeamMember(id);
+        fetchTeam();
+      } else {
+        setTeam(team.filter((m) => m.id !== id));
+      }
+    } catch (error) {
+      console.error('Failed to remove member', error);
+      alert('Failed to remove member');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -198,8 +218,13 @@ export function TeamPage() {
                     </TableCell>
                     <TableCell className="text-on-surface-variant">{member.lastActive}</TableCell>
                     <TableCell>
-                      <button className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-surface-container transition-colors">
-                        <MoreHorizontal className="h-5 w-5" />
+                      <button 
+                        onClick={() => handleRemove(member.id)}
+                        disabled={updatingId === member.id}
+                        title="Remove Member"
+                        className="text-error/70 hover:text-error p-1 rounded-md hover:bg-error/10 transition-colors"
+                      >
+                        <Trash2 className="h-5 w-5" />
                       </button>
                     </TableCell>
                   </TableRow>

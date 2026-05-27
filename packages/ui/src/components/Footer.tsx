@@ -143,19 +143,20 @@ export function Footer({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-8">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4 lg:col-span-8">
             {sections.map((section) => (
               <div key={section.title}>
                 <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-white">
                   {section.title}
                 </h3>
-                <ul className="space-y-4">
+                <ul className="space-y-3">
                   {section.links.map((link) => (
                     <li key={link.label}>
                       <LinkComponent
                         to={link.to}
-                        className="text-sm text-brand-muted hover:text-white transition-colors"
+                        className="group flex items-center text-sm text-brand-muted transition-colors hover:text-white"
                       >
+                        <span className="mr-2 h-px w-0 bg-accent/0 transition-all duration-300 group-hover:w-3 group-hover:bg-accent"></span>
                         {link.label}
                       </LinkComponent>
                     </li>
@@ -164,22 +165,45 @@ export function Footer({
               </div>
             ))}
 
-            <div className="sm:col-span-1">
+            <div className="col-span-2 md:col-span-1">
               <h3 className="mb-6 text-xs font-bold uppercase tracking-widest text-white">
                 Contact
               </h3>
-              <ul className="space-y-4">
-                <li className="flex items-center gap-3 text-sm text-brand-muted">
-                  <Mail className="h-4 w-4 text-accent" />
-                  {contactInfo?.email}
+              <ul className="space-y-5">
+                <li className="group flex items-start gap-3">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 text-accent transition-colors group-hover:bg-accent/10">
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest mb-1">Email Us</span>
+                    <a href={`mailto:${contactInfo?.email}`} className="text-sm text-brand-muted hover:text-white transition-colors">
+                      {contactInfo?.email}
+                    </a>
+                  </div>
                 </li>
-                <li className="flex items-center gap-3 text-sm text-brand-muted">
-                  <Phone className="h-4 w-4 text-accent" />
-                  {contactInfo?.phone}
+                
+                <li className="group flex items-start gap-3">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 text-accent transition-colors group-hover:bg-accent/10">
+                    <Phone className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest mb-1">Call Us</span>
+                    <a href={`tel:${contactInfo?.phone?.replace(/[^0-9+]/g, '')}`} className="text-sm text-brand-muted hover:text-white transition-colors">
+                      {contactInfo?.phone}
+                    </a>
+                  </div>
                 </li>
-                <li className="flex items-center gap-3 text-sm text-brand-muted">
-                  <MapPin className="h-4 w-4 text-accent" />
-                  {contactInfo?.address}
+                
+                <li className="group flex items-start gap-3">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 text-accent transition-colors group-hover:bg-accent/10">
+                    <MapPin className="h-4 w-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest mb-1">Visit Us</span>
+                    <span className="text-sm text-brand-muted leading-relaxed">
+                      {contactInfo?.address}
+                    </span>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -189,12 +213,12 @@ export function Footer({
         <div className="mt-10 border-t border-white/5 pt-6 flex flex-col md:flex-row justify-between gap-4">
           <p className="text-xs text-brand-subtle">{copyright}</p>
           <div className="flex gap-6">
-            <a href="#" className="text-xs text-brand-subtle hover:text-white transition-colors">
+            <LinkComponent to="/legal/privacy" className="text-xs text-brand-subtle hover:text-white transition-colors">
               Privacy Policy
-            </a>
-            <a href="#" className="text-xs text-brand-subtle hover:text-white transition-colors">
+            </LinkComponent>
+            <LinkComponent to="/legal/terms" className="text-xs text-brand-subtle hover:text-white transition-colors">
               Terms of Service
-            </a>
+            </LinkComponent>
           </div>
         </div>
       </div>

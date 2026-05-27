@@ -279,7 +279,7 @@ export function DashboardPage() {
                   No recent sales found.
                 </div>
               ) : (
-                recentSales.map((sale: any, i: number) => (
+                recentSales.slice(0, 10).map((sale: any, i: number) => (
                   <div key={i} className="flex items-center">
                     <div className="h-9 w-9 rounded-full bg-primary-container text-primary flex items-center justify-center font-semibold text-sm">
                       {(sale.user_profiles?.full_name || 'G').charAt(0)}

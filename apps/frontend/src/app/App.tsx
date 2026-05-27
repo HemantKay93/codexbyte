@@ -38,6 +38,16 @@ const DashboardPage = lazy(() =>
 const TrackingPage = lazy(() =>
   import('@/features/shop/pages/TrackingPage').then((m) => ({ default: m.TrackingPage }))
 );
+const OrderSuccessPage = lazy(() =>
+  import('@/features/shop/pages/OrderSuccessPage').then((m) => ({ default: m.OrderSuccessPage }))
+);
+const OrderFailedPage = lazy(() =>
+  import('@/features/shop/pages/OrderFailedPage').then((m) => ({ default: m.OrderFailedPage }))
+);
+const CategoryPage = lazy(() =>
+  import('@/features/shop/pages/CategoryPage').then((m) => ({ default: m.CategoryPage }))
+);
+
 
 import { useEffect } from 'react';
 import { useAuthStore } from '@byteevolvr/store';
@@ -64,6 +74,14 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+          <Route path="/legal/refund" element={<RefundPolicy />} />
+          <Route path="/legal/terms" element={<TermsAndConditions />} />
+          
+          {/* Shop Routes */}
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/product/:id" element={<ProductDetailPage />} />
           <Route path="/shop/cart" element={<CartPage />} />
@@ -78,6 +96,9 @@ export default function App() {
           <Route path="/shop/login" element={<LoginPage />} />
           <Route path="/shop/signup" element={<SignupPage />} />
           <Route path="/shop/track/:id?" element={<TrackingPage />} />
+          <Route path="/shop/order-success" element={<OrderSuccessPage />} />
+          <Route path="/shop/order-failed" element={<OrderFailedPage />} />
+          <Route path="/shop/category/:id" element={<CategoryPage />} />
           <Route
             path="/shop/dashboard"
             element={
@@ -86,12 +107,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/legal/privacy" element={<PrivacyPolicy />} />
-          <Route path="/legal/refund" element={<RefundPolicy />} />
-          <Route path="/legal/terms" element={<TermsAndConditions />} />
         </Route>
       </Routes>
     </Suspense>

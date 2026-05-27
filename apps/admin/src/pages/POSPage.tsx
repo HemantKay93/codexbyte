@@ -12,7 +12,7 @@ import {
   CheckCircle2,
   Printer,
 } from 'lucide-react';
-import { AdminService } from '@byteevolvr/api-client';
+import { AdminService, CMSService } from '@byteevolvr/api-client';
 import { printInvoice } from '@byteevolvr/ui';
 
 export function POSPage() {
@@ -30,6 +30,7 @@ export function POSPage() {
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [tempCustomer, setTempCustomer] = useState(customer);
   const [lastCreatedOrder, setLastCreatedOrder] = useState<any>(null);
+  const [lastCartSnapshot, setLastCartSnapshot] = useState<any[]>([]);
 
   useEffect(() => {
     fetchProducts();
@@ -124,6 +125,7 @@ export function POSPage() {
 
       const createdOrder = await AdminService.createOrder(orderData);
       setLastCreatedOrder(createdOrder);
+      setLastCartSnapshot([...cart]);
       setSuccess(true);
       setCart([]);
       setTimeout(() => setSuccess(false), 8000); // Longer success message if they want to print
@@ -135,13 +137,13 @@ export function POSPage() {
     }
   };
 
-  const handlePrintReceipt = () => {
+  const handlePrintReceipt = async () => {
     if (!lastCreatedOrder) return;
-    const order = lastCreatedOrder;
+    const order = { ...lastCreatedOrder, total_amount: lastCreatedOrder.totalAmount || lastCreatedOrder.total_amount };
     const items =
       order.order_items && order.order_items.length > 0
         ? order.order_items
-        : cart.map((item) => ({
+        : lastCartSnapshot.map((item) => ({
             product_name: item.name,
             sku: item.sku || '',
             quantity: item.qty,
@@ -149,7 +151,13 @@ export function POSPage() {
             total_price: Number(item.price) * item.qty,
           }));
 
-    printInvoice(order, items);
+    try {
+      const cmsData = await CMSService.getContent('global');
+      printInvoice(order, items, cmsData);
+    } catch (err) {
+      console.error('Failed to get settings for receipt', err);
+      printInvoice(order, items);
+    }
   };
 
   const subtotal = cart.reduce((acc, item) => acc + Number(item.price) * item.qty, 0);

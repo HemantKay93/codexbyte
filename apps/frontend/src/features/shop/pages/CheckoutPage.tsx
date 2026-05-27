@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore, useAuthStore } from '@byteevolvr/store';
 import { OrderService, ShippingService, UserService } from '@byteevolvr/api-client';
-import { ArrowLeft, Loader2, CreditCard, Banknote, MapPin, Truck } from 'lucide-react';
-import { Button } from '@byteevolvr/ui';
-
+import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
+import { Loader2, CreditCard, Banknote, Truck, Lock, Shield, CheckCircle, Award } from 'lucide-react';
 export function CheckoutPage() {
   const { items, clearCart, totalAmount } = useCartStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
+  const currencySymbol = useStoreCurrency();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -142,334 +142,342 @@ export function CheckoutPage() {
       await OrderService.createOrder(payload);
 
       if (paymentMethod === 'razorpay') {
-        // In a real implementation, you would open the Razorpay popup here
-        // using the order ID returned from the backend.
-        // For now, we simulate a successful payment.
         alert('Payment integration pending. Order placed successfully!');
       }
 
       clearCart();
-      navigate('/shop/dashboard', { state: { orderPlaced: true } });
+      navigate('/shop/order-success');
     } catch (err: any) {
       console.error('Order creation failed:', err);
       setError(
         err.response?.data?.message || err.message || 'Failed to place order. Please try again.'
       );
+      // optionally navigate to order-failed instead
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#04080F] text-white py-12 px-6">
-      <div className="max-w-[1200px] mx-auto">
-        <button
-          onClick={() => navigate('/shop/cart')}
-          className="flex items-center gap-2 text-sm text-brand-muted hover:text-white transition-colors mb-8"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Cart
-        </button>
-
-        <div className="flex flex-col lg:flex-row gap-10">
-          {/* Checkout Form */}
-          <div className="flex-1">
-            <h1 className="text-3xl md:text-4xl font-display font-bold mb-8">Checkout</h1>
-
-            {error && (
-              <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-                {error}
-              </div>
-            )}
-
-            <form id="checkout-form" onSubmit={handlePlaceOrder} className="space-y-8">
-              {/* Shipping Address Section */}
-              <div className="bg-[#070D1A] border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-accent" />
-                  </div>
-                  <h2 className="text-xl font-bold">Shipping Address</h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {!user && (
-                    <>
-                      <div className="space-y-2 md:col-span-2 bg-accent/5 p-4 rounded-xl border border-accent/20 mb-2">
-                        <h3 className="font-bold text-accent mb-2">Guest Checkout</h3>
-                        <p className="text-sm text-brand-muted mb-4">
-                          We'll automatically create an account for you so you can track your order.
-                        </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
-                              Email Address
-                            </label>
-                            <input
-                              required
-                              type="email"
-                              value={guestEmail}
-                              onChange={(e) => setGuestEmail(e.target.value)}
-                              className="w-full rounded-xl border border-white/10 bg-[#04080F] py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
-                              placeholder="you@example.com"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
-                              Create Password
-                            </label>
-                            <input
-                              required
-                              type="password"
-                              value={guestPassword}
-                              onChange={(e) => setGuestPassword(e.target.value)}
-                              className="w-full rounded-xl border border-white/10 bg-[#04080F] py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
-                              placeholder="••••••••"
-                              minLength={6}
-                            />
-                          </div>
-                        </div>
-                        <p className="text-xs text-brand-muted mt-3">
-                          Already have an account?{' '}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              navigate('/auth/login', { state: { returnTo: '/shop/checkout' } })
-                            }
-                            className="text-accent hover:underline"
-                          >
-                            Log in here
-                          </button>
-                        </p>
-                      </div>
-                    </>
-                  )}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
-                      Full Name
-                    </label>
-                    <input
-                      required
-                      name="full_name"
-                      value={shippingAddress.full_name}
-                      onChange={handleInputChange}
-                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
-                      Phone Number
-                    </label>
-                    <input
-                      required
-                      name="phone"
-                      value={shippingAddress.phone}
-                      onChange={handleInputChange}
-                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
-                      placeholder="+91 98765 43210"
-                    />
-                  </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
-                      Address Line
-                    </label>
-                    <input
-                      required
-                      name="line_1"
-                      value={shippingAddress.line_1}
-                      onChange={handleInputChange}
-                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
-                      placeholder="Flat No, Building, Street"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
-                      City
-                    </label>
-                    <input
-                      required
-                      name="city"
-                      value={shippingAddress.city}
-                      onChange={handleInputChange}
-                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
-                      placeholder="Mumbai"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
-                      State
-                    </label>
-                    <input
-                      required
-                      name="state"
-                      value={shippingAddress.state}
-                      onChange={handleInputChange}
-                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
-                      placeholder="Maharashtra"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-brand-subtle ml-1">
-                      Pincode
-                    </label>
-                    <input
-                      required
-                      name="postal_code"
-                      value={shippingAddress.postal_code}
-                      onChange={handleInputChange}
-                      className="w-full rounded-xl border border-white/10 bg-white/5 py-3 px-4 text-white placeholder:text-white/30 focus:border-accent/50 focus:outline-none focus:ring-1 focus:ring-accent/50"
-                      placeholder="400001"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment Method Section */}
-              <div className="bg-[#070D1A] border border-white/10 rounded-2xl p-6 md:p-8 shadow-xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-10 w-10 rounded-full bg-accent/20 flex items-center justify-center">
-                    <CreditCard className="h-5 w-5 text-accent" />
-                  </div>
-                  <h2 className="text-xl font-bold">Payment Method</h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div
-                    onClick={() => setPaymentMethod('razorpay')}
-                    className={`cursor-pointer rounded-xl border p-4 flex items-center gap-4 transition-all ${paymentMethod === 'razorpay' ? 'border-accent bg-accent/10 shadow-[0_0_15px_rgba(26,79,214,0.2)]' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
-                  >
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'razorpay' ? 'border-accent' : 'border-white/30'}`}
-                    >
-                      {paymentMethod === 'razorpay' && (
-                        <div className="w-2.5 h-2.5 bg-accent rounded-full" />
-                      )}
-                    </div>
-                    <CreditCard className="h-6 w-6 text-brand-muted" />
-                    <div>
-                      <div className="font-bold">Online Payment</div>
-                      <div className="text-xs text-brand-muted">Cards, UPI, Netbanking</div>
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={() => setPaymentMethod('cod')}
-                    className={`cursor-pointer rounded-xl border p-4 flex items-center gap-4 transition-all ${paymentMethod === 'cod' ? 'border-accent bg-accent/10 shadow-[0_0_15px_rgba(26,79,214,0.2)]' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
-                  >
-                    <div
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'cod' ? 'border-accent' : 'border-white/30'}`}
-                    >
-                      {paymentMethod === 'cod' && (
-                        <div className="w-2.5 h-2.5 bg-accent rounded-full" />
-                      )}
-                    </div>
-                    <Banknote className="h-6 w-6 text-brand-muted" />
-                    <div>
-                      <div className="font-bold">Cash on Delivery</div>
-                      <div className="text-xs text-brand-muted">Pay when you receive</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
+    <div className="w-full">
+      <main className="pt-24 pb-stitch-section-gap px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop max-w-7xl mx-auto w-full min-h-[calc(100vh-160px)]">
+        {/* Progress Indicator */}
+        <nav className="mb-12 flex justify-center md:justify-start items-center gap-4 md:gap-12">
+          <div className="flex items-center gap-3 text-stitch-primary border-b-2 border-stitch-primary pb-2 px-1">
+            <span className="font-stitch-label-sm text-stitch-label-sm">01</span>
+            <span className="font-stitch-headline-lg-mobile text-stitch-headline-lg-mobile uppercase tracking-widest">Address</span>
           </div>
+          <div className="h-[1px] w-8 md:w-16 bg-stitch-outline-variant/30"></div>
+          <div className="flex items-center gap-3 text-stitch-outline pb-2 px-1">
+            <span className="font-stitch-label-sm text-stitch-label-sm">02</span>
+            <span className="font-stitch-headline-lg-mobile text-stitch-headline-lg-mobile uppercase tracking-widest">Payment</span>
+          </div>
+          <div className="h-[1px] w-8 md:w-16 bg-stitch-outline-variant/30"></div>
+          <div className="flex items-center gap-3 text-stitch-outline pb-2 px-1">
+            <span className="font-stitch-label-sm text-stitch-label-sm">03</span>
+            <span className="font-stitch-headline-lg-mobile text-stitch-headline-lg-mobile uppercase tracking-widest">Review</span>
+          </div>
+        </nav>
 
-          {/* Order Summary Sidebar */}
-          <div className="w-full lg:w-[380px] shrink-0">
-            <div className="bg-[#070D1A] border border-white/10 rounded-2xl p-6 shadow-xl sticky top-24">
-              <h2 className="text-xl font-bold mb-6">Review Order</h2>
+        {error && (
+          <div className="mb-6 p-4 rounded-xl bg-stitch-error/10 border border-stitch-error/20 text-stitch-error text-sm">
+            {error}
+          </div>
+        )}
 
-              {/* Mini Item List */}
-              <div className="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2 scrollbar-thin">
-                {items.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="w-10 h-10 bg-white/5 rounded-md flex-shrink-0 flex items-center justify-center border border-white/10">
-                        {item.image_url ? (
-                          <img
-                            src={item.image_url}
-                            alt=""
-                            className="max-w-full max-h-full object-contain p-1"
-                          />
-                        ) : null}
-                      </div>
-                      <span className="truncate text-brand-muted">
-                        {item.quantity}x {item.name}
-                      </span>
+        <form id="checkout-form" onSubmit={handlePlaceOrder} className="grid grid-cols-1 lg:grid-cols-12 gap-stitch-gutter items-start">
+          
+          {/* Left Column: Checkout Forms */}
+          <section className="lg:col-span-8 space-y-stitch-gutter">
+            {/* Shipping Form */}
+            <div className="stitch-glass-panel p-8 rounded-xl">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="font-stitch-headline-lg text-stitch-headline-lg text-white">SHIPPING_INFO</h2>
+                <span className="text-stitch-secondary font-stitch-label-sm text-stitch-label-sm flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-stitch-secondary animate-pulse"></span>
+                  SECURE_ENCRYPTION_ACTIVE
+                </span>
+              </div>
+              
+              {!user && (
+                <div className="mb-6 space-y-2 md:col-span-2 bg-stitch-primary/5 p-4 rounded-xl border border-stitch-primary/20">
+                  <h3 className="font-bold text-stitch-primary mb-2">Guest Checkout</h3>
+                  <p className="text-sm text-stitch-on-surface-variant mb-4">
+                    We'll automatically create an account for you so you can track your order.
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline uppercase">Email Address</label>
+                      <input
+                        required
+                        type="email"
+                        value={guestEmail}
+                        onChange={(e) => setGuestEmail(e.target.value)}
+                        className="w-full bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg py-3 px-4 focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none transition-all placeholder:text-stitch-outline-variant/50 text-white"
+                        placeholder="you@example.com"
+                      />
                     </div>
-                    <span className="font-medium">
-                      ₹{(item.price * item.quantity).toLocaleString('en-IN')}
-                    </span>
+                    <div className="space-y-2">
+                      <label className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline uppercase">Create Password</label>
+                      <input
+                        required
+                        type="password"
+                        value={guestPassword}
+                        onChange={(e) => setGuestPassword(e.target.value)}
+                        className="w-full bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg py-3 px-4 focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none transition-all placeholder:text-stitch-outline-variant/50 text-white"
+                        placeholder="••••••••"
+                        minLength={6}
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-stitch-on-surface-variant mt-3">
+                    Already have an account?{' '}
+                    <button
+                      type="button"
+                      onClick={() => navigate('/auth/login', { state: { returnTo: '/shop/checkout' } })}
+                      className="text-stitch-primary hover:underline"
+                    >
+                      Log in here
+                    </button>
+                  </p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-1 space-y-2">
+                  <label className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline uppercase">Full Name</label>
+                  <input 
+                    required
+                    name="full_name"
+                    value={shippingAddress.full_name}
+                    onChange={handleInputChange}
+                    autoComplete="name" 
+                    className="w-full bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg py-3 px-4 focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none transition-all placeholder:text-stitch-outline-variant/50 text-white" 
+                    placeholder="John Doe" 
+                  />
+                </div>
+                <div className="md:col-span-1 space-y-2">
+                  <label className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline uppercase">Phone</label>
+                  <input 
+                    required
+                    name="phone"
+                    value={shippingAddress.phone}
+                    onChange={handleInputChange}
+                    autoComplete="tel" 
+                    className="w-full bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg py-3 px-4 focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none transition-all placeholder:text-stitch-outline-variant/50 text-white" 
+                    placeholder="+91 98765 43210" 
+                  />
+                </div>
+                <div className="md:col-span-2 space-y-2">
+                  <label className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline uppercase">Address Line 1</label>
+                  <input 
+                    required
+                    name="line_1"
+                    value={shippingAddress.line_1}
+                    onChange={handleInputChange}
+                    autoComplete="shipping street-address" 
+                    className="w-full bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg py-3 px-4 focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none transition-all placeholder:text-stitch-outline-variant/50 text-white" 
+                    placeholder="123 Vector Drive" 
+                  />
+                </div>
+                <div className="md:col-span-1 space-y-2">
+                  <label className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline uppercase">City</label>
+                  <input 
+                    required
+                    name="city"
+                    value={shippingAddress.city}
+                    onChange={handleInputChange}
+                    autoComplete="shipping address-level2" 
+                    className="w-full bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg py-3 px-4 focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none transition-all placeholder:text-stitch-outline-variant/50 text-white" 
+                    placeholder="Neo Tokyo" 
+                  />
+                </div>
+                <div className="md:col-span-1 space-y-2">
+                  <label className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline uppercase">State</label>
+                  <input 
+                    required
+                    name="state"
+                    value={shippingAddress.state}
+                    onChange={handleInputChange}
+                    className="w-full bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg py-3 px-4 focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none transition-all placeholder:text-stitch-outline-variant/50 text-white" 
+                    placeholder="Maharashtra" 
+                  />
+                </div>
+                <div className="md:col-span-1 space-y-2">
+                  <label className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline uppercase">Zip Code</label>
+                  <input 
+                    required
+                    name="postal_code"
+                    value={shippingAddress.postal_code}
+                    onChange={handleInputChange}
+                    autoComplete="shipping postal-code" 
+                    className="w-full bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg py-3 px-4 focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none transition-all placeholder:text-stitch-outline-variant/50 text-white" 
+                    placeholder="101-0021" 
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Payment Methods */}
+            <div className="stitch-glass-panel p-8 rounded-xl">
+              <h2 className="font-stitch-headline-lg text-stitch-headline-lg text-white mb-8">PAYMENT_GATEWAY</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {/* Online Payment */}
+                <div 
+                  onClick={() => setPaymentMethod('razorpay')}
+                  className={`group relative p-6 rounded-xl cursor-pointer transition-all ${paymentMethod === 'razorpay' ? 'border border-stitch-primary bg-stitch-primary/10 shadow-[0_0_15px_rgba(173,198,255,0.2)]' : 'border border-stitch-outline-variant/30 bg-stitch-surface-container-lowest hover:border-stitch-primary/50'}`}
+                >
+                  <div className="flex flex-col gap-4">
+                    <CreditCard className={`w-8 h-8 ${paymentMethod === 'razorpay' ? 'text-stitch-primary' : 'text-stitch-on-surface-variant group-hover:text-stitch-primary transition-colors'}`} />
+                    <span className="font-stitch-cta-button text-stitch-cta-button text-white">Online Payment (Cards, UPI)</span>
+                  </div>
+                  {paymentMethod === 'razorpay' && (
+                    <div className="absolute top-4 right-4 h-4 w-4 rounded-full border-2 border-stitch-primary flex items-center justify-center">
+                      <div className="h-2 w-2 rounded-full bg-stitch-primary"></div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Cash on Delivery */}
+                <div 
+                  onClick={() => setPaymentMethod('cod')}
+                  className={`group relative p-6 rounded-xl cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border border-stitch-primary bg-stitch-primary/10 shadow-[0_0_15px_rgba(173,198,255,0.2)]' : 'border border-stitch-outline-variant/30 bg-stitch-surface-container-lowest hover:border-stitch-primary/50'}`}
+                >
+                  <div className="flex flex-col gap-4">
+                    <Banknote className={`w-8 h-8 ${paymentMethod === 'cod' ? 'text-stitch-primary' : 'text-stitch-on-surface-variant group-hover:text-stitch-primary transition-colors'}`} />
+                    <span className="font-stitch-cta-button text-stitch-cta-button text-white">Cash on Delivery</span>
+                  </div>
+                  {paymentMethod === 'cod' && (
+                    <div className="absolute top-4 right-4 h-4 w-4 rounded-full border-2 border-stitch-primary flex items-center justify-center">
+                      <div className="h-2 w-2 rounded-full bg-stitch-primary"></div>
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            </div>
+          </section>
+          
+          {/* Right Column: Order Summary Sidebar */}
+          <aside className="lg:col-span-4 sticky top-24 space-y-stitch-gutter">
+            <div className="stitch-glass-panel p-8 rounded-xl overflow-hidden relative">
+              {/* Subtle Glow Ornament */}
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-stitch-primary/10 blur-[60px] rounded-full"></div>
+              
+              <h2 className="font-stitch-headline-lg text-stitch-headline-lg text-white mb-6 relative z-10">ORDER_SUMMARY</h2>
+              
+              {/* Product Teaser(s) */}
+              <div className="space-y-4 mb-8 max-h-60 overflow-y-auto stitch-no-scrollbar relative z-10">
+                {items.map((item) => (
+                  <div key={item.id} className="flex gap-4 p-4 rounded-lg bg-stitch-surface-container-lowest border border-stitch-outline-variant/10">
+                    <div className="w-20 h-20 bg-stitch-surface-variant rounded flex-shrink-0 overflow-hidden">
+                      <img 
+                        className="w-full h-full object-cover transition-all duration-500" 
+                        src={item.image_url || 'https://via.placeholder.com/150'} 
+                        alt={item.name} 
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <h3 className="font-stitch-cta-button text-stitch-cta-button text-white">{item.quantity}x {item.name}</h3>
+                      <p className="font-stitch-label-sm text-stitch-label-sm text-stitch-primary mt-1">{currencySymbol}{(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-4 text-sm mb-6 border-t border-white/10 pt-6">
-                <div className="flex justify-between text-brand-muted">
-                  <span>Subtotal</span>
-                  <span className="text-white font-medium">
-                    ₹{subtotal.toLocaleString('en-IN')}
-                  </span>
+              {/* Price Breakdown */}
+              <div className="space-y-3 font-stitch-body-md text-stitch-body-md border-b border-stitch-outline-variant/20 pb-6 mb-6 relative z-10">
+                <div className="flex justify-between">
+                  <span className="text-stitch-outline">Subtotal</span>
+                  <span className="text-white">{currencySymbol}{subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-brand-muted">
-                  <span>GST (18%)</span>
-                  <span className="text-white font-medium">₹{tax.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between text-brand-muted pb-4 border-b border-white/10">
+                
+                <div className="flex justify-between items-center">
                   <div className="flex flex-col">
-                    <span>Shipping</span>
+                    <span className="text-stitch-outline">Shipping</span>
                     {shippingRates.length > 0 && (
                       <select
                         value={selectedRate}
                         onChange={(e) => setSelectedRate(Number(e.target.value))}
-                        className="text-[10px] bg-transparent border-none text-accent focus:ring-0 p-0 cursor-pointer"
+                        className="text-[10px] bg-transparent border-none text-stitch-secondary focus:ring-0 p-0 cursor-pointer w-32"
                       >
                         {shippingRates.map((r, i) => (
-                          <option key={i} value={r.rate} className="bg-[#070D1A] text-white">
-                            {r.courier_name} (₹{r.rate})
+                          <option key={i} value={r.rate} className="bg-stitch-surface-container text-white">
+                            {r.courier_name} ({currencySymbol}{r.rate})
                           </option>
                         ))}
                       </select>
                     )}
                   </div>
-                  <span
-                    className={
-                      shipping === 0 ? 'text-green-400 font-medium' : 'text-white font-medium'
-                    }
-                  >
+                  <span className="text-stitch-secondary">
                     {calculatingShipping ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin text-stitch-secondary" />
                     ) : shipping === 0 ? (
-                      'Free'
+                      'FREE'
                     ) : (
-                      `₹${shipping.toLocaleString('en-IN')}`
+                      `${currencySymbol}${shipping.toFixed(2)}`
                     )}
                   </span>
                 </div>
-                <div className="flex justify-between text-xl font-display font-bold text-white pt-2">
-                  <span>Total</span>
-                  <span className="text-accent">₹{finalTotalAmount.toLocaleString('en-IN')}</span>
+
+                <div className="flex justify-between">
+                  <span className="text-stitch-outline">Estimated Tax (18%)</span>
+                  <span className="text-white">{currencySymbol}{tax.toFixed(2)}</span>
                 </div>
               </div>
 
-              <Button
-                type="submit"
-                form="checkout-form"
-                disabled={loading}
-                variant="primary"
-                className="w-full py-4 rounded-xl shadow-[0_0_15px_rgba(26,79,214,0.3)] text-base flex justify-center items-center gap-2"
-              >
-                {loading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Truck className="h-5 w-5" />
-                )}
-                {paymentMethod === 'cod' ? 'Place Order' : 'Proceed to Payment'}
-              </Button>
+              {/* Delivery Date Badge */}
+              <div className="flex items-center gap-3 p-4 bg-stitch-secondary-container/10 border border-stitch-secondary/20 rounded-lg mb-8 relative z-10">
+                <Truck className="w-6 h-6 text-stitch-secondary" />
+                <div>
+                  <p className="font-stitch-label-sm text-stitch-label-sm text-stitch-secondary-fixed-dim uppercase font-bold">Estimated Delivery</p>
+                  <p className="font-stitch-body-md text-stitch-body-md text-white">3-5 Business Days</p>
+                </div>
+              </div>
+              
+              {/* Total */}
+              <div className="flex justify-between items-end mb-8 relative z-10">
+                <span className="font-stitch-headline-lg-mobile text-stitch-headline-lg-mobile text-white">TOTAL</span>
+                <div className="text-right">
+                  <span className="font-stitch-display-lg-mobile text-stitch-display-lg-mobile text-stitch-primary">{currencySymbol}{finalTotalAmount.toFixed(2)}</span>
+                </div>
+              </div>
+              
+              {/* Terms and Checkout */}
+              <div className="space-y-6 relative z-10">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input required className="mt-1 bg-stitch-surface-container-lowest border-stitch-outline-variant/50 text-stitch-primary focus:ring-stitch-primary rounded" type="checkbox" />
+                  <span className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline leading-tight group-hover:text-white transition-colors">
+                    I AGREE TO THE <Link to="/legal/terms" target="_blank" className="text-stitch-primary hover:underline hover:text-stitch-secondary">TERMS OF SERVICE</Link> AND <Link to="/legal/refund" target="_blank" className="text-stitch-primary hover:underline hover:text-stitch-secondary">REFUND POLICY</Link>.
+                  </span>
+                </label>
+                
+                <button 
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-4 bg-stitch-primary text-stitch-on-primary font-stitch-cta-button text-stitch-cta-button rounded-xl flex items-center justify-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(173,198,255,0.3)] disabled:opacity-50"
+                >
+                  {loading ? (
+                    <Loader2 className="animate-spin w-5 h-5" />
+                  ) : (
+                    <Lock className="w-5 h-5 fill-current" />
+                  )}
+                  {paymentMethod === 'cod' ? 'PLACE ORDER' : 'CONTINUE TO SECURE PAYMENT'}
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
+            
+            {/* Secondary Trust Badge */}
+            <div className="flex justify-center gap-8 py-4 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all text-white">
+              <Shield className="w-10 h-10" />
+              <CheckCircle className="w-10 h-10" />
+              <Award className="w-10 h-10" />
+            </div>
+          </aside>
+          
+        </form>
+      </main>
     </div>
   );
 }

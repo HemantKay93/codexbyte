@@ -1,6 +1,6 @@
 import { numberToWords } from './numberToWords';
 
-export const printInvoice = (order: any, items: any[]) => {
+export const printInvoice = (order: any, items: any[], cmsData?: any) => {
   const printWindow = window.open('', '_blank');
   if (!printWindow) return;
 
@@ -9,6 +9,23 @@ export const printInvoice = (order: any, items: any[]) => {
   const totalInWords = order.total_amount
     ? numberToWords(Math.floor(Number(order.total_amount)))
     : '';
+
+  // Extract settings from cmsData array or object
+  const contact = Array.isArray(cmsData) 
+    ? cmsData.find(s => s.section_key === 'contact')?.content || {} 
+    : cmsData || {};
+    
+  const template = Array.isArray(cmsData)
+    ? cmsData.find(s => s.section_key === 'invoice_template')?.content || {}
+    : {};
+
+  const layout = template.layout || 'classic';
+  const primaryColor = template.primaryColor || '#004ac6';
+  const showLogo = template.showLogo !== false; // default true
+  const showSignatory = template.showSignatory !== false; // default true
+
+  const isMinimalist = layout === 'minimalist';
+  const isModern = layout === 'modern';
 
   // Handle address normalization
   let address: any = null;
@@ -31,6 +48,9 @@ export const printInvoice = (order: any, items: any[]) => {
       <title>Tax Invoice - ${order.order_number}</title>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        :root {
+          --primary-color: ${primaryColor};
+        }
         body { 
           font-family: 'Inter', sans-serif; 
           padding: 40px; 
@@ -42,36 +62,34 @@ export const printInvoice = (order: any, items: any[]) => {
         .invoice-container {
           max-width: 800px;
           margin: 0 auto;
-          border: 1px solid #eee;
-          padding: 40px;
-          box-shadow: 0 0 10px rgba(0,0,0,0.05);
+          ${isMinimalist ? 'border: none; padding: 20px;' : 'border: 1px solid #eee; padding: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.05);'}
         }
         .header { 
           display: flex; 
           justify-content: space-between; 
           margin-bottom: 30px; 
-          border-bottom: 2px solid #004ac6;
-          padding-bottom: 20px;
+          ${isMinimalist ? 'border-bottom: 1px solid #e5e7eb;' : isModern ? `background: var(--primary-color); color: #fff; padding: 20px; border-radius: 10px; margin: -20px -20px 30px -20px;` : `border-bottom: 2px solid var(--primary-color);`}
+          padding-bottom: ${isModern ? '20px' : '20px'};
         }
         .company-info h1 { 
           margin: 0; 
           font-size: 28px; 
-          color: #004ac6; 
+          color: ${isModern ? '#fff' : 'var(--primary-color)'}; 
           font-weight: 700;
         }
-        .company-info p { margin: 4px 0; color: #4b5563; }
+        .company-info p { margin: 4px 0; color: ${isModern ? '#f3f4f6' : '#4b5563'}; }
         
         .invoice-details { text-align: right; }
         .invoice-details h2 { 
           margin: 0 0 10px 0; 
           font-size: 20px; 
           text-transform: uppercase; 
-          color: #004ac6;
+          color: ${isModern ? '#fff' : 'var(--primary-color)'};
           letter-spacing: 1px;
         }
         .detail-row { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 4px; }
-        .detail-label { color: #6b7280; font-weight: 500; }
-        .detail-value { font-weight: 600; color: #111827; }
+        .detail-label { color: ${isModern ? '#e5e7eb' : '#6b7280'}; font-weight: 500; }
+        .detail-value { font-weight: 600; color: ${isModern ? '#fff' : '#111827'}; }
 
         .address-section { 
           display: grid; 
@@ -97,11 +115,12 @@ export const printInvoice = (order: any, items: any[]) => {
           margin-bottom: 30px; 
         }
         .items-table th { 
-          background: #f9fafb; 
-          color: #374151; 
+          background: ${isMinimalist ? 'transparent' : isModern ? 'var(--primary-color)' : '#f9fafb'}; 
+          color: ${isMinimalist ? '#374151' : isModern ? '#fff' : '#374151'}; 
           text-align: left; 
           padding: 12px 10px; 
-          border-bottom: 2px solid #e5e7eb;
+          border-bottom: ${isMinimalist ? '1px solid #e5e7eb' : 'none'};
+          border-top: ${isMinimalist ? '1px solid #e5e7eb' : 'none'};
           font-weight: 600;
           text-transform: uppercase;
           font-size: 11px;
@@ -122,12 +141,12 @@ export const printInvoice = (order: any, items: any[]) => {
         .summary-table { width: 300px; }
         .summary-row { display: flex; justify-content: space-between; padding: 6px 0; }
         .summary-row.total { 
-          border-top: 2px solid #004ac6; 
+          border-top: ${isMinimalist ? '1px solid #e5e7eb' : '2px solid var(--primary-color)'}; 
           margin-top: 10px; 
           padding-top: 10px;
           font-size: 16px;
           font-weight: 700;
-          color: #004ac6;
+          color: ${isMinimalist ? '#111827' : 'var(--primary-color)'};
         }
         .amount-in-words { 
           margin-top: -30px;
@@ -151,7 +170,9 @@ export const printInvoice = (order: any, items: any[]) => {
 
         @media print {
           body { padding: 0; }
-          .invoice-container { border: none; box-shadow: none; max-width: 100%; padding: 0; }
+          .invoice-container { border: none; box-shadow: none; max-width: 100%; padding: 0; margin: 0;}
+          .header { ${isModern ? '-webkit-print-color-adjust: exact; print-color-adjust: exact;' : ''} }
+          .items-table th { ${isModern ? '-webkit-print-color-adjust: exact; print-color-adjust: exact;' : ''} }
         }
       </style>
     </head>
@@ -159,10 +180,10 @@ export const printInvoice = (order: any, items: any[]) => {
       <div class="invoice-container">
         <div class="header">
           <div class="company-info">
-            <h1>ByteEvolvr</h1>
-            <p>ByteEvolvr Technologies Pvt Ltd</p>
-            <p>Chaltakonda, Routhkhanda, Near Kali Mata Mandir<br/>Joypur, Bankura, West Bengal - 722138</p>
-            <p>GSTIN: 19AABCU9603R1ZN | PAN: AABCU9603R</p>
+            <h1>${showLogo ? '<span style="margin-right: 8px;">■</span>' : ''}${contact?.storeName || 'ByteEvolvr'}</h1>
+            <p>${contact?.email || 'hello@byteevolvr.com'}</p>
+            <p>${(contact?.address || 'Chaltakonda, Routhkhanda, Near Kali Mata Mandir\nJoypur, Bankura, West Bengal - 722138').replace(/\n/g, '<br/>')}</p>
+            <p>GSTIN: ${contact?.gstNumber || '19AABCU9603R1ZN'} | PAN: ${contact?.panNumber || 'AABCU9603R'}</p>
           </div>
           <div class="invoice-details">
             <h2>Tax Invoice</h2>
@@ -176,7 +197,7 @@ export const printInvoice = (order: any, items: any[]) => {
             </div>
             <div class="detail-row">
               <span class="detail-label">Place of Supply:</span>
-              <span class="detail-value">Maharashtra (27)</span>
+              <span class="detail-value">${address?.state || 'Maharashtra (27)'}</span>
             </div>
           </div>
         </div>
@@ -188,7 +209,7 @@ export const printInvoice = (order: any, items: any[]) => {
               <p class="name">${order.customer_name || 'Customer'}</p>
               <p>${order.customer_email || ''}</p>
               ${address && address.phone ? `<p>Phone: ${address.phone}</p>` : ''}
-              <p>POS: Maharashtra</p>
+              ${address && address.state ? `<p>POS: ${address.state}</p>` : ''}
             </div>
           </div>
           <div class="address-box">
@@ -283,10 +304,12 @@ export const printInvoice = (order: any, items: any[]) => {
             <p>2. Any dispute subject to Mumbai Jurisdiction.</p>
             <p>3. This is a computer generated invoice and requires no physical signature.</p>
           </div>
+          ${showSignatory ? `
           <div class="signature">
             <div class="sig-line"></div>
             <p class="sig-text">Authorized Signatory</p>
           </div>
+          ` : ''}
         </div>
       </div>
       <script>

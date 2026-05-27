@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(25, 25, 27, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(140, 144, 159, 0.1);
+        }
+        .glow-border:hover {
+            border-color: #adc6ff;
+            box-shadow: 0 0 15px rgba(173, 198, 255, 0.2);
+        }
+        .active-glow {
+            box-shadow: 0 0 10px rgba(93, 230, 255, 0.4);
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131315;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #424754;
+            border-radius: 10px;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ddb7ff",
+                    "on-background": "#e5e1e4",
+                    "surface-variant": "#353437",
+                    "surface-container": "#201f21",
+                    "primary-container": "#4d8eff",
+                    "surface-container-lowest": "#0e0e10",
+                    "outline": "#8c909f",
+                    "primary": "#adc6ff",
+                    "secondary-fixed-dim": "#2fd9f4",
+                    "surface-bright": "#39393b",
+                    "tertiary": "#ddb7ff",
+                    "tertiary-container": "#b76dff",
+                    "on-secondary-container": "#00515d",
+                    "on-tertiary-fixed": "#2c0051",
+                    "error": "#ffb4ab",
+                    "outline-variant": "#424754",
+                    "surface": "#131315",
+                    "surface-container-highest": "#353437",
+                    "on-tertiary-fixed-variant": "#6900b3",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "on-error-container": "#ffdad6",
+                    "surface-dim": "#131315",
+                    "secondary": "#5de6ff",
+                    "surface-container-high": "#2a2a2c",
+                    "on-surface": "#e5e1e4",
+                    "secondary-container": "#00cbe6",
+                    "on-primary": "#002e6a",
+                    "on-secondary-fixed-variant": "#004e5a",
+                    "surface-tint": "#adc6ff",
+                    "on-tertiary": "#490080",
+                    "on-primary-fixed-variant": "#004395",
+                    "inverse-primary": "#005ac2",
+                    "on-tertiary-container": "#400071",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-secondary-fixed": "#001f25",
+                    "on-secondary": "#00363e",
+                    "on-primary-fixed": "#001a42",
+                    "tertiary-fixed": "#f0dbff",
+                    "background": "#131315",
+                    "on-primary-container": "#00285d",
+                    "surface-container-low": "#1b1b1d",
+                    "inverse-surface": "#e5e1e4",
+                    "inverse-on-surface": "#303032",
+                    "secondary-fixed": "#a2eeff",
+                    "on-surface-variant": "#c2c6d6",
+                    "primary-fixed": "#d8e2ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding-mobile": "20px",
+                    "section-gap": "80px",
+                    "container-padding-desktop": "64px",
+                    "gutter": "24px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Geist"],
+                    "label-sm": ["JetBrains Mono"],
+                    "display-lg": ["Geist"],
+                    "display-lg-mobile": ["Geist"],
+                    "cta-button": ["Geist"],
+                    "headline-lg": ["Geist"],
+                    "body-md": ["Geist"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "display-lg-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                    "cta-button": ["14px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary/30 antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-2xl flex items-center justify-between px-container-padding-mobile md:px-container-padding-desktop h-20">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary scale-95 active:scale-90 transition-transform">menu</button>
+<span class="font-display-lg text-display-lg-mobile tracking-tighter text-primary dark:text-primary-fixed-dim uppercase">NEON_CORE</span>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-label-sm text-label-sm text-primary dark:text-secondary-fixed-dim font-bold hover:text-secondary transition-colors" href="#">Laptops</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Gaming PCs</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors" href="#">Components</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary hover:text-secondary transition-colors">search</button>
+<button class="material-symbols-outlined text-primary hover:text-secondary transition-colors">shopping_cart</button>
+</div>
+</header>
+<main class="pt-24 pb-32">
+<div class="max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop grid grid-cols-1 lg:grid-cols-2 gap-gutter lg:gap-16">
+<!-- Image Gallery Section -->
+<section class="space-y-6">
+<div class="relative group aspect-video md:aspect-square overflow-hidden rounded-xl glass-panel flex items-center justify-center">
+<img class="w-full h-full object-contain p-8 transform transition-transform duration-700 group-hover:scale-110" data-alt="A hyper-realistic studio shot of a sleek, matte black ultra-slim gaming laptop on a dark obsidian surface. The screen displays a vibrant, high-contrast abstract wave pattern in electric blue and cyan. Subtle atmospheric smoke and cyan neon rim lighting emphasize the sharp, engineered edges of the chassis. The background is a deep, dark grey with soft-focus glass reflections." id="main-product-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHoYXMllYEILkRCH5LLWMoMdhgI332w_LM75YEuh0ZZFaytpAkjAWKhtnqBGXAqnBQez5pd8dXF6ckb13jyBSCMvwYOQKL75i3P0TnNSfi9y86ud8DQ0St2v5Byp4Vtq4KgSjmEIZgXaF9EkRQWBJjthyOsKmsWk6110aK7Iohaxt0RtVxidLZ9DjQAqolMCVsqpLd3MM1cW3k6_9zux3NQyeGZae8PuUahfg0xHEe9DqJcXtghd9eJxvTiiscHDOklH1kXm_HBCqt"/>
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+<div class="w-2 h-2 rounded-full bg-primary active-glow"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+</div>
+<div class="absolute top-4 right-4 bg-surface-container-high/60 backdrop-blur-md p-2 rounded-full text-on-surface border border-outline-variant/30">
+<span class="material-symbols-outlined text-sm">zoom_in</span>
+</div>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+<button class="flex-shrink-0 w-24 h-24 rounded-lg border-2 border-primary overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up thumbnail of a high-end gaming laptop keyboard with vibrant per-key RGB lighting in shades of cyan and blue." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYYIXyovkBLNwXazc_5o7NUqYCXb2pP_SwzO8QMSdfq4udqT4NMchCiMViZ-12heEWrCfqgaBTrOmzyBBhfwcsVTyYjPsoCy-BlWKJcRTCQfffQsvIBykcvOGcOYZMJnXeE9deT-kKsp3a_vLOriWRGxEdLHNQAZRJS5Vr96aigzn6eIMMged4x_JSdZKoJUlmR5VTv8t7ka9MqBCIPEJ7cCJKP0PzI51aMuShRNIN5rNt07vZ402DNzqeHgYyHLEDwJwzX2qzKluo"/>
+</button>
+<button class="flex-shrink-0 w-24 h-24 rounded-lg border border-outline-variant overflow-hidden bg-surface-container opacity-60 hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="Side profile shot of an ultra-slim laptop chassis showing a series of precision-engineered vents and glowing USB-C ports." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwMZpUOVBAU9t6HrZR1qHUmMbQ7UYAwt3AHwUaXUdTWqlgj62C_gVp9gNYTYWbw4hRLDqbp1Ibv6w-Wr4HIqF2WAWJdoucwPpLpI3rz2Gus87-SEWStOFHnE-QmzjMpbNYpr0WiMcjjT85sM6793TjcszO8uIK9wleuf1N0dEXDxdcaVfY76tOsxoCXbpGhtylkpHoCChwq3Z6-4T3C3KGCe4Wju84VzWgjBvXLs954CY1ufwVpQBjx_mIlHYc6TbDRzW3LWiKiua5"/>
+</button>
+<button class="flex-shrink-0 w-24 h-24 rounded-lg border border-outline-variant overflow-hidden bg-surface-container opacity-60 hover:opacity-100 transition-opacity">
+<img class="w-full h-full object-cover" data-alt="Rear view of a premium gaming laptop with a large glowing logo on the lid, set against a dark architectural background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcJISX2iqLZx76199p6DsdBTzEQa6JkRIU2zQv3ILJrgXFpvyhfKT2-BxGy5OPHpfGp-b8b8os1F0DNcNF4ACTHLJejvVpI_zpByG_fi0rlX0cwwNaneUbNoxmEKiNEhuWD6E2-oQAhbBUv0ORx7acmpAFbC-CH2AYh3QKcVomDSKlFSqhoTuN44oK9LR3V--mnJ4uyEyGWsORns8nOTdIX_UUA25X1-hp1RViMmaOvrY2ZO-IuNIAKHBzkGcsdyEFcLGASTXCgYPj"/>
+</button>
+</div>
+</section>
+<!-- Product Details Section -->
+<section class="flex flex-col gap-8">
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<span class="bg-secondary-container/20 text-secondary-fixed-dim px-3 py-1 rounded-full font-label-sm text-label-sm flex items-center gap-1 border border-secondary/30">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+                            In Stock - Fast Shipping
+                        </span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-sm text-label-sm text-on-surface">4.9 (124 reviews)</span>
+</div>
+</div>
+<h1 class="font-display-lg text-display-lg-mobile md:text-headline-lg tracking-tight text-on-surface uppercase">NEON_CORE X15 PRECISION</h1>
+<p class="font-headline-lg text-primary">$2,499.00</p>
+</div>
+<!-- Key Features Pills -->
+<div class="flex flex-wrap gap-3">
+<div class="glass-panel px-4 py-3 rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">memory</span>
+<span class="font-label-sm text-label-sm">NVIDIA RTX 4080</span>
+</div>
+<div class="glass-panel px-4 py-3 rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">monitor</span>
+<span class="font-label-sm text-label-sm">144Hz Display</span>
+</div>
+<div class="glass-panel px-4 py-3 rounded-xl flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">bolt</span>
+<span class="font-label-sm text-label-sm">Ultra-Slim Chassis</span>
+</div>
+</div>
+<!-- Variant Selection -->
+<div class="space-y-6">
+<div class="space-y-3">
+<label class="font-label-sm text-label-sm uppercase text-outline">System Memory (RAM)</label>
+<div class="grid grid-cols-2 gap-4">
+<button class="variant-btn glass-panel py-4 rounded-xl border-2 border-primary active-glow transition-all">
+<span class="block font-bold">16GB DDR5</span>
+<span class="font-label-sm text-label-sm text-outline">Included</span>
+</button>
+<button class="variant-btn glass-panel py-4 rounded-xl border border-outline-variant hover:border-primary transition-all">
+<span class="block font-bold text-on-surface-variant">32GB DDR5</span>
+<span class="font-label-sm text-label-sm text-outline">+$199.00</span>
+</button>
+</div>
+</div>
+<div class="space-y-3">
+<label class="font-label-sm text-label-sm uppercase text-outline">Storage Capacity</label>
+<div class="grid grid-cols-2 gap-4">
+<button class="variant-btn glass-panel py-4 rounded-xl border-2 border-primary active-glow transition-all">
+<span class="block font-bold">1TB NVMe Gen4</span>
+<span class="font-label-sm text-label-sm text-outline">Included</span>
+</button>
+<button class="variant-btn glass-panel py-4 rounded-xl border border-outline-variant hover:border-primary transition-all">
+<span class="block font-bold text-on-surface-variant">2TB NVMe Gen4</span>
+<span class="font-label-sm text-label-sm text-outline">+$249.00</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Tabbed Info Section -->
+<div class="space-y-6 pt-4">
+<div class="border-b border-outline-variant/20">
+<div class="flex gap-8 overflow-x-auto no-scrollbar scroll-smooth">
+<button class="tab-trigger pb-4 font-label-sm text-label-sm uppercase tracking-wider text-primary border-b-2 border-primary transition-all" id="tab-description" onclick="switchTab('description')">Description</button>
+<button class="tab-trigger pb-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-all border-b-2 border-transparent" id="tab-specifications" onclick="switchTab('specifications')">Specifications</button>
+<button class="tab-trigger pb-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-all border-b-2 border-transparent" id="tab-reviews" onclick="switchTab('reviews')">Reviews (124)</button>
+<button class="tab-trigger pb-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-all border-b-2 border-transparent" id="tab-faq" onclick="switchTab('faq')">FAQ</button>
+</div>
+</div>
+<div class="tab-content" id="content-description">
+<div class="relative overflow-hidden transition-all duration-500 max-h-24" id="description-text">
+<p class="text-on-surface-variant leading-relaxed">
+                                Experience the pinnacle of mobile gaming with the NEON_CORE X15 Precision. Engineered for those who demand uncompromising power without the bulk, this machine combines a high-performance Intel Core i9 processor with the sheer graphics muscle of NVIDIA's RTX 4080. The chassis is a marvel of industrial design, milled from a single block of aerospace-grade aluminum and finished in a deep matte obsidian.
+                                <br/><br/>
+                                Every detail has been scrutinized, from the precision-calibrated 144Hz display to the per-key RGB mechanical keyboard that offers tactical feedback and near-instant actuation. Advanced thermal management ensures that the X15 remains cool under pressure, utilizing liquid metal cooling and high-density vapor chambers.
+                            </p>
+<div class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background to-transparent" id="description-fade"></div>
+</div>
+<button class="mt-4 flex items-center gap-2 text-primary font-label-sm hover:gap-3 transition-all" id="read-more-btn" onclick="toggleDescription()">
+<span id="btn-text">READ MORE</span>
+<span class="material-symbols-outlined transition-transform duration-300" id="btn-icon">expand_more</span>
+</button>
+</div>
+<div class="tab-content hidden" id="content-specifications">
+<div class="grid grid-cols-2 gap-y-6">
+<div>
+<p class="font-label-sm text-outline text-[10px] uppercase mb-1">Processor</p>
+<p class="text-on-surface">Intel Core i9-13900H</p>
+</div>
+<div>
+<p class="font-label-sm text-outline text-[10px] uppercase mb-1">Graphics</p>
+<p class="text-on-surface">NVIDIA GeForce RTX 4080 (12GB)</p>
+</div>
+<div>
+<p class="font-label-sm text-outline text-[10px] uppercase mb-1">Display</p>
+<p class="text-on-surface">15.6" QHD 144Hz G-Sync</p>
+</div>
+<div>
+<p class="font-label-sm text-outline text-[10px] uppercase mb-1">Battery</p>
+<p class="text-on-surface">99.9 Whr Lithium-ion</p>
+</div>
+</div>
+</div>
+<div class="tab-content hidden" id="content-reviews">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<p class="text-on-surface font-bold">Top Verified Reviews</p>
+<button class="text-primary text-xs font-label-sm underline">View all 124 reviews</button>
+</div>
+<div class="p-4 glass-panel rounded-xl">
+<div class="flex items-center gap-2 mb-2">
+<div class="flex text-secondary scale-75">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="text-sm font-bold">Alex M.</span>
+</div>
+<p class="text-sm text-on-surface-variant italic">"This machine is a beast. Thermal management is surprisingly good given the slim profile."</p>
+</div>
+</div>
+</div>
+<div class="tab-content hidden" id="content-faq">
+<div class="space-y-4">
+<div class="p-4 glass-panel rounded-xl border-l-2 border-primary">
+<p class="font-bold text-sm mb-1">What is the warranty period?</p>
+<p class="text-sm text-outline">Every device comes with a 2-year precision warranty.</p>
+</div>
+<div class="p-4 glass-panel rounded-xl">
+<p class="font-bold text-sm mb-1">Can I upgrade the RAM later?</p>
+<p class="text-sm text-outline">Yes, features two user-accessible DDR5 slots.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Frequently Bought Together Section -->
+<section class="max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop mt-section-gap">
+<h2 class="font-headline-lg mb-8">Frequently Bought Together</h2>
+<div class="glass-panel p-8 rounded-3xl flex flex-col md:flex-row items-center gap-8 md:gap-16">
+<div class="flex items-center gap-6">
+<div class="w-24 h-24 rounded-xl bg-surface-container flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="A premium wireless gaming mouse with a matte finish and a glowing blue LED stripe on its underside, sitting on a dark grey desktop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwZEs4irQIcDfF3FhOwgizUXwElZ-wLNFn8vbiUUJvwJNqf9s8FyGMEY1KcWlfjB-rdlM7CSHw4w2_DxZbklS0EbwLozlHA_nV5eJjittdc-LgmJBjlVeBTHhxOl5tMkp31OMF-Bk_yaDUeRP8GTWzQS1UAVp6qZ6sbhngmlKDQxgtjvWPh4nR1jhrBa-zwavmKNC9PY3QZXLTdn4ZLUZO9lcgWdN-D0UmwEEl9ZcLxTkZ6IJaFFr05wkPNh0SA_84erNfYA8xQgZi"/>
+</div>
+<span class="material-symbols-outlined text-outline">add</span>
+<div class="w-24 h-24 rounded-xl bg-surface-container flex items-center justify-center p-2">
+<img class="w-full h-full object-contain" data-alt="A high-end mechanical gaming keyboard with low-profile keys and intense cyan backlighting, highlighting its metallic top plate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD33PY7AQe3-pVjjxMJHtgDBr6Z5HOQkKROe1Rq2miJzYRfGVTah463fGTg81jVofdMmHj_LsGl5Hl-2iSkVDHy4DI4OaLh8ced-oUzPZVcOeNv2J3GjJ-MlNlWW7Pu4CmH78uOv9dMTaqyz5DgilO8J1o9m5WgeF81c_0Nc4tAK25HHUBIxL5G0yKR78FftV4ez5gwUTTbhXxCHY2q9aeKvGDHQui-WAffT0nc9_-Agzud2MbvI73AWAJRttdbgkQy8my9tU52CEJj"/>
+</div>
+</div>
+<div class="flex-1 text-center md:text-left">
+<h3 class="font-headline-lg-mobile text-on-surface">Upgrade your setup</h3>
+<p class="text-outline">Add the Precision Mouse &amp; Mechanical Keyboard to your order.</p>
+</div>
+<div class="flex flex-col items-center md:items-end gap-2">
+<p class="font-headline-lg text-secondary">+$348.00</p>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full font-cta-button hover:brightness-110 transition-all scale-95 active:scale-90">Add Bundle</button>
+</div>
+</div>
+</section>
+<!-- Original Reviews & FAQ Sections preserved for full page content consistency -->
+<section class="max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop mt-section-gap">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="md:col-span-2 glass-panel p-8 rounded-3xl space-y-8">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-lg">Customer Reviews</h2>
+<button class="text-primary font-label-sm">Write Review</button>
+</div>
+<div class="space-y-6">
+<div class="border-b border-outline-variant/10 pb-6">
+<div class="flex items-center gap-2 mb-2">
+<div class="flex text-secondary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="font-bold">Alex M.</span>
+</div>
+<p class="text-outline-variant italic">"This machine is a beast. The display is the sharpest I've ever seen on a 15-inch laptop. Thermal management is surprisingly good given the slim profile."</p>
+</div>
+<div class="pb-6">
+<div class="flex items-center gap-2 mb-2">
+<div class="flex text-secondary">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-sm">star</span>
+</div>
+<span class="font-bold">Sarah K.</span>
+</div>
+<p class="text-outline-variant italic">"Perfect for high-end rendering and 4K gaming. The battery life in office mode is actually decent too. Solid build quality."</p>
+</div>
+</div>
+</div>
+<div class="glass-panel p-8 rounded-3xl space-y-6">
+<h2 class="font-headline-lg">FAQ</h2>
+<div class="space-y-4">
+<div class="group">
+<p class="font-bold text-on-surface mb-1 group-hover:text-primary transition-colors cursor-pointer">What is the warranty period?</p>
+<p class="text-sm text-outline">Every NEON_CORE device comes with a 2-year precision warranty covering parts and labor.</p>
+</div>
+<div class="group">
+<p class="font-bold text-on-surface mb-1 group-hover:text-primary transition-colors cursor-pointer">Can I upgrade the RAM later?</p>
+<p class="text-sm text-outline">Yes, the chassis features two user-accessible DDR5 slots supporting up to 64GB.</p>
+</div>
+<div class="group">
+<p class="font-bold text-on-surface mb-1 group-hover:text-primary transition-colors cursor-pointer">Does it include a sleeve?</p>
+<p class="text-sm text-outline">A custom microfiber protective sleeve is included in the premium packaging box.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/10 relative mt-section-gap">
+<div class="max-w-7xl mx-auto px-container-padding-desktop py-section-gap flex flex-col md:flex-row justify-between gap-gutter">
+<div class="space-y-4">
+<span class="font-display-lg text-display-lg-mobile text-primary">NEON_CORE</span>
+<p class="text-outline max-w-sm">Engineering the future of high-performance gaming hardware. Precision, power, and minimalist design.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+<div class="flex flex-col gap-4">
+<span class="font-bold uppercase text-on-surface text-xs tracking-widest">Support</span>
+<a class="text-outline hover:text-secondary-fixed-dim underline-offset-4 underline transition-all" href="#">Warranty</a>
+<a class="text-outline hover:text-secondary-fixed-dim underline-offset-4 underline transition-all" href="#">Shipping</a>
+</div>
+<div class="flex flex-col gap-4">
+<span class="font-bold uppercase text-on-surface text-xs tracking-widest">Company</span>
+<a class="text-outline hover:text-secondary-fixed-dim underline-offset-4 underline transition-all" href="#">Privacy</a>
+<a class="text-outline hover:text-secondary-fixed-dim underline-offset-4 underline transition-all" href="#">About Us</a>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-container-padding-desktop py-8 border-t border-outline-variant/5">
+<p class="font-body-md text-body-md text-outline">© 2024 NEON_CORE PRECISI0N. ALL RIGHTS RESERVED.</p>
+</div>
+</footer>
+<!-- Sticky Bottom Bar -->
+<div class="fixed bottom-0 left-0 w-full z-[60] bg-surface-container/90 backdrop-blur-md border-t border-outline-variant/20 h-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex items-center justify-between px-container-padding-mobile md:px-container-padding-desktop">
+<div class="hidden md:flex flex-col">
+<span class="font-label-sm text-outline text-[10px] uppercase">Current Config</span>
+<span class="font-bold text-on-surface">X15 Precision — 16GB / 1TB</span>
+</div>
+<div class="flex gap-4 w-full md:w-auto">
+<button class="flex-1 md:w-48 py-3 rounded-full border border-primary text-primary font-cta-button hover:bg-primary/10 transition-all scale-95 active:scale-90">Add to Cart</button>
+<button class="flex-1 md:w-48 py-3 rounded-full bg-primary text-on-primary font-cta-button hover:brightness-110 shadow-lg shadow-primary/20 transition-all scale-95 active:scale-90">Buy Now</button>
+</div>
+</div>
+<script>
+        function switchTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Show target content
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            
+            // Reset tab styles
+            document.querySelectorAll('.tab-trigger').forEach(trigger => {
+                trigger.classList.remove('text-primary', 'border-primary');
+                trigger.classList.add('text-on-surface-variant', 'border-transparent');
+            });
+            // Activate target tab
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            activeTab.classList.add('text-primary', 'border-primary');
+            activeTab.classList.remove('text-on-surface-variant', 'border-transparent');
+        }
+
+        function toggleDescription() {
+            const text = document.getElementById('description-text');
+            const btnText = document.getElementById('btn-text');
+            const btnIcon = document.getElementById('btn-icon');
+            const fade = document.getElementById('description-fade');
+
+            if (text.classList.contains('max-h-24')) {
+                text.classList.remove('max-h-24');
+                text.classList.add('max-h-[1000px]');
+                btnText.innerText = 'SHOW LESS';
+                btnIcon.classList.add('rotate-180');
+                fade.classList.add('hidden');
+            } else {
+                text.classList.add('max-h-24');
+                text.classList.remove('max-h-[1000px]');
+                btnText.innerText = 'READ MORE';
+                btnIcon.classList.remove('rotate-180');
+                fade.classList.remove('hidden');
+            }
+        }
+
+        // Micro-interaction for variant selection
+        document.querySelectorAll('.variant-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const group = this.closest('.grid');
+                group.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('border-primary', 'active-glow', 'border-2');
+                    b.classList.add('border-outline-variant', 'border');
+                    b.querySelector('.font-bold')?.classList.add('text-on-surface-variant');
+                });
+                this.classList.add('border-primary', 'active-glow', 'border-2');
+                this.classList.remove('border-outline-variant', 'border');
+                this.querySelector('.font-bold')?.classList.remove('text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

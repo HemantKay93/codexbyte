@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '@byteevolvr/store';
-import { UserService, OrderService, SocketService } from '@byteevolvr/api-client';
+import { UserService, OrderService, SocketService, CMSService } from '@byteevolvr/api-client';
 import { Card, Badge, Button } from '@byteevolvr/ui';
 import {
   Package,
@@ -15,7 +15,8 @@ import {
   Printer,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { printInvoice, formatPrice } from '@byteevolvr/ui';
+import { printInvoice } from '@byteevolvr/ui';
+import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
@@ -41,6 +42,7 @@ const labelStyle: React.CSSProperties = {
 export function DashboardPage() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const currencySymbol = useStoreCurrency();
   const [orders, setOrders] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
@@ -77,16 +79,19 @@ export function DashboardPage() {
       ]);
 
       if (results[0].status === 'fulfilled' && results[0].value) {
-        setProfile(results[0].value);
-        setFullName(results[0].value.full_name || '');
+        const profileData = results[0].value.data || results[0].value;
+        setProfile(profileData);
+        setFullName(profileData.full_name || '');
       }
 
       if (results[1].status === 'fulfilled' && results[1].value) {
-        setOrders(results[1].value);
+        const ordersData = results[1].value.data || results[1].value;
+        setOrders(Array.isArray(ordersData) ? ordersData : []);
       }
 
       if (results[2].status === 'fulfilled' && results[2].value) {
-        setAddresses(results[2].value);
+        const addressesData = results[2].value.data || results[2].value;
+        setAddresses(Array.isArray(addressesData) ? addressesData : []);
       }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
@@ -194,8 +199,10 @@ export function DashboardPage() {
 
   const handlePrintInvoice = async (order: any) => {
     try {
-      const items = await OrderService.getOrderItems(order.id);
-      printInvoice(order, items);
+      const response = await OrderService.getOrderItems(order.id);
+      const items = response.data || [];
+      const cmsData = await CMSService.getContent('global');
+      printInvoice(order, items, cmsData);
     } catch (err) {
       console.error('Print failed:', err);
       alert('Could not generate invoice.');
@@ -520,16 +527,16 @@ export function DashboardPage() {
                           <span className="text-brand-muted">
                             {item.quantity}x {item.product_name}
                           </span>
-                          <span className="font-medium text-white">
-                            {formatPrice(item.total_price)}
-                          </span>
+                          <div className="font-bold text-accent">
+                            {currencySymbol}{Number(item.total_price).toFixed(2)}
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
-                  <div className="border-t border-white/10 pt-4 flex justify-between items-center font-bold">
+                  <div className="flex justify-between items-center pt-4 border-t border-white/5 font-bold">
                     <span>Total Amount</span>
-                    <span className="text-accent">{formatPrice(order.total_amount)}</span>
+                    <span className="text-accent">{currencySymbol}{Number(order.total_amount).toFixed(2)}</span>
                   </div>
                 </Card>
               ))

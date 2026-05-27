@@ -35,6 +35,7 @@ export class ProductService {
       tags: Array.isArray(data.tags) ? data.tags : [],
       slug: data.slug || slugify(data.name),
       variants: data.variants || [],
+      specifications: data.specifications || {},
     };
 
     return await productRepo.create(sanitizedData, userId);
@@ -64,6 +65,8 @@ export class ProductService {
       sanitizedData.images = Array.isArray(data.images) ? data.images : [data.images];
     if (data.tags) sanitizedData.tags = Array.isArray(data.tags) ? data.tags : [data.tags];
     if (data.variants) sanitizedData.variants = data.variants;
+    if (data.specifications) sanitizedData.specifications = data.specifications;
+    if (data.slug) sanitizedData.slug = data.slug;
 
     return await productRepo.update(id, sanitizedData, userId);
   }

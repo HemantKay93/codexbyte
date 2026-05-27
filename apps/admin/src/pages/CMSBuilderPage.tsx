@@ -93,6 +93,7 @@ export function CMSBuilderPage() {
     { id: 'contact_page', label: 'Contact Page', icon: Phone, sections: ['details'] },
     { id: 'terms', label: 'Terms & Conditions', icon: Columns, sections: ['main'] },
     { id: 'refund', label: 'Refund Policy', icon: ArrowLeft, sections: ['main'] },
+    { id: 'privacy', label: 'Privacy Policy', icon: Type, sections: ['main'] },
     { id: 'global', label: 'Global Settings', icon: Globe, sections: ['social', 'seo', 'contact'] },
   ];
 
@@ -325,7 +326,8 @@ export function CMSBuilderPage() {
 
             {(selectedPage === 'about' ||
               selectedPage === 'terms' ||
-              selectedPage === 'refund') && (
+              selectedPage === 'refund' ||
+              selectedPage === 'privacy') && (
               <div className="p-12">
                 <h1 className="text-3xl font-bold mb-6">
                   {cmsData.main?.title || currentPage?.label}

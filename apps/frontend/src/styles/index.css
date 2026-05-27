@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -34,11 +35,24 @@ body {
   font-family: 'JetBrains Mono', monospace;
 }
 
+.font-geist {
+  font-family: 'Geist', sans-serif;
+}
+
 .glass-panel {
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+}
+
+.stitch-glass-panel {
+  background: rgba(19, 19, 21, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary {
@@ -52,6 +66,18 @@ body {
   transform: translateY(-2px);
 }
 
+.stitch-btn-primary {
+  background: linear-gradient(135deg, #005ac2, #4d8eff);
+  border: 1px solid rgba(173, 198, 255, 0.3);
+  box-shadow: 0 0 20px rgba(77, 142, 255, 0.4), 0 0 40px rgba(77, 142, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stitch-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(173, 198, 255, 0.6), 0 0 50px rgba(173, 198, 255, 0.2);
+}
+
 .btn-ghost {
   border: 1px solid rgba(255, 255, 255, 0.12);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -60,6 +86,19 @@ body {
 .btn-ghost:hover {
   border-color: rgba(96, 165, 250, 0.4);
   background: rgba(26, 79, 214, 0.08);
+}
+
+.stitch-btn-secondary {
+  border: 1px solid rgba(93, 230, 255, 0.5);
+  background: rgba(93, 230, 255, 0.05);
+  color: #5de6ff;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stitch-btn-secondary:hover {
+  border-color: rgba(93, 230, 255, 0.8);
+  background: rgba(93, 230, 255, 0.15);
+  box-shadow: 0 0 15px rgba(93, 230, 255, 0.3);
 }
 
 .gradient-blur {

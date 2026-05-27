@@ -17,7 +17,7 @@ import {
   AlertTriangle,
   DollarSign,
 } from 'lucide-react';
-import { AdminService } from '@byteevolvr/api-client';
+import { AdminService, CMSService } from '@byteevolvr/api-client';
 
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { OrderActivityLogs } from '../components/OrderActivityLogs';
@@ -120,9 +120,15 @@ export function OrderDetailPage() {
     }
   };
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
     if (!order) return;
-    printInvoice(order, order.order_items || []);
+    try {
+      const cmsData = await CMSService.getContent('global');
+      printInvoice(order, order.order_items || [], cmsData);
+    } catch (err) {
+      console.error('Failed to get settings for invoice', err);
+      printInvoice(order, order.order_items || []);
+    }
   };
 
   if (loading || hookLoading) {

@@ -17,7 +17,9 @@ export function SettingsPage() {
     supportEmail: '',
     phone: '',
     address: '',
-    currency: 'INR (₹)',
+    currency: 'USD ($)',
+    panNumber: '',
+    gstNumber: '',
   });
 
   const [apiConfig, setApiConfig] = useState({
@@ -187,7 +189,9 @@ export function SettingsPage() {
         address:
           contact.address ||
           'Chaltakonda, Routhkhanda, Near Kali Mata Mandir, Joypur, Bankura, West Bengal - 722138',
-        currency: 'INR (₹)',
+        currency: contact.currency || 'USD ($)',
+        panNumber: contact.panNumber || '',
+        gstNumber: contact.gstNumber || '',
       });
     } catch (err) {
       console.error('Failed to fetch settings:', err);
@@ -205,6 +209,9 @@ export function SettingsPage() {
         email: settings.supportEmail,
         phone: settings.phone,
         address: settings.address,
+        currency: settings.currency,
+        panNumber: settings.panNumber,
+        gstNumber: settings.gstNumber,
         workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
       });
       setStoreStatus({ type: 'success', msg: 'Store details saved successfully!' });
@@ -256,7 +263,33 @@ export function SettingsPage() {
               value={settings.phone}
               onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
             />
-            <Input label="Currency" value={settings.currency} disabled />
+            <div>
+              <label className="block text-label-md text-on-surface-variant mb-1 font-medium">Currency</label>
+              <select 
+                className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-body-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                value={settings.currency}
+                onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
+              >
+                <option value="USD ($)">USD ($)</option>
+                <option value="INR (₹)">INR (₹)</option>
+                <option value="EUR (€)">EUR (€)</option>
+                <option value="GBP (£)">GBP (£)</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              label="PAN Number (Accounting)"
+              value={settings.panNumber}
+              onChange={(e) => setSettings({ ...settings, panNumber: e.target.value.toUpperCase() })}
+              placeholder="ABCDE1234F"
+            />
+            <Input
+              label="GST Number (Accounting)"
+              value={settings.gstNumber}
+              onChange={(e) => setSettings({ ...settings, gstNumber: e.target.value.toUpperCase() })}
+              placeholder="22AAAAA0000A1Z5"
+            />
           </div>
           <div>
             <label className="block text-label-md text-on-surface-variant mb-1 font-medium">

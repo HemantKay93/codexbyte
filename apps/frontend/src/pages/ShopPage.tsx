@@ -1,25 +1,56 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { offerCards, secondaryOfferCards } from '../features/shop/data';
-import { ShoppingCart, User, ArrowRight, Zap, ShieldCheck, Loader2 } from 'lucide-react';
-import { useCartStore } from '@byteevolvr/store';
-import { Card, Button, Badge } from '@byteevolvr/ui';
+import { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { ProductService, Product } from '@byteevolvr/api-client';
-
-const formatPrice = (value: number) =>
-  new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0,
-  }).format(value);
+import { Loader2, Zap, ArrowRight, Gamepad2, Flame, Tag, Sparkles, TrendingUp, ShoppingCart, Clock, Grid, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useCartStore } from '@byteevolvr/store';
 
 export function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  
   const { addItem } = useCartStore();
-  const navigate = useNavigate();
-  const [products, setProducts] = React.useState<Product[]>([]);
-  const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => {
+  const heroSlides = [
+    {
+      id: 1,
+      image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=2071&auto=format&fit=crop',
+      badge: 'AVAILABLE NOW',
+      title: 'UNLOCK NEXT-GEN PERFORMANCE',
+      subtitle: 'Engineered for precision. Built for power. Experience the zenith of portable gaming with our all-new NEON series laptops.',
+      link: '/shop/category/laptops',
+      productLink: '/shop/product/1' // Example direct link for technical specs
+    },
+    {
+      id: 2,
+      image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop',
+      badge: 'NEW ARRIVAL',
+      title: 'IMMERSIVE 4K DISPLAYS',
+      subtitle: 'See every detail with crystal clarity. Upgrade your battlestation with our latest ultra-wide curved monitors.',
+      link: '/shop/category/monitors',
+      productLink: '/shop/product/2'
+    },
+    {
+      id: 3,
+      image: 'https://images.unsplash.com/photo-1587831990711-23ca6441447b?q=80&w=2000&auto=format&fit=crop',
+      badge: 'CUSTOM BUILDS',
+      title: 'BUILD YOUR DREAM RIG',
+      subtitle: 'Custom tailored desktop PCs designed to crush any workload and dominate every game without breaking a sweat.',
+      link: '/shop/category/pcs',
+      productLink: '/shop/product/3'
+    }
+  ];
+  
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Auto slider
+  useEffect(() => {
+    const sliderInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 6000);
+    return () => clearInterval(sliderInterval);
+  }, [heroSlides.length]);
+
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
         const data = await ProductService.getProducts();
@@ -33,269 +64,342 @@ export function ShopPage() {
     fetchProducts();
   }, []);
 
-  const renderGlassCard = (card: any, index: number) => {
-    return (
-      <Card
-        key={index}
-        className="flex flex-col bg-[#070D1A]/80 backdrop-blur-xl border border-white/10 h-[400px] hover:border-accent/50 transition-all duration-300 group overflow-hidden"
-      >
-        <div className="flex-1 p-6 flex flex-col">
-          <h3 className="text-xl font-display font-bold text-white mb-4 leading-tight group-hover:text-accent transition-colors">
-            {card.title}
-          </h3>
 
-          {card.type === 'signin' ? (
-            <div className="flex-1 flex flex-col justify-center items-center text-center">
-              <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mb-4">
-                <User className="h-8 w-8 text-accent" />
-              </div>
-              <p className="text-brand-muted mb-6">
-                Unlock exclusive deals and track your orders seamlessly.
-              </p>
-              <Link to="/shop/login" className="w-full">
-                <Button variant="primary" className="w-full">
-                  Sign In Securely
-                </Button>
-              </Link>
-            </div>
-          ) : card.type === 'single' ? (
-            <div className="flex-1 relative rounded-xl overflow-hidden mb-4">
-              <img
-                src={card.image}
-                alt={card.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#070D1A] via-transparent to-transparent opacity-80" />
-            </div>
-          ) : (
-            <div className="flex-1 grid grid-cols-2 gap-3 mb-4">
-              {card.items.map((item: any, i: number) => (
-                <div
-                  key={i}
-                  className="relative rounded-lg overflow-hidden group/item cursor-pointer"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-full h-24 object-cover transition-transform duration-300 group-hover/item:scale-110 opacity-80 group-hover/item:opacity-100"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-2">
-                    <span className="text-xs font-semibold text-white drop-shadow-md">
-                      {item.name}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
 
-          {card.linkText && (
-            <Link
-              to="/shop"
-              className="text-sm font-bold text-accent flex items-center gap-1 hover:gap-2 transition-all mt-auto"
-            >
-              {card.linkText} <ArrowRight className="h-4 w-4" />
-            </Link>
-          )}
-        </div>
-      </Card>
-    );
+  const calculateAvgRating = (product: Product) => {
+    if (!product.reviews || product.reviews.length === 0) return 0;
+    const sum = product.reviews.reduce((acc, rev) => acc + rev.rating, 0);
+    return sum / product.reviews.length;
   };
 
-  const renderPremiumCarousel = (title: string, subtitle: string, products: any[]) => {
-    return (
-      <div className="mb-16">
-        <div className="flex items-end justify-between mb-8 px-2">
-          <div>
-            <h3 className="text-3xl font-display font-bold text-white mb-2">{title}</h3>
-            <p className="text-brand-muted">{subtitle}</p>
-          </div>
-          <Button variant="ghost" className="text-accent hover:text-white group">
-            View All{' '}
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Button>
-        </div>
+  const getTags = (product: Product) => (product.tags || []).map(t => t.toLowerCase());
 
-        <div className="flex overflow-x-auto pb-6 gap-6 scrollbar-hide snap-x px-2">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="min-w-[280px] max-w-[280px] snap-start"
-              onClick={() => navigate(`/shop/product/${product.id}`)}
-            >
-              <Card className="h-full bg-[#070D1A] border-white/5 hover:border-accent/30 transition-all duration-300 cursor-pointer overflow-hidden p-0 group">
-                <div className="relative h-[220px] bg-white/5 overflow-hidden p-6 flex items-center justify-center">
-                  <div className="absolute top-3 left-3 z-10">
-                    <Badge
-                      variant="primary"
-                      className="bg-accent/20 text-accent border-accent/20 backdrop-blur-md"
-                    >
-                      Hot Deal
-                    </Badge>
-                  </div>
-                  <img
-                    src={product.image_url || product.imageUrl}
-                    alt={product.name}
-                    className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-2xl"
-                  />
-                </div>
-                <div className="p-5 flex flex-col gap-2">
-                  <div className="text-xs font-semibold text-brand-muted uppercase tracking-wider">
-                    {product.brand}
-                  </div>
-                  <h4 className="text-lg font-bold text-white line-clamp-2 leading-tight group-hover:text-accent transition-colors">
-                    {product.name}
-                  </h4>
-                  <div className="mt-4 flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-2xl font-bold text-white">
-                        {formatPrice(Number(product.price))}
-                      </span>
-                      {product.original_price && product.original_price > product.price && (
-                        <span className="text-sm text-white/40 line-through">
-                          {formatPrice(Number(product.original_price))}
-                        </span>
-                      )}
-                    </div>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addItem(product);
-                      }}
-                      size="sm"
-                      variant="primary"
-                      className="rounded-lg h-10 w-10 p-0 flex items-center justify-center shadow-lg shadow-accent/20"
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          ))}
+  // Derive Sections
+  const dealOfTheDay = products.filter(p => getTags(p).includes('deal of the day') || getTags(p).includes('dod'));
+  const clearanceSale = products.filter(p => getTags(p).includes('clearance'));
+  const newArrivals = products.filter(p => getTags(p).includes('new'));
+  const trending = [...products].sort((a, b) => calculateAvgRating(b) - calculateAvgRating(a)).slice(0, 4);
+
+  // Helper component for a product card
+  const ProductCard = ({ product, tag, tagClass, label }: { product: Product, tag?: string, tagClass?: string, label?: string }) => {
+    const discount = product.original_price && product.original_price > product.price 
+      ? Math.round(((product.original_price - product.price) / product.original_price) * 100) 
+      : 0;
+
+    return (
+      <div className="stitch-glass-panel rounded-2xl p-6 group relative overflow-hidden border-stitch-outline-variant/10 hover:border-stitch-primary/50 transition-all flex flex-col justify-between w-[280px] md:w-[320px] flex-shrink-0 snap-start">
+        {tag && (
+          <div className={`absolute top-4 right-4 ${tagClass || 'bg-stitch-primary text-stitch-on-primary'} font-bold px-3 py-1 rounded text-xs z-10 shadow-lg`}>
+            {tag}
+          </div>
+        )}
+        {discount > 0 && !tag && (
+          <div className="absolute top-4 right-4 bg-stitch-error text-stitch-on-error font-bold px-3 py-1 rounded text-xs z-10 shadow-lg">
+            -{discount}% OFF
+          </div>
+        )}
+        <Link to={`/shop/product/${product.slug || product.id}`} className="block aspect-square bg-white/5 rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4">
+          <img className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-lg" src={product.image_url || 'https://via.placeholder.com/200'} alt={product.name} />
+        </Link>
+        <Link to={`/shop/product/${product.slug || product.id}`}>
+          <h4 className="font-stitch-headline-lg-mobile uppercase mb-2 text-white line-clamp-2 hover:text-stitch-primary transition-colors">{product.name}</h4>
+        </Link>
+        <div className="mt-auto">
+          <div className="flex items-baseline gap-3 mb-6">
+            <span className="text-xl font-bold text-stitch-primary">${product.price.toFixed(2)}</span>
+            {product.original_price && product.original_price > product.price && (
+              <span className="text-stitch-outline line-through text-sm">${product.original_price.toFixed(2)}</span>
+            )}
+          </div>
+          <button onClick={() => addItem(product)} className="w-full py-3 bg-stitch-primary/10 border border-stitch-primary/30 text-stitch-primary font-bold rounded-lg hover:bg-stitch-primary hover:text-stitch-on-primary transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+            <ShoppingCart className="w-5 h-5" />
+            {label || 'Add to Cart'}
+          </button>
         </div>
       </div>
     );
   };
 
-  return (
-    <div className="min-h-screen bg-[#04080F] text-white selection:bg-accent/30">
-      <main className="relative mx-auto pb-20">
-        {/* Modern Hero Section */}
-        <div className="relative w-full h-[600px] md:h-[700px] overflow-hidden">
-          <div className="absolute inset-0 bg-[#04080F]" />
+  const CountdownTimer = () => {
+    const [timeLeft, setTimeLeft] = useState({ hours: 5, minutes: 24, seconds: 12 });
+    
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setTimeLeft(prev => {
+          let { hours, minutes, seconds } = prev;
+          if (seconds > 0) {
+            seconds--;
+          } else {
+            seconds = 59;
+            if (minutes > 0) {
+              minutes--;
+            } else {
+              minutes = 59;
+              hours = Math.max(0, hours - 1);
+            }
+          }
+          return { hours, minutes, seconds };
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }, []);
 
-          {/* Abstract Tech Background */}
-          <div className="absolute inset-0 opacity-40 mix-blend-screen">
-            <img
-              src="https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?auto=format&fit=crop&q=80&w=2000"
-              alt="Tech Background"
-              className="w-full h-full object-cover"
-            />
+    return (
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <span className="text-xs text-stitch-error uppercase font-bold tracking-widest flex items-center gap-1.5 bg-stitch-error/10 px-4 py-2 rounded-full border border-stitch-error/30 shadow-[0_0_15px_rgba(239,68,68,0.15)]">
+          <Clock className="w-4 h-4" /> ENDS IN
+        </span>
+        <div className="flex items-center gap-2">
+          <div className="bg-stitch-surface-container-high border border-stitch-outline-variant/30 px-3 py-2 rounded-lg min-w-[54px] flex flex-col items-center shadow-inner">
+            <span className="text-2xl font-black text-white leading-none font-mono">{String(timeLeft.hours).padStart(2, '0')}</span>
+            <span className="text-[10px] text-stitch-outline font-bold tracking-wider mt-1">HRS</span>
           </div>
-
-          {/* Gradients to blend smoothly */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#04080F] via-[#04080F]/80 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#04080F] via-[#04080F]/20 to-transparent" />
-
-          {/* Hero Content */}
-          <div className="relative z-10 max-w-[1500px] mx-auto px-6 pt-32 md:pt-40">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-semibold mb-6 backdrop-blur-md">
-                <Zap className="h-4 w-4 fill-current" /> Next-Gen Hardware
-              </div>
-              <h2 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-6">
-                Elevate Your <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-purple-500">
-                  Digital Realm
-                </span>
-              </h2>
-              <p className="text-lg md:text-xl text-white/70 mb-10 max-w-xl leading-relaxed">
-                Discover enterprise-grade workstations, immersive displays, and ultra-fast
-                networking gear curated for professionals.
-              </p>
-              <div className="flex gap-4">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  className="rounded-xl px-8 shadow-[0_0_20px_rgba(59,130,246,0.3)]"
-                >
-                  Explore Catalog
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="rounded-xl px-8 border border-white/20 hover:bg-white/5"
-                >
-                  View Deals
-                </Button>
-              </div>
-            </div>
+          <span className="text-stitch-error font-black text-xl animate-pulse">:</span>
+          <div className="bg-stitch-surface-container-high border border-stitch-outline-variant/30 px-3 py-2 rounded-lg min-w-[54px] flex flex-col items-center shadow-inner">
+            <span className="text-2xl font-black text-white leading-none font-mono">{String(timeLeft.minutes).padStart(2, '0')}</span>
+            <span className="text-[10px] text-stitch-outline font-bold tracking-wider mt-1">MIN</span>
+          </div>
+          <span className="text-stitch-error font-black text-xl animate-pulse">:</span>
+          <div className="bg-stitch-error/20 border border-stitch-error/40 px-3 py-2 rounded-lg min-w-[54px] flex flex-col items-center shadow-[0_0_15px_rgba(239,68,68,0.25)]">
+            <span className="text-2xl font-black text-stitch-error leading-none font-mono">{String(timeLeft.seconds).padStart(2, '0')}</span>
+            <span className="text-[10px] text-stitch-error font-bold tracking-wider mt-1">SEC</span>
           </div>
         </div>
+      </div>
+    );
+  };
 
-        {/* Feature Highlights Bar */}
-        <div className="relative z-20 max-w-[1500px] mx-auto px-6 -mt-16 md:-mt-24 mb-16 hidden md:block">
-          <div className="bg-[#070D1A]/90 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 flex justify-around shadow-2xl">
-            {[
-              { title: 'Secure Checkout', desc: 'Enterprise-grade encryption', icon: ShieldCheck },
-              { title: 'Express Delivery', desc: 'Next day shipping on prime', icon: Zap },
-              { title: 'Premium Support', desc: '24/7 dedicated experts', icon: User },
-            ].map((feature, i) => (
-              <div key={i} className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-accent/10 flex items-center justify-center border border-accent/20">
-                  <feature.icon className="h-6 w-6 text-accent" />
-                </div>
-                <div>
-                  <div className="font-bold text-white">{feature.title}</div>
-                  <div className="text-sm text-white/50">{feature.desc}</div>
+  const ProductSlider = ({ products, tag, tagClass, label }: { products: Product[], tag?: string, tagClass?: string, label?: string }) => {
+    const sliderRef = useRef<HTMLDivElement>(null);
+
+    const scroll = (direction: 'left' | 'right') => {
+      if (sliderRef && sliderRef.current) {
+        const { scrollLeft, clientWidth } = sliderRef.current;
+        const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+        sliderRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+      }
+    };
+
+    return (
+      <div className="relative group/slider">
+        <button 
+          onClick={() => scroll('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 z-20 bg-stitch-surface-container-high/90 backdrop-blur-md p-3 rounded-full text-white shadow-xl border border-white/10 opacity-0 group-hover/slider:opacity-100 transition-opacity hover:bg-stitch-primary hover:border-stitch-primary"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+        
+        <div 
+          ref={sliderRef as any} 
+          className="flex gap-6 overflow-x-auto snap-x snap-mandatory stitch-no-scrollbar pb-8 pt-4"
+        >
+          {products.map(product => (
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              tag={tag} 
+              tagClass={tagClass} 
+              label={label} 
+            />
+          ))}
+        </div>
+
+        <button 
+          onClick={() => scroll('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 z-20 bg-stitch-surface-container-high/90 backdrop-blur-md p-3 rounded-full text-white shadow-xl border border-white/10 opacity-0 group-hover/slider:opacity-100 transition-opacity hover:bg-stitch-primary hover:border-stitch-primary"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
+    );
+  };
+
+  return (
+    <div className="w-full pt-20"> {/* pt-20 pushes content below the fixed header nav */}
+      {/* Announcement Bar */}
+      <div className="h-10 bg-gradient-to-r from-stitch-primary/80 to-stitch-secondary/80 text-white flex items-center justify-center text-sm font-medium overflow-hidden z-40 relative">
+        <div className="flex items-center gap-2 animate-pulse">
+          <Zap className="w-4 h-4 fill-white text-white" />
+          <span>Flash Sale: Up to 40% off Gaming Laptops!</span>
+        </div>
+      </div>
+
+      <main className="w-full">
+        {/* Dynamic Hero Slider */}
+        <section className="relative h-[650px] w-full mb-stitch-section-gap overflow-hidden bg-stitch-surface">
+          {heroSlides.map((slide, index) => (
+            <div 
+              key={slide.id} 
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+            >
+              <img className="w-full h-full object-cover brightness-[0.4]" src={slide.image} alt={slide.title} />
+              <div className="absolute inset-0 bg-gradient-to-t from-stitch-background via-stitch-background/60 to-transparent"></div>
+              
+              <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-16 max-w-7xl mx-auto">
+                <div className="max-w-3xl">
+                  <div className="inline-flex items-center gap-2 mb-6 bg-stitch-primary/10 border border-stitch-primary/20 backdrop-blur-md px-4 py-1.5 rounded-full w-fit">
+                    <span className="w-2 h-2 rounded-full bg-stitch-secondary animate-pulse shadow-[0_0_8px_rgba(173,198,255,0.8)]"></span>
+                    <span className="text-stitch-secondary text-xs font-bold uppercase tracking-widest">{slide.badge}</span>
+                  </div>
+                  
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight text-white tracking-tight flex items-center gap-4">
+                    {slide.title}
+                  </h1>
+                  
+                  <p className="text-lg md:text-xl text-stitch-on-surface-variant mb-10 max-w-2xl leading-relaxed">
+                    {slide.subtitle}
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-4">
+                    <Link to={slide.link} className="px-8 py-4 bg-stitch-primary text-stitch-on-primary font-bold rounded-lg hover:bg-stitch-primary/90 transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center gap-2">
+                      Shop Now <ArrowRight className="w-5 h-5" />
+                    </Link>
+                    <Link to={slide.productLink} className="px-8 py-4 stitch-glass-panel text-white border border-white/20 font-bold rounded-lg hover:bg-white/10 transition-all flex items-center gap-2">
+                      <Gamepad2 className="w-5 h-5" /> Technical Specs
+                    </Link>
+                  </div>
                 </div>
               </div>
+            </div>
+          ))}
+
+          {/* Slider Indicators */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+            {heroSlides.map((_, idx) => (
+              <button 
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`transition-all duration-300 rounded-full ${idx === currentSlide ? 'w-8 h-2 bg-stitch-primary shadow-[0_0_10px_rgba(37,99,235,0.8)]' : 'w-2 h-2 bg-white/40 hover:bg-white/70'}`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* Main Content Container */}
-        <div className="relative z-10 max-w-[1500px] mx-auto px-6">
-          {/* Reference Layout: 4-Column Grid of Categories/Offers */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20 md:-mt-10 lg:-mt-10">
-            {offerCards.map((card, i) => renderGlassCard(card, i))}
+        {/* CMS Image Category Grid */}
+        <section className="px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop max-w-7xl mx-auto mb-stitch-section-gap">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Link to="/shop/category/laptops" className="relative h-48 rounded-2xl overflow-hidden group border border-stitch-outline-variant/20 hover:border-stitch-primary/60 transition-all">
+              <img src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500&q=80" alt="Laptops" className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:brightness-75 group-hover:scale-105 transition-all duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center justify-end pb-6">
+                <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-1">Laptops</h3>
+                <span className="text-xs text-stitch-primary font-medium tracking-widest group-hover:opacity-100 opacity-80 transition-opacity">Browse Systems</span>
+              </div>
+            </Link>
+            
+            <Link to="/shop/category/pcs" className="relative h-48 rounded-2xl overflow-hidden group border border-stitch-outline-variant/20 hover:border-stitch-secondary/60 transition-all">
+              <img src="https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&w=500&q=80" alt="Gaming PCs" className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:brightness-75 group-hover:scale-105 transition-all duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center justify-end pb-6">
+                <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-1">Gaming PCs</h3>
+                <span className="text-xs text-stitch-secondary font-medium tracking-widest group-hover:opacity-100 opacity-80 transition-opacity">Configure Tower</span>
+              </div>
+            </Link>
+            
+            <Link to="/shop/category/accessories" className="relative h-48 rounded-2xl overflow-hidden group border border-stitch-outline-variant/20 hover:border-stitch-tertiary/60 transition-all">
+              <img src="https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=500&q=80" alt="Accessories" className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:brightness-75 group-hover:scale-105 transition-all duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center justify-end pb-6">
+                <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-1">Accessories</h3>
+                <span className="text-xs text-stitch-tertiary font-medium tracking-widest group-hover:opacity-100 opacity-80 transition-opacity">Level Up Gear</span>
+              </div>
+            </Link>
+            
+            <Link to="/shop/category/monitors" className="relative h-48 rounded-2xl overflow-hidden group border border-stitch-outline-variant/20 hover:border-stitch-primary-fixed-dim/60 transition-all">
+              <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=500&q=80" alt="Monitors" className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:brightness-75 group-hover:scale-105 transition-all duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center justify-end pb-6">
+                <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-1">Monitors</h3>
+                <span className="text-xs text-stitch-primary-fixed-dim font-medium tracking-widest group-hover:opacity-100 opacity-80 transition-opacity">Ultra-Wide Visuals</span>
+              </div>
+            </Link>
           </div>
+        </section>
 
-          {/* Reference Layout: Horizontal Product Carousel */}
-          {loading ? (
-            <div className="flex justify-center items-center py-20">
-              <Loader2 className="animate-spin text-accent" />
-            </div>
-          ) : products.length > 0 ? (
-            renderPremiumCarousel(
-              'Flash Sale: Flagship Tech',
-              'Limited quantities available. Up to 40% off retail price.',
-              products
-            )
-          ) : (
-            <div className="text-center py-20 bg-[#070D1A] border border-white/10 rounded-2xl mb-20">
-              <h3 className="text-xl font-bold mb-2">No Products Available</h3>
-              <p className="text-brand-muted">
-                Please add products via the Admin panel or run your database migrations.
-              </p>
-            </div>
-          )}
-
-          {/* Reference Layout: Secondary 4-Column Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
-            {secondaryOfferCards.map((card, i) => renderGlassCard(card, i))}
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-10 w-10 animate-spin text-stitch-primary" />
           </div>
-
-          {/* Reference Layout: Second Horizontal Carousel */}
-          {!loading &&
-            products.length > 0 &&
-            renderPremiumCarousel(
-              'Curated for Creatives',
-              'High-color accuracy displays and responsive peripherals.',
-              [...products].reverse()
+        ) : (
+          <div className="max-w-7xl mx-auto">
+            {/* Deals of the Day */}
+            {dealOfTheDay.length > 0 && (
+              <section className="px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop mb-stitch-section-gap">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4 border-b border-stitch-outline-variant/20 pb-4">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2 text-white">
+                      <Flame className="w-8 h-8 text-stitch-error fill-stitch-error/20" />
+                      <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter">DEALS OF THE DAY</h2>
+                    </div>
+                    <p className="text-sm text-stitch-outline uppercase tracking-widest font-medium">High-performance tech at legendary prices</p>
+                  </div>
+                  <CountdownTimer />
+                </div>
+                
+                <ProductSlider products={dealOfTheDay} label="CLAIM DEAL" />
+              </section>
             )}
-        </div>
+
+            {/* Clearance Sale */}
+            {clearanceSale.length > 0 && (
+              <section className="px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop mb-stitch-section-gap">
+                <div className="mb-8 border-b border-stitch-outline-variant/20 pb-4">
+                  <div className="flex items-center gap-3 mb-2 text-white">
+                    <Tag className="w-8 h-8 text-stitch-tertiary" />
+                    <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter">CLEARANCE SALE</h2>
+                  </div>
+                  <p className="text-sm text-stitch-outline uppercase tracking-widest font-medium">Final drops. Unbeatable discounts.</p>
+                </div>
+                <ProductSlider 
+                  products={clearanceSale} 
+                  tag="CLEARANCE" 
+                  tagClass="bg-stitch-tertiary text-stitch-on-tertiary" 
+                />
+              </section>
+            )}
+
+            {/* New Arrivals */}
+            {newArrivals.length > 0 && (
+              <section className="px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop mb-stitch-section-gap">
+                <div className="mb-8 border-b border-stitch-outline-variant/20 pb-4">
+                  <div className="flex items-center gap-3 mb-2 text-white">
+                    <Sparkles className="w-8 h-8 text-stitch-primary" />
+                    <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter">NEW ARRIVALS</h2>
+                  </div>
+                  <p className="text-sm text-stitch-outline uppercase tracking-widest font-medium">Fresh tech just dropped.</p>
+                </div>
+                <ProductSlider 
+                  products={newArrivals} 
+                  tag="NEW" 
+                  tagClass="bg-stitch-primary text-stitch-on-primary" 
+                />
+              </section>
+            )}
+
+            {/* Trending Hardware */}
+            {trending.length > 0 && (
+              <section className="px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop mb-stitch-section-gap">
+                <div className="mb-8 border-b border-stitch-outline-variant/20 pb-4">
+                  <div className="flex items-center gap-3 mb-2 text-white">
+                    <TrendingUp className="w-8 h-8 text-stitch-secondary" />
+                    <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter">TRENDING HARDWARE</h2>
+                  </div>
+                  <p className="text-sm text-stitch-outline uppercase tracking-widest font-medium">Highest rated by the community</p>
+                </div>
+                <ProductSlider 
+                  products={trending} 
+                  tag="TRENDING" 
+                  tagClass="bg-stitch-secondary text-stitch-on-secondary" 
+                />
+              </section>
+            )}
+          </div>
+        )}
+
+        {/* View All Button */}
+        <section className="px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop mb-stitch-section-gap pb-12 flex justify-center">
+           <Link to="/shop/category/all" className="inline-flex items-center gap-3 px-8 py-4 border border-stitch-secondary text-stitch-secondary hover:bg-stitch-secondary hover:text-stitch-on-secondary transition-all font-bold rounded-lg uppercase tracking-widest shadow-[0_0_15px_rgba(173,198,255,0.1)] hover:shadow-[0_0_25px_rgba(173,198,255,0.3)]">
+             <Grid className="w-5 h-5" />
+             View All Products
+           </Link>
+        </section>
       </main>
     </div>
   );

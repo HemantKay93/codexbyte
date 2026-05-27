@@ -101,6 +101,19 @@ const DevelopersPage = lazy(() =>
   import('./pages/DevelopersPage').then((m) => ({ default: m.DevelopersPage }))
 );
 const TeamPage = lazy(() => import('./pages/TeamPage').then((m) => ({ default: m.TeamPage })));
+
+const AccountingDashboard = lazy(() =>
+  import('./pages/accounting/AccountingDashboard').then((m) => ({ default: m.AccountingDashboard }))
+);
+const JournalEntriesPage = lazy(() =>
+  import('./pages/accounting/JournalEntriesPage').then((m) => ({ default: m.JournalEntriesPage }))
+);
+const ProfitLossPage = lazy(() =>
+  import('./pages/accounting/ProfitLossPage').then((m) => ({ default: m.ProfitLossPage }))
+);
+const GSTFilingPage = lazy(() =>
+  import('./pages/accounting/GSTFilingPage').then((m) => ({ default: m.GSTFilingPage }))
+);
 const SupportPage = lazy(() =>
   import('./pages/SupportPage').then((m) => ({ default: m.SupportPage }))
 );
@@ -150,6 +163,7 @@ const Main = () => {
                   <Route path="/pos" element={<POSPage />} />
                   <Route path="/products" element={<ProductManagementPage />} />
                   <Route path="/products/new" element={<ProductFormPage />} />
+                  <Route path="/products/:id/edit" element={<ProductFormPage />} />
                   <Route path="/inventory" element={<InventoryPage />} />
                   <Route path="/orders" element={<OrderManagementPage />} />
                   <Route path="/orders/:id" element={<OrderDetailPage />} />
@@ -172,6 +186,12 @@ const Main = () => {
                   <Route path="/activity-log" element={<ActivityLogPage />} />
                   <Route path="/developers" element={<DevelopersPage />} />
                   <Route path="/team" element={<TeamPage />} />
+                  <Route path="/accounting">
+                    <Route index element={<AccountingDashboard />} />
+                    <Route path="journal" element={<JournalEntriesPage />} />
+                    <Route path="profit-loss" element={<ProfitLossPage />} />
+                    <Route path="gst" element={<GSTFilingPage />} />
+                  </Route>
                   <Route path="/support" element={<SupportPage />} />
                   <Route path="/whatsapp" element={<WhatsAppDashboard />} />
                   <Route path="/whatsapp/campaigns" element={<WhatsAppCampaigns />} />

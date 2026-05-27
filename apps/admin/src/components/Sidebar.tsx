@@ -89,6 +89,17 @@ const navigation: (NavItem | NavGroup)[] = [
     ],
   },
   {
+    name: 'Accounting',
+    icon: FileText,
+    roles: ['admin', 'super-admin'],
+    items: [
+      { name: 'Dashboard', href: '/accounting', icon: LayoutDashboard },
+      { name: 'Journal Entries', href: '/accounting/journal', icon: FileText },
+      { name: 'Profit & Loss', href: '/accounting/profit-loss', icon: FileText },
+      { name: 'GST Filing', href: '/accounting/gst', icon: FileText },
+    ],
+  },
+  {
     name: 'System',
     icon: Settings,
     roles: ['admin', 'super-admin'],
