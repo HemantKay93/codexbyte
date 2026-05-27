@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import { Plus, Search, Filter, Trash2, Shield, Mail, X } from 'lucide-react';
 import { TeamService } from '@byteevolvr/api-client';
 
@@ -112,8 +119,8 @@ export function TeamPage() {
     try {
       // Use existing service if it exists, or handle directly
       // Assuming TeamService.removeTeamMember exists, if not we will just filter the state for now
-      if (TeamService.removeTeamMember) {
-        await TeamService.removeTeamMember(id);
+      if ((TeamService as any).removeTeamMember) {
+        await (TeamService as any).removeTeamMember(id);
         fetchTeam();
       } else {
         setTeam(team.filter((m) => m.id !== id));
@@ -196,7 +203,9 @@ export function TeamPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1.5 text-on-surface">
-                        <Shield className={`h-4 w-4 ${member.role === 'super-admin' ? 'text-primary' : 'text-on-surface-variant'}`} />
+                        <Shield
+                          className={`h-4 w-4 ${member.role === 'super-admin' ? 'text-primary' : 'text-on-surface-variant'}`}
+                        />
                         <select
                           className="bg-transparent text-sm border-none focus:ring-0 cursor-pointer"
                           value={member.role}
@@ -218,7 +227,7 @@ export function TeamPage() {
                     </TableCell>
                     <TableCell className="text-on-surface-variant">{member.lastActive}</TableCell>
                     <TableCell>
-                      <button 
+                      <button
                         onClick={() => handleRemove(member.id)}
                         disabled={updatingId === member.id}
                         title="Remove Member"
@@ -240,15 +249,18 @@ export function TeamPage() {
           <div className="bg-surface rounded-xl shadow-xl w-full max-w-md overflow-hidden">
             <div className="px-6 py-4 border-b border-outline-variant flex items-center justify-between">
               <h2 className="text-title-lg font-semibold">Invite Team Member</h2>
-              <button onClick={() => setIsInviteModalOpen(false)} className="text-on-surface-variant hover:text-on-surface">
+              <button
+                onClick={() => setIsInviteModalOpen(false)}
+                className="text-on-surface-variant hover:text-on-surface"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-6 space-y-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-on-surface">Email Address</label>
-                <Input 
-                  placeholder="colleague@example.com" 
+                <Input
+                  placeholder="colleague@example.com"
                   type="email"
                   value={inviteData.email}
                   onChange={(e) => setInviteData({ ...inviteData, email: e.target.value })}
@@ -256,15 +268,15 @@ export function TeamPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-on-surface">Full Name</label>
-                <Input 
-                  placeholder="John Doe" 
+                <Input
+                  placeholder="John Doe"
                   value={inviteData.full_name}
                   onChange={(e) => setInviteData({ ...inviteData, full_name: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium text-on-surface">Role</label>
-                <select 
+                <select
                   className="flex h-10 w-full rounded-md border border-outline bg-surface px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                   value={inviteData.role}
                   onChange={(e) => setInviteData({ ...inviteData, role: e.target.value })}
@@ -278,7 +290,9 @@ export function TeamPage() {
               </div>
             </div>
             <div className="px-6 py-4 border-t border-outline-variant flex justify-end gap-3 bg-surface-container-lowest">
-              <Button variant="outline" onClick={() => setIsInviteModalOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setIsInviteModalOpen(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleInvite} disabled={inviting || !inviteData.email}>
                 {inviting ? 'Inviting...' : 'Send Invitation'}
               </Button>

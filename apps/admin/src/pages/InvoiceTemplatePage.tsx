@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Input } from '@byteevolvr/ui';
-import { Save, Eye, Palette, LayoutTemplate, Loader2, Link as LinkIcon } from 'lucide-react';
+import { Save, Palette, LayoutTemplate, Loader2, Link as LinkIcon } from 'lucide-react';
 import { CMSService } from '@byteevolvr/api-client';
 import { Link } from 'react-router-dom';
 
 export function InvoiceTemplatePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   // Settings from CMS 'contact' (Read Only)
   const [contactSettings, setContactSettings] = useState<any>({});
 
@@ -22,8 +22,9 @@ export function InvoiceTemplatePage() {
       try {
         const cmsData = await CMSService.getContent('global');
         const contact = cmsData?.find((s: any) => s.section_key === 'contact')?.content || {};
-        const template = cmsData?.find((s: any) => s.section_key === 'invoice_template')?.content || {};
-        
+        const template =
+          cmsData?.find((s: any) => s.section_key === 'invoice_template')?.content || {};
+
         setContactSettings(contact);
         if (template.layout) setLayout(template.layout);
         if (template.primaryColor) setPrimaryColor(template.primaryColor);
@@ -41,13 +42,11 @@ export function InvoiceTemplatePage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await CMSService.updateContent('global', {
-        invoice_template: {
-          layout,
-          primaryColor,
-          showLogo,
-          showSignatory
-        }
+      await CMSService.updateContent('global', 'invoice_template', {
+        layout,
+        primaryColor,
+        showLogo,
+        showSignatory,
       });
       alert('Template saved successfully!');
     } catch (err) {
@@ -83,7 +82,7 @@ export function InvoiceTemplatePage() {
         </div>
         <div className="flex gap-3">
           <Button onClick={handleSave} className="gap-2" disabled={saving}>
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} 
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             Save Template
           </Button>
         </div>
@@ -110,19 +109,31 @@ export function InvoiceTemplatePage() {
                 <label className="block text-xs font-medium text-on-surface-variant mb-1">
                   Company Name
                 </label>
-                <Input value={contactSettings.storeName || ''} disabled className="opacity-70 bg-surface-container" />
+                <Input
+                  value={contactSettings.storeName || ''}
+                  disabled
+                  className="opacity-70 bg-surface-container"
+                />
               </div>
               <div>
                 <label className="block text-xs font-medium text-on-surface-variant mb-1">
                   GSTIN
                 </label>
-                <Input value={contactSettings.gstNumber || ''} disabled className="opacity-70 bg-surface-container" />
+                <Input
+                  value={contactSettings.gstNumber || ''}
+                  disabled
+                  className="opacity-70 bg-surface-container"
+                />
               </div>
               <div>
                 <label className="block text-xs font-medium text-on-surface-variant mb-1">
                   PAN
                 </label>
-                <Input value={contactSettings.panNumber || ''} disabled className="opacity-70 bg-surface-container" />
+                <Input
+                  value={contactSettings.panNumber || ''}
+                  disabled
+                  className="opacity-70 bg-surface-container"
+                />
               </div>
               <div>
                 <label className="block text-xs font-medium text-on-surface-variant mb-1">
@@ -148,7 +159,7 @@ export function InvoiceTemplatePage() {
                 <label className="block text-xs font-medium text-on-surface-variant mb-1">
                   Select Layout
                 </label>
-                <select 
+                <select
                   className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-sm focus:ring-2 focus:ring-primary focus:outline-none"
                   value={layout}
                   onChange={(e) => setLayout(e.target.value)}
@@ -178,10 +189,10 @@ export function InvoiceTemplatePage() {
                     onChange={(e) => setPrimaryColor(e.target.value)}
                     className="h-8 w-12 rounded cursor-pointer"
                   />
-                  <Input 
-                    value={primaryColor} 
+                  <Input
+                    value={primaryColor}
                     onChange={(e) => setPrimaryColor(e.target.value)}
-                    className="flex-1" 
+                    className="flex-1"
                   />
                 </div>
               </div>
@@ -213,30 +224,34 @@ export function InvoiceTemplatePage() {
         <div className="flex-1 bg-surface-container-lowest border border-outline-variant rounded-xl p-8 overflow-y-auto">
           <div className="max-w-3xl mx-auto bg-white border border-outline shadow-sm p-10 min-h-[800px] text-black">
             {/* Mock Invoice Visual */}
-            <div 
+            <div
               className={`flex justify-between items-start mb-6 ${isMinimalist ? 'pb-4 border-b border-gray-200' : isModern ? 'p-6 rounded-xl' : 'pb-6 border-b-2'}`}
               style={{
                 borderColor: isMinimalist ? undefined : primaryColor,
-                backgroundColor: isModern ? `${primaryColor}10` : 'transparent'
+                backgroundColor: isModern ? `${primaryColor}10` : 'transparent',
               }}
             >
               <div>
-                <div 
-                  className="text-2xl font-bold mb-1"
-                  style={{ color: primaryColor }}
-                >
+                <div className="text-2xl font-bold mb-1" style={{ color: primaryColor }}>
                   {showLogo && <span className="mr-2">■</span>}
                   {contactSettings.storeName || 'ByteEvolvr'}
                 </div>
                 <div className="text-xs text-gray-600">
                   {contactSettings.email || 'hello@byteevolvr.com'}
                   <br />
-                  {(contactSettings.address || '101, Tech Park\nMumbai, Maharashtra 400069').split('\n').map((line: string, i: number) => <span key={i}>{line}<br/></span>)}
+                  {(contactSettings.address || '101, Tech Park\nMumbai, Maharashtra 400069')
+                    .split('\n')
+                    .map((line: string, i: number) => (
+                      <span key={i}>
+                        {line}
+                        <br />
+                      </span>
+                    ))}
                   GSTIN: {contactSettings.gstNumber || '27AABCU9603R1ZN'}
                 </div>
               </div>
               <div className="text-right">
-                <h2 
+                <h2
                   className="text-xl font-bold mb-2 uppercase tracking-widest"
                   style={{ color: primaryColor }}
                 >
@@ -245,8 +260,7 @@ export function InvoiceTemplatePage() {
                 <div className="text-sm grid grid-cols-2 gap-x-4 gap-y-1 text-gray-600">
                   <span>Invoice No:</span>{' '}
                   <span className="font-semibold text-black">INV-2026-0042</span>
-                  <span>Date:</span>{' '}
-                  <span className="font-semibold text-black">02-May-2026</span>
+                  <span>Date:</span> <span className="font-semibold text-black">02-May-2026</span>
                   <span>Place of Supply:</span>{' '}
                   <span className="font-semibold text-black">Maharashtra (27)</span>
                 </div>
@@ -271,11 +285,17 @@ export function InvoiceTemplatePage() {
 
             <table className="w-full text-sm mb-8">
               <thead>
-                <tr 
+                <tr
                   style={{
-                    backgroundColor: isModern ? `${primaryColor}20` : isMinimalist ? 'transparent' : `${primaryColor}10`,
+                    backgroundColor: isModern
+                      ? `${primaryColor}20`
+                      : isMinimalist
+                        ? 'transparent'
+                        : `${primaryColor}10`,
                     borderTop: isMinimalist ? '1px solid #e5e7eb' : 'none',
-                    borderBottom: isMinimalist ? '1px solid #e5e7eb' : `1px solid ${primaryColor}40`
+                    borderBottom: isMinimalist
+                      ? '1px solid #e5e7eb'
+                      : `1px solid ${primaryColor}40`,
                   }}
                 >
                   <th className="text-left py-2 px-2 font-semibold text-black">Description</th>
@@ -312,11 +332,11 @@ export function InvoiceTemplatePage() {
                       <td className="py-1">SGST @ 9%</td>
                       <td className="py-1 text-right text-black">₹22,500.00</td>
                     </tr>
-                    <tr 
+                    <tr
                       className="font-bold text-lg"
                       style={{
                         borderTop: isMinimalist ? '1px solid #e5e7eb' : `2px solid ${primaryColor}`,
-                        color: primaryColor
+                        color: primaryColor,
                       }}
                     >
                       <td className="py-2 pt-4">Invoice Total</td>

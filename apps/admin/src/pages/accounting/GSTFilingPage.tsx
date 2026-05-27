@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Card, Button, Input } from '@byteevolvr/ui';
+import { Card, Button } from '@byteevolvr/ui';
 import { Download, UploadCloud, AlertCircle } from 'lucide-react';
 
 export function GSTFilingPage() {
@@ -25,25 +24,28 @@ export function GSTFilingPage() {
           <p className="text-sm text-on-surface-variant mb-6">
             Export B2B and B2C sales data in government-approved CSV format for the selected month.
           </p>
-          
+
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-xs font-medium text-on-surface-variant mb-1">Select Month</label>
+              <label className="block text-xs font-medium text-on-surface-variant mb-1">
+                Select Month
+              </label>
               <select className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-sm focus:ring-2 focus:ring-primary focus:outline-none">
                 <option>May 2026</option>
                 <option>April 2026</option>
                 <option>March 2026</option>
               </select>
             </div>
-            
+
             <div className="p-3 bg-surface-container-low border border-outline-variant rounded-md flex gap-3 items-start">
               <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div className="text-xs text-on-surface-variant leading-relaxed">
-                This export will include all internal POS sales, web store sales, and imported marketplace sales for the selected period.
+                This export will include all internal POS sales, web store sales, and imported
+                marketplace sales for the selected period.
               </div>
             </div>
           </div>
-          
+
           <Button className="w-full gap-2">
             <Download className="h-4 w-4" /> Download GSTR-1 CSV
           </Button>
@@ -52,19 +54,22 @@ export function GSTFilingPage() {
         <Card className="p-6">
           <h3 className="font-bold text-lg mb-4">Export GSTR-3B (Summary)</h3>
           <p className="text-sm text-on-surface-variant mb-6">
-            Export the monthly summary of outward supplies, inward supplies, and Input Tax Credit (ITC).
+            Export the monthly summary of outward supplies, inward supplies, and Input Tax Credit
+            (ITC).
           </p>
-          
+
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-xs font-medium text-on-surface-variant mb-1">Select Month</label>
+              <label className="block text-xs font-medium text-on-surface-variant mb-1">
+                Select Month
+              </label>
               <select className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-sm focus:ring-2 focus:ring-primary focus:outline-none">
                 <option>May 2026</option>
                 <option>April 2026</option>
                 <option>March 2026</option>
               </select>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="p-3 bg-surface-container-lowest border border-outline-variant rounded-md text-center">
                 <div className="text-xs text-on-surface-variant mb-1">Output Tax</div>
@@ -76,7 +81,7 @@ export function GSTFilingPage() {
               </div>
             </div>
           </div>
-          
+
           <Button className="w-full gap-2" variant="outline">
             <Download className="h-4 w-4" /> Download GSTR-3B PDF
           </Button>
