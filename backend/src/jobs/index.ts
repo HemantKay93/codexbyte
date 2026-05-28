@@ -26,7 +26,9 @@ const WORKER_OPTIONS = {
   connection: redis,
   stalledInterval: 300_000, // Check for stalled jobs every 5 min (default: 30s)
   lockDuration: 600_000, // Hold job lock for 10 min
-  drainDelay: 10, // Wait 10 seconds before polling when queue is empty (reduces idle commands)
+  drainDelay: 60, // Poll every 60s when queue is empty (was 10s).
+  // At 10s: 5 workers × 6 polls/min × 60×24×30 = ~1,296,000 cmds/month ❌
+  // At 60s: 5 workers × 1 poll/min × 60×24×30 = ~216,000 cmds/month ✅
   removeOnComplete: { count: 100 }, // Keep only last 100 completed jobs in Redis
   removeOnFail: { count: 500 }, // Keep only last 500 failed jobs
 };

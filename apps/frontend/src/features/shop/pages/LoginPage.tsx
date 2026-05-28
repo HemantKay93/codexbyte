@@ -26,7 +26,7 @@ export function LoginPage() {
       setToken(token, 'auth');
       setUser(user);
       navigate(from, { replace: true });
-    } catch (signInError: unknown) {
+    } catch (signInError: any) {
       const error = signInError as any;
       setError(error.customMessage || error.message || 'An unexpected error occurred');
       setLoading(false);

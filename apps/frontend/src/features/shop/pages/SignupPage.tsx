@@ -24,7 +24,7 @@ export function SignupPage() {
       setToken(token, 'auth');
       setUser(user);
       navigate('/shop/dashboard');
-    } catch (signUpError: unknown) {
+    } catch (signUpError: any) {
       const error = signUpError as any;
       setError(error.customMessage || error.message || 'An unexpected error occurred');
       setLoading(false);

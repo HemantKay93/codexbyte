@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ProductService, Product } from '@byteevolvr/api-client';
 import {
@@ -10,22 +10,17 @@ import {
   Tag,
   Sparkles,
   TrendingUp,
-  ShoppingCart,
-  Clock,
   Grid,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
-import { useCartStore } from '@byteevolvr/store';
+
+import { CountdownTimer } from '../components/shop/CountdownTimer';
+import { ProductSlider } from '../components/shop/ProductSlider';
 
 import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 
 export function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const { addItem } = useCartStore();
-  const currencySymbol = useStoreCurrency();
 
   const heroSlides = [
     {
@@ -84,7 +79,7 @@ export function ShopPage() {
         setLoading(false);
       }
     };
-    fetchProducts();
+    void fetchProducts();
   }, []);
 
   const calculateAvgRating = (product: Product) => {
@@ -104,191 +99,6 @@ export function ShopPage() {
   const trending = [...products]
     .sort((a, b) => calculateAvgRating(b) - calculateAvgRating(a))
     .slice(0, 4);
-
-  // Helper component for a product card
-  const ProductCard = ({
-    product,
-    tag,
-    tagClass,
-    label,
-  }: {
-    product: Product;
-    tag?: string;
-    tagClass?: string;
-    label?: string;
-  }) => {
-    const discount =
-      product.original_price && product.original_price > product.price
-        ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
-        : 0;
-
-    return (
-      <div className="stitch-glass-panel rounded-2xl p-6 group relative overflow-hidden border-stitch-outline-variant/10 hover:border-stitch-primary/50 transition-all flex flex-col justify-between w-[280px] md:w-[320px] flex-shrink-0 snap-start">
-        {tag && (
-          <div
-            className={`absolute top-4 right-4 ${tagClass || 'bg-stitch-primary text-stitch-on-primary'} font-bold px-3 py-1 rounded text-xs z-10 shadow-lg`}
-          >
-            {tag}
-          </div>
-        )}
-        {discount > 0 && !tag && (
-          <div className="absolute top-4 right-4 bg-stitch-error text-stitch-on-error font-bold px-3 py-1 rounded text-xs z-10 shadow-lg">
-            -{discount}% OFF
-          </div>
-        )}
-        <Link
-          to={`/shop/product/${product.slug || product.id}`}
-          className="block aspect-square bg-white/5 rounded-xl mb-6 overflow-hidden flex items-center justify-center p-4"
-        >
-          <img
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-lg"
-            src={product.image_url || 'https://via.placeholder.com/200'}
-            alt={product.name}
-          />
-        </Link>
-        <Link to={`/shop/product/${product.slug || product.id}`}>
-          <h4 className="font-stitch-headline-lg-mobile uppercase mb-2 text-white line-clamp-2 hover:text-stitch-primary transition-colors">
-            {product.name}
-          </h4>
-        </Link>
-        <div className="mt-auto">
-          <div className="flex items-baseline gap-3 mb-6">
-            <span className="text-xl font-bold text-stitch-primary">
-              {currencySymbol}
-              {product.price.toFixed(2)}
-            </span>
-            {product.original_price && product.original_price > product.price && (
-              <span className="text-stitch-outline line-through text-sm">
-                {currencySymbol}
-                {product.original_price.toFixed(2)}
-              </span>
-            )}
-          </div>
-          <button
-            onClick={() => addItem(product)}
-            className="w-full py-3 bg-stitch-primary/10 border border-stitch-primary/30 text-stitch-primary font-bold rounded-lg hover:bg-stitch-primary hover:text-stitch-on-primary transition-all uppercase tracking-widest flex items-center justify-center gap-2"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            {label || 'Add to Cart'}
-          </button>
-        </div>
-      </div>
-    );
-  };
-
-  const CountdownTimer = () => {
-    const [timeLeft, setTimeLeft] = useState({ hours: 5, minutes: 24, seconds: 12 });
-
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          let { hours, minutes, seconds } = prev;
-          if (seconds > 0) {
-            seconds--;
-          } else {
-            seconds = 59;
-            if (minutes > 0) {
-              minutes--;
-            } else {
-              minutes = 59;
-              hours = Math.max(0, hours - 1);
-            }
-          }
-          return { hours, minutes, seconds };
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }, []);
-
-    return (
-      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-        <span className="text-xs text-stitch-error uppercase font-bold tracking-widest flex items-center gap-1.5 bg-stitch-error/10 px-4 py-2 rounded-full border border-stitch-error/30 shadow-[0_0_15px_rgba(239,68,68,0.15)]">
-          <Clock className="w-4 h-4" /> ENDS IN
-        </span>
-        <div className="flex items-center gap-2">
-          <div className="bg-stitch-surface-container-high border border-stitch-outline-variant/30 px-3 py-2 rounded-lg min-w-[54px] flex flex-col items-center shadow-inner">
-            <span className="text-2xl font-black text-white leading-none font-mono">
-              {String(timeLeft.hours).padStart(2, '0')}
-            </span>
-            <span className="text-[10px] text-stitch-outline font-bold tracking-wider mt-1">
-              HRS
-            </span>
-          </div>
-          <span className="text-stitch-error font-black text-xl animate-pulse">:</span>
-          <div className="bg-stitch-surface-container-high border border-stitch-outline-variant/30 px-3 py-2 rounded-lg min-w-[54px] flex flex-col items-center shadow-inner">
-            <span className="text-2xl font-black text-white leading-none font-mono">
-              {String(timeLeft.minutes).padStart(2, '0')}
-            </span>
-            <span className="text-[10px] text-stitch-outline font-bold tracking-wider mt-1">
-              MIN
-            </span>
-          </div>
-          <span className="text-stitch-error font-black text-xl animate-pulse">:</span>
-          <div className="bg-stitch-error/20 border border-stitch-error/40 px-3 py-2 rounded-lg min-w-[54px] flex flex-col items-center shadow-[0_0_15px_rgba(239,68,68,0.25)]">
-            <span className="text-2xl font-black text-stitch-error leading-none font-mono">
-              {String(timeLeft.seconds).padStart(2, '0')}
-            </span>
-            <span className="text-[10px] text-stitch-error font-bold tracking-wider mt-1">SEC</span>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const ProductSlider = ({
-    products,
-    tag,
-    tagClass,
-    label,
-  }: {
-    products: Product[];
-    tag?: string;
-    tagClass?: string;
-    label?: string;
-  }) => {
-    const sliderRef = useRef<HTMLDivElement>(null);
-
-    const scroll = (direction: 'left' | 'right') => {
-      if (sliderRef && sliderRef.current) {
-        const { scrollLeft, clientWidth } = sliderRef.current;
-        const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
-        sliderRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
-      }
-    };
-
-    return (
-      <div className="relative group/slider">
-        <button
-          onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 z-20 bg-stitch-surface-container-high/90 backdrop-blur-md p-3 rounded-full text-white shadow-xl border border-white/10 opacity-0 group-hover/slider:opacity-100 transition-opacity hover:bg-stitch-primary hover:border-stitch-primary"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-
-        <div
-          ref={sliderRef as any}
-          className="flex gap-6 overflow-x-auto snap-x snap-mandatory stitch-no-scrollbar pb-8 pt-4"
-        >
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              tag={tag}
-              tagClass={tagClass}
-              label={label}
-            />
-          ))}
-        </div>
-
-        <button
-          onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 z-20 bg-stitch-surface-container-high/90 backdrop-blur-md p-3 rounded-full text-white shadow-xl border border-white/10 opacity-0 group-hover/slider:opacity-100 transition-opacity hover:bg-stitch-primary hover:border-stitch-primary"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
-      </div>
-    );
-  };
 
   return (
     <div className="w-full pt-20">

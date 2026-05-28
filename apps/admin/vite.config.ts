@@ -1,6 +1,7 @@
+import path from 'node:path';
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import path from 'node:path';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
@@ -9,8 +10,8 @@ export default defineConfig({
     visualizer({
       filename: './dist/bundle-analysis.html',
       open: false,
-      title: 'ByteEvolvr Admin Bundle Analysis'
-    })
+      title: 'ByteEvolvr Admin Bundle Analysis',
+    }),
   ],
   envDir: path.resolve(__dirname, '../..'),
   server: {
@@ -27,9 +28,9 @@ export default defineConfig({
           'vendor-ui': ['lucide-react', 'framer-motion'],
           'vendor-charts': ['recharts'],
           'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-utils': ['xlsx', 'date-fns']
-        }
-      }
-    }
-  }
+          'vendor-utils': ['xlsx', 'date-fns'],
+        },
+      },
+    },
+  },
 });

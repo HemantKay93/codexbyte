@@ -6,6 +6,8 @@ import { getAdminClient } from '../../config/supabase.js';
 
 import { AdminRepository } from './admin.repository.js';
 import { AdminService } from './admin.service.js';
+import { ProviderService } from '../marketing/providers/provider.service.js';
+import { redis } from '../../config/redis.js';
 
 const adminService = new AdminService();
 const adminRepo = new AdminRepository();
@@ -22,6 +24,61 @@ export const getRevenueChart = catchAsync(async (req: Request, res: Response) =>
   const months = Number(req.query.months) || 6;
   const data = await AnalyticsService.getRevenueChart(months);
   res.json({ success: true, data });
+});
+
+export const getIntegrationHealth = catchAsync(async (req: Request, res: Response) => {
+  const health = {
+    database: { status: 'unknown', details: '' },
+    redis: { status: 'unknown', details: '' },
+    email: { status: 'unknown', details: '' },
+    whatsapp: { status: 'unknown', details: '' },
+  };
+
+  // Database
+  try {
+    const adminClient = await getAdminClient();
+    const { error } = await adminClient.from('user_profiles').select('id').limit(1);
+    health.database = error
+      ? { status: 'error', details: error.message }
+      : { status: 'connected', details: 'Connected to Supabase' };
+  } catch (e: any) {
+    health.database = { status: 'error', details: e.message };
+  }
+
+  // Redis
+  try {
+    const ping = await redis.ping();
+    health.redis =
+      ping === 'PONG'
+        ? { status: 'connected', details: 'Connected to Redis' }
+        : { status: 'error', details: 'No PONG response' };
+  } catch (e: any) {
+    health.redis = { status: 'error', details: e.message };
+  }
+
+  // Email
+  try {
+    const emailProvider = await ProviderService.getEmailProvider();
+    const isHealthy = await emailProvider.isHealthy();
+    health.email = isHealthy
+      ? { status: 'connected', details: `Provider: ${emailProvider.name}` }
+      : { status: 'error', details: 'Health check failed' };
+  } catch (e: any) {
+    health.email = { status: 'error', details: e.message };
+  }
+
+  // WhatsApp
+  try {
+    const waProvider = await ProviderService.getWhatsAppProvider();
+    const isHealthy = await waProvider.isHealthy();
+    health.whatsapp = isHealthy
+      ? { status: 'connected', details: `Provider: ${waProvider.name}` }
+      : { status: 'error', details: 'Health check failed' };
+  } catch (e: any) {
+    health.whatsapp = { status: 'error', details: e.message };
+  }
+
+  res.json({ success: true, data: health });
 });
 
 export const getCustomers = catchAsync(async (req: Request, res: Response) => {
