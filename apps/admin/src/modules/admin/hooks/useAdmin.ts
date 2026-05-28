@@ -36,7 +36,6 @@ export const useAdmin = () => {
     } catch (err: any) {
       setError(err.customMessage || 'Failed to fetch order details');
       return null;
-    } finally {
     }
   };
 
@@ -59,7 +58,6 @@ export const useAdmin = () => {
     } catch (err: any) {
       setError(err.customMessage || 'Failed to fetch customers');
       return [];
-    } finally {
     }
   };
 

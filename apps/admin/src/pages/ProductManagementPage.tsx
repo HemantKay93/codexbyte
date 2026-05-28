@@ -16,7 +16,7 @@ import { useProduct } from '../modules/product/hooks/useProduct';
 export function ProductManagementPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const { products, fetchProducts } = useProduct();
+  const { products, fetchProducts, loading } = useProduct();
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export function ProductManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {false ? (
+              {loading ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8 text-on-surface-variant">
                     Loading products...
@@ -109,7 +109,7 @@ export function ProductManagementPage() {
                       {product.sku}
                     </TableCell>
                     <TableCell className="text-right text-on-surface">
-                      ${Number(product.price).toFixed(2)}
+                      {Number(product.price).toFixed(2)}
                     </TableCell>
                     <TableCell className="text-right">
                       <span

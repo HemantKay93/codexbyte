@@ -15,6 +15,7 @@ import { AdminService } from '@byteevolvr/api-client';
 
 export function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
   const { customers, setCustomers, setError } = useAdminStore();
 
   useEffect(() => {
@@ -22,6 +23,7 @@ export function CustomersPage() {
   }, []);
 
   async function fetchCustomers() {
+    setLoading(true);
     try {
       const data = await AdminService.getCustomers();
       setCustomers(data || []);
@@ -29,6 +31,7 @@ export function CustomersPage() {
       console.error('Error fetching customers:', err);
       setError(err.customMessage || 'Failed to load customers');
     } finally {
+      setLoading(false);
     }
   }
 
@@ -117,7 +120,7 @@ export function CustomersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {false ? (
+              {loading ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-12">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />

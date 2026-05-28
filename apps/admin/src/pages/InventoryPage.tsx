@@ -28,6 +28,7 @@ import { useAdmin } from '../modules/admin/hooks/useAdmin';
 
 export function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
   const { products, setProducts, setError } = useAdminStore();
   const { warehouses, fetchWarehouses } = useAdmin();
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
@@ -42,6 +43,7 @@ export function InventoryPage() {
   }, []);
 
   async function fetchInventory() {
+    setLoading(true);
     try {
       const data = await AdminService.getProducts();
       setProducts(data || []);
@@ -49,6 +51,7 @@ export function InventoryPage() {
       console.error('Error fetching inventory:', err);
       setError(err.customMessage || 'Failed to load inventory');
     } finally {
+      setLoading(false);
     }
   }
 
@@ -234,7 +237,7 @@ export function InventoryPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {false ? (
+              {loading ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-20">
                     <Loader2 className="h-10 w-10 animate-spin mx-auto text-primary" />

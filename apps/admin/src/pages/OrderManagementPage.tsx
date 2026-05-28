@@ -16,6 +16,7 @@ import { AdminService } from '@byteevolvr/api-client';
 export function OrderManagementPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
   const { orders, setOrders, setError } = useAdminStore();
 
   useEffect(() => {
@@ -23,6 +24,7 @@ export function OrderManagementPage() {
   }, []);
 
   async function fetchOrders() {
+    setLoading(true);
     try {
       const data = await AdminService.getOrders();
       // Map user_profiles to user for backward compatibility
@@ -35,6 +37,7 @@ export function OrderManagementPage() {
       console.error('Failed to fetch orders:', error);
       setError(error.customMessage || 'Failed to load orders');
     } finally {
+      setLoading(false);
     }
   }
 
@@ -121,7 +124,7 @@ export function OrderManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {false ? (
+              {loading ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-12">
                     <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
