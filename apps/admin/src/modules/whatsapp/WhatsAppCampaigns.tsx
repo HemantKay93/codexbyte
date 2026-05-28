@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button } from '@byteevolvr/ui';;
+import { Card, Button } from '@byteevolvr/ui';
 import { toast } from 'sonner';
 import { apiClient } from '@byteevolvr/api-client';
 import * as XLSX from 'xlsx';
@@ -24,11 +24,14 @@ export const WhatsAppCampaigns = () => {
       setBulkPreview([]);
       return;
     }
-    
-    const numbersList = nums.split(/[\n,]+/).map(n => n.trim()).filter(Boolean);
-    const mapped = numbersList.map(n => ({
+
+    const numbersList = nums
+      .split(/[\n,]+/)
+      .map((n) => n.trim())
+      .filter(Boolean);
+    const mapped = numbersList.map((n) => ({
       to: n,
-      message: msg
+      message: msg,
     }));
     setBulkPreview(mapped);
   };
@@ -45,7 +48,11 @@ export const WhatsAppCampaigns = () => {
       setTo('');
       setMessage('');
     } catch (err: any) {
-      const msg = err?.customMessage || err?.response?.data?.message || err?.message || 'Failed to queue message';
+      const msg =
+        err?.customMessage ||
+        err?.response?.data?.message ||
+        err?.message ||
+        'Failed to queue message';
       toast.error(`❌ ${msg}`);
     } finally {
       singleSendingRef.current = false;
@@ -65,17 +72,26 @@ export const WhatsAppCampaigns = () => {
       const wsname = wb.SheetNames[0];
       const ws = wb.Sheets[wsname];
       const data = XLSX.utils.sheet_to_json(ws);
-      
-      const mapped = data.map((row: any) => {
-        // Try to find columns for phone and message flexibly
-        const phoneKey = Object.keys(row).find(k => k.toLowerCase().includes('phone') || k.toLowerCase().includes('number') || k.toLowerCase().includes('to'));
-        const msgKey = Object.keys(row).find(k => k.toLowerCase().includes('message') || k.toLowerCase().includes('content'));
-        
-        return {
-          to: phoneKey ? row[phoneKey].toString() : '',
-          message: msgKey ? row[msgKey] : ''
-        };
-      }).filter(r => r.to && r.message);
+
+      const mapped = data
+        .map((row: any) => {
+          // Try to find columns for phone and message flexibly
+          const phoneKey = Object.keys(row).find(
+            (k) =>
+              k.toLowerCase().includes('phone') ||
+              k.toLowerCase().includes('number') ||
+              k.toLowerCase().includes('to')
+          );
+          const msgKey = Object.keys(row).find(
+            (k) => k.toLowerCase().includes('message') || k.toLowerCase().includes('content')
+          );
+
+          return {
+            to: phoneKey ? row[phoneKey].toString() : '',
+            message: msgKey ? row[msgKey] : '',
+          };
+        })
+        .filter((r) => r.to && r.message);
 
       setBulkPreview(mapped);
       if (mapped.length === 0) {
@@ -100,7 +116,11 @@ export const WhatsAppCampaigns = () => {
       setBulkManualNumbers('');
       setBulkMessage('');
     } catch (err: any) {
-      const msg = err?.customMessage || err?.response?.data?.message || err?.message || 'Failed to queue bulk campaign';
+      const msg =
+        err?.customMessage ||
+        err?.response?.data?.message ||
+        err?.message ||
+        'Failed to queue bulk campaign';
       toast.error(`❌ ${msg}`);
     } finally {
       bulkSendingRef.current = false;
@@ -116,7 +136,9 @@ export const WhatsAppCampaigns = () => {
         <button
           onClick={() => setActiveTab('single')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'single' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant hover:text-on-surface'
+            activeTab === 'single'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-on-surface-variant hover:text-on-surface'
           }`}
         >
           <MessageSquare className="w-4 h-4" /> Single Message
@@ -124,7 +146,9 @@ export const WhatsAppCampaigns = () => {
         <button
           onClick={() => setActiveTab('bulk')}
           className={`flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'bulk' ? 'text-primary border-b-2 border-primary' : 'text-on-surface-variant hover:text-on-surface'
+            activeTab === 'bulk'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-on-surface-variant hover:text-on-surface'
           }`}
         >
           <List className="w-4 h-4" /> Bulk Excel Campaign
@@ -140,7 +164,9 @@ export const WhatsAppCampaigns = () => {
             <div>
               <form onSubmit={handleSendTest} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-1">Phone Number (with country code)</label>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1">
+                    Phone Number (with country code)
+                  </label>
                   <input
                     type="text"
                     className="w-full bg-background border border-border rounded-md px-3 py-2 text-white"
@@ -150,7 +176,9 @@ export const WhatsAppCampaigns = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-1">Message Content</label>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1">
+                    Message Content
+                  </label>
                   <textarea
                     className="w-full bg-background border border-border rounded-md px-3 py-2 text-white h-32"
                     placeholder="Hello from ByteEvolvr..."
@@ -172,26 +200,26 @@ export const WhatsAppCampaigns = () => {
             <div>
               <div className="space-y-6">
                 <div className="border-2 border-dashed border-outline-variant rounded-xl p-8 text-center hover:bg-surface-container transition-colors cursor-pointer relative">
-                  <input 
-                    type="file" 
-                    accept=".xlsx, .xls, .csv" 
-                    onChange={handleFileUpload} 
+                  <input
+                    type="file"
+                    accept=".xlsx, .xls, .csv"
+                    onChange={handleFileUpload}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
                   <UploadCloud className="w-8 h-8 mx-auto text-primary mb-3" />
                   <h3 className="text-sm font-medium text-on-surface mb-1">
                     {bulkFile ? bulkFile.name : 'Click or drag Excel/CSV file here'}
                   </h3>
-                  <p className="text-xs text-on-surface-variant mt-2">
-                    Or paste numbers below
-                  </p>
+                  <p className="text-xs text-on-surface-variant mt-2">Or paste numbers below</p>
                 </div>
 
                 <div className="space-y-4 pt-4 border-t border-outline-variant">
                   <h3 className="text-sm font-medium text-on-surface mb-2">Manual Input</h3>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1">Comma or line separated numbers</label>
-                    <textarea 
+                    <label className="block text-xs text-muted-foreground mb-1">
+                      Comma or line separated numbers
+                    </label>
+                    <textarea
                       className="w-full bg-background border border-border rounded-md px-3 py-2 text-white h-24"
                       placeholder="e.g. 1234567890, 0987654321&#10;1122334455"
                       value={bulkManualNumbers}
@@ -202,8 +230,10 @@ export const WhatsAppCampaigns = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1">Message Content for Manual Numbers</label>
-                    <textarea 
+                    <label className="block text-xs text-muted-foreground mb-1">
+                      Message Content for Manual Numbers
+                    </label>
+                    <textarea
                       className="w-full bg-background border border-border rounded-md px-3 py-2 text-white h-24"
                       placeholder="Your promotional message here..."
                       value={bulkMessage}
@@ -231,7 +261,12 @@ export const WhatsAppCampaigns = () => {
                         {bulkPreview.slice(0, 50).map((row, i) => (
                           <tr key={i}>
                             <td className="py-2 text-on-surface">{row.to}</td>
-                            <td className="py-2 text-on-surface-variant max-w-[200px] truncate" title={row.message}>{row.message}</td>
+                            <td
+                              className="py-2 text-on-surface-variant max-w-[200px] truncate"
+                              title={row.message}
+                            >
+                              {row.message}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -244,12 +279,14 @@ export const WhatsAppCampaigns = () => {
                   </div>
                 )}
 
-                <Button 
-                  onClick={handleSendBulk} 
-                  disabled={loading || bulkPreview.length === 0} 
+                <Button
+                  onClick={handleSendBulk}
+                  disabled={loading || bulkPreview.length === 0}
                   className="w-full"
                 >
-                  {loading ? 'Queueing Campaign...' : `Launch Bulk Campaign (${bulkPreview.length} messages)`}
+                  {loading
+                    ? 'Queueing Campaign...'
+                    : `Launch Bulk Campaign (${bulkPreview.length} messages)`}
                 </Button>
               </div>
             </div>

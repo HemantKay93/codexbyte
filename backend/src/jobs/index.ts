@@ -24,6 +24,7 @@ const WORKER_OPTIONS = {
   connection: redis,
   stalledInterval: 300_000, // Check for stalled jobs every 5 min (default: 30s)
   lockDuration: 600_000, // Hold job lock for 10 min
+  drainDelay: 10, // Wait 10 seconds before polling when queue is empty (reduces idle commands)
   removeOnComplete: { count: 100 }, // Keep only last 100 completed jobs in Redis
   removeOnFail: { count: 500 }, // Keep only last 500 failed jobs
 };

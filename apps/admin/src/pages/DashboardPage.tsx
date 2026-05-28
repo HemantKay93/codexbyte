@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Card, Badge, Button } from '@byteevolvr/ui';;
+import { Card, Badge, Button } from '@byteevolvr/ui';
 import { ArrowUpRight, DollarSign, ShoppingBag, Users, Activity, Loader2 } from 'lucide-react';
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { SocketService } from '@byteevolvr/api-client';
@@ -182,7 +182,11 @@ export function DashboardPage() {
                 <p className="text-2xl font-bold text-on-surface">{displayStats.pendingOrders}</p>
                 <p className="text-sm text-on-surface-variant">Orders awaiting fulfillment</p>
               </div>
-              <Button onClick={() => window.location.href='/orders'} variant="outline" className="border-warning text-warning hover:bg-warning/10">
+              <Button
+                onClick={() => (window.location.href = '/orders')}
+                variant="outline"
+                className="border-warning text-warning hover:bg-warning/10"
+              >
                 Review Orders
               </Button>
             </div>
@@ -202,10 +206,16 @@ export function DashboardPage() {
           <div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-2xl font-bold text-on-surface">{displayStats.lowStockAlertsCount}</p>
+                <p className="text-2xl font-bold text-on-surface">
+                  {displayStats.lowStockAlertsCount}
+                </p>
                 <p className="text-sm text-on-surface-variant">SKUs critically low on stock</p>
               </div>
-              <Button onClick={() => window.location.href='/inventory'} variant="outline" className="border-error text-error hover:bg-error/10">
+              <Button
+                onClick={() => (window.location.href = '/inventory')}
+                variant="outline"
+                className="border-error text-error hover:bg-error/10"
+              >
                 Restock Now
               </Button>
             </div>

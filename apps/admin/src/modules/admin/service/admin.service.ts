@@ -16,7 +16,10 @@ export const AdminService = {
     return response.data;
   },
 
-  async updateOrderStatus(orderId: string, data: { status?: string, trackingId?: string, courier?: string }) {
+  async updateOrderStatus(
+    orderId: string,
+    data: { status?: string; trackingId?: string; courier?: string }
+  ) {
     const response = await apiClient.put(`/admin/orders/${orderId}`, data);
     return response.data;
   },
@@ -29,5 +32,5 @@ export const AdminService = {
   async getCustomers() {
     const response = await apiClient.get('/admin/customers');
     return response.data;
-  }
+  },
 };

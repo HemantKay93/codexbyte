@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Card, Input, Button } from '@byteevolvr/ui';;
+import { Card, Input, Button } from '@byteevolvr/ui';
 import { CMSService } from '@byteevolvr/api-client';
+import { useQueryClient } from '@tanstack/react-query';
 import { Loader2, Save, CheckCircle2, XCircle, RefreshCw } from 'lucide-react';
 
 type SaveStatus = { type: 'success' | 'error'; msg: string } | null;
@@ -12,6 +13,7 @@ export function SettingsPage() {
   const [waStatus, setWaStatus] = useState<SaveStatus>(null);
   const [emailStatus, setEmailStatus] = useState<SaveStatus>(null);
   const [pushStatus, setPushStatus] = useState<SaveStatus>(null);
+  const queryClient = useQueryClient();
   const [settings, setSettings] = useState({
     storeName: '',
     supportEmail: '',
@@ -214,6 +216,8 @@ export function SettingsPage() {
         gstNumber: settings.gstNumber,
         workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
       });
+      // Invalidate cached CMS data so frontend reflects new currency
+      queryClient.invalidateQueries(['cms', 'global']);
       setStoreStatus({ type: 'success', msg: 'Store details saved successfully!' });
     } catch (err: any) {
       const msg = err?.customMessage || err?.message || 'Failed to save store details.';
@@ -264,8 +268,10 @@ export function SettingsPage() {
               onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
             />
             <div>
-              <label className="block text-label-md text-on-surface-variant mb-1 font-medium">Currency</label>
-              <select 
+              <label className="block text-label-md text-on-surface-variant mb-1 font-medium">
+                Currency
+              </label>
+              <select
                 className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-body-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 value={settings.currency}
                 onChange={(e) => setSettings({ ...settings, currency: e.target.value })}
@@ -281,13 +287,17 @@ export function SettingsPage() {
             <Input
               label="PAN Number (Accounting)"
               value={settings.panNumber}
-              onChange={(e) => setSettings({ ...settings, panNumber: e.target.value.toUpperCase() })}
+              onChange={(e) =>
+                setSettings({ ...settings, panNumber: e.target.value.toUpperCase() })
+              }
               placeholder="ABCDE1234F"
             />
             <Input
               label="GST Number (Accounting)"
               value={settings.gstNumber}
-              onChange={(e) => setSettings({ ...settings, gstNumber: e.target.value.toUpperCase() })}
+              onChange={(e) =>
+                setSettings({ ...settings, gstNumber: e.target.value.toUpperCase() })
+              }
               placeholder="22AAAAA0000A1Z5"
             />
           </div>

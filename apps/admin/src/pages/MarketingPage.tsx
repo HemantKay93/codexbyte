@@ -1,5 +1,12 @@
 import { Card, Button, Badge } from '@byteevolvr/ui';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import { Plus, Zap, Send, MousePointerClick, TrendingUp, MoreHorizontal } from 'lucide-react';
 
 const workflows = [

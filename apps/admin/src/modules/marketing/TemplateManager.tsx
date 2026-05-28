@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Input } from '@byteevolvr/ui';;
+import { Card, Button, Input } from '@byteevolvr/ui';
 import { LayoutTemplate, Plus, Loader2, X } from 'lucide-react';
 import { MarketingService } from '@byteevolvr/api-client';
 
@@ -8,7 +8,7 @@ export function TemplateManager() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  
+
   const [emailTemplates, setEmailTemplates] = useState<any[]>([]);
   const [pushTemplates, setPushTemplates] = useState<any[]>([]);
 
@@ -25,7 +25,7 @@ export function TemplateManager() {
     try {
       const [eTpls, pTpls] = await Promise.all([
         MarketingService.getEmailTemplates(),
-        MarketingService.getPushTemplates()
+        MarketingService.getPushTemplates(),
       ]);
       setEmailTemplates(eTpls || []);
       setPushTemplates(pTpls || []);
@@ -145,14 +145,21 @@ export function TemplateManager() {
 
       {showModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+          <div
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            onClick={() => setShowModal(false)}
+          />
           <div className="relative bg-surface w-full max-w-[600px] shadow-xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            
             <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
               <h2 className="text-xl font-bold text-on-surface">
                 Create {activeTab === 'email' ? 'Email' : 'Push'} Template
               </h2>
-              <Button variant="ghost" size="sm" onClick={() => setShowModal(false)} className="rounded-full h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowModal(false)}
+                className="rounded-full h-8 w-8 p-0"
+              >
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -181,7 +188,9 @@ export function TemplateManager() {
                       className="w-full h-40 px-3 py-2 rounded-lg border border-outline bg-surface text-body-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary font-mono text-sm"
                       placeholder="<h1>Hello {{customer_name}}</h1>..."
                       value={newTemplate.html_content}
-                      onChange={(e) => setNewTemplate({ ...newTemplate, html_content: e.target.value })}
+                      onChange={(e) =>
+                        setNewTemplate({ ...newTemplate, html_content: e.target.value })
+                      }
                     />
                   </div>
                 </>
@@ -211,9 +220,15 @@ export function TemplateManager() {
             </div>
 
             <div className="p-6 border-t border-outline-variant bg-surface-container-low flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleCreate} disabled={saving || !newTemplate.name}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+                {saving ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Plus className="h-4 w-4 mr-2" />
+                )}
                 Create Template
               </Button>
             </div>

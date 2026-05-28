@@ -1,6 +1,6 @@
 export interface ProviderResponse {
   success: boolean;
-  provider: 'meta' | 'evolution' | 'openwa' | 'unknown';
+  provider: 'meta' | 'evolution' | 'unknown';
   messageId?: string;
   status?: 'sent' | 'delivered' | 'read' | 'failed' | 'queued';
   error?: string;
@@ -29,9 +29,9 @@ export interface WhatsAppTemplatePayload extends WhatsAppMessagePayload {
 
 export interface IWhatsAppProvider {
   /**
-   * Identifies the provider (e.g., 'meta', 'evolution', 'openwa')
+   * Identifies the provider (e.g., 'meta', 'evolution')
    */
-  readonly name: 'meta' | 'evolution' | 'openwa';
+  readonly name: 'meta' | 'evolution';
 
   /**
    * Provider specific initialization (auth, connections)

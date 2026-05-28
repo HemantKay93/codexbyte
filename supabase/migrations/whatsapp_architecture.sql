@@ -1,10 +1,10 @@
 -- WhatsApp Multi-Provider Architecture Schema Updates
 
 -- 1. provider_configs table
--- Stores configuration for various WhatsApp providers (Meta, Evolution, OpenWA)
+-- Stores configuration for various WhatsApp providers (Meta, Evolution)
 CREATE TABLE IF NOT EXISTS public.provider_configs (
     id UUID DEFAULT extensions.uuid_generate_v4() PRIMARY KEY,
-    provider_name VARCHAR(50) NOT NULL UNIQUE, -- 'meta', 'evolution', 'openwa'
+    provider_name VARCHAR(50) NOT NULL UNIQUE, -- 'meta', 'evolution'
     is_enabled BOOLEAN DEFAULT false,
     priority INTEGER DEFAULT 1,
     config JSONB DEFAULT '{}'::jsonb, -- Store accessToken, phoneNumberId, instanceUrl, apiKey, etc.

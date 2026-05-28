@@ -1,5 +1,12 @@
 import { Card, Button, Badge } from '@byteevolvr/ui';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import { FileText, Building, Landmark, PieChart } from 'lucide-react';
 
 export function TaxCompliancePage() {

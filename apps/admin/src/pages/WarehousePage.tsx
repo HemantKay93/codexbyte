@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Badge, Input } from '@byteevolvr/ui';;
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
 import {
   ScanBarcode,
   PackageCheck,

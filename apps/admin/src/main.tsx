@@ -105,6 +105,9 @@ const TeamPage = lazy(() => import('./pages/TeamPage').then((m) => ({ default: m
 const AccountingDashboard = lazy(() =>
   import('./pages/accounting/AccountingDashboard').then((m) => ({ default: m.AccountingDashboard }))
 );
+const InvoicesPage = lazy(() =>
+  import('./pages/accounting/InvoicesPage').then((m) => ({ default: m.InvoicesPage }))
+);
 const JournalEntriesPage = lazy(() =>
   import('./pages/accounting/JournalEntriesPage').then((m) => ({ default: m.JournalEntriesPage }))
 );
@@ -188,6 +191,7 @@ const Main = () => {
                   <Route path="/team" element={<TeamPage />} />
                   <Route path="/accounting">
                     <Route index element={<AccountingDashboard />} />
+                    <Route path="invoices" element={<InvoicesPage />} />
                     <Route path="journal" element={<JournalEntriesPage />} />
                     <Route path="profit-loss" element={<ProfitLossPage />} />
                     <Route path="gst" element={<GSTFilingPage />} />

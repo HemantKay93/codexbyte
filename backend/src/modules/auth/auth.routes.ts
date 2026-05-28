@@ -13,5 +13,6 @@ router.post('/customer/signup', validate(signupSchema), authController.signup);
 router.get('/me', authenticate, authController.getMe);
 router.get('/admin/me', authenticate, authorize('admin', 'super-admin'), authController.getAdminMe);
 router.get('/customer/me', authenticate, authController.getMe);
+router.post('/logout', authenticate, authController.logout);
 
 export default router;

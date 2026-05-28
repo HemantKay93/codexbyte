@@ -5,18 +5,16 @@ import {
 } from './IWhatsAppProvider.js';
 import { MetaCloudProvider } from './metaCloudProvider.js';
 import { EvolutionProvider } from './evolutionProvider.js';
-import { OpenWAProvider } from './openwaProvider.js';
 import { getAdminClient } from '../../../../config/supabase.js';
 import logger from '../../../../services/logger.js';
 
 export class WhatsAppProviderFactory {
   private providers: Map<string, IWhatsAppProvider> = new Map();
-  private defaultProviderName: 'meta' | 'evolution' | 'openwa' = 'meta';
+  private defaultProviderName: 'meta' | 'evolution' = 'meta';
 
   constructor() {
     this.providers.set('meta', new MetaCloudProvider());
     this.providers.set('evolution', new EvolutionProvider());
-    this.providers.set('openwa', new OpenWAProvider());
   }
 
   /**

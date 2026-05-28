@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import { printInvoice } from '@byteevolvr/ui';
 import {
   ArrowLeft,
@@ -177,7 +184,9 @@ export function OrderDetailPage() {
                 variant={
                   order.status === 'delivered' || order.status === 'refunded'
                     ? 'success'
-                    : order.status === 'shipped' || order.status === 'packed' || order.status === 'confirmed'
+                    : order.status === 'shipped' ||
+                        order.status === 'packed' ||
+                        order.status === 'confirmed'
                       ? 'primary'
                       : order.status === 'cancelled'
                         ? 'error'
@@ -215,7 +224,11 @@ export function OrderDetailPage() {
               variant="outline"
               className="gap-2 text-red-600 border-red-200 hover:bg-red-50 dark:hover:bg-red-950/20"
               onClick={() => {
-                if (window.confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+                if (
+                  window.confirm(
+                    'Are you sure you want to cancel this order? This action cannot be undone.'
+                  )
+                ) {
                   handleUpdateStatus('cancelled');
                 }
               }}
@@ -303,10 +316,12 @@ export function OrderDetailPage() {
         <div className="p-6">
           <div className="flex items-center justify-between relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-outline-variant -z-10 rounded-full" />
-            
+
             {/* Step 1: Confirmed */}
             <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
-              <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['confirmed', 'packed', 'shipped', 'delivered'].includes(order.status) ? 'border-primary bg-primary text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}>
+              <div
+                className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['confirmed', 'packed', 'shipped', 'delivered'].includes(order.status) ? 'border-primary bg-primary text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}
+              >
                 <CheckCircle2 className="h-5 w-5" />
               </div>
               <span className="text-sm font-bold">Confirmed</span>
@@ -314,7 +329,9 @@ export function OrderDetailPage() {
 
             {/* Step 2: Packed */}
             <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
-              <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['packed', 'shipped', 'delivered'].includes(order.status) ? 'border-indigo-500 bg-indigo-500 text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}>
+              <div
+                className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['packed', 'shipped', 'delivered'].includes(order.status) ? 'border-indigo-500 bg-indigo-500 text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}
+              >
                 <Package className="h-5 w-5" />
               </div>
               <span className="text-sm font-bold">Packed</span>
@@ -322,7 +339,9 @@ export function OrderDetailPage() {
 
             {/* Step 3: Shipped */}
             <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
-              <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['shipped', 'delivered'].includes(order.status) ? 'border-info bg-info text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}>
+              <div
+                className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['shipped', 'delivered'].includes(order.status) ? 'border-info bg-info text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}
+              >
                 <Truck className="h-5 w-5" />
               </div>
               <span className="text-sm font-bold">Shipped</span>
@@ -330,7 +349,9 @@ export function OrderDetailPage() {
 
             {/* Step 4: Delivered */}
             <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
-              <div className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['delivered'].includes(order.status) ? 'border-success bg-success text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}>
+              <div
+                className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['delivered'].includes(order.status) ? 'border-success bg-success text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}
+              >
                 <CheckCircle2 className="h-5 w-5" />
               </div>
               <span className="text-sm font-bold">Delivered</span>

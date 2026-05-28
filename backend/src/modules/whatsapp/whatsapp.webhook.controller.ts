@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
+import crypto from 'crypto';
 import logger from '../../services/logger.js';
 import { WhatsAppRepository } from './whatsapp.repository.js';
 import { CMSService } from '../cms/cms.service.js';
 import { getAdminClient } from '../../config/supabase.js';
+import { redis } from '../../config/redis.js';
 
 const repository = new WhatsAppRepository();
 
@@ -126,13 +128,33 @@ export const verifyWebhook = async (req: Request, res: Response) => {
  * Receives unified incoming message events and delivery status updates.
  */
 export const handleWebhookEvent = async (req: Request, res: Response) => {
-  res.sendStatus(200); // Respond immediately
+  // 1. Signature Verification for Meta Cloud API
+  const signature = req.headers['x-hub-signature-256'] as string;
+  if (signature) {
+    const appSecret = process.env.WHATSAPP_APP_SECRET;
+    if (appSecret) {
+      const elements = signature.split('=');
+      const signatureHash = elements[1];
+      const rawBody = JSON.stringify(req.body);
+      const expectedHash = crypto
+        .createHmac('sha256', appSecret)
+        .update(rawBody)
+        .digest('hex');
+
+      if (signatureHash !== expectedHash) {
+        logger.error('[WhatsApp Webhook] Signature validation failed!');
+        return res.status(401).send('Signature mismatch');
+      }
+    }
+  }
+
+  res.sendStatus(200); // Respond immediately to webhook provider
 
   try {
     const body = req.body;
     const admin = await getAdminClient();
 
-    // 1. Check if Meta Cloud API Payload
+    // 2. Check if Meta Cloud API Payload
     if (body.object === 'whatsapp_business_account') {
       for (const entry of body.entry || []) {
         for (const change of entry.changes || []) {
@@ -141,6 +163,16 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
           // Process Meta Delivery Status
           if (value?.statuses) {
             for (const status of value.statuses) {
+              // Replay prevention (Max 5 minutes / 300 seconds window)
+              const timestamp = status.timestamp ? Number(status.timestamp) : undefined;
+              if (timestamp) {
+                const ageSeconds = Math.abs(Math.floor(Date.now() / 1000) - timestamp);
+                if (ageSeconds > 300) {
+                  logger.warn(`[WhatsApp Webhook] Replay attack blocked: Event timestamp aged by ${ageSeconds}s`);
+                  continue;
+                }
+              }
+
               await normalizeAndSaveEvent(admin, {
                 provider: 'meta',
                 message_id: status.id,
@@ -160,11 +192,22 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
         }
       }
     }
-    // 2. Check if Evolution API Payload (typical evolution webhook structure)
+    // 3. Check if Evolution API Payload
     else if (body.event) {
       // Process Evolution Delivery Status
       if (body.event === 'messages.update' && body.data) {
         const msg = body.data;
+        
+        // Replay prevention for Evolution message updates
+        const timestamp = msg.messageTimestamp ? Number(msg.messageTimestamp) : undefined;
+        if (timestamp) {
+          const ageSeconds = Math.abs(Math.floor(Date.now() / 1000) - timestamp);
+          if (ageSeconds > 300) {
+            logger.warn(`[WhatsApp Webhook] Replay attack blocked: Evolution timestamp aged by ${ageSeconds}s`);
+            return;
+          }
+        }
+
         await normalizeAndSaveEvent(admin, {
           provider: 'evolution',
           message_id: msg.key.id,
@@ -179,7 +222,6 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
         logger.info(`[WhatsApp Webhook] Incoming Evolution message`);
       }
     }
-    // 3. Fallback OpenWA logic could go here if needed
   } catch (error) {
     logger.error('[WhatsApp Webhook] Error processing webhook event:', error);
   }
@@ -187,14 +229,23 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
 
 async function normalizeAndSaveEvent(admin: any, event: any) {
   try {
+    // 1. Redis key-based event deduplication
+    const dedupKey = `dedup:whatsapp:${event.message_id}:${event.status}`;
+    const isNew = await redis.set(dedupKey, '1', 'EX', 86400, 'NX'); // NX ensures atomic duplicate protection, 24 hr TTL
+    
+    if (!isNew) {
+      logger.info(`[Webhook] Event deduplicated: ${event.message_id} -> ${event.status}`);
+      return;
+    }
+
     logger.info(
       `[Webhook] Normalizing event: ${event.provider} - ${event.message_id} -> ${event.status}`
     );
 
-    // 1. Insert into unified delivery_events table
+    // 2. Insert into unified delivery_events table
     await admin.from('delivery_events').insert(event);
 
-    // 2. Update legacy whatsapp_messages table for backwards compatibility
+    // 3. Update legacy whatsapp_messages table for backwards compatibility
     const errorLog = event.status === 'failed' ? JSON.stringify(event.metadata) : undefined;
     await repository.updateMessageStatusByExternalId(event.message_id, event.status, errorLog);
   } catch (err) {

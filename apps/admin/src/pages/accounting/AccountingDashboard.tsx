@@ -26,8 +26,12 @@ export function AccountingDashboard() {
         <Card className="p-6 border-l-4 border-l-primary flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-on-surface-variant text-sm uppercase">Total Revenue</h3>
-              <div className="bg-primary/10 p-2 rounded text-primary"><IndianRupee className="h-5 w-5" /></div>
+              <h3 className="font-semibold text-on-surface-variant text-sm uppercase">
+                Total Revenue
+              </h3>
+              <div className="bg-primary/10 p-2 rounded text-primary">
+                <IndianRupee className="h-5 w-5" />
+              </div>
             </div>
             <div className="text-3xl font-bold text-on-surface">₹14,50,000</div>
           </div>
@@ -39,8 +43,12 @@ export function AccountingDashboard() {
         <Card className="p-6 border-l-4 border-l-error flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-on-surface-variant text-sm uppercase">Total Expenses</h3>
-              <div className="bg-error/10 p-2 rounded text-error"><ArrowDownRight className="h-5 w-5" /></div>
+              <h3 className="font-semibold text-on-surface-variant text-sm uppercase">
+                Total Expenses
+              </h3>
+              <div className="bg-error/10 p-2 rounded text-error">
+                <ArrowDownRight className="h-5 w-5" />
+              </div>
             </div>
             <div className="text-3xl font-bold text-on-surface">₹4,20,000</div>
           </div>
@@ -52,8 +60,12 @@ export function AccountingDashboard() {
         <Card className="p-6 border-l-4 border-l-success flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-on-surface-variant text-sm uppercase">Net Profit</h3>
-              <div className="bg-success/10 p-2 rounded text-success"><FileText className="h-5 w-5" /></div>
+              <h3 className="font-semibold text-on-surface-variant text-sm uppercase">
+                Net Profit
+              </h3>
+              <div className="bg-success/10 p-2 rounded text-success">
+                <FileText className="h-5 w-5" />
+              </div>
             </div>
             <div className="text-3xl font-bold text-on-surface">₹10,30,000</div>
           </div>
@@ -67,7 +79,12 @@ export function AccountingDashboard() {
         <Card>
           <div className="p-4 border-b border-outline-variant flex items-center justify-between">
             <h3 className="font-semibold text-on-surface">Recent Journal Entries</h3>
-            <Link to="/admin/accounting/journal" className="text-primary text-sm font-medium hover:underline">View All</Link>
+            <Link
+              to="/admin/accounting/journal"
+              className="text-primary text-sm font-medium hover:underline"
+            >
+              View All
+            </Link>
           </div>
           <div className="p-0">
             <table className="w-full text-sm text-left">
@@ -97,7 +114,12 @@ export function AccountingDashboard() {
         <Card>
           <div className="p-4 border-b border-outline-variant flex items-center justify-between">
             <h3 className="font-semibold text-on-surface">GST Summary (May 2026)</h3>
-            <Link to="/admin/accounting/gst" className="text-primary text-sm font-medium hover:underline">File GST</Link>
+            <Link
+              to="/admin/accounting/gst"
+              className="text-primary text-sm font-medium hover:underline"
+            >
+              File GST
+            </Link>
           </div>
           <div className="p-6 space-y-4">
             <div className="flex justify-between items-center">

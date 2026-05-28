@@ -1,10 +1,34 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard, LineChart, MonitorSmartphone, Package, ShoppingCart, Users, Tag,
-  LayoutTemplate, Megaphone, MessageSquare, LifeBuoy, Shield, Settings,
-  ChevronDown, ChevronRight, Boxes, RefreshCcw, Truck, Warehouse,
-  FileClock, FileCheck, FileCode, Globe, Code2, Store, Send, ListTodo, FileText
+  LayoutDashboard,
+  LineChart,
+  MonitorSmartphone,
+  Package,
+  ShoppingCart,
+  Users,
+  Tag,
+  LayoutTemplate,
+  Megaphone,
+  MessageSquare,
+  LifeBuoy,
+  Shield,
+  Settings,
+  ChevronDown,
+  ChevronRight,
+  Boxes,
+  RefreshCcw,
+  Truck,
+  Warehouse,
+  FileClock,
+  FileCheck,
+  FileCode,
+  Globe,
+  Code2,
+  Store,
+  Send,
+  ListTodo,
+  FileText,
 } from 'lucide-react';
 import { useAuthStore } from '@byteevolvr/store';
 
@@ -12,7 +36,12 @@ type NavItem = { name: string; href: string; icon: React.ElementType; roles?: st
 type NavGroup = { name: string; icon: React.ElementType; items: NavItem[]; roles?: string[] };
 
 const navigation: (NavItem | NavGroup)[] = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard, roles: ['admin', 'super-admin', 'support'] },
+  {
+    name: 'Dashboard',
+    href: '/',
+    icon: LayoutDashboard,
+    roles: ['admin', 'super-admin', 'support'],
+  },
   { name: 'Analytics', href: '/analytics', icon: LineChart, roles: ['admin', 'super-admin'] },
   { name: 'Point of Sale', href: '/pos', icon: MonitorSmartphone, roles: ['admin', 'super-admin'] },
   {
@@ -32,7 +61,12 @@ const navigation: (NavItem | NavGroup)[] = [
     items: [
       { name: 'All Orders', href: '/orders', icon: ShoppingCart },
       { name: 'Returns & Refunds', href: '/returns', icon: RefreshCcw },
-      { name: 'Warehouse Ops', href: '/warehouse', icon: Warehouse, roles: ['admin', 'super-admin'] },
+      {
+        name: 'Warehouse Ops',
+        href: '/warehouse',
+        icon: Warehouse,
+        roles: ['admin', 'super-admin'],
+      },
     ],
   },
   {
@@ -48,7 +82,7 @@ const navigation: (NavItem | NavGroup)[] = [
     name: 'Support Hub',
     href: '/support',
     icon: LifeBuoy,
-    roles: ['admin', 'super-admin', 'support']
+    roles: ['admin', 'super-admin', 'support'],
   },
   {
     name: 'Marketing',
@@ -94,6 +128,7 @@ const navigation: (NavItem | NavGroup)[] = [
     roles: ['admin', 'super-admin'],
     items: [
       { name: 'Dashboard', href: '/accounting', icon: LayoutDashboard },
+      { name: 'Invoices', href: '/accounting/invoices', icon: FileText },
       { name: 'Journal Entries', href: '/accounting/journal', icon: FileText },
       { name: 'Profit & Loss', href: '/accounting/profit-loss', icon: FileText },
       { name: 'GST Filing', href: '/accounting/gst', icon: FileText },
@@ -124,9 +159,7 @@ function NavGroupItem({ group }: { group: NavGroup }) {
   const userRole = user?.role || user?.user_metadata?.role || 'user';
 
   // Filter group items based on role
-  const filteredItems = group.items.filter(item => 
-    !item.roles || item.roles.includes(userRole)
-  );
+  const filteredItems = group.items.filter((item) => !item.roles || item.roles.includes(userRole));
 
   if (filteredItems.length === 0) return null;
 
@@ -157,7 +190,7 @@ function NavGroupItem({ group }: { group: NavGroup }) {
                 className={({ isActive }) =>
                   `group flex items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                     isActive
-                       ? 'bg-primary-container text-primary font-semibold'
+                      ? 'bg-primary-container text-primary font-semibold'
                       : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'
                   }`
                 }
@@ -178,8 +211,8 @@ export function Sidebar() {
   const userRole = user?.role || user?.user_metadata?.role || 'user';
 
   // Filter top-level navigation based on role
-  const filteredNavigation = navigation.filter(item => 
-    !item.roles || item.roles.includes(userRole)
+  const filteredNavigation = navigation.filter(
+    (item) => !item.roles || item.roles.includes(userRole)
   );
 
   return (

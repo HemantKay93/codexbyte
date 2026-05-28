@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card, Button } from '@byteevolvr/ui';;
+import { Card, Button } from '@byteevolvr/ui';
 import {
   ArrowLeft,
   Save,
@@ -110,7 +110,12 @@ export function ProductFormPage() {
         original_price: formData.original_price ? parseFloat(formData.original_price) : undefined,
         stock_quantity: parseInt(formData.stock_quantity),
         slug: formData.slug || undefined,
-        tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+        tags: formData.tags
+          ? formData.tags
+              .split(',')
+              .map((t) => t.trim())
+              .filter(Boolean)
+          : [],
       };
 
       if (id) {
@@ -136,7 +141,9 @@ export function ProductFormPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-display-sm font-semibold text-on-background">{id ? 'Edit Product' : 'Add New Product'}</h1>
+          <h1 className="text-display-sm font-semibold text-on-background">
+            {id ? 'Edit Product' : 'Add New Product'}
+          </h1>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => navigate('/products')}>
@@ -144,7 +151,7 @@ export function ProductFormPage() {
           </Button>
           <Button className="gap-2 min-w-[140px]" onClick={handleSave} disabled={loading}>
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-            {success ? 'Saved!' : (id ? 'Update Product' : 'Save Product')}
+            {success ? 'Saved!' : id ? 'Update Product' : 'Save Product'}
           </Button>
         </div>
       </div>
@@ -251,7 +258,9 @@ export function ProductFormPage() {
                       Recommended size: 800x800px. Max 2MB.
                     </p>
                     <div className="mt-2 flex flex-col gap-1.5">
-                      <label className="text-xs font-medium text-on-surface">Or enter Image URL</label>
+                      <label className="text-xs font-medium text-on-surface">
+                        Or enter Image URL
+                      </label>
                       <input
                         type="text"
                         value={formData.image_url}
@@ -543,7 +552,9 @@ export function ProductFormPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-1.5">Tags (Comma Separated)</label>
+                <label className="block text-sm font-medium text-on-surface mb-1.5">
+                  Tags (Comma Separated)
+                </label>
                 <input
                   type="text"
                   value={formData.tags}

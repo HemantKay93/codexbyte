@@ -6,7 +6,6 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuthStore();
   const location = useLocation();
 
-
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">

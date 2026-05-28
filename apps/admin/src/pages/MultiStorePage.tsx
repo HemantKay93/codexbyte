@@ -1,4 +1,4 @@
-import { Card, Button, Badge } from '@byteevolvr/ui';;
+import { Card, Button, Badge } from '@byteevolvr/ui';
 import { Plus, Globe, TrendingUp, TrendingDown, Store, MoreHorizontal } from 'lucide-react';
 
 const mockStores = [

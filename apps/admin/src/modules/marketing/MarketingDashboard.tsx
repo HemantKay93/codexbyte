@@ -14,7 +14,9 @@ export function MarketingDashboard() {
   return (
     <div className="space-y-6 max-w-7xl">
       <div>
-        <h1 className="text-display-sm font-semibold text-on-background">Marketing CRM Dashboard</h1>
+        <h1 className="text-display-sm font-semibold text-on-background">
+          Marketing CRM Dashboard
+        </h1>
         <p className="text-body-sm text-on-surface-variant mt-1">
           Orchestrate campaigns, segments, and automations
         </p>
@@ -27,7 +29,9 @@ export function MarketingDashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-body-sm font-medium text-on-surface-variant">{metric.title}</p>
-                  <p className="text-display-sm font-bold text-on-background mt-1">{metric.value}</p>
+                  <p className="text-display-sm font-bold text-on-background mt-1">
+                    {metric.value}
+                  </p>
                 </div>
                 <div className="rounded-full bg-primary/10 p-3">
                   <metric.icon className="h-5 w-5 text-primary" />
@@ -48,7 +52,9 @@ export function MarketingDashboard() {
                 <Mail className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="font-semibold text-on-background">Email & SMS Campaigns</h3>
-              <p className="text-body-sm text-on-surface-variant mt-1">Send bulk promotional emails</p>
+              <p className="text-body-sm text-on-surface-variant mt-1">
+                Send bulk promotional emails
+              </p>
             </div>
           </Card>
         </div>

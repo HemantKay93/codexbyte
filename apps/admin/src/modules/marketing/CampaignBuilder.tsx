@@ -126,7 +126,6 @@ export function CampaignBuilder() {
                     <option value="">-- Use Default Provider --</option>
                     <option value="meta">Meta Cloud API</option>
                     <option value="evolution">Evolution API</option>
-                    <option value="openwa">OpenWA (Legacy)</option>
                   </select>
                   <p className="text-xs text-on-surface-variant mt-1">
                     Leave empty to use the system default provider.

@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Card, Button, Badge } from '@byteevolvr/ui';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import { ArrowLeft, Edit, Mail, MapPin, ShoppingBag, Star, Loader2, Calendar } from 'lucide-react';
 import { AdminService } from '@byteevolvr/api-client';
 
@@ -115,7 +122,9 @@ export function CustomerDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <div className="p-6 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border-indigo-500/20">
-            <div className="text-indigo-700 dark:text-indigo-300 font-black text-[10px] uppercase tracking-[0.2em] mb-1">Lifetime Value (LTV)</div>
+            <div className="text-indigo-700 dark:text-indigo-300 font-black text-[10px] uppercase tracking-[0.2em] mb-1">
+              Lifetime Value (LTV)
+            </div>
             <div className="text-3xl font-black text-indigo-700 dark:text-indigo-400">
               ₹{stats.totalSpent.toLocaleString()}
             </div>
@@ -273,7 +282,9 @@ export function CustomerDetailPage() {
             </div>
             <div className="p-6">
               {orders.length === 0 ? (
-                <p className="text-center text-on-surface-variant py-4 italic">No activity recorded yet.</p>
+                <p className="text-center text-on-surface-variant py-4 italic">
+                  No activity recorded yet.
+                </p>
               ) : (
                 <div className="relative space-y-6 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-outline-variant">
                   {/* Account Creation Event */}
@@ -284,38 +295,62 @@ export function CustomerDetailPage() {
                     <div className="ml-12 pt-2">
                       <div className="flex justify-between items-center w-full">
                         <span className="font-bold text-on-surface">Account Created</span>
-                        <time className="text-xs text-on-surface-variant ml-4">{new Date(customer.created_at).toLocaleDateString()}</time>
+                        <time className="text-xs text-on-surface-variant ml-4">
+                          {new Date(customer.created_at).toLocaleDateString()}
+                        </time>
                       </div>
-                      <p className="text-sm text-on-surface-variant mt-1">Customer joined ByteEvolvr.</p>
+                      <p className="text-sm text-on-surface-variant mt-1">
+                        Customer joined ByteEvolvr.
+                      </p>
                     </div>
                   </div>
 
                   {/* Order Events mapped to timeline */}
-                  {orders.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).map(order => (
-                    <div key={order.id} className="relative flex items-start gap-4">
-                      <div className={`absolute left-0 h-10 w-10 rounded-full border flex items-center justify-center z-10 
-                        ${order.status === 'refunded' ? 'bg-error/10 border-error/20 text-error' : 
-                          order.status === 'returned' ? 'bg-warning/10 border-warning/20 text-warning' : 
-                          'bg-surface-container border-outline-variant text-on-surface-variant'}`}
-                      >
-                        <ShoppingBag className="h-4 w-4" />
-                      </div>
-                      <div className="ml-12 pt-2 w-full">
-                        <div className="flex justify-between items-center">
-                          <span className="font-bold text-on-surface">
-                            {order.status === 'refunded' ? 'Order Refunded' : 
-                             order.status === 'returned' ? 'Order Returned' : 
-                             'Placed Order'} <Link to={`/orders/${order.id}`} className="text-primary hover:underline">#{order.order_number}</Link>
-                          </span>
-                          <time className="text-xs text-on-surface-variant ml-4">{new Date(order.created_at).toLocaleDateString()}</time>
+                  {orders
+                    .sort(
+                      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                    )
+                    .map((order) => (
+                      <div key={order.id} className="relative flex items-start gap-4">
+                        <div
+                          className={`absolute left-0 h-10 w-10 rounded-full border flex items-center justify-center z-10 
+                        ${
+                          order.status === 'refunded'
+                            ? 'bg-error/10 border-error/20 text-error'
+                            : order.status === 'returned'
+                              ? 'bg-warning/10 border-warning/20 text-warning'
+                              : 'bg-surface-container border-outline-variant text-on-surface-variant'
+                        }`}
+                        >
+                          <ShoppingBag className="h-4 w-4" />
                         </div>
-                        <p className="text-sm text-on-surface-variant mt-1">
-                          {order.status === 'refunded' ? `Refunded ₹${Number(order.total_amount).toLocaleString()}` :
-                           `Spent ₹${Number(order.total_amount).toLocaleString()}`}
-                        </p>
+                        <div className="ml-12 pt-2 w-full">
+                          <div className="flex justify-between items-center">
+                            <span className="font-bold text-on-surface">
+                              {order.status === 'refunded'
+                                ? 'Order Refunded'
+                                : order.status === 'returned'
+                                  ? 'Order Returned'
+                                  : 'Placed Order'}{' '}
+                              <Link
+                                to={`/orders/${order.id}`}
+                                className="text-primary hover:underline"
+                              >
+                                #{order.order_number}
+                              </Link>
+                            </span>
+                            <time className="text-xs text-on-surface-variant ml-4">
+                              {new Date(order.created_at).toLocaleDateString()}
+                            </time>
+                          </div>
+                          <p className="text-sm text-on-surface-variant mt-1">
+                            {order.status === 'refunded'
+                              ? `Refunded ₹${Number(order.total_amount).toLocaleString()}`
+                              : `Spent ₹${Number(order.total_amount).toLocaleString()}`}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               )}
             </div>

@@ -53,6 +53,21 @@ export const whatsappWorker = new Worker(
       );
 
       if (!result.success) {
+        // Validation / Invalid Recipient check (non-existent WhatsApp number)
+        const isValidationFailure = 
+          result.error?.includes('not registered on WhatsApp') || 
+          result.error?.includes('exists:false') ||
+          result.error?.includes('invalid number') ||
+          result.error?.includes('exists is false');
+
+        if (isValidationFailure) {
+          logger.warn(`[WhatsApp Worker] Recipient validation failed for ${to}: ${result.error}. Resolving job gracefully as permanently failed.`);
+          if (jobId) {
+            await whatsappRepo.updateMessageStatus(jobId, 'failed', result.error);
+          }
+          return { success: false, status: 'invalid_recipient', error: result.error, providerUsed: result.provider };
+        }
+
         throw new Error(result.error || 'Unknown provider error');
       }
 
@@ -83,6 +98,7 @@ export const whatsappWorker = new Worker(
     concurrency: 5,
     stalledInterval: 300_000, // Check stalled jobs every 5 min (default: 30s)
     lockDuration: 600_000, // Hold job lock for 10 min
+    drainDelay: 10, // Wait 10 seconds before polling when empty (reduces idle commands)
     removeOnComplete: { count: 100 }, // Keep only last 100 completed jobs
     removeOnFail: { count: 500 }, // Keep only last 500 failed jobs
   }

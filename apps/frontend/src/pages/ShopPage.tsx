@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { ProductService, Product } from '@byteevolvr/api-client';
 import { Loader2, Zap, ArrowRight, Gamepad2, Flame, Tag, Sparkles, TrendingUp, ShoppingCart, Clock, Grid, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCartStore } from '@byteevolvr/store';
+import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 
 export function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   
   const { addItem } = useCartStore();
+  const currencySymbol = useStoreCurrency();
 
   const heroSlides = [
     {
@@ -106,9 +108,9 @@ export function ShopPage() {
         </Link>
         <div className="mt-auto">
           <div className="flex items-baseline gap-3 mb-6">
-            <span className="text-xl font-bold text-stitch-primary">${product.price.toFixed(2)}</span>
+            <span className="text-xl font-bold text-stitch-primary">{currencySymbol}{product.price.toFixed(2)}</span>
             {product.original_price && product.original_price > product.price && (
-              <span className="text-stitch-outline line-through text-sm">${product.original_price.toFixed(2)}</span>
+              <span className="text-stitch-outline line-through text-sm">{currencySymbol}{product.original_price.toFixed(2)}</span>
             )}
           </div>
           <button onClick={() => addItem(product)} className="w-full py-3 bg-stitch-primary/10 border border-stitch-primary/30 text-stitch-primary font-bold rounded-lg hover:bg-stitch-primary hover:text-stitch-on-primary transition-all uppercase tracking-widest flex items-center justify-center gap-2">

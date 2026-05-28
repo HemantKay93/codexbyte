@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import { Plus, Search, Filter, MoreHorizontal, Tag, Loader2, X } from 'lucide-react';
 
 export function DiscountsPage() {
@@ -18,7 +25,7 @@ export function DiscountsPage() {
     max_uses: '',
     start_date: '',
     end_date: '',
-    is_active: true
+    is_active: true,
   });
 
   useEffect(() => {
@@ -67,14 +74,25 @@ export function DiscountsPage() {
         usage_limit: formData.max_uses ? Number(formData.max_uses) : null,
         start_date: formData.start_date ? new Date(formData.start_date).toISOString() : null,
         end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null,
-        is_active: formData.is_active
+        is_active: formData.is_active,
       });
       setShowModal(false);
-      setFormData({ code: '', type: 'percentage', value: '', min_order_amount: '0', max_uses: '', start_date: '', end_date: '', is_active: true });
+      setFormData({
+        code: '',
+        type: 'percentage',
+        value: '',
+        min_order_amount: '0',
+        max_uses: '',
+        start_date: '',
+        end_date: '',
+        is_active: true,
+      });
       fetchDiscounts();
     } catch (err: any) {
       console.error('Failed to create discount', err?.response?.data || err);
-      alert(`Failed to create discount. ${err?.response?.data?.message || err?.message || 'Please check inputs.'}`);
+      alert(
+        `Failed to create discount. ${err?.response?.data?.message || err?.message || 'Please check inputs.'}`
+      );
     } finally {
       setIsSaving(false);
     }
@@ -189,12 +207,19 @@ export function DiscountsPage() {
 
       {showModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+          <div
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            onClick={() => setShowModal(false)}
+          />
           <div className="relative bg-surface w-full max-w-[600px] shadow-xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            
             <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
               <h2 className="text-xl font-bold text-on-surface">Create Discount</h2>
-              <Button variant="ghost" size="sm" onClick={() => setShowModal(false)} className="rounded-full h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowModal(false)}
+                className="rounded-full h-8 w-8 p-0"
+              >
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -277,9 +302,18 @@ export function DiscountsPage() {
             </div>
 
             <div className="p-6 border-t border-outline-variant bg-surface-container-low flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
-              <Button onClick={handleSaveDiscount} disabled={isSaving || !formData.code || !formData.value}>
-                {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+              <Button variant="outline" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveDiscount}
+                disabled={isSaving || !formData.code || !formData.value}
+              >
+                {isSaving ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Plus className="h-4 w-4 mr-2" />
+                )}
                 Create Discount
               </Button>
             </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Input } from '@byteevolvr/ui';;
+import { Card, Button, Input } from '@byteevolvr/ui';
 import { GitBranch, Play, Settings, Plus, Loader2, X } from 'lucide-react';
 import { MarketingService } from '@byteevolvr/api-client';
 
@@ -87,7 +87,9 @@ export function AutomationFlows() {
                     </div>
                     <div className="text-title-md">{flow.name}</div>
                   </div>
-                  <div className={`px-2 py-0.5 rounded-full text-xs font-medium ${flow.is_active ? 'bg-success/10 text-success' : 'bg-surface text-on-surface-variant'}`}>
+                  <div
+                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${flow.is_active ? 'bg-success/10 text-success' : 'bg-surface text-on-surface-variant'}`}
+                  >
                     {flow.is_active ? 'Active' : 'Draft'}
                   </div>
                 </div>
@@ -96,7 +98,7 @@ export function AutomationFlows() {
                 <p className="text-body-sm text-on-surface-variant line-clamp-2 h-10">
                   {flow.description || 'No description provided.'}
                 </p>
-                
+
                 <div className="flex items-center gap-2 text-sm">
                   <span className="text-on-surface-variant">Trigger:</span>
                   <span className="font-mono text-xs bg-surface px-1.5 py-0.5 rounded border border-outline">
@@ -120,12 +122,19 @@ export function AutomationFlows() {
 
       {showModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+          <div
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            onClick={() => setShowModal(false)}
+          />
           <div className="relative bg-surface w-full max-w-[500px] shadow-xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            
             <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
               <h2 className="text-xl font-bold text-on-surface">Create Automation Flow</h2>
-              <Button variant="ghost" size="sm" onClick={() => setShowModal(false)} className="rounded-full h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowModal(false)}
+                className="rounded-full h-8 w-8 p-0"
+              >
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -161,9 +170,15 @@ export function AutomationFlows() {
             </div>
 
             <div className="p-6 border-t border-outline-variant bg-surface-container-low flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleCreate} disabled={saving || !newFlow.name}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+                {saving ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Plus className="h-4 w-4 mr-2" />
+                )}
                 Create Flow
               </Button>
             </div>

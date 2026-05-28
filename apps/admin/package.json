@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite --port 4031",
     "build": "tsc -b && vite build",
+    "lint": "eslint src --ext ts,tsx",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {

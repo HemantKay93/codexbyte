@@ -30,13 +30,6 @@ export function WhatsAppProviderSettings() {
         priority: 2,
         config: { baseUrl: '', apiKey: '', instanceName: '' },
       },
-      {
-        id: '3',
-        provider_name: 'openwa',
-        is_enabled: false,
-        priority: 3,
-        config: { baseUrl: '', apiKey: '' },
-      },
     ],
   });
 
@@ -63,8 +56,8 @@ export function WhatsAppProviderSettings() {
           <Server className="h-5 w-5 text-primary" /> WhatsApp Multi-Provider Configuration
         </h2>
         <p className="text-body-sm text-on-surface-variant mt-1">
-          Manage Evolution API, Meta Cloud API, and OpenWA legacy fallback. The highest priority
-          enabled provider is the default.
+          Manage Evolution API and Meta Cloud API. The highest priority enabled provider is the
+          default.
         </p>
       </div>
 
@@ -160,22 +153,6 @@ function ProviderCard({
                 placeholder="byteevolvr"
                 value={localConfig.instanceName || ''}
                 onChange={(e) => setLocalConfig({ ...localConfig, instanceName: e.target.value })}
-              />
-            </>
-          )}
-
-          {provider.provider_name === 'openwa' && (
-            <>
-              <Input
-                label="Base URL"
-                value={localConfig.baseUrl || ''}
-                onChange={(e) => setLocalConfig({ ...localConfig, baseUrl: e.target.value })}
-              />
-              <Input
-                label="API Key (Optional)"
-                type="password"
-                value={localConfig.apiKey || ''}
-                onChange={(e) => setLocalConfig({ ...localConfig, apiKey: e.target.value })}
               />
             </>
           )}

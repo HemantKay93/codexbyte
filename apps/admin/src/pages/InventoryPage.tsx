@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import {
   Search,
   Filter,
@@ -35,7 +42,6 @@ export function InventoryPage() {
   }, []);
 
   async function fetchInventory() {
-    
     try {
       const data = await AdminService.getProducts();
       setProducts(data || []);
@@ -43,7 +49,6 @@ export function InventoryPage() {
       console.error('Error fetching inventory:', err);
       setError(err.customMessage || 'Failed to load inventory');
     } finally {
-      
     }
   }
 

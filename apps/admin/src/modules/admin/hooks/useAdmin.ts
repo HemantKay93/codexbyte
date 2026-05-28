@@ -3,16 +3,8 @@ import { AdminService } from '@byteevolvr/api-client';
 import { useAdminStore } from '@byteevolvr/store';
 
 export const useAdmin = () => {
-  const {
-    stats,
-    setStats,
-    recentSales,
-    setRecentSales,
-    chartData,
-    setChartData,
-    error,
-    setError,
-  } = useAdminStore();
+  const { stats, setStats, recentSales, setRecentSales, chartData, setChartData, error, setError } =
+    useAdminStore();
 
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDashboardLoading, setDashboardLoading] = useState(false);
@@ -38,7 +30,6 @@ export const useAdmin = () => {
   }, [setError, setStats, setRecentSales, setChartData]);
 
   const fetchOrderDetail = async (id: string) => {
-    
     try {
       const orderData = await AdminService.getOrderDetail(id);
       return orderData;
@@ -46,7 +37,6 @@ export const useAdmin = () => {
       setError(err.customMessage || 'Failed to fetch order details');
       return null;
     } finally {
-      
     }
   };
 
@@ -63,7 +53,6 @@ export const useAdmin = () => {
   };
 
   const getCustomers = async () => {
-    
     try {
       const data = await AdminService.getCustomers();
       return data;
@@ -71,7 +60,6 @@ export const useAdmin = () => {
       setError(err.customMessage || 'Failed to fetch customers');
       return [];
     } finally {
-      
     }
   };
 

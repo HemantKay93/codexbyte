@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Input } from '@byteevolvr/ui';;
+import { Card, Button, Input } from '@byteevolvr/ui';
 import { Filter, Users, Loader2, Plus, X } from 'lucide-react';
 import { MarketingService } from '@byteevolvr/api-client';
 
@@ -8,7 +8,7 @@ export function AudienceSegments() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
-  
+
   const [newSegment, setNewSegment] = useState({
     name: '',
     description: '',
@@ -89,8 +89,12 @@ export function AudienceSegments() {
                   {seg.description || 'No description provided.'}
                 </p>
                 <div className="mt-4 flex items-center justify-between text-sm">
-                  <span className="font-medium text-on-background">Est. Size: {seg.estimated_count}</span>
-                  <Button variant="outline" size="sm">Edit Rules</Button>
+                  <span className="font-medium text-on-background">
+                    Est. Size: {seg.estimated_count}
+                  </span>
+                  <Button variant="outline" size="sm">
+                    Edit Rules
+                  </Button>
                 </div>
               </div>
             </Card>
@@ -100,12 +104,19 @@ export function AudienceSegments() {
 
       {showModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+          <div
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            onClick={() => setShowModal(false)}
+          />
           <div className="relative bg-surface w-full max-w-[500px] shadow-xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-            
             <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
               <h2 className="text-xl font-bold text-on-surface">Create Segment</h2>
-              <Button variant="ghost" size="sm" onClick={() => setShowModal(false)} className="rounded-full h-8 w-8 p-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowModal(false)}
+                className="rounded-full h-8 w-8 p-0"
+              >
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -130,19 +141,29 @@ export function AudienceSegments() {
                 <select
                   className="w-full h-11 px-3 rounded-lg border border-outline bg-surface text-body-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                   value={newSegment.filter_rules.type}
-                  onChange={(e) => setNewSegment({ ...newSegment, filter_rules: { type: e.target.value } })}
+                  onChange={(e) =>
+                    setNewSegment({ ...newSegment, filter_rules: { type: e.target.value } })
+                  }
                 >
                   <option value="all">All Users</option>
                   <option value="high_spenders">High Spenders (Placeholder)</option>
                 </select>
-                <p className="text-xs text-on-surface-variant mt-1">Rule engine MVP only supports "All Users" dynamically right now.</p>
+                <p className="text-xs text-on-surface-variant mt-1">
+                  Rule engine MVP only supports "All Users" dynamically right now.
+                </p>
               </div>
             </div>
 
             <div className="p-6 border-t border-outline-variant bg-surface-container-low flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleCreate} disabled={saving || !newSegment.name}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+                {saving ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <Plus className="h-4 w-4 mr-2" />
+                )}
                 Create Segment
               </Button>
             </div>

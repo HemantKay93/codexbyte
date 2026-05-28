@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Button } from '@byteevolvr/ui';;
+import { Card, Button } from '@byteevolvr/ui';
 import {
   Download,
   TrendingUp,

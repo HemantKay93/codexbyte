@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Badge, Button, Input } from '@byteevolvr/ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/Table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../components/ui/Table';
 import { Search, Filter, Download, MoreHorizontal, Loader2 } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
@@ -16,7 +23,6 @@ export function OrderManagementPage() {
   }, []);
 
   async function fetchOrders() {
-    
     try {
       const data = await AdminService.getOrders();
       // Map user_profiles to user for backward compatibility
@@ -29,7 +35,6 @@ export function OrderManagementPage() {
       console.error('Failed to fetch orders:', error);
       setError(error.customMessage || 'Failed to load orders');
     } finally {
-      
     }
   }
 
@@ -163,7 +168,9 @@ export function OrderManagementPage() {
                           variant={
                             order.status === 'delivered' || order.status === 'refunded'
                               ? 'success'
-                              : order.status === 'shipped' || order.status === 'packed' || order.status === 'confirmed'
+                              : order.status === 'shipped' ||
+                                  order.status === 'packed' ||
+                                  order.status === 'confirmed'
                                 ? 'primary'
                                 : order.status === 'cancelled'
                                   ? 'error'

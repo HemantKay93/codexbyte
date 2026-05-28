@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/Table';;
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../components/ui/Table';
 import { Plus, Filter, Search, UploadCloud, Edit } from 'lucide-react';
 import { BulkImportDialog } from '../components/BulkImportDialog';
 import { useProduct } from '../modules/product/hooks/useProduct';
@@ -131,7 +138,7 @@ export function ProductManagementPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <button 
+                      <button
                         onClick={() => navigate(`/products/${product.id}/edit`)}
                         className="text-on-surface-variant hover:text-primary p-2 rounded-md hover:bg-primary/10 transition-colors flex items-center gap-1 text-sm font-medium"
                       >

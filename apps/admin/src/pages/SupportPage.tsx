@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Badge } from '@byteevolvr/ui';;
+import { Card, Button, Badge } from '@byteevolvr/ui';
 import { LifeBuoy, MoreVertical, MessageSquare, Loader2, RefreshCcw } from 'lucide-react';
 import { SupportService } from '@byteevolvr/api-client';
 
@@ -22,7 +22,6 @@ export function SupportPage() {
       setLoading(false);
     }
   }
-
 
   const getStatusColor = (status: string) => {
     switch (status) {

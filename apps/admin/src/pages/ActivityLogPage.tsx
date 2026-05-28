@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Input } from '@byteevolvr/ui';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import {
   Search,
   Filter,

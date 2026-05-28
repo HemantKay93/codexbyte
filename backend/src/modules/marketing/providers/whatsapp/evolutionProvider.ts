@@ -53,7 +53,7 @@ export class EvolutionProvider implements IWhatsAppProvider {
         '[EvolutionProvider] Error sending text message:',
         error.response?.data || error.message
       );
-      return this.createErrorResponse(error.response?.data?.message || error.message);
+      return this.createErrorResponse(this.extractErrorMessage(error));
     }
   }
 
@@ -86,7 +86,7 @@ export class EvolutionProvider implements IWhatsAppProvider {
         '[EvolutionProvider] Error sending media message:',
         error.response?.data || error.message
       );
-      return this.createErrorResponse(error.response?.data?.message || error.message);
+      return this.createErrorResponse(this.extractErrorMessage(error));
     }
   }
 
@@ -140,5 +140,21 @@ export class EvolutionProvider implements IWhatsAppProvider {
       error,
       status: 'failed',
     };
+  }
+
+  private extractErrorMessage(error: any): string {
+    if (error.response?.data) {
+      const data = error.response.data;
+      if (data.response?.message?.[0]?.exists === false) {
+        return 'Recipient number is not registered on WhatsApp';
+      }
+      if (data.message) {
+        return typeof data.message === 'string' ? data.message : JSON.stringify(data.message);
+      }
+      if (data.error) {
+        return typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+      }
+    }
+    return error.message || 'Unknown Evolution API Error';
   }
 }

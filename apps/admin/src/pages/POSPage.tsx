@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Input, Button, Badge } from '@byteevolvr/ui';;
+import { Card, Input, Button, Badge } from '@byteevolvr/ui';
 import {
   Search,
   ShoppingCart,
@@ -139,7 +139,10 @@ export function POSPage() {
 
   const handlePrintReceipt = async () => {
     if (!lastCreatedOrder) return;
-    const order = { ...lastCreatedOrder, total_amount: lastCreatedOrder.totalAmount || lastCreatedOrder.total_amount };
+    const order = {
+      ...lastCreatedOrder,
+      total_amount: lastCreatedOrder.totalAmount || lastCreatedOrder.total_amount,
+    };
     const items =
       order.order_items && order.order_items.length > 0
         ? order.order_items
@@ -224,9 +227,7 @@ export function POSPage() {
                     className="cursor-pointer"
                     onClick={() => addToCart(product)}
                   >
-                    <Card
-                      className="hover:border-primary hover:shadow-md transition-all h-36 flex flex-col justify-between p-4 group bg-surface"
-                    >
+                    <Card className="hover:border-primary hover:shadow-md transition-all h-36 flex flex-col justify-between p-4 group bg-surface">
                       <div>
                         <div className="font-semibold text-on-surface line-clamp-2 group-hover:text-primary transition-colors text-sm">
                           {product.name}

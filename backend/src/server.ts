@@ -34,6 +34,7 @@ import inventoryRoutes from './modules/inventory/inventory.routes.js';
 import userRoutes from './modules/user/user.routes.js';
 import posRoutes from './modules/pos/pos.routes.js';
 import marketingRoutes from './modules/marketing/marketing.routes.js';
+import { accountingRoutes } from './modules/accounting/accounting.routes.js';
 import leadRoutes from './modules/lead/lead.routes.js';
 import supportRoutes from './modules/support/support.routes.js';
 import supplierRoutes from './modules/supplier/supplier.routes.js';
@@ -41,9 +42,15 @@ import whatsappRoutes from './modules/whatsapp/whatsapp.routes.js';
 
 import * as reportController from './modules/admin/report.controller.js';
 import { authenticate, authorize } from './middlewares/auth.js';
+import { validateEnvironment } from './config/env.js';
+import { requestIdCorrelation } from './middlewares/requestId.js';
+import { csrfProtection } from './middlewares/csrf.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+
+// Run startup environment variable validation
+validateEnvironment();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -100,28 +107,54 @@ app.use(
 );
 app.use(express.json());
 
+// Request ID Correlation & CSRF Protection
+app.use(requestIdCorrelation);
+app.use(csrfProtection);
+
 // Request Logging
 app.use(requestLogger);
 
-// Rate Limiting
-const limiter = rateLimit({
+// Rate Limiting Strategies
+// 1. General API Limiter (Standard endpoints)
+const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5000, // Increased from 200 to 5000 to allow for UI status polling
-  message: 'Too many requests',
+  max: 300, // 300 requests per 15 minutes
+  message: { message: 'Too many requests from this IP, please try again after 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
-app.use('/api/', limiter);
 
-// API Routes (V1)
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/products', productRoutes);
-app.use('/api/v1/orders', orderRoutes);
-app.use('/api/v1/admin', adminRoutes);
-app.use('/api/v1/reviews', reviewRoutes);
-app.use('/api/v1/cms', cmsRoutes);
-app.use('/api/v1/webhooks', webhookRoutes);
-app.use('/api/v1/wishlist', wishlistRoutes);
-app.use('/api/v1/payments', paymentRoutes);
-app.use('/api/v1/shipping', shippingRoutes);
+// 2. Strict Auth / Bruteforce Protection
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30, // 30 auth attempts per 15 minutes
+  message: { message: 'Too many authentication attempts, please try again after 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// 3. High Burst Webhook Ingestion Limiter
+const webhookLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1000, // 1000 requests per 15 minutes to allow burst integrations
+  message: { message: 'Webhook event ingestion limit exceeded.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Mount Routes with Specific Rate Limits
+app.use('/api/v1/auth', authLimiter, authRoutes);
+app.use('/api/v1/webhooks', webhookLimiter, webhookRoutes);
+
+app.use('/api/v1/accounting', generalLimiter, accountingRoutes);
+app.use('/api/v1/products', generalLimiter, productRoutes);
+app.use('/api/v1/orders', generalLimiter, orderRoutes);
+app.use('/api/v1/admin', generalLimiter, adminRoutes);
+app.use('/api/v1/reviews', generalLimiter, reviewRoutes);
+app.use('/api/v1/cms', generalLimiter, cmsRoutes);
+app.use('/api/v1/wishlist', generalLimiter, wishlistRoutes);
+app.use('/api/v1/payments', generalLimiter, paymentRoutes);
+app.use('/api/v1/shipping', generalLimiter, shippingRoutes);
 app.use('/api/v1/warehouse', inventoryRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/pos', posRoutes);

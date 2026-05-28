@@ -47,6 +47,23 @@ export interface AuthRequest extends Request {
   user?: any;
 }
 
+/**
+ * Revokes/blacklists a token in Redis until its natural expiration.
+ */
+export const blacklistToken = async (token: string, expiresAtUnix: number): Promise<void> => {
+  try {
+    if (redis && redis.status === 'ready') {
+      const ttl = Math.max(0, expiresAtUnix - Math.floor(Date.now() / 1000));
+      if (ttl > 0) {
+        await redis.set(`blacklist:token:${token}`, '1', 'EX', ttl);
+        logger.info(`[Auth] Token successfully blacklisted for ${ttl} seconds`);
+      }
+    }
+  } catch (err) {
+    logger.error(`[Auth] Failed to blacklist token: ${(err as Error).message}`);
+  }
+};
+
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
@@ -56,6 +73,20 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     }
 
     const token = authHeader.split(' ')[1];
+
+    // Check if token is blacklisted
+    try {
+      if (redis && redis.status === 'ready') {
+        const isBlacklisted = await redis.get(`blacklist:token:${token}`);
+        if (isBlacklisted) {
+          logger.warn(`[Auth] Access attempted with blacklisted token for path: ${req.path}`);
+          return next(new AppError('Invalid or expired token', 401));
+        }
+      }
+    } catch (redisErr) {
+      logger.error(`[Auth] Blacklist check error: ${(redisErr as Error).message}`);
+    }
+
     let user: any = null;
     let role: string = 'user';
     let fullName: string = '';
@@ -166,6 +197,20 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
     }
 
     const token = authHeader.split(' ')[1];
+
+    // Check if token is blacklisted
+    try {
+      if (redis && redis.status === 'ready') {
+        const isBlacklisted = await redis.get(`blacklist:token:${token}`);
+        if (isBlacklisted) {
+          logger.warn(`[Auth] Optional auth: Attempted use of blacklisted token`);
+          return next();
+        }
+      }
+    } catch (redisErr) {
+      logger.error(`[Auth] Blacklist check error: ${(redisErr as Error).message}`);
+    }
+
     const decodedUnverified: any = jwt.decode(token);
     const isSupabaseToken =
       decodedUnverified && decodedUnverified.iss && decodedUnverified.iss.includes('supabase');

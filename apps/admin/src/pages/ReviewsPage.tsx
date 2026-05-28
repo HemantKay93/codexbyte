@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table';;
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import { Star, MessageSquare, Check, X, Search, Filter, Loader2, RefreshCcw } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { ReviewService } from '@byteevolvr/api-client';
@@ -16,7 +23,6 @@ export function ReviewsPage() {
   }, []);
 
   async function fetchReviews() {
-    
     try {
       const data = await ReviewService.getAllReviews();
       setReviews(data || []);
@@ -24,7 +30,6 @@ export function ReviewsPage() {
       console.error('Error fetching reviews:', err);
       setError(err.customMessage || 'Failed to load reviews');
     } finally {
-      
     }
   }
 

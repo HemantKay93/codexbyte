@@ -6,7 +6,6 @@ export const useProduct = () => {
   const { products, setProducts, error, setError } = useAdminStore();
 
   const fetchProducts = async () => {
-    
     setError(null);
     try {
       const data = await ProductService.getProducts();
@@ -14,12 +13,10 @@ export const useProduct = () => {
     } catch (err: any) {
       setError(err.customMessage || 'Failed to fetch products');
     } finally {
-      
     }
   };
 
   const saveProduct = async (data: ProductFormData) => {
-    
     setError(null);
     try {
       if (data.id) {
@@ -32,13 +29,12 @@ export const useProduct = () => {
       setError(err.customMessage || 'Failed to save product');
       throw err;
     } finally {
-      
     }
   };
 
   const deleteProduct = async (id: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
-    
+
     setError(null);
     try {
       await ProductService.deleteProduct(id);
@@ -46,7 +42,6 @@ export const useProduct = () => {
     } catch (err: any) {
       setError(err.customMessage || 'Failed to delete product');
     } finally {
-      
     }
   };
 

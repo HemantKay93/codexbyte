@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
-import { Loader2, X, Clock, ArrowRightLeft, ArrowUpRight, ArrowDownRight, Info } from 'lucide-react';
+import {
+  Loader2,
+  X,
+  Clock,
+  ArrowRightLeft,
+  ArrowUpRight,
+  ArrowDownRight,
+  Info,
+} from 'lucide-react';
 import { Button, Badge } from '@byteevolvr/ui';
 
 export function StockMovementHistoryModal({
@@ -29,23 +37,35 @@ export function StockMovementHistoryModal({
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'in': return <ArrowDownRight className="h-4 w-4 text-emerald-500" />;
-      case 'out': return <ArrowUpRight className="h-4 w-4 text-rose-500" />;
-      case 'transfer': return <ArrowRightLeft className="h-4 w-4 text-indigo-500" />;
-      case 'adjustment': return <Info className="h-4 w-4 text-warning" />;
-      case 'return': return <ArrowDownRight className="h-4 w-4 text-orange-500" />;
-      default: return <Clock className="h-4 w-4 text-on-surface-variant" />;
+      case 'in':
+        return <ArrowDownRight className="h-4 w-4 text-emerald-500" />;
+      case 'out':
+        return <ArrowUpRight className="h-4 w-4 text-rose-500" />;
+      case 'transfer':
+        return <ArrowRightLeft className="h-4 w-4 text-indigo-500" />;
+      case 'adjustment':
+        return <Info className="h-4 w-4 text-warning" />;
+      case 'return':
+        return <ArrowDownRight className="h-4 w-4 text-orange-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-on-surface-variant" />;
     }
   };
 
   const getTypeBadgeVariant = (type: string) => {
     switch (type) {
-      case 'in': return 'success';
-      case 'out': return 'error';
-      case 'transfer': return 'primary';
-      case 'adjustment': return 'warning';
-      case 'return': return 'warning';
-      default: return 'secondary';
+      case 'in':
+        return 'success';
+      case 'out':
+        return 'error';
+      case 'transfer':
+        return 'primary';
+      case 'adjustment':
+        return 'warning';
+      case 'return':
+        return 'warning';
+      default:
+        return 'secondary';
     }
   };
 
@@ -65,7 +85,12 @@ export function StockMovementHistoryModal({
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose} className="h-10 w-10 p-0 rounded-xl hover:bg-surface-container">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="h-10 w-10 p-0 rounded-xl hover:bg-surface-container"
+          >
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -83,7 +108,9 @@ export function StockMovementHistoryModal({
             <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-outline-variant">
               {movements.map((mov) => (
                 <div key={mov.id} className="relative flex items-start gap-6">
-                  <div className={`absolute left-0 h-10 w-10 rounded-full border bg-surface-container-lowest flex items-center justify-center z-10`}>
+                  <div
+                    className={`absolute left-0 h-10 w-10 rounded-full border bg-surface-container-lowest flex items-center justify-center z-10`}
+                  >
                     {getTypeIcon(mov.type)}
                   </div>
                   <div className="ml-10 flex-1 pt-0.5">
@@ -92,8 +119,11 @@ export function StockMovementHistoryModal({
                         <Badge variant={getTypeBadgeVariant(mov.type)} className="capitalize">
                           {mov.type}
                         </Badge>
-                        <span className={`text-sm font-black ${mov.quantity > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-                          {mov.quantity > 0 ? '+' : ''}{mov.quantity}
+                        <span
+                          className={`text-sm font-black ${mov.quantity > 0 ? 'text-emerald-500' : 'text-rose-500'}`}
+                        >
+                          {mov.quantity > 0 ? '+' : ''}
+                          {mov.quantity}
                         </span>
                         <span className="text-sm font-bold text-on-surface-variant">
                           • {mov.warehouse_name}

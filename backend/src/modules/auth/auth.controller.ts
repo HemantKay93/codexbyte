@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import { AuthService } from './auth.service.js';
 import { catchAsync } from '../../middlewares/error.js';
 import { AuditService } from '../../services/auditService.js';
+import { blacklistToken } from '../../middlewares/auth.js';
 
 const authService = new AuthService();
 
@@ -84,5 +86,29 @@ export const getAdminMe = catchAsync(async (req: any, res: Response) => {
   res.json({
     success: true,
     data: { user },
+  });
+});
+
+export const logout = catchAsync(async (req: any, res: Response) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const decoded: any = jwt.decode(token);
+    // If we have an expiration timestamp, use it. Otherwise, default to 24h.
+    const expiresAt = decoded && decoded.exp ? decoded.exp : Math.floor(Date.now() / 1000) + 86400;
+
+    await blacklistToken(token, expiresAt);
+
+    await AuditService.log({
+      user_id: req.user.id,
+      action: 'USER_LOGOUT',
+      module: 'auth',
+      new_data: { email: req.user.email },
+    });
+  }
+
+  res.json({
+    success: true,
+    message: 'Logged out successfully',
   });
 });

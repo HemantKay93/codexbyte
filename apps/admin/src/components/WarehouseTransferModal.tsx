@@ -74,7 +74,12 @@ export function WarehouseTransferModal({
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose} className="h-10 w-10 p-0 rounded-xl hover:bg-surface-container">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="h-10 w-10 p-0 rounded-xl hover:bg-surface-container"
+          >
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -98,7 +103,9 @@ export function WarehouseTransferModal({
               >
                 <option value="">Select Origin</option>
                 {warehouses.map((w) => (
-                  <option key={w.id} value={w.id}>{w.name}</option>
+                  <option key={w.id} value={w.id}>
+                    {w.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -114,7 +121,9 @@ export function WarehouseTransferModal({
               >
                 <option value="">Select Destination</option>
                 {warehouses.map((w) => (
-                  <option key={w.id} value={w.id}>{w.name}</option>
+                  <option key={w.id} value={w.id}>
+                    {w.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -146,7 +155,11 @@ export function WarehouseTransferModal({
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button variant="ghost" onClick={onClose} className="flex-1 h-12 rounded-2xl font-black uppercase tracking-widest">
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              className="flex-1 h-12 rounded-2xl font-black uppercase tracking-widest"
+            >
               Cancel
             </Button>
             <Button

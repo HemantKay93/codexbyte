@@ -2,6 +2,7 @@
   "name": "byteevolvr-platform",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "npm@10.9.3",
   "workspaces": [
     "apps/*",
     "packages/*",
@@ -12,10 +13,10 @@
     "dev:frontend": "npm run dev --workspace @byteevolvr/frontend",
     "dev:admin": "npm run dev --workspace @byteevolvr/admin",
     "dev:backend": "npm run dev --workspace @byteevolvr/backend",
-    "build": "npm run build --workspaces --if-present",
-    "lint": "npm run lint --workspaces --if-present",
-    "type-check": "npm run type-check --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "test": "turbo run test",
     "prepare": "node tools/dev-scripts/prepare.js"
   },
   "devDependencies": {
@@ -27,7 +28,9 @@
     "eslint-plugin-prettier": "^5.5.5",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
-    "prettier": "^3.8.3"
+    "prettier": "^3.8.3",
+    "rollup-plugin-visualizer": "^7.0.1",
+    "turbo": "^2.0.4"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

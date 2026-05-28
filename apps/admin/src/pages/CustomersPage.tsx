@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Button, Input, Badge } from '@byteevolvr/ui';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/Table';;
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../components/ui/Table';
 import { Search, Download, Filter, MoreHorizontal, Mail, Loader2, User } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
@@ -15,7 +22,6 @@ export function CustomersPage() {
   }, []);
 
   async function fetchCustomers() {
-    
     try {
       const data = await AdminService.getCustomers();
       setCustomers(data || []);
@@ -23,7 +29,6 @@ export function CustomersPage() {
       console.error('Error fetching customers:', err);
       setError(err.customMessage || 'Failed to load customers');
     } finally {
-      
     }
   }
 

@@ -66,52 +66,69 @@ export function LoginPage() {
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center bg-[#030712] overflow-hidden font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
-      
       {/* Dynamic Background Glow following cursor */}
-      <div 
+      <div
         className="pointer-events-none absolute inset-0 z-0 transition-opacity duration-300"
         style={{
-          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(79, 70, 229, 0.15), transparent 80%)`
+          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(79, 70, 229, 0.15), transparent 80%)`,
         }}
       />
 
       {/* Decorative Orbs */}
-      <div className="absolute top-[-10%] left-[-5%] w-[50vw] h-[50vw] rounded-full bg-indigo-900/20 blur-[120px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }} />
-      <div className="absolute bottom-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-blue-900/20 blur-[100px] pointer-events-none animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
-      
+      <div
+        className="absolute top-[-10%] left-[-5%] w-[50vw] h-[50vw] rounded-full bg-indigo-900/20 blur-[120px] pointer-events-none animate-pulse"
+        style={{ animationDuration: '8s' }}
+      />
+      <div
+        className="absolute bottom-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-blue-900/20 blur-[100px] pointer-events-none animate-pulse"
+        style={{ animationDuration: '10s', animationDelay: '2s' }}
+      />
+
       {/* Geometric Overlay */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#4f46e5 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+      <div
+        className="absolute inset-0 z-0 opacity-20 pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(#4f46e5 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+        }}
+      />
 
       <div className="relative z-10 w-full max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 items-center p-6 lg:p-16 gap-12 lg:gap-24">
-        
         {/* Left Side: Brand & Copy */}
         <div className="w-full flex flex-col justify-center text-center lg:text-left pt-12 lg:pt-0">
           <div className="w-full flex justify-center lg:justify-start mb-6">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 backdrop-blur-md">
               <span className="w-2 h-2 rounded-full bg-indigo-400 shadow-[0_0_8px_#818cf8] animate-pulse" />
-              <span className="text-indigo-200 text-xs font-semibold tracking-widest uppercase">Admin Secure Portal</span>
+              <span className="text-indigo-200 text-xs font-semibold tracking-widest uppercase">
+                Admin Secure Portal
+              </span>
             </div>
           </div>
-          
+
           <h1 className="w-full text-5xl lg:text-7xl font-black text-white tracking-tighter leading-[1.1] mb-6">
-            ByteEvolvr <br className="hidden lg:block"/>
+            ByteEvolvr <br className="hidden lg:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-400 to-cyan-400">
               Command Center.
             </span>
           </h1>
-          
+
           <p className="w-full max-w-xl text-slate-400 text-lg lg:text-xl font-medium leading-relaxed mx-auto lg:mx-0">
-            Welcome back. Securely authenticate to manage your unified commerce operations, view analytics, and orchestrate growth from one place.
+            Welcome back. Securely authenticate to manage your unified commerce operations, view
+            analytics, and orchestrate growth from one place.
           </p>
 
           <div className="hidden lg:flex w-full items-center gap-8 mt-10 opacity-60">
             <div className="flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-indigo-400" />
-              <span className="text-slate-300 text-sm font-semibold tracking-wider uppercase">End-to-End Encrypted</span>
+              <span className="text-slate-300 text-sm font-semibold tracking-wider uppercase">
+                End-to-End Encrypted
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Fingerprint className="w-5 h-5 text-cyan-400" />
-              <span className="text-slate-300 text-sm font-semibold tracking-wider uppercase">Biometric Ready</span>
+              <span className="text-slate-300 text-sm font-semibold tracking-wider uppercase">
+                Biometric Ready
+              </span>
             </div>
           </div>
         </div>
@@ -159,7 +176,10 @@ export function LoginPage() {
                   <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest">
                     Password
                   </label>
-                  <button type="button" className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-medium">
+                  <button
+                    type="button"
+                    className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
+                  >
                     Forgot?
                   </button>
                 </div>
@@ -196,7 +216,10 @@ export function LoginPage() {
                   ) : (
                     <>
                       <span>Initialize Session</span>
-                      <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" strokeWidth={2.5} />
+                      <ArrowRight
+                        className="h-4 w-4 transition-transform group-hover/btn:translate-x-1"
+                        strokeWidth={2.5}
+                      />
                     </>
                   )}
                   {/* Button shine effect */}
