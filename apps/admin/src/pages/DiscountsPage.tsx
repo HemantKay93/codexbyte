@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Plus, Search, Filter, MoreHorizontal, Tag, Loader2, X } from 'lucide-react';
+
 import {
   Table,
   TableHeader,
@@ -9,7 +11,6 @@ import {
   TableBody,
   TableCell,
 } from '../components/ui/Table';
-import { Plus, Search, Filter, MoreHorizontal, Tag, Loader2, X } from 'lucide-react';
 
 export function DiscountsPage() {
   const [searchTerm, setSearchTerm] = useState('');

@@ -1,6 +1,8 @@
 import admin from 'firebase-admin';
-import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
+
 import logger from '../../services/logger.js';
+
+import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
 
 export class FirebaseProvider implements IProvider {
   public readonly name = 'firebase-push';

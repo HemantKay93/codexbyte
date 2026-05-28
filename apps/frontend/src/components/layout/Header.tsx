@@ -1,8 +1,9 @@
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Navbar } from '@byteevolvr/ui';
-import { AppLogo } from '@/components/ui/AppLogo';
 import { Mail, Phone, ShoppingCart, User } from 'lucide-react';
 import { useAuthStore, useCartStore } from '@byteevolvr/store';
+
+import { AppLogo } from '@/components/ui/AppLogo';
 import { useCMS } from '@/features/cms/useCMS';
 
 const navLinks = [

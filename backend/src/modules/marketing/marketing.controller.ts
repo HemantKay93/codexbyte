@@ -1,9 +1,11 @@
 import { Response } from 'express';
+
 import { AuthRequest } from '../../middlewares/auth.js';
-import { MarketingService } from './marketing.service.js';
 import { catchAsync } from '../../middlewares/error.js';
 import { AuditService } from '../../services/auditService.js';
 import { createResponse } from '../../utils/apiResponse.js';
+
+import { MarketingService } from './marketing.service.js';
 
 const marketingService = new MarketingService();
 

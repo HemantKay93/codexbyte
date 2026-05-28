@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+
 import { supabase, getAdminClient } from '../config/supabase.js';
-import { AppError } from './error.js';
 import logger from '../services/logger.js';
 import { redis } from '../config/redis.js';
+
+import { AppError } from './error.js';
 
 const jwtSecret = process.env.JWT_SECRET;
 

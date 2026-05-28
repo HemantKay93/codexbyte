@@ -1,5 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
 import crypto from 'node:crypto';
+
+import { Request, Response, NextFunction } from 'express';
+
 import logger from '../services/logger.js';
 
 const parseCookies = (cookieHeader?: string): Record<string, string> => {

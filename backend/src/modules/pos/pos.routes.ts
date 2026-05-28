@@ -1,6 +1,8 @@
 import express from 'express';
-import * as posController from './pos.controller.js';
+
 import { authenticate, authorize } from '../../middlewares/auth.js';
+
+import * as posController from './pos.controller.js';
 
 const router = express.Router();
 

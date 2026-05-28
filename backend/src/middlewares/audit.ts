@@ -1,6 +1,8 @@
 import { Response, NextFunction } from 'express';
-import { AuthRequest } from './auth.js';
+
 import { AuditService } from '../services/auditService.js';
+
+import { AuthRequest } from './auth.js';
 
 export const auditLog = (module: string, action: string) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {

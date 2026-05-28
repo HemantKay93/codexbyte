@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { JobService } from '../jobService.js';
 import { emailQueue, notificationQueue, analyticsQueue } from '../../core/queues/index.js';
 import logger from '../logger.js';

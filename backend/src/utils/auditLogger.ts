@@ -20,7 +20,7 @@ export const logAudit = async (
       old_data: oldData,
       new_data: newData,
       ip_address: req?.ip,
-      user_agent: req?.headers?.['user-agent']
+      user_agent: req?.headers?.['user-agent'],
     });
   } catch (error) {
     logger.error('Failed to save audit log:', error);

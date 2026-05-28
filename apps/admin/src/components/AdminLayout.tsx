@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Sidebar } from './Sidebar';
 import {
   Bell,
   Search,
@@ -15,9 +14,12 @@ import {
   Info,
   X,
 } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
 import { useAuthStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
+
+import { useTheme } from '../contexts/ThemeContext';
+
+import { Sidebar } from './Sidebar';
 
 function formatRelativeTime(date: Date) {
   const now = new Date();

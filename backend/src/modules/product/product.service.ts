@@ -1,7 +1,8 @@
-import { ProductRepository } from './product.repository.js';
 import { AppError } from '../../middlewares/error.js';
 import { generateSKU } from '../../utils/sku.js';
 import { slugify } from '../../utils/slugify.js';
+
+import { ProductRepository } from './product.repository.js';
 
 const productRepo = new ProductRepository();
 

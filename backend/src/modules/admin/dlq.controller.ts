@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
-import { DLQService } from './dlq.service.js';
+
 import { catchAsync } from '../../middlewares/error.js';
+
+import { DLQService } from './dlq.service.js';
 
 const dlqService = new DLQService();
 

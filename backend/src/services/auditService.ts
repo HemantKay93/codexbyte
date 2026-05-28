@@ -13,7 +13,8 @@ export class AuditService {
   }) {
     try {
       const admin = await getAdminClient();
-      const validUserId = data.user_id === '00000000-0000-0000-0000-000000000000' ? null : data.user_id;
+      const validUserId =
+        data.user_id === '00000000-0000-0000-0000-000000000000' ? null : data.user_id;
       await admin.from('audit_logs').insert({ ...data, user_id: validUserId });
     } catch (error) {
       console.error('Audit Log Error:', error);
@@ -29,7 +30,8 @@ export class AuditService {
   }) {
     try {
       const admin = await getAdminClient();
-      const validUserId = data.performed_by === '00000000-0000-0000-0000-000000000000' ? null : data.performed_by;
+      const validUserId =
+        data.performed_by === '00000000-0000-0000-0000-000000000000' ? null : data.performed_by;
       await admin.from('order_activity_logs').insert({ ...data, performed_by: validUserId });
     } catch (error) {
       console.error('Order Activity Log Error:', error);

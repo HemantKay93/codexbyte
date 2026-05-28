@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
+
 import { getAdminClient } from '../../config/supabase.js';
+
 import { InventoryService } from './inventory.service.js';
+
 import { AuditService } from '../../services/auditService.js';
 import { catchAsync } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';

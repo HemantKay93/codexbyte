@@ -1,6 +1,8 @@
 import nodemailer from 'nodemailer';
-import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
+
 import logger from '../../services/logger.js';
+
+import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
 
 export class SmtpProvider implements IProvider {
   public readonly name = 'smtp-email';

@@ -2,11 +2,12 @@ import { IProvider, SendMessagePayload } from '../../../core/providers/IProvider
 import { ResendEmailProvider } from '../../../core/providers/ResendEmailProvider.js';
 import { BrevoProvider } from '../../../core/providers/brevoProvider.js';
 import { SmtpProvider } from '../../../core/providers/smtpProvider.js';
-import { ProviderHealthService } from './provider-health.service.js';
 import { FirebaseProvider } from '../../../core/providers/firebaseProvider.js';
-import { MetaCloudProvider } from './whatsapp/metaCloudProvider.js';
 import { QueueJobPayload } from '../../../core/contracts/index.js';
 import { CMSService } from '../../cms/cms.service.js';
+
+import { MetaCloudProvider } from './whatsapp/metaCloudProvider.js';
+import { ProviderHealthService } from './provider-health.service.js';
 
 export class ProviderService {
   /**

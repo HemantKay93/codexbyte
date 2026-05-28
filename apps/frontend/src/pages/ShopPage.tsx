@@ -17,6 +17,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useCartStore } from '@byteevolvr/store';
+
 import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 
 export function ShopPage() {

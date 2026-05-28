@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCartStore, useAuthStore } from '@byteevolvr/store';
 import { OrderService, ShippingService, UserService } from '@byteevolvr/api-client';
-import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 import {
   Loader2,
   CreditCard,
@@ -13,6 +12,8 @@ import {
   CheckCircle,
   Award,
 } from 'lucide-react';
+
+import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 export function CheckoutPage() {
   const { items, clearCart, totalAmount } = useCartStore();
   const { user } = useAuthStore();

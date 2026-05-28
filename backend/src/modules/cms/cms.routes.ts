@@ -1,6 +1,8 @@
 import express from 'express';
-import * as cmsController from './cms.controller.js';
+
 import { authenticate, authorize } from '../../middlewares/auth.js';
+
+import * as cmsController from './cms.controller.js';
 
 const router = express.Router();
 

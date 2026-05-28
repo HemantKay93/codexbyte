@@ -1,7 +1,8 @@
 import { getAdminClient } from '../config/supabase.js';
 import { InventoryService } from '../modules/inventory/inventory.service.js';
-import { AuditService } from './auditService.js';
 import { AppError } from '../middlewares/error.js';
+
+import { AuditService } from './auditService.js';
 import logger from './logger.js';
 
 export class ReturnService {

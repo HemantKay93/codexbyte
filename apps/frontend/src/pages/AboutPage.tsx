@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { PageSeo } from '@/components/seo/PageSeo';
 import { Target, Users, Shield, Zap } from 'lucide-react';
+
+import { PageSeo } from '@/components/seo/PageSeo';
 import { useCMS } from '@/features/cms/useCMS';
 
 export function AboutPage() {

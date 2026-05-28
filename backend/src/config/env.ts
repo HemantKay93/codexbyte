@@ -5,7 +5,7 @@ const REQUIRED_ENV = [
   'SUPABASE_URL',
   'SUPABASE_ANON_KEY',
   'SUPABASE_SERVICE_ROLE_KEY',
-  'REDIS_URL'
+  'REDIS_URL',
 ];
 
 export const validateEnvironment = () => {
@@ -22,9 +22,7 @@ export const validateEnvironment = () => {
     process.env.VITE_SUPABASE_ANON_KEY ||
     process.env.SUPABASE_KEY;
 
-  const serviceRoleKey =
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    process.env.SUPABASE_SERVICE_KEY;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
 
   if (!supabaseUrl) missing.push('SUPABASE_URL (or VITE_/NEXT_ fallback)');
   if (!supabaseAnonKey) missing.push('SUPABASE_ANON_KEY (or VITE_/NEXT_ fallback)');
@@ -33,8 +31,12 @@ export const validateEnvironment = () => {
   if (!process.env.REDIS_URL) missing.push('REDIS_URL');
 
   if (missing.length > 0) {
-    logger.error(`❌ [Env Validation] Missing critical environment variables: ${missing.join(', ')}`);
-    console.error(`❌ Critical environment variables missing: ${missing.join(', ')}. Server process shutting down.`);
+    logger.error(
+      `❌ [Env Validation] Missing critical environment variables: ${missing.join(', ')}`
+    );
+    console.error(
+      `❌ Critical environment variables missing: ${missing.join(', ')}. Server process shutting down.`
+    );
     process.exit(1);
   }
 

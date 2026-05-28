@@ -64,29 +64,63 @@ export function ShopLayout() {
             </p>
           </div>
           <div className="flex gap-8">
-            <Link to="/contact" className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline hover:text-stitch-secondary-fixed-dim underline-offset-4 underline transition-all">Support</Link>
-            <Link to="/legal/terms" className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline hover:text-stitch-secondary-fixed-dim underline-offset-4 underline transition-all">Terms & Conditions</Link>
-            <Link to="/legal/refund" className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline hover:text-stitch-secondary-fixed-dim underline-offset-4 underline transition-all">Refund Policy</Link>
-            <Link to="/legal/privacy" className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline hover:text-stitch-secondary-fixed-dim underline-offset-4 underline transition-all">Privacy Policy</Link>
+            <Link
+              to="/contact"
+              className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline hover:text-stitch-secondary-fixed-dim underline-offset-4 underline transition-all"
+            >
+              Support
+            </Link>
+            <Link
+              to="/legal/terms"
+              className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline hover:text-stitch-secondary-fixed-dim underline-offset-4 underline transition-all"
+            >
+              Terms & Conditions
+            </Link>
+            <Link
+              to="/legal/refund"
+              className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline hover:text-stitch-secondary-fixed-dim underline-offset-4 underline transition-all"
+            >
+              Refund Policy
+            </Link>
+            <Link
+              to="/legal/privacy"
+              className="font-stitch-label-sm text-stitch-label-sm text-stitch-outline hover:text-stitch-secondary-fixed-dim underline-offset-4 underline transition-all"
+            >
+              Privacy Policy
+            </Link>
           </div>
         </div>
       </footer>
 
       {/* BottomNavBar (Mobile only) */}
       <div className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-16 pb-safe bg-stitch-surface-container/90 backdrop-blur-md border-t border-stitch-outline-variant/20 z-50 rounded-t-xl shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-        <button onClick={() => navigate('/shop')} className="flex flex-col items-center justify-center text-stitch-outline hover:bg-stitch-surface-variant/50 active:scale-95 transition-all">
+        <button
+          onClick={() => navigate('/shop')}
+          className="flex flex-col items-center justify-center text-stitch-outline hover:bg-stitch-surface-variant/50 active:scale-95 transition-all"
+        >
           <span className="material-symbols-outlined">home</span>
           <span className="font-stitch-label-sm text-stitch-label-sm">Home</span>
         </button>
-        <button onClick={() => navigate('/shop')} className="flex flex-col items-center justify-center text-stitch-outline hover:bg-stitch-surface-variant/50 active:scale-95 transition-all">
+        <button
+          onClick={() => navigate('/shop')}
+          className="flex flex-col items-center justify-center text-stitch-outline hover:bg-stitch-surface-variant/50 active:scale-95 transition-all"
+        >
           <span className="material-symbols-outlined">search</span>
           <span className="font-stitch-label-sm text-stitch-label-sm">Search</span>
         </button>
-        <button onClick={() => navigate('/shop/cart')} className="flex flex-col items-center justify-center text-stitch-primary brightness-125 hover:bg-stitch-surface-variant/50 active:scale-95 transition-all">
-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
+        <button
+          onClick={() => navigate('/shop/cart')}
+          className="flex flex-col items-center justify-center text-stitch-primary brightness-125 hover:bg-stitch-surface-variant/50 active:scale-95 transition-all"
+        >
+          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+            shopping_cart
+          </span>
           <span className="font-stitch-label-sm text-stitch-label-sm">Cart</span>
         </button>
-        <button onClick={() => navigate('/shop/dashboard')} className="flex flex-col items-center justify-center text-stitch-outline hover:bg-stitch-surface-variant/50 active:scale-95 transition-all">
+        <button
+          onClick={() => navigate('/shop/dashboard')}
+          className="flex flex-col items-center justify-center text-stitch-outline hover:bg-stitch-surface-variant/50 active:scale-95 transition-all"
+        >
           <span className="material-symbols-outlined">person</span>
           <span className="font-stitch-label-sm text-stitch-label-sm">Account</span>
         </button>

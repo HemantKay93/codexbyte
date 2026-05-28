@@ -1,8 +1,6 @@
 import { supabase, getAdminClient } from '../../config/supabase.js';
 
 export class AdminRepository {
-
-
   async getCustomers() {
     const admin = await getAdminClient();
     const { data, error } = await admin
@@ -15,7 +13,10 @@ export class AdminRepository {
 
     return (data || []).map((profile: any) => {
       const userOrders: any[] = profile.orders || [];
-      const totalSpent = userOrders.reduce((acc: number, o: any) => acc + Number(o.total_amount), 0);
+      const totalSpent = userOrders.reduce(
+        (acc: number, o: any) => acc + Number(o.total_amount),
+        0
+      );
       return {
         ...profile,
         orders: undefined,
@@ -115,7 +116,6 @@ export class AdminRepository {
   }
 
   async getOrderActivity(id: string) {
-
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('order_activity_logs')
@@ -202,4 +202,3 @@ export class AdminRepository {
     return data;
   }
 }
-

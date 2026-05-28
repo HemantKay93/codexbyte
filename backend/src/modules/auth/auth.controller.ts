@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthService } from './auth.service.js';
+
 import { catchAsync } from '../../middlewares/error.js';
 import { AuditService } from '../../services/auditService.js';
 import { blacklistToken } from '../../middlewares/auth.js';
+
+import { AuthService } from './auth.service.js';
 
 const authService = new AuthService();
 

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { authorize } from '../auth.js';
 import { Request, Response, NextFunction } from 'express';
+
+import { authorize } from '../auth.js';
 
 describe('RBAC Middleware', () => {
   it('should allow access if user has the exact required role', () => {
@@ -32,7 +33,9 @@ describe('RBAC Middleware', () => {
     const next = vi.fn() as NextFunction;
 
     middleware(req, res, next);
-    expect(next).toHaveBeenCalledWith(expect.objectContaining({ message: 'Forbidden: Access denied' }));
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'Forbidden: Access denied' })
+    );
   });
 
   it('should deny access if user role is missing from payload', () => {

@@ -1,14 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
 import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '../components/ui/Table';
-import {
   Search,
   Filter,
   MoreHorizontal,
@@ -20,6 +12,15 @@ import {
 } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
+
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 import { BulkImportDialog } from '../components/BulkImportDialog';
 import { StockAdjustmentModal } from '../components/StockAdjustmentModal';
 import { StockMovementHistoryModal } from '../components/StockMovementHistoryModal';

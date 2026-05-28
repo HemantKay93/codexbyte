@@ -1,7 +1,9 @@
 import { Router } from 'express';
-import { getFlows, createFlow } from './automation.controller.js';
+
 import { requireAdmin } from '../../middlewares/auth.js';
 import { validate } from '../../middlewares/validate.js';
+
+import { getFlows, createFlow } from './automation.controller.js';
 import { createAutomationFlowSchema } from './marketing.validator.js';
 
 const router = Router();

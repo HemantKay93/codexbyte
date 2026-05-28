@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
+
 import { AuthRequest } from '../../middlewares/auth.js';
-import { SupplierService } from './supplier.service.js';
 import { catchAsync } from '../../middlewares/error.js';
 import { createResponse } from '../../utils/apiResponse.js';
+
+import { SupplierService } from './supplier.service.js';
 
 const supplierService = new SupplierService();
 
@@ -30,6 +32,10 @@ export const createPurchaseOrder = catchAsync(async (req: AuthRequest, res: Resp
 export const receivePurchaseOrder = catchAsync(async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
   const { warehouseId } = req.body;
-  const result = await supplierService.receivePurchaseOrder(id as string, warehouseId as string, req.user!.id as string);
+  const result = await supplierService.receivePurchaseOrder(
+    id as string,
+    warehouseId as string,
+    req.user!.id as string
+  );
   res.json(createResponse(result, 'Purchase order received successfully'));
 });

@@ -1,5 +1,5 @@
 import { Job } from 'bullmq';
-import { BaseWorker } from './base.worker.js';
+
 import { CampaignPayload } from '../core/contracts/index.js';
 import { CampaignRepository } from '../modules/marketing/campaign.repository.js';
 import { ProviderService } from '../modules/marketing/providers/provider.service.js';
@@ -8,6 +8,8 @@ import { TemplateEngine } from '../core/template/TemplateEngine.js';
 import { SocketGateway } from '../core/notifications/SocketGateway.js';
 import { ProviderHealthService } from '../modules/marketing/providers/provider-health.service.js';
 import logger from '../services/logger.js';
+
+import { BaseWorker } from './base.worker.js';
 
 export class CampaignWorker extends BaseWorker<CampaignPayload> {
   private campaignRepo: CampaignRepository;

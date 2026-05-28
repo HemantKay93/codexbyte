@@ -15,4 +15,3 @@ export const generateSKU = (product: { category: string; brand?: string; name: s
 
   return `${cat}-${brd}-${name}-${rand}`;
 };
-

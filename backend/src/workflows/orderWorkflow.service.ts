@@ -14,7 +14,12 @@ export class OrderWorkflow {
     let warehouseId = orderData.warehouseId;
 
     if (!warehouseId) {
-      const { data: defaultWh } = await admin.from('warehouses').select('id').eq('is_active', true).limit(1).single();
+      const { data: defaultWh } = await admin
+        .from('warehouses')
+        .select('id')
+        .eq('is_active', true)
+        .limit(1)
+        .single();
       warehouseId = defaultWh?.id;
     }
 
@@ -26,7 +31,7 @@ export class OrderWorkflow {
           productId: item.productId || item.product_id,
           warehouseId,
           quantity: Number(item.quantity),
-          userId
+          userId,
         });
         reservations.push(reservationId);
       }
@@ -41,48 +46,48 @@ export class OrderWorkflow {
 
       // 3. Commit reservations (convert reserved to actual deductions)
       for (const item of items) {
-         await InventoryService.adjustStock({
-            productId: item.productId || item.product_id,
-            warehouseId,
-            quantity: -Number(item.quantity),
-            type: 'out',
-            referenceType: 'order',
-            referenceId: order.id,
-            userId
-         });
+        await InventoryService.adjustStock({
+          productId: item.productId || item.product_id,
+          warehouseId,
+          quantity: -Number(item.quantity),
+          type: 'out',
+          referenceType: 'order',
+          referenceId: order.id,
+          userId,
+        });
       }
       // 4. Dispatch analytics event asynchronously
       await JobService.dispatchAnalyticsEvent('order_created', {
         orderId: order.id,
         userId,
-        totalAmount: order.total_amount
+        totalAmount: order.total_amount,
       });
 
       return order;
     } catch (orderErr: any) {
-       // Rollback reservations
-       logger.error('[OrderWorkflow] Order creation failed, rolling back reservations:', orderErr);
-       for (const rId of reservations) {
-         try {
-           // We need to release the reservation. The reservations array just has the IDs,
-           // but our releaseReservation method requires productId, warehouseId, and quantity.
-           // Since we have the items array, we can use it to reconstruct the release.
-           // Note: This assumes 1:1 mapping of reservations to items.
-           const index = reservations.indexOf(rId);
-           if (index !== -1) {
-             const item = items[index];
-             await InventoryService.releaseReservation({
-               productId: item.productId || item.product_id,
-               warehouseId,
-               quantity: Number(item.quantity),
-               reservationId: rId
-             });
-           }
-         } catch (rollbackErr) {
-           logger.error(`[OrderWorkflow] Failed to rollback reservation ${rId}:`, rollbackErr);
-         }
-       }
-       throw new AppError(`Order processing failed: ${orderErr.message}`, 500);
+      // Rollback reservations
+      logger.error('[OrderWorkflow] Order creation failed, rolling back reservations:', orderErr);
+      for (const rId of reservations) {
+        try {
+          // We need to release the reservation. The reservations array just has the IDs,
+          // but our releaseReservation method requires productId, warehouseId, and quantity.
+          // Since we have the items array, we can use it to reconstruct the release.
+          // Note: This assumes 1:1 mapping of reservations to items.
+          const index = reservations.indexOf(rId);
+          if (index !== -1) {
+            const item = items[index];
+            await InventoryService.releaseReservation({
+              productId: item.productId || item.product_id,
+              warehouseId,
+              quantity: Number(item.quantity),
+              reservationId: rId,
+            });
+          }
+        } catch (rollbackErr) {
+          logger.error(`[OrderWorkflow] Failed to rollback reservation ${rId}:`, rollbackErr);
+        }
+      }
+      throw new AppError(`Order processing failed: ${orderErr.message}`, 500);
     }
   }
 }

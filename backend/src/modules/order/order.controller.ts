@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
-import { OrderService } from './order.service.js';
+
 import { catchAsync } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';
-
 import { OrderWorkflow } from '../../workflows/orderWorkflow.service.js';
 import { InventoryWorkflow } from '../../workflows/inventoryWorkflow.service.js';
+
+import { OrderService } from './order.service.js';
 
 const orderService = new OrderService();
 

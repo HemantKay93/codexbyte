@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Plus, Edit2, Trash2, Save } from 'lucide-react';
 import { toast } from 'sonner';
-
 import { apiClient } from '@byteevolvr/api-client';
 
 export function WhatsAppTemplates() {

@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import { ReviewRepository } from './review.repository.js';
+
 import { catchAsync } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';
+
+import { ReviewRepository } from './review.repository.js';
 
 const reviewRepo = new ReviewRepository();
 

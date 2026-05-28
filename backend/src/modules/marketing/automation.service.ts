@@ -1,7 +1,7 @@
-import { getAdminClient } from '../../config/supabase.js';
-import { AutomationFlow } from '../../core/contracts/index.js';
 import { Queue } from 'bullmq';
 
+import { getAdminClient } from '../../config/supabase.js';
+import { AutomationFlow } from '../../core/contracts/index.js';
 import { AutomationEngine, automationQueue } from '../../core/automation/AutomationEngine.js';
 
 export class AutomationService {

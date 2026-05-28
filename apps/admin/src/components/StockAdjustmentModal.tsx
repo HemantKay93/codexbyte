@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Button, Input } from '@byteevolvr/ui';
-import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { Package, Warehouse, Info, Loader2, X, ChevronDown } from 'lucide-react';
+
+import { useAdmin } from '../modules/admin/hooks/useAdmin';
 
 interface Props {
   product: any;

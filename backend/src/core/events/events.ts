@@ -27,11 +27,27 @@ export enum DomainEvents {
 export interface DomainEventPayload {
   [DomainEvents.USER_REGISTERED]: { userId: string; email: string; name: string };
   [DomainEvents.CUSTOMER_INACTIVE]: { customerId: string; lastActiveAt: Date };
-  
-  [DomainEvents.ORDER_CREATED]: { orderId: string; orderNumber: string; customerId: string; customerName: string; email?: string; phone?: string; totalAmount: number };
+
+  [DomainEvents.ORDER_CREATED]: {
+    orderId: string;
+    orderNumber: string;
+    customerId: string;
+    customerName: string;
+    email?: string;
+    phone?: string;
+    totalAmount: number;
+  };
   [DomainEvents.ORDER_COMPLETED]: { orderId: string; customerId: string };
   [DomainEvents.ORDER_CANCELLED]: { orderId: string; reason: string };
-  [DomainEvents.ORDER_STATUS_UPDATED]: { orderId: string; orderNumber: string; status: string; customerId: string; notes?: string; phone?: string; email?: string };
+  [DomainEvents.ORDER_STATUS_UPDATED]: {
+    orderId: string;
+    orderNumber: string;
+    status: string;
+    customerId: string;
+    notes?: string;
+    phone?: string;
+    email?: string;
+  };
   [DomainEvents.CART_ABANDONED]: { cartId: string; customerId: string; items: any[] };
 
   [DomainEvents.PAYMENT_FAILED]: { orderId: string; amount: number; reason: string };
@@ -41,6 +57,10 @@ export interface DomainEventPayload {
   [DomainEvents.REVIEW_SUBMITTED]: { reviewId: string; rating: number };
 
   [DomainEvents.CAMPAIGN_CREATED]: { campaignId: string; name: string; type: string };
-  [DomainEvents.CAMPAIGN_COMPLETED]: { campaignId: string; successCount: number; failCount: number };
+  [DomainEvents.CAMPAIGN_COMPLETED]: {
+    campaignId: string;
+    successCount: number;
+    failCount: number;
+  };
   [DomainEvents.CAMPAIGN_PAUSED]: { campaignId: string };
 }

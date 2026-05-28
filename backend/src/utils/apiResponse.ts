@@ -21,7 +21,7 @@ export const createResponse = <T>(
     success: true,
     message,
     data,
-    ...(pagination && { pagination })
+    ...(pagination && { pagination }),
   };
 };
 
@@ -32,6 +32,6 @@ export const createErrorResponse = (
   return {
     success: false,
     message,
-    data
+    data,
   };
 };

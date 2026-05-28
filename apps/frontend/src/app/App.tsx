@@ -1,6 +1,8 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
+
 import { MainLayout } from '@/components/layout/MainLayout';
+
 import { Loader2 } from 'lucide-react';
 
 const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m.HomePage })));
@@ -48,9 +50,9 @@ const CategoryPage = lazy(() =>
   import('@/features/shop/pages/CategoryPage').then((m) => ({ default: m.CategoryPage }))
 );
 
-
 import { useEffect } from 'react';
 import { useAuthStore } from '@byteevolvr/store';
+
 import { ProtectedRoute } from '@/features/shop/components/ProtectedRoute';
 
 function PageLoader() {
@@ -80,7 +82,7 @@ export default function App() {
           <Route path="/legal/privacy" element={<PrivacyPolicy />} />
           <Route path="/legal/refund" element={<RefundPolicy />} />
           <Route path="/legal/terms" element={<TermsAndConditions />} />
-          
+
           {/* Shop Routes */}
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/product/:id" element={<ProductDetailPage />} />

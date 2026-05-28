@@ -1,8 +1,9 @@
 import { emailQueue, notificationQueue, analyticsQueue } from '../core/queues/index.js';
+import { redis } from '../config/redis.js';
+
 import { EmailService } from './email.js';
 import { NotificationService } from './notificationService.js';
 import logger from './logger.js';
-import { redis } from '../config/redis.js';
 
 export class JobService {
   private static isRedisAvailable(): boolean {

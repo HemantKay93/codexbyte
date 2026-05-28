@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
-import { SegmentService } from './segment.service.js';
+
 import { catchAsync } from '../../middlewares/error.js';
+
+import { SegmentService } from './segment.service.js';
 
 const segmentService = new SegmentService();
 

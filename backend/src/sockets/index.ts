@@ -1,5 +1,7 @@
-import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
+
+import { Server } from 'socket.io';
+
 import logger from '../services/logger.js';
 
 let io: Server;

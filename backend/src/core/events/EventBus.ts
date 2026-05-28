@@ -1,5 +1,7 @@
 import { EventEmitter } from 'events';
+
 import logger from '../../services/logger.js';
+
 import { DomainEvents, DomainEventPayload } from './events.js';
 
 class EventBus extends EventEmitter {

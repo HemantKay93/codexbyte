@@ -20,7 +20,8 @@ export class ProductRepository {
 
   async findById(id: string) {
     const admin = await getAdminClient();
-    const isUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+    const isUuid =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
     const column = isUuid ? 'id' : 'slug';
     const { data, error } = await admin
       .from('products')

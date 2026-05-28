@@ -1,5 +1,6 @@
-import { useCMS } from '@/features/cms/useCMS';
 import { useMemo } from 'react';
+
+import { useCMS } from '@/features/cms/useCMS';
 
 export function useStoreCurrency() {
   const { data: globalCms } = useCMS('global');

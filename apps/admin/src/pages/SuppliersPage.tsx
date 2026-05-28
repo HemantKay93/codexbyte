@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Search, Filter, Plus, Truck, Building2, ExternalLink, Loader2, X } from 'lucide-react';
+import { AdminService } from '@byteevolvr/api-client';
+
 import {
   Table,
   TableHeader,
@@ -8,9 +11,6 @@ import {
   TableBody,
   TableCell,
 } from '../components/ui/Table';
-import { Search, Filter, Plus, Truck, Building2, ExternalLink, Loader2, X } from 'lucide-react';
-
-import { AdminService } from '@byteevolvr/api-client';
 
 export function SuppliersPage() {
   const [searchTerm, setSearchTerm] = useState('');

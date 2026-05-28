@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+
 import { catchAsync } from '../../middlewares/error.js';
+
 import { AccountingService } from './accounting.service.js';
 import { AccountingRepository } from './accounting.repository.js';
 
@@ -11,9 +13,9 @@ export const createInvoice = catchAsync(async (req: Request, res: Response) => {
 
 export const getInvoices = catchAsync(async (req: Request, res: Response) => {
   const { type, status } = req.query;
-  const invoices = await AccountingRepository.getInvoices({ 
-    type: type as string, 
-    status: status as string 
+  const invoices = await AccountingRepository.getInvoices({
+    type: type as string,
+    status: status as string,
   });
   res.status(200).json({ status: 'success', data: invoices });
 });
@@ -30,8 +32,8 @@ export const createJournalEntry = catchAsync(async (req: Request, res: Response)
 
 export const getJournalEntries = catchAsync(async (req: Request, res: Response) => {
   const { account_type } = req.query;
-  const entries = await AccountingRepository.getJournalEntries({ 
-    account_type: account_type as string 
+  const entries = await AccountingRepository.getJournalEntries({
+    account_type: account_type as string,
   });
   res.status(200).json({ status: 'success', data: entries });
 });

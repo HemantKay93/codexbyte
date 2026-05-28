@@ -6,7 +6,7 @@ export class WishlistRepository {
       .from('wishlists')
       .select('*, product:products(*)')
       .eq('user_id', userId);
-    
+
     if (error) throw error;
     return data;
   }
@@ -18,7 +18,7 @@ export class WishlistRepository {
       .eq('user_id', userId)
       .eq('product_id', productId)
       .maybeSingle();
-    
+
     return !!data;
   }
 
@@ -29,7 +29,7 @@ export class WishlistRepository {
       .eq('user_id', userId)
       .eq('product_id', productId)
       .maybeSingle();
-    
+
     if (existing) {
       await supabase.from('wishlists').delete().eq('id', existing.id);
       return false; // Not wishlisted anymore

@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
+
 import { PageSeo } from '@/components/seo/PageSeo';
 import { websiteServices } from '@/content/services';
-import { ArrowUpRight } from 'lucide-react';
 
 export function ServicesPage() {
   const containerVariants = {

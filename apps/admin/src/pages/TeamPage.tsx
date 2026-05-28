@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import { Plus, Search, Filter, Trash2, Shield, Mail, X } from 'lucide-react';
+import { TeamService } from '@byteevolvr/api-client';
+
 import {
   Table,
   TableHeader,
@@ -8,8 +11,6 @@ import {
   TableBody,
   TableCell,
 } from '../components/ui/Table';
-import { Plus, Search, Filter, Trash2, Shield, Mail, X } from 'lucide-react';
-import { TeamService } from '@byteevolvr/api-client';
 
 const mockTeam = [
   {

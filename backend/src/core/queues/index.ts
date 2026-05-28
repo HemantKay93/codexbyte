@@ -1,4 +1,5 @@
 import { Queue } from 'bullmq';
+
 import { redis } from '../../config/redis.js';
 
 // Default job options shared by all queues.

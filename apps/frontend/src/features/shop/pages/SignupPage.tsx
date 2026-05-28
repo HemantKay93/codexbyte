@@ -35,7 +35,10 @@ export function SignupPage() {
     <div className="relative flex min-h-screen items-center justify-center p-6 pt-32 overflow-hidden bg-[#020617]">
       {/* Dynamic Background Effects */}
       <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] bg-accent/20 rounded-full mix-blend-screen filter blur-[120px] animate-pulse z-0"></div>
-      <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-primary/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse z-0" style={{ animationDelay: '2s' }}></div>
+      <div
+        className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-primary/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse z-0"
+        style={{ animationDelay: '2s' }}
+      ></div>
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 z-0 pointer-events-none"></div>
 
       <div className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-white/5 p-10 shadow-2xl backdrop-blur-xl border border-white/10 transition-all hover:border-white/20">
@@ -43,7 +46,9 @@ export function SignupPage() {
           <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-accent/20 to-primary/20 mb-4 ring-1 ring-white/10 shadow-inner">
             <User className="h-8 w-8 text-accent" />
           </div>
-          <h1 className="font-display text-4xl font-bold tracking-tight text-white mb-2">Create Account</h1>
+          <h1 className="font-display text-4xl font-bold tracking-tight text-white mb-2">
+            Create Account
+          </h1>
           <p className="text-brand-muted font-medium">Join ByteeVolvr today</p>
         </div>
 
@@ -84,7 +89,7 @@ export function SignupPage() {
               />
             </div>
           </div>
-          
+
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-brand-muted ml-1">Password</label>
             <div className="relative group">
@@ -100,16 +105,17 @@ export function SignupPage() {
             </div>
           </div>
 
-          <Button 
-            type="submit" 
-            className="group relative w-full overflow-hidden rounded-xl bg-white text-black hover:bg-gray-100 py-6 font-bold tracking-wide transition-all hover:scale-[1.02] active:scale-[0.98] mt-2" 
+          <Button
+            type="submit"
+            className="group relative w-full overflow-hidden rounded-xl bg-white text-black hover:bg-gray-100 py-6 font-bold tracking-wide transition-all hover:scale-[1.02] active:scale-[0.98] mt-2"
             disabled={loading}
           >
             {loading ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
               <span className="flex items-center justify-center gap-2">
-                Create Account <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                Create Account{' '}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </span>
             )}
           </Button>
@@ -117,7 +123,10 @@ export function SignupPage() {
 
         <div className="mt-8 flex items-center justify-center gap-2 text-sm text-brand-muted">
           <span>Already have an account?</span>
-          <Link to="/shop/login" className="font-semibold text-white hover:text-accent transition-colors underline decoration-white/30 underline-offset-4 hover:decoration-accent">
+          <Link
+            to="/shop/login"
+            className="font-semibold text-white hover:text-accent transition-colors underline decoration-white/30 underline-offset-4 hover:decoration-accent"
+          >
             Sign in
           </Link>
         </div>

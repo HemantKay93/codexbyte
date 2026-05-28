@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Card, Badge, Button } from '@byteevolvr/ui';
 import { ArrowUpRight, DollarSign, ShoppingBag, Users, Activity, Loader2 } from 'lucide-react';
-import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { SocketService } from '@byteevolvr/api-client';
 import {
   AreaChart,
@@ -12,6 +11,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+
+import { useAdmin } from '../modules/admin/hooks/useAdmin';
 
 export function DashboardPage() {
   const { stats, recentSales, chartData, isLoading, error, fetchDashboardData } = useAdmin();

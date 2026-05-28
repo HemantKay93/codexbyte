@@ -1,10 +1,16 @@
 import express from 'express';
-import * as warehouseController from './inventory.controller.js';
+
 import { authenticate, authorize } from '../../middlewares/auth.js';
 import { requirePermission } from '../../middlewares/permission.js';
 import { validate } from '../../middlewares/validate.js';
 import { auditLog } from '../../middlewares/audit.js';
-import { warehouseSchema, stockAdjustmentSchema, stockTransferSchema } from './inventory.validator.js';
+
+import * as warehouseController from './inventory.controller.js';
+import {
+  warehouseSchema,
+  stockAdjustmentSchema,
+  stockTransferSchema,
+} from './inventory.validator.js';
 
 const router = express.Router();
 

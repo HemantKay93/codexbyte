@@ -1,5 +1,6 @@
-import logger from './logger.js';
 import { getAdminClient } from '../config/supabase.js';
+
+import logger from './logger.js';
 
 export class NotificationService {
   static async send(data: {

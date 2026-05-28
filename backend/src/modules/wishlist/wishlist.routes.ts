@@ -1,6 +1,8 @@
 import express from 'express';
-import * as wishlistController from './wishlist.controller.js';
+
 import { authenticate } from '../../middlewares/auth.js';
+
+import * as wishlistController from './wishlist.controller.js';
 
 const router = express.Router();
 

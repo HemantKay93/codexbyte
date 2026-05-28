@@ -1,4 +1,7 @@
 import axios from 'axios';
+
+import logger from '../../../../services/logger.js';
+
 import {
   IWhatsAppProvider,
   ProviderResponse,
@@ -6,7 +9,6 @@ import {
   WhatsAppMediaPayload,
   WhatsAppTemplatePayload,
 } from './IWhatsAppProvider.js';
-import logger from '../../../../services/logger.js';
 
 export class EvolutionProvider implements IWhatsAppProvider {
   public readonly name = 'evolution';

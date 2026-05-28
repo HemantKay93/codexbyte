@@ -8,7 +8,7 @@ export class ReviewRepository {
       .eq('product_id', productId)
       .eq('status', 'approved')
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return data;
   }
@@ -17,13 +17,15 @@ export class ReviewRepository {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('product_reviews')
-      .select(`
+      .select(
+        `
         *,
         product:product_id (name),
         user:user_id (full_name)
-      `)
+      `
+      )
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return data;
   }
@@ -34,7 +36,7 @@ export class ReviewRepository {
       .insert([reviewData])
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }
@@ -47,7 +49,7 @@ export class ReviewRepository {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) throw error;
     return data;
   }

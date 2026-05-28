@@ -1,14 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '../components/ui/Table';
 import { printInvoice } from '@byteevolvr/ui';
 import {
   ArrowLeft,
@@ -28,6 +20,9 @@ import { AdminService, CMSService } from '@byteevolvr/api-client';
 
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
 import { OrderActivityLogs } from '../components/OrderActivityLogs';
+
+import { OrderItemsTable } from './orders/components/OrderItemsTable';
+import { OrderStatusStepper } from './orders/components/OrderStatusStepper';
 
 export function OrderDetailPage() {
   const { id } = useParams();
@@ -312,117 +307,13 @@ export function OrderDetailPage() {
       </div>
 
       {/* Status Stepper */}
-      <Card className="border-none shadow-sm mb-6 bg-surface-container-lowest">
-        <div className="p-6">
-          <div className="flex items-center justify-between relative">
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-outline-variant -z-10 rounded-full" />
-
-            {/* Step 1: Confirmed */}
-            <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
-              <div
-                className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['confirmed', 'packed', 'shipped', 'delivered'].includes(order.status) ? 'border-primary bg-primary text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}
-              >
-                <CheckCircle2 className="h-5 w-5" />
-              </div>
-              <span className="text-sm font-bold">Confirmed</span>
-            </div>
-
-            {/* Step 2: Packed */}
-            <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
-              <div
-                className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['packed', 'shipped', 'delivered'].includes(order.status) ? 'border-indigo-500 bg-indigo-500 text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}
-              >
-                <Package className="h-5 w-5" />
-              </div>
-              <span className="text-sm font-bold">Packed</span>
-            </div>
-
-            {/* Step 3: Shipped */}
-            <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
-              <div
-                className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['shipped', 'delivered'].includes(order.status) ? 'border-info bg-info text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}
-              >
-                <Truck className="h-5 w-5" />
-              </div>
-              <span className="text-sm font-bold">Shipped</span>
-            </div>
-
-            {/* Step 4: Delivered */}
-            <div className="flex flex-col items-center gap-2 bg-surface-container-lowest px-4">
-              <div
-                className={`h-10 w-10 rounded-full border-2 flex items-center justify-center ${['delivered'].includes(order.status) ? 'border-success bg-success text-white' : 'border-outline-variant bg-surface-container-lowest text-on-surface-variant'}`}
-              >
-                <CheckCircle2 className="h-5 w-5" />
-              </div>
-              <span className="text-sm font-bold">Delivered</span>
-            </div>
-          </div>
-        </div>
-      </Card>
+      <OrderStatusStepper status={order.status} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Details */}
         <div className="lg:col-span-2 space-y-6">
           {/* Items Card */}
-          <Card className="border-none shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
-              <h2 className="text-lg font-bold text-on-surface">Order Items ({items.length})</h2>
-              <Package className="h-5 w-5 text-on-surface-variant" />
-            </div>
-            <div className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-surface-container-lowest">
-                    <TableHead className="font-bold uppercase text-[10px] tracking-widest">
-                      Product
-                    </TableHead>
-                    <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">
-                      Price
-                    </TableHead>
-                    <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">
-                      Qty
-                    </TableHead>
-                    <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">
-                      Total
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {items.map((item: any) => (
-                    <TableRow
-                      key={item.id}
-                      className="hover:bg-surface-container-lowest transition-colors"
-                    >
-                      <TableCell>
-                        <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 bg-surface-container rounded-xl flex items-center justify-center border border-outline-variant">
-                            <Package className="h-6 w-6 text-on-surface-variant opacity-30" />
-                          </div>
-                          <div>
-                            <div className="font-bold text-on-surface">{item.product_name}</div>
-                            <div className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">
-                              SKU: {item.sku}
-                            </div>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right font-medium">
-                        ₹{Number(item.unit_price).toLocaleString()}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <span className="bg-surface-container px-2 py-1 rounded text-xs font-bold">
-                          {item.quantity}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right font-black text-primary">
-                        ₹{Number(item.total_price).toLocaleString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </Card>
+          <OrderItemsTable items={items} />
 
           {/* Activity Logs Timeline */}
           <Card className="border-none shadow-sm">

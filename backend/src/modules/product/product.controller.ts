@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
-import { ProductService } from './product.service.js';
+
 import { catchAsync } from '../../middlewares/error.js';
 import { CacheService } from '../../services/cacheService.js';
 import { AuditService } from '../../services/auditService.js';
 import { AuthRequest } from '../../middlewares/auth.js';
+
+import { ProductService } from './product.service.js';
 
 const productService = new ProductService();
 

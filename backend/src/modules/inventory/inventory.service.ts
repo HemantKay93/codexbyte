@@ -14,7 +14,7 @@ export class InventoryService {
     userId?: string;
   }): Promise<{ reservationId: string }> {
     const admin = await getAdminClient();
-    
+
     // Check available stock (quantity - reserved_quantity)
     const { data: inventory, error: invError } = await admin
       .from('inventory')
@@ -30,7 +30,10 @@ export class InventoryService {
 
     const availableStock = inventory.quantity - (inventory.reserved_quantity || 0);
     if (availableStock < data.quantity) {
-      throw new AppError(`Insufficient available stock. Requested: ${data.quantity}, Available: ${availableStock}`, 400);
+      throw new AppError(
+        `Insufficient available stock. Requested: ${data.quantity}, Available: ${availableStock}`,
+        400
+      );
     }
 
     const reservationId = `RES-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
@@ -45,7 +48,9 @@ export class InventoryService {
       throw new AppError('Failed to lock inventory', 500);
     }
 
-    logger.info(`[Inventory] Reserved ${data.quantity} of product ${data.productId}. Reservation ID: ${reservationId}`);
+    logger.info(
+      `[Inventory] Reserved ${data.quantity} of product ${data.productId}. Reservation ID: ${reservationId}`
+    );
     return { reservationId };
   }
 
@@ -108,12 +113,16 @@ export class InventoryService {
       // If this is an 'out' adjustment coming from an order, we must also deduct reserved_quantity
       let newReserved = reservedQty;
       if (data.type === 'out' && data.referenceType === 'order') {
-         newReserved = Math.max(0, reservedQty - Math.abs(data.quantity));
+        newReserved = Math.max(0, reservedQty - Math.abs(data.quantity));
       }
 
       await admin
         .from('inventory')
-        .update({ quantity: newQty, reserved_quantity: newReserved, updated_at: new Date().toISOString() })
+        .update({
+          quantity: newQty,
+          reserved_quantity: newReserved,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', inventory.id);
     } else {
       const { data: newInv, error: insertError } = await admin
@@ -122,7 +131,7 @@ export class InventoryService {
           product_id: data.productId,
           warehouse_id: data.warehouseId,
           quantity: newQty,
-          reserved_quantity: 0
+          reserved_quantity: 0,
         })
         .select('id')
         .single();
@@ -140,15 +149,26 @@ export class InventoryService {
       performed_by: data.userId,
     });
 
-    const { data: allInv } = await admin.from('inventory').select('quantity').eq('product_id', data.productId);
+    const { data: allInv } = await admin
+      .from('inventory')
+      .select('quantity')
+      .eq('product_id', data.productId);
     const totalStock = allInv?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
 
     await admin.from('products').update({ stock_quantity: totalStock }).eq('id', data.productId);
 
     if (newQty <= InventoryService.LOW_STOCK_THRESHOLD) {
       try {
-        const { data: prod } = await admin.from('products').select('name').eq('id', data.productId).single();
-        const { data: wh } = await admin.from('warehouses').select('name').eq('id', data.warehouseId).single();
+        const { data: prod } = await admin
+          .from('products')
+          .select('name')
+          .eq('id', data.productId)
+          .single();
+        const { data: wh } = await admin
+          .from('warehouses')
+          .select('name')
+          .eq('id', data.warehouseId)
+          .single();
         if (prod && wh) {
           await NotificationService.notifyLowStock(prod.name, wh.name, newQty);
         }
@@ -182,36 +202,34 @@ export class InventoryService {
 
   static async getStockMovements(productId: string) {
     const admin = await getAdminClient();
-    
+
     // First find all inventory IDs for this product
     const { data: invData, error: invError } = await admin
       .from('inventory')
       .select('id, warehouses(name)')
       .eq('product_id', productId);
-      
+
     if (invError) throw invError;
     if (!invData || invData.length === 0) return [];
-    
+
     const invIds = invData.map((i: any) => i.id);
-    
+
     // Then get movements for those inventory IDs
     const { data, error } = await admin
       .from('stock_movements')
       .select('*, user_profiles(full_name)')
       .in('inventory_id', invIds)
       .order('created_at', { ascending: false });
-      
+
     if (error) throw error;
-    
+
     // Map warehouse name back to movements
     return data.map((m: any) => {
       const inv = invData.find((i: any) => i.id === m.inventory_id);
       return {
         ...m,
-        warehouse_name: inv?.warehouses?.name || 'Unknown'
+        warehouse_name: inv?.warehouses?.name || 'Unknown',
       };
     });
   }
-
-
 }

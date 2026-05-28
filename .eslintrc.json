@@ -7,7 +7,10 @@
     "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "prettier", "react-hooks"],
+  "parserOptions": {
+    "project": ["./tsconfig.json", "./apps/*/tsconfig.json", "./packages/*/tsconfig.json", "./backend/tsconfig.json"]
+  },
+  "plugins": ["@typescript-eslint", "prettier", "react-hooks", "import"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -28,9 +31,18 @@
         "caughtErrorsIgnorePattern": "^_"
       }
     ],
-    "@typescript-eslint/no-explicit-any": "warn",
-    "react-hooks/rules-of-hooks": "warn",
-    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-floating-promises": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+    "complexity": ["error", 15],
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always"
+      }
+    ],
     "no-console": [
       "warn",
       {
@@ -38,7 +50,7 @@
       }
     ]
   },
-  "ignorePatterns": ["node_modules/", ".next/", "out/", "public/"],
+  "ignorePatterns": ["node_modules/", ".next/", "out/", "public/", "dist/"],
   "env": {
     "browser": true,
     "node": true,

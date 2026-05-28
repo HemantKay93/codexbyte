@@ -10,14 +10,14 @@ export const createCouponSchema = z.object({
     start_date: z.string().optional().nullable(),
     end_date: z.string().optional().nullable(),
     is_active: z.boolean().optional(),
-  })
+  }),
 });
 
 export const validateCouponSchema = z.object({
   body: z.object({
     code: z.string().min(1),
     orderAmount: z.number().positive(),
-  })
+  }),
 });
 
 export const createCampaignSchema = z.object({
@@ -28,7 +28,7 @@ export const createCampaignSchema = z.object({
     template_id: z.string().uuid().optional().nullable(),
     custom_content: z.string().optional().nullable(),
     scheduled_at: z.string().optional().nullable(),
-  })
+  }),
 });
 
 export const createSegmentSchema = z.object({
@@ -36,7 +36,7 @@ export const createSegmentSchema = z.object({
     name: z.string().min(1),
     description: z.string().optional().nullable(),
     rules: z.any().optional(), // Can be tightened later
-  })
+  }),
 });
 
 export const createTemplateSchema = z.object({
@@ -46,7 +46,7 @@ export const createTemplateSchema = z.object({
     subject: z.string().optional().nullable(),
     content: z.string().min(1),
     variables: z.array(z.string()).optional(),
-  })
+  }),
 });
 
 export const createAutomationFlowSchema = z.object({
@@ -57,5 +57,5 @@ export const createAutomationFlowSchema = z.object({
     nodes: z.array(z.any()).optional(),
     edges: z.array(z.any()).optional(),
     is_active: z.boolean().optional(),
-  })
+  }),
 });

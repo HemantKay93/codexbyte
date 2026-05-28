@@ -1,7 +1,9 @@
 import express from 'express';
-import * as userController from './user.controller.js';
+
 import { authenticate } from '../../middlewares/auth.js';
 import { requirePermission } from '../../middlewares/permission.js';
+
+import * as userController from './user.controller.js';
 
 const router = express.Router();
 

@@ -13,7 +13,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { setToken, setUser } = useAuthStore();
-  
+
   const from = location.state?.from?.pathname || '/shop/dashboard';
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -37,7 +37,10 @@ export function LoginPage() {
     <div className="relative flex min-h-screen items-center justify-center p-6 pt-32 overflow-hidden bg-[#020617]">
       {/* Dynamic Background Effects */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse z-0"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/20 rounded-full mix-blend-screen filter blur-[120px] animate-pulse z-0" style={{ animationDelay: '2s' }}></div>
+      <div
+        className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/20 rounded-full mix-blend-screen filter blur-[120px] animate-pulse z-0"
+        style={{ animationDelay: '2s' }}
+      ></div>
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 z-0 pointer-events-none"></div>
 
       <div className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-white/5 p-10 shadow-2xl backdrop-blur-xl border border-white/10 transition-all hover:border-white/20">
@@ -45,7 +48,9 @@ export function LoginPage() {
           <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-tr from-accent/20 to-primary/20 mb-4 ring-1 ring-white/10 shadow-inner">
             <Lock className="h-8 w-8 text-accent" />
           </div>
-          <h1 className="font-display text-4xl font-bold tracking-tight text-white mb-2">Welcome Back</h1>
+          <h1 className="font-display text-4xl font-bold tracking-tight text-white mb-2">
+            Welcome Back
+          </h1>
           <p className="text-brand-muted font-medium">Log in to continue shopping</p>
         </div>
 
@@ -71,11 +76,16 @@ export function LoginPage() {
               />
             </div>
           </div>
-          
+
           <div className="space-y-1.5">
             <div className="flex justify-between items-center ml-1">
               <label className="text-sm font-medium text-brand-muted">Password</label>
-              <a href="#" className="text-xs font-semibold text-accent hover:text-accent-light transition-colors">Forgot password?</a>
+              <a
+                href="#"
+                className="text-xs font-semibold text-accent hover:text-accent-light transition-colors"
+              >
+                Forgot password?
+              </a>
             </div>
             <div className="relative group">
               <Lock className="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-white/40 transition-colors group-focus-within:text-accent" />
@@ -90,16 +100,17 @@ export function LoginPage() {
             </div>
           </div>
 
-          <Button 
-            type="submit" 
-            className="group relative w-full overflow-hidden rounded-xl bg-white text-black hover:bg-gray-100 py-6 font-bold tracking-wide transition-all hover:scale-[1.02] active:scale-[0.98]" 
+          <Button
+            type="submit"
+            className="group relative w-full overflow-hidden rounded-xl bg-white text-black hover:bg-gray-100 py-6 font-bold tracking-wide transition-all hover:scale-[1.02] active:scale-[0.98]"
             disabled={loading}
           >
             {loading ? (
               <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
               <span className="flex items-center justify-center gap-2">
-                Sign In <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                Sign In{' '}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </span>
             )}
           </Button>
@@ -107,7 +118,10 @@ export function LoginPage() {
 
         <div className="mt-8 flex items-center justify-center gap-2 text-sm text-brand-muted">
           <span>New to ByteeVolvr?</span>
-          <Link to="/shop/signup" className="font-semibold text-white hover:text-accent transition-colors underline decoration-white/30 underline-offset-4 hover:decoration-accent">
+          <Link
+            to="/shop/signup"
+            className="font-semibold text-white hover:text-accent transition-colors underline decoration-white/30 underline-offset-4 hover:decoration-accent"
+          >
             Create an account
           </Link>
         </div>

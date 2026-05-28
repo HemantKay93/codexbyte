@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { PageSeo } from '@/components/seo/PageSeo';
 import { Send, Phone, Mail, MapPin, Clock, Loader2, CheckCircle2 } from 'lucide-react';
-import { useCMS } from '@/features/cms/useCMS';
 import { MarketingService } from '@byteevolvr/api-client';
+
+import { PageSeo } from '@/components/seo/PageSeo';
+import { useCMS } from '@/features/cms/useCMS';
 
 export function ContactPage() {
   const { data: contactPageCms } = useCMS('contact_page');

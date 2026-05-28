@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+
 import { getAdminClient } from '../config/supabase.js';
 import logger from '../services/logger.js';
 
@@ -32,7 +33,7 @@ export const idempotencyMiddleware = async (req: Request, res: Response, next: N
       if (existingKey.status === 'processing') {
         return res.status(409).json({
           success: false,
-          message: 'A request with this idempotency key is currently processing.'
+          message: 'A request with this idempotency key is currently processing.',
         });
       }
 
@@ -42,22 +43,21 @@ export const idempotencyMiddleware = async (req: Request, res: Response, next: N
     }
 
     // 2. Lock the key (insert as processing)
-    const { error: insertError } = await admin
-      .from('idempotency_keys')
-      .insert({
-        key: idempotencyKey,
-        path,
-        method,
-        status: 'processing',
-        request_body: req.body
-      });
+    const { error: insertError } = await admin.from('idempotency_keys').insert({
+      key: idempotencyKey,
+      path,
+      method,
+      status: 'processing',
+      request_body: req.body,
+    });
 
     if (insertError) {
       // Possible race condition: another request just inserted it
-      if (insertError.code === '23505') { // Unique violation
+      if (insertError.code === '23505') {
+        // Unique violation
         return res.status(409).json({
           success: false,
-          message: 'A request with this idempotency key is currently processing.'
+          message: 'A request with this idempotency key is currently processing.',
         });
       }
       logger.error('[Idempotency] Error inserting key:', insertError);
@@ -76,7 +76,7 @@ export const idempotencyMiddleware = async (req: Request, res: Response, next: N
         .update({
           status: 'completed',
           response_code: res.statusCode,
-          response_body: body
+          response_body: body,
         })
         .eq('key', idempotencyKey)
         .then(({ error }: any) => {

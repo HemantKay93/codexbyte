@@ -9,10 +9,13 @@ export interface IWhatsAppProvider {
   /**
    * Sends a message based on the payload (Text, Media, Template)
    */
-  sendMessage(to: string, payload: WhatsAppMessagePayload): Promise<{ messageId?: string, success: boolean, error?: any }>;
+  sendMessage(
+    to: string,
+    payload: WhatsAppMessagePayload
+  ): Promise<{ messageId?: string; success: boolean; error?: any }>;
 
   /**
    * Returns current connection status
    */
-  getStatus(): Promise<{ status: string, details?: any }>;
+  getStatus(): Promise<{ status: string; details?: any }>;
 }

@@ -37,12 +37,12 @@ export class NotificationWorkflow {
         let content = `Update on Order #${orderNumber}: Your order status has been updated to *${status.toUpperCase()}*.`;
         if (notes) content += `\nNote: ${notes}`;
         if (!isCritical && ['shipped', 'delivered'].includes(status)) {
-           content = `Great news! Your order #${orderNumber} is now *${status.toUpperCase()}*.`;
+          content = `Great news! Your order #${orderNumber} is now *${status.toUpperCase()}*.`;
         }
 
         await WhatsAppService.enqueueMessage(phone, {
           content,
-          type: 'text'
+          type: 'text',
         });
       } catch (waErr) {
         logger.error('[NotificationWorkflow] Failed to send WhatsApp notification:', waErr);
@@ -75,15 +75,15 @@ export class NotificationWorkflow {
         data.email,
         `Order Confirmed: ${data.orderNumber}`,
         `<h1>Thank you for your order, ${data.customerName}!</h1><p>Your order #${data.orderNumber} is being processed.</p>`
-      ).catch(e => logger.error('Failed to send new order email:', e));
+      ).catch((e) => logger.error('Failed to send new order email:', e));
     }
 
     // WhatsApp
     if (data.phone) {
       await WhatsAppService.enqueueMessage(data.phone, {
         content: `Hi ${data.customerName},\n\nYour order #${data.orderNumber} has been successfully placed! We will notify you once it ships.`,
-        type: 'text'
-      }).catch(e => logger.error('Failed to send new order WhatsApp:', e));
+        type: 'text',
+      }).catch((e) => logger.error('Failed to send new order WhatsApp:', e));
     }
   }
 }

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+
 import { catchAsync } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';
 import { getAdminClient } from '../../config/supabase.js';

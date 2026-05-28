@@ -1,4 +1,5 @@
 import { Worker, Job } from 'bullmq';
+
 import { redis } from '../config/redis.js';
 import logger from '../services/logger.js';
 import { WhatsAppRepository } from '../modules/whatsapp/whatsapp.repository.js';
@@ -54,18 +55,25 @@ export const whatsappWorker = new Worker(
 
       if (!result.success) {
         // Validation / Invalid Recipient check (non-existent WhatsApp number)
-        const isValidationFailure = 
-          result.error?.includes('not registered on WhatsApp') || 
+        const isValidationFailure =
+          result.error?.includes('not registered on WhatsApp') ||
           result.error?.includes('exists:false') ||
           result.error?.includes('invalid number') ||
           result.error?.includes('exists is false');
 
         if (isValidationFailure) {
-          logger.warn(`[WhatsApp Worker] Recipient validation failed for ${to}: ${result.error}. Resolving job gracefully as permanently failed.`);
+          logger.warn(
+            `[WhatsApp Worker] Recipient validation failed for ${to}: ${result.error}. Resolving job gracefully as permanently failed.`
+          );
           if (jobId) {
             await whatsappRepo.updateMessageStatus(jobId, 'failed', result.error);
           }
-          return { success: false, status: 'invalid_recipient', error: result.error, providerUsed: result.provider };
+          return {
+            success: false,
+            status: 'invalid_recipient',
+            error: result.error,
+            providerUsed: result.provider,
+          };
         }
 
         throw new Error(result.error || 'Unknown provider error');

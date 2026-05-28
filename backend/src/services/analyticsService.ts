@@ -23,10 +23,21 @@ export class AnalyticsService {
       return { revenue, count };
     };
 
-    const [currentPeriod, previousPeriod, revenueResult, totalOrdersResult, pendingOrdersResult, totalUsersResult, lowStockResult] = await Promise.all([
+    const [
+      currentPeriod,
+      previousPeriod,
+      revenueResult,
+      totalOrdersResult,
+      pendingOrdersResult,
+      totalUsersResult,
+      lowStockResult,
+    ] = await Promise.all([
       getPeriodStats(lastMonth, now),
       getPeriodStats(twoMonthsAgo, lastMonth),
-      admin.from('orders').select('total_amount').in('status', ['confirmed','packed','shipped','delivered']),
+      admin
+        .from('orders')
+        .select('total_amount')
+        .in('status', ['confirmed', 'packed', 'shipped', 'delivered']),
       admin.from('orders').select('*', { count: 'exact', head: true }),
       admin.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
       admin.from('user_profiles').select('*', { count: 'exact', head: true }),
@@ -38,7 +49,8 @@ export class AnalyticsService {
     const pendingOrders = pendingOrdersResult.count;
     const totalUsers = totalUsersResult.count;
     const lowStock = lowStockResult.data;
-    const totalRevenue = revenueData?.reduce((sum: number, o: any) => sum + Number(o.total_amount), 0) || 0;
+    const totalRevenue =
+      revenueData?.reduce((sum: number, o: any) => sum + Number(o.total_amount), 0) || 0;
 
     const calculateDelta = (current: number, previous: number) => {
       if (previous === 0) return current > 0 ? 100 : 0;
@@ -82,7 +94,7 @@ export class AnalyticsService {
     const admin = await getAdminClient();
     const startDate = new Date();
     startDate.setMonth(startDate.getMonth() - months);
-    
+
     // Set to first day of that month for complete coverage
     startDate.setDate(1);
     startDate.setHours(0, 0, 0, 0);
@@ -109,7 +121,7 @@ export class AnalyticsService {
       const monthStr = d.toLocaleString('default', { month: 'short' });
       result.push({
         name: monthStr,
-        total: grouped[monthStr] || 0
+        total: grouped[monthStr] || 0,
       });
     }
     return result;

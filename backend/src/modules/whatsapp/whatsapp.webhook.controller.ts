@@ -1,11 +1,14 @@
-import { Request, Response } from 'express';
-import axios from 'axios';
 import crypto from 'crypto';
+
+import axios from 'axios';
+import { Request, Response } from 'express';
+
 import logger from '../../services/logger.js';
-import { WhatsAppRepository } from './whatsapp.repository.js';
 import { CMSService } from '../cms/cms.service.js';
 import { getAdminClient } from '../../config/supabase.js';
 import { redis } from '../../config/redis.js';
+
+import { WhatsAppRepository } from './whatsapp.repository.js';
 
 const repository = new WhatsAppRepository();
 
@@ -136,10 +139,7 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
       const elements = signature.split('=');
       const signatureHash = elements[1];
       const rawBody = JSON.stringify(req.body);
-      const expectedHash = crypto
-        .createHmac('sha256', appSecret)
-        .update(rawBody)
-        .digest('hex');
+      const expectedHash = crypto.createHmac('sha256', appSecret).update(rawBody).digest('hex');
 
       if (signatureHash !== expectedHash) {
         logger.error('[WhatsApp Webhook] Signature validation failed!');
@@ -168,7 +168,9 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
               if (timestamp) {
                 const ageSeconds = Math.abs(Math.floor(Date.now() / 1000) - timestamp);
                 if (ageSeconds > 300) {
-                  logger.warn(`[WhatsApp Webhook] Replay attack blocked: Event timestamp aged by ${ageSeconds}s`);
+                  logger.warn(
+                    `[WhatsApp Webhook] Replay attack blocked: Event timestamp aged by ${ageSeconds}s`
+                  );
                   continue;
                 }
               }
@@ -197,13 +199,15 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
       // Process Evolution Delivery Status
       if (body.event === 'messages.update' && body.data) {
         const msg = body.data;
-        
+
         // Replay prevention for Evolution message updates
         const timestamp = msg.messageTimestamp ? Number(msg.messageTimestamp) : undefined;
         if (timestamp) {
           const ageSeconds = Math.abs(Math.floor(Date.now() / 1000) - timestamp);
           if (ageSeconds > 300) {
-            logger.warn(`[WhatsApp Webhook] Replay attack blocked: Evolution timestamp aged by ${ageSeconds}s`);
+            logger.warn(
+              `[WhatsApp Webhook] Replay attack blocked: Evolution timestamp aged by ${ageSeconds}s`
+            );
             return;
           }
         }
@@ -232,7 +236,7 @@ async function normalizeAndSaveEvent(admin: any, event: any) {
     // 1. Redis key-based event deduplication
     const dedupKey = `dedup:whatsapp:${event.message_id}:${event.status}`;
     const isNew = await redis.set(dedupKey, '1', 'EX', 86400, 'NX'); // NX ensures atomic duplicate protection, 24 hr TTL
-    
+
     if (!isNew) {
       logger.info(`[Webhook] Event deduplicated: ${event.message_id} -> ${event.status}`);
       return;

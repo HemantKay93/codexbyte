@@ -14,6 +14,7 @@
  */
 
 import { redis } from '../config/redis.js';
+
 import logger from './logger.js';
 
 const isRedisReady = () => redis.status === 'ready';

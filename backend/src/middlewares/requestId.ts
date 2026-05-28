@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
 import crypto from 'node:crypto';
+
+import { Request, Response, NextFunction } from 'express';
 
 export interface CorrelatedRequest extends Request {
   id?: string;

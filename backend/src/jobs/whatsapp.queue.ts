@@ -1,8 +1,9 @@
 import { Queue } from 'bullmq';
+
 import { redis } from '../config/redis.js';
 
 // Define the Queue for WhatsApp Jobs
-export const whatsappQueue = new Queue('whatsapp-queue', { 
+export const whatsappQueue = new Queue('whatsapp-queue', {
   connection: redis,
   defaultJobOptions: {
     attempts: 3,
@@ -12,5 +13,5 @@ export const whatsappQueue = new Queue('whatsapp-queue', {
     },
     removeOnComplete: true,
     removeOnFail: false, // Keep failed jobs for manual inspection and retry
-  }
+  },
 });

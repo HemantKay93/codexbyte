@@ -1,8 +1,9 @@
+import { CampaignPayload } from '../../../core/contracts/index.js';
+import logger from '../../../services/logger.js';
+
 import { CampaignAudienceService } from './campaign-audience.service.js';
 import { CampaignDispatchService } from './campaign-dispatch.service.js';
 import { CampaignStateService } from './campaign-state.service.js';
-import { CampaignPayload } from '../../../core/contracts/index.js';
-import logger from '../../../services/logger.js';
 
 export class CampaignOrchestratorService {
   private stateService: CampaignStateService;

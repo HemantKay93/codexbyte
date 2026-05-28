@@ -1,14 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
 import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '../components/ui/Table';
-import {
   Search,
   Filter,
   RefreshCcw,
@@ -20,6 +12,15 @@ import {
 } from 'lucide-react';
 import { AdminService } from '@byteevolvr/api-client';
 import { useNavigate } from 'react-router-dom';
+
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from '../components/ui/Table';
 
 export function ReturnsPage() {
   const navigate = useNavigate();

@@ -1,12 +1,11 @@
 import { Worker, Job } from 'bullmq';
+
 import { redis } from '../config/redis.js';
 import { NotificationService } from '../services/notificationService.js';
 import { EmailService } from '../services/email.js';
 import { AnalyticsService } from '../services/analyticsService.js';
 import logger from '../services/logger.js';
 import { WhatsAppRepository } from '../modules/whatsapp/whatsapp.repository.js';
-import { automationWorker } from './automation.worker.js';
-import { whatsappWorker } from './whatsapp.worker.js';
 import {
   emailQueue,
   notificationQueue,
@@ -15,6 +14,9 @@ import {
   whatsappQueue,
 } from '../core/queues/index.js';
 import { SocketGateway } from '../core/notifications/SocketGateway.js';
+
+import { automationWorker } from './automation.worker.js';
+import { whatsappWorker } from './whatsapp.worker.js';
 
 // Define Workers
 // REDIS OPTIMISATION: stalledInterval controls how often BullMQ polls for stalled jobs.

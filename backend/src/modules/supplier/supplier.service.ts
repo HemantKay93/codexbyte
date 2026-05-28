@@ -6,7 +6,10 @@ import logger from '../../services/logger.js';
 export class SupplierService {
   async getSuppliers() {
     const admin = await getAdminClient();
-    const { data, error } = await admin.from('suppliers').select('*').order('created_at', { ascending: false });
+    const { data, error } = await admin
+      .from('suppliers')
+      .select('*')
+      .order('created_at', { ascending: false });
     if (error) throw new AppError('Failed to fetch suppliers', 500);
     return data;
   }
@@ -23,7 +26,7 @@ export class SupplierService {
       })
       .select()
       .single();
-      
+
     if (error) throw new AppError('Failed to create supplier', 500);
     return supplier;
   }
@@ -32,7 +35,10 @@ export class SupplierService {
 
   async getPurchaseOrders(supplierId?: string) {
     const admin = await getAdminClient();
-    let query = admin.from('purchase_orders').select('*, suppliers(name), purchase_order_items(*)').order('created_at', { ascending: false });
+    let query = admin
+      .from('purchase_orders')
+      .select('*, suppliers(name), purchase_order_items(*)')
+      .order('created_at', { ascending: false });
     if (supplierId) {
       query = query.eq('supplier_id', supplierId);
     }
@@ -41,29 +47,40 @@ export class SupplierService {
     return data;
   }
 
-  async createPurchaseOrder(data: { supplierId: string, expectedDelivery?: string, items: { productId: string, quantity: number, unitCost: number }[] }, userId: string) {
+  async createPurchaseOrder(
+    data: {
+      supplierId: string;
+      expectedDelivery?: string;
+      items: { productId: string; quantity: number; unitCost: number }[];
+    },
+    userId: string
+  ) {
     const admin = await getAdminClient();
-    
+
     // 1. Calculate total
-    const totalAmount = data.items.reduce((sum, item) => sum + (item.quantity * item.unitCost), 0);
+    const totalAmount = data.items.reduce((sum, item) => sum + item.quantity * item.unitCost, 0);
 
     // 2. Create PO
-    const { data: po, error: poError } = await admin.from('purchase_orders').insert({
-      supplier_id: data.supplierId,
-      status: 'pending',
-      total_amount: totalAmount,
-      expected_delivery: data.expectedDelivery,
-      created_by: userId
-    }).select().single();
+    const { data: po, error: poError } = await admin
+      .from('purchase_orders')
+      .insert({
+        supplier_id: data.supplierId,
+        status: 'pending',
+        total_amount: totalAmount,
+        expected_delivery: data.expectedDelivery,
+        created_by: userId,
+      })
+      .select()
+      .single();
 
     if (poError || !po) throw new AppError('Failed to create PO', 500);
 
     // 3. Create PO Items
-    const itemsToInsert = data.items.map(item => ({
+    const itemsToInsert = data.items.map((item) => ({
       purchase_order_id: po.id,
       product_id: item.productId,
       quantity: item.quantity,
-      unit_cost: item.unitCost
+      unit_cost: item.unitCost,
     }));
 
     const { error: itemsError } = await admin.from('purchase_order_items').insert(itemsToInsert);
@@ -74,7 +91,7 @@ export class SupplierService {
 
   async receivePurchaseOrder(poId: string, warehouseId: string, userId: string) {
     const admin = await getAdminClient();
-    
+
     // 1. Fetch PO and items
     const { data: po, error: poError } = await admin
       .from('purchase_orders')
@@ -86,7 +103,10 @@ export class SupplierService {
     if (po.status === 'received') throw new AppError('PO is already received', 400);
 
     // 2. Update PO status
-    const { error: updateError } = await admin.from('purchase_orders').update({ status: 'received', received_at: new Date().toISOString() }).eq('id', poId);
+    const { error: updateError } = await admin
+      .from('purchase_orders')
+      .update({ status: 'received', received_at: new Date().toISOString() })
+      .eq('id', poId);
     if (updateError) throw new AppError('Failed to update PO status', 500);
 
     // 3. Sync with Inventory Service automatically!
@@ -99,11 +119,13 @@ export class SupplierService {
         referenceType: 'purchase_order',
         referenceId: po.id,
         notes: `Received from PO ${po.id}`,
-        userId: userId
+        userId: userId,
       });
     }
 
-    logger.info(`[Supplier] PO ${poId} marked as received and inventory synced to warehouse ${warehouseId}`);
+    logger.info(
+      `[Supplier] PO ${poId} marked as received and inventory synced to warehouse ${warehouseId}`
+    );
     return { success: true, message: 'PO received and inventory updated successfully' };
   }
 }

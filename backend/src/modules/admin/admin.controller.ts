@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
-import { AdminService } from './admin.service.js';
-import { AdminRepository } from './admin.repository.js';
+
 import { catchAsync } from '../../middlewares/error.js';
 import { AnalyticsService } from '../../services/analyticsService.js';
 import { getAdminClient } from '../../config/supabase.js';
+
+import { AdminRepository } from './admin.repository.js';
+import { AdminService } from './admin.service.js';
 
 const adminService = new AdminService();
 const adminRepo = new AdminRepository();
@@ -141,7 +143,7 @@ export const getTeamMembers = catchAsync(async (req: Request, res: Response) => 
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  
+
   res.json({
     success: true,
     data,
@@ -151,12 +153,12 @@ export const getTeamMembers = catchAsync(async (req: Request, res: Response) => 
 export const inviteTeamMember = catchAsync(async (req: Request, res: Response) => {
   const { email, full_name, role } = req.body;
   const admin = await getAdminClient();
-  
+
   // Create user via Supabase Auth Admin
   const { data: user, error: authError } = await admin.auth.admin.inviteUserByEmail(email, {
-    data: { full_name, role }
+    data: { full_name, role },
   });
-  
+
   if (authError) throw authError;
 
   res.json({
@@ -169,7 +171,7 @@ export const updateTeamMemberRole = catchAsync(async (req: Request, res: Respons
   const { id } = req.params;
   const { role } = req.body;
   const admin = await getAdminClient();
-  
+
   const { data, error } = await admin
     .from('user_profiles')
     .update({ role })
@@ -178,10 +180,10 @@ export const updateTeamMemberRole = catchAsync(async (req: Request, res: Respons
     .single();
 
   if (error) throw error;
-  
+
   // Also update auth user metadata
   await admin.auth.admin.updateUserById(id, {
-    user_metadata: { role }
+    user_metadata: { role },
   });
 
   res.json({

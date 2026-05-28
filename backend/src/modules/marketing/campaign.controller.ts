@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
-import { CampaignOrchestratorService } from './services/campaign-orchestrator.service.js';
+
 import { catchAsync } from '../../middlewares/error.js';
+
+import { CampaignOrchestratorService } from './services/campaign-orchestrator.service.js';
 
 const campaignService = new CampaignOrchestratorService();
 

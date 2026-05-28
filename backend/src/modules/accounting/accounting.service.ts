@@ -2,7 +2,10 @@ import { AccountingRepository } from './accounting.repository.js';
 import { Invoice, InvoiceLineItem, JournalEntry } from './accounting.types.js';
 
 export class AccountingService {
-  static async createInvoice(invoicePayload: Partial<Invoice>, lineItems: Partial<InvoiceLineItem>[]) {
+  static async createInvoice(
+    invoicePayload: Partial<Invoice>,
+    lineItems: Partial<InvoiceLineItem>[]
+  ) {
     // Basic validation
     if (!invoicePayload.type || !invoicePayload.customer_name || lineItems.length === 0) {
       throw new Error('Missing required fields for invoice creation');
@@ -15,12 +18,12 @@ export class AccountingService {
     // Calculate totals
     let subtotal = 0;
     let tax_total = 0;
-    
-    const processedLineItems = lineItems.map(item => {
+
+    const processedLineItems = lineItems.map((item) => {
       const quantity = item.quantity || 1;
       const unit_price = item.unit_price || 0;
       const tax_rate = item.tax_rate || 0;
-      
+
       const itemSubtotal = quantity * unit_price;
       const itemTaxAmount = (itemSubtotal * tax_rate) / 100;
       const itemTotal = itemSubtotal + itemTaxAmount;
@@ -35,7 +38,7 @@ export class AccountingService {
         unit_price,
         tax_rate,
         tax_amount: itemTaxAmount,
-        total_price: itemTotal
+        total_price: itemTotal,
       };
     });
 
@@ -55,22 +58,35 @@ export class AccountingService {
       notes: invoicePayload.notes,
       subtotal,
       tax_total,
-      total
+      total,
     };
 
-    const createdInvoice = await AccountingRepository.createInvoice(fullInvoice, processedLineItems);
+    const createdInvoice = await AccountingRepository.createInvoice(
+      fullInvoice,
+      processedLineItems
+    );
 
     // If it's sent or paid immediately, we post a journal entry
     if (createdInvoice.status !== 'draft' && createdInvoice.status !== 'cancelled') {
-      await this.postInvoiceJournalEntry(createdInvoice.id, fullInvoice.invoice_number, total, invoicePayload.type as 'b2b' | 'b2c');
+      await this.postInvoiceJournalEntry(
+        createdInvoice.id,
+        fullInvoice.invoice_number,
+        total,
+        invoicePayload.type as 'b2b' | 'b2c'
+      );
     }
 
     return createdInvoice;
   }
 
-  static async postInvoiceJournalEntry(invoiceId: string, invoiceNumber: string, amount: number, type: 'b2b' | 'b2c') {
+  static async postInvoiceJournalEntry(
+    invoiceId: string,
+    invoiceNumber: string,
+    amount: number,
+    type: 'b2b' | 'b2c'
+  ) {
     const description = `Auto-generated entry for ${type.toUpperCase()} Invoice ${invoiceNumber}`;
-    
+
     // Debit Accounts Receivable
     await AccountingRepository.createJournalEntry({
       entry_date: new Date().toISOString(),
@@ -80,7 +96,7 @@ export class AccountingService {
       is_credit: false,
       description,
       reference_type: 'invoice',
-      reference_id: invoiceId
+      reference_id: invoiceId,
     });
 
     // Credit Sales Revenue
@@ -92,7 +108,7 @@ export class AccountingService {
       is_credit: true,
       description,
       reference_type: 'invoice',
-      reference_id: invoiceId
+      reference_id: invoiceId,
     });
   }
 
@@ -107,19 +123,19 @@ export class AccountingService {
 
     const aggregateTax = (invoices: any[]) => {
       return invoices
-        .filter(inv => inv.status !== 'draft' && inv.status !== 'cancelled')
+        .filter((inv) => inv.status !== 'draft' && inv.status !== 'cancelled')
         .reduce((sum, inv) => sum + Number(inv.tax_total), 0);
     };
 
     const aggregateSales = (invoices: any[]) => {
       return invoices
-        .filter(inv => inv.status !== 'draft' && inv.status !== 'cancelled')
+        .filter((inv) => inv.status !== 'draft' && inv.status !== 'cancelled')
         .reduce((sum, inv) => sum + Number(inv.subtotal), 0);
     };
 
     const b2bTax = aggregateTax(b2bInvoices);
     const b2cTax = aggregateTax(b2cInvoices);
-    
+
     const b2bSales = aggregateSales(b2bInvoices);
     const b2cSales = aggregateSales(b2cInvoices);
 
@@ -128,8 +144,8 @@ export class AccountingService {
       total_tax_collected: b2bTax + b2cTax,
       breakdown: {
         b2b: { sales: b2bSales, tax: b2bTax, count: b2bInvoices.length },
-        b2c: { sales: b2cSales, tax: b2cTax, count: b2cInvoices.length }
-      }
+        b2c: { sales: b2cSales, tax: b2cTax, count: b2cInvoices.length },
+      },
     };
   }
 }

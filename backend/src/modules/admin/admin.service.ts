@@ -1,11 +1,10 @@
-import { AdminRepository } from './admin.repository.js';
 import { AuditService } from '../../services/auditService.js';
+
+import { AdminRepository } from './admin.repository.js';
 
 const adminRepo = new AdminRepository();
 
 export class AdminService {
-
-
   async getSalesReport() {
     const data = await adminRepo.getSalesAnalytics();
     // Process data for charts
@@ -52,4 +51,3 @@ export class AdminService {
     return await AuditService.getLogs(params);
   }
 }
-

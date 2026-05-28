@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import { SupportRepository } from './support.repository.js';
+
 import { catchAsync, AppError } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';
+
+import { SupportRepository } from './support.repository.js';
 
 const supportRepo = new SupportRepository();
 

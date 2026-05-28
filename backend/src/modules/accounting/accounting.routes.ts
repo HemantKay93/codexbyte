@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import * as accountingController from './accounting.controller.js';
+
 import { authenticate, requireAdmin } from '../../middlewares/auth.js';
+
+import * as accountingController from './accounting.controller.js';
 
 const router = Router();
 

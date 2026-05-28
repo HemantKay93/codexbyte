@@ -11,7 +11,10 @@ export class CMSService {
     return await cmsRepo.upsert(pageSlug, sectionKey, content);
   }
 
-  static async updatePageContent(pageSlug: string, sections: { sectionKey: string; content: any }[]) {
+  static async updatePageContent(
+    pageSlug: string,
+    sections: { sectionKey: string; content: any }[]
+  ) {
     return await cmsRepo.upsertBulk(pageSlug, sections);
   }
 }

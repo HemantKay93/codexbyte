@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { catchAsync } from '../../middlewares/error.js';
 import axios from 'axios';
+
+import { catchAsync } from '../../middlewares/error.js';
 import logger from '../../services/logger.js';
 
 export const getShippingRates = catchAsync(async (req: Request, res: Response) => {

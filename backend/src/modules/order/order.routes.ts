@@ -1,8 +1,10 @@
 import express from 'express';
-import * as orderController from './order.controller.js';
+
 import { authenticate, authorize, authenticateOptional } from '../../middlewares/auth.js';
 import { requirePermission } from '../../middlewares/permission.js';
 import { idempotencyMiddleware } from '../../middlewares/idempotency.middleware.js';
+
+import * as orderController from './order.controller.js';
 
 const router = express.Router();
 

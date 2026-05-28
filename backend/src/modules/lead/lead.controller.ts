@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
-import { LeadService } from './lead.service.js';
+
 import { catchAsync } from '../../middlewares/error.js';
+
+import { LeadService } from './lead.service.js';
 
 const leadService = new LeadService();
 

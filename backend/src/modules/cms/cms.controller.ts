@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
-import { CmsRepository } from './cms.repository.js';
+
 import { catchAsync } from '../../middlewares/error.js';
+
+import { CmsRepository } from './cms.repository.js';
 
 const cmsRepo = new CmsRepository();
 

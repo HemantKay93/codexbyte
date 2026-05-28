@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
-import { WhatsAppService } from './whatsapp.service.js';
+
 import logger from '../../services/logger.js';
 import { whatsappQueue } from '../../jobs/whatsapp.queue.js';
-import { WhatsAppRepository } from './whatsapp.repository.js';
 import { CacheService } from '../../services/cacheService.js';
 import { getAdminClient } from '../../config/supabase.js';
+
+import { WhatsAppRepository } from './whatsapp.repository.js';
+import { WhatsAppService } from './whatsapp.service.js';
 
 const repository = new WhatsAppRepository();
 

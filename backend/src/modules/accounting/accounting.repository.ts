@@ -1,9 +1,13 @@
 import { getAdminClient } from '../../config/supabase.js';
+
 import { Invoice, InvoiceLineItem, JournalEntry } from './accounting.types.js';
 
 export class AccountingRepository {
   // --- Invoices ---
-  static async createInvoice(invoice: Omit<Invoice, 'id' | 'created_at' | 'updated_at'>, lineItems: Omit<InvoiceLineItem, 'id' | 'invoice_id' | 'created_at'>[]) {
+  static async createInvoice(
+    invoice: Omit<Invoice, 'id' | 'created_at' | 'updated_at'>,
+    lineItems: Omit<InvoiceLineItem, 'id' | 'invoice_id' | 'created_at'>[]
+  ) {
     const admin = await getAdminClient();
     const { data: invData, error: invError } = await admin
       .from('invoices')
@@ -114,11 +118,13 @@ export class AccountingRepository {
       if (entry.account_type === 'Revenue') {
         const adjustedValue = entry.is_credit ? value : -value; // Revenue increases on Credit
         result.revenue += adjustedValue;
-        result.revenue_breakdown[entry.account_name] = (result.revenue_breakdown[entry.account_name] || 0) + adjustedValue;
+        result.revenue_breakdown[entry.account_name] =
+          (result.revenue_breakdown[entry.account_name] || 0) + adjustedValue;
       } else if (entry.account_type === 'Expense') {
         const adjustedValue = entry.is_credit ? -value : value; // Expenses increase on Debit
         result.expenses += adjustedValue;
-        result.expense_breakdown[entry.account_name] = (result.expense_breakdown[entry.account_name] || 0) + adjustedValue;
+        result.expense_breakdown[entry.account_name] =
+          (result.expense_breakdown[entry.account_name] || 0) + adjustedValue;
       }
     }
 

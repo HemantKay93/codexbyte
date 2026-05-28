@@ -1,4 +1,3 @@
-import { OrderRepository } from './order.repository.js';
 import { AppError } from '../../middlewares/error.js';
 import { InventoryService } from '../inventory/inventory.service.js';
 import { AuditService } from '../../services/auditService.js';
@@ -8,6 +7,8 @@ import { JobService } from '../../services/jobService.js';
 import { AuthService } from '../auth/auth.service.js';
 import { eventBus } from '../../core/events/EventBus.js';
 import { DomainEvents } from '../../core/events/events.js';
+
+import { OrderRepository } from './order.repository.js';
 
 const orderRepo = new OrderRepository();
 
@@ -49,13 +50,20 @@ export class OrderService {
       try {
         const authService = new AuthService();
         const customerName = shippingAddress?.full_name || shippingAddress?.name || 'Guest User';
-        const newUser = await authService.customerSignup(orderData.email, orderData.password, customerName);
+        const newUser = await authService.customerSignup(
+          orderData.email,
+          orderData.password,
+          customerName
+        );
         if (newUser?.user?.id) {
           finalUserId = newUser.user.id;
           logger.info(`[OrderService] Auto-created guest account: ${finalUserId}`);
         }
       } catch (err: any) {
-        logger.error(`[OrderService] Failed to auto-create guest account for ${orderData.email}:`, err);
+        logger.error(
+          `[OrderService] Failed to auto-create guest account for ${orderData.email}:`,
+          err
+        );
         // Proceed as pure anonymous guest if account creation fails (e.g., email exists)
       }
     }
@@ -125,7 +133,7 @@ export class OrderService {
       customerName: order.customer_name,
       email: order.customer_email,
       phone: shippingAddress?.phone || orderData.phone,
-      totalAmount: order.total_amount
+      totalAmount: order.total_amount,
     });
 
     // 5. Emit Real-time events
@@ -143,8 +151,6 @@ export class OrderService {
 
     return order;
   }
-
-
 
   async updateOrderStatus(id: string, updateData: any, userId?: string) {
     const { status, courier, trackingId, notes } = updateData;
@@ -232,18 +238,18 @@ export class OrderService {
         customerId: order.user_id || 'guest',
         notes: notes,
         phone: order.shipping_address?.phone || order.phone,
-        email: order.customer_email
+        email: order.customer_email,
       });
-      
+
       if (newStatus === 'delivered') {
         eventBus.publish(DomainEvents.ORDER_COMPLETED, {
           orderId: id,
-          customerId: order.user_id || 'guest'
+          customerId: order.user_id || 'guest',
         });
       } else if (newStatus === 'cancelled') {
         eventBus.publish(DomainEvents.ORDER_CANCELLED, {
           orderId: id,
-          reason: notes || 'User cancelled'
+          reason: notes || 'User cancelled',
         });
       }
     }
@@ -280,6 +286,4 @@ export class OrderService {
 
     return { success: true };
   }
-
-
 }

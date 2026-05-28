@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { printInvoice } from '@byteevolvr/ui';
+
 import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 
 const inputStyle: React.CSSProperties = {
@@ -528,7 +529,8 @@ export function DashboardPage() {
                             {item.quantity}x {item.product_name}
                           </span>
                           <div className="font-bold text-accent">
-                            {currencySymbol}{Number(item.total_price).toFixed(2)}
+                            {currencySymbol}
+                            {Number(item.total_price).toFixed(2)}
                           </div>
                         </div>
                       ))}
@@ -536,7 +538,10 @@ export function DashboardPage() {
                   </div>
                   <div className="flex justify-between items-center pt-4 border-t border-white/5 font-bold">
                     <span>Total Amount</span>
-                    <span className="text-accent">{currencySymbol}{Number(order.total_amount).toFixed(2)}</span>
+                    <span className="text-accent">
+                      {currencySymbol}
+                      {Number(order.total_amount).toFixed(2)}
+                    </span>
                   </div>
                 </Card>
               ))

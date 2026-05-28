@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
-import { AutomationService } from './automation.service.js';
+
 import { catchAsync } from '../../middlewares/error.js';
+
+import { AutomationService } from './automation.service.js';
 
 const automationService = new AutomationService();
 

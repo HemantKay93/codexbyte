@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
-import { TemplateService } from './template.service.js';
+
 import { catchAsync } from '../../middlewares/error.js';
+
+import { TemplateService } from './template.service.js';
 
 const templateService = new TemplateService();
 

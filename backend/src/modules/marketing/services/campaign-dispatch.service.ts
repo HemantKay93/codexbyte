@@ -1,4 +1,5 @@
 import { Queue } from 'bullmq';
+
 import { redis } from '../../../config/redis.js';
 import logger from '../../../services/logger.js';
 

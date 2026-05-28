@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Footer as SharedFooter } from '@byteevolvr/ui';
+
 import { AppLogo } from '@/components/ui/AppLogo';
 import { useCMS } from '@/features/cms/useCMS';
 

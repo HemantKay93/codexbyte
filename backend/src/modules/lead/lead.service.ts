@@ -1,5 +1,6 @@
-import { LeadRepository } from './lead.repository.js';
 import logger from '../../services/logger.js';
+
+import { LeadRepository } from './lead.repository.js';
 
 const leadRepo = new LeadRepository();
 

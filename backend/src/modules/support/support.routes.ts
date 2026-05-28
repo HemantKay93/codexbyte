@@ -1,6 +1,8 @@
 import express from 'express';
-import * as supportController from './support.controller.js';
+
 import { authenticate, authorize } from '../../middlewares/auth.js';
+
+import * as supportController from './support.controller.js';
 
 const router = express.Router();
 

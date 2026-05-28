@@ -5,18 +5,20 @@ export class SupportRepository {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('support_tickets')
-      .select(`
+      .select(
+        `
         *,
         user:user_id (
           full_name
         )
-      `)
+      `
+      )
       .order('updated_at', { ascending: false });
 
     if (error) throw error;
     return data;
   }
-  
+
   async findByUserId(userId: string) {
     const admin = await getAdminClient();
     const { data, error } = await admin
@@ -33,13 +35,15 @@ export class SupportRepository {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('support_tickets')
-      .select(`
+      .select(
+        `
         *,
         user:user_id (
           full_name
         ),
         messages:support_messages (*)
-      `)
+      `
+      )
       .eq('id', id)
       .single();
 

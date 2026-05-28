@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+
 import { PageSeo } from '@/components/seo/PageSeo';
 import { useCMS } from '@/features/cms/useCMS';
 

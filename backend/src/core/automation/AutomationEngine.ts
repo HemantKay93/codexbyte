@@ -1,6 +1,7 @@
+import { Queue } from 'bullmq';
+
 import { getAdminClient } from '../../config/supabase.js';
 import logger from '../../services/logger.js';
-import { Queue } from 'bullmq';
 import { redis } from '../../config/redis.js';
 
 export const automationQueue = new Queue('marketing-automation', { connection: redis });

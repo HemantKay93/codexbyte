@@ -1,5 +1,6 @@
-import { getAdminClient } from '../../config/supabase.js';
 import { Queue } from 'bullmq';
+
+import { getAdminClient } from '../../config/supabase.js';
 import { redis } from '../../config/redis.js';
 import logger from '../../services/logger.js';
 

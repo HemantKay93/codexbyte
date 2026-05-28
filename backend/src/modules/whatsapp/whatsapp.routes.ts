@@ -1,4 +1,7 @@
 import { Router } from 'express';
+
+import { authenticate, requireAdmin } from '../../middlewares/auth.js';
+
 import {
   getStatus,
   getLogs,
@@ -20,7 +23,6 @@ import {
   updateProvider,
 } from './whatsapp.controller.js';
 import { webhookHealth, verifyWebhook, handleWebhookEvent } from './whatsapp.webhook.controller.js';
-import { authenticate, requireAdmin } from '../../middlewares/auth.js';
 
 const router = Router();
 

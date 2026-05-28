@@ -1,7 +1,9 @@
 import { Response } from 'express';
-import { WishlistRepository } from './wishlist.repository.js';
+
 import { catchAsync } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';
+
+import { WishlistRepository } from './wishlist.repository.js';
 
 const wishlistRepo = new WishlistRepository();
 

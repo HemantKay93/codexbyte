@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+
 import { supabase, getAdminClient } from '../../config/supabase.js';
 import { AppError } from '../../middlewares/error.js';
 
@@ -20,9 +21,13 @@ export class AuthService {
       ADMIN_PASSWORD_HASH &&
       bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)
     ) {
-      const token = jwt.sign({ id: '00000000-0000-0000-0000-000000000000', email, role: 'admin' }, JWT_SECRET, {
-        expiresIn: '12h',
-      });
+      const token = jwt.sign(
+        { id: '00000000-0000-0000-0000-000000000000', email, role: 'admin' },
+        JWT_SECRET,
+        {
+          expiresIn: '12h',
+        }
+      );
       return {
         token,
         user: {

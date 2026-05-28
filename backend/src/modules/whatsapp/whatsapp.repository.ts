@@ -1,5 +1,6 @@
 import { getAdminClient } from '../../config/supabase.js';
 import logger from '../../services/logger.js';
+
 import { WhatsAppMessageRecord, WhatsAppSession } from './whatsapp.types.js';
 
 export class WhatsAppRepository {
@@ -27,7 +28,7 @@ export class WhatsAppRepository {
       .maybeSingle();
 
     if (selectErr) {
-        logger.error('[WhatsAppRepository] Error checking existing session:', selectErr);
+      logger.error('[WhatsAppRepository] Error checking existing session:', selectErr);
     }
 
     if (existing) {
@@ -41,20 +42,20 @@ export class WhatsAppRepository {
         .eq('id', existing.id);
       if (updateErr) logger.error('[WhatsAppRepository] Error updating session:', updateErr);
     } else {
-      const { error: insertErr } = await admin
-        .from('whatsapp_sessions')
-        .insert({
-          session_name: sessionName,
-          ...state,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          last_active: new Date().toISOString(),
-        });
+      const { error: insertErr } = await admin.from('whatsapp_sessions').insert({
+        session_name: sessionName,
+        ...state,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        last_active: new Date().toISOString(),
+      });
       if (insertErr) logger.error('[WhatsAppRepository] Error inserting session:', insertErr);
     }
   }
 
-  async createMessageRecord(record: Partial<WhatsAppMessageRecord>): Promise<WhatsAppMessageRecord> {
+  async createMessageRecord(
+    record: Partial<WhatsAppMessageRecord>
+  ): Promise<WhatsAppMessageRecord> {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('whatsapp_messages')
@@ -70,7 +71,11 @@ export class WhatsAppRepository {
     return data;
   }
 
-  async updateMessageStatus(id: string, status: 'sent' | 'failed' | 'delivered', errorLog?: string) {
+  async updateMessageStatus(
+    id: string,
+    status: 'sent' | 'failed' | 'delivered',
+    errorLog?: string
+  ) {
     const admin = await getAdminClient();
     const { error } = await admin
       .from('whatsapp_messages')
@@ -86,7 +91,11 @@ export class WhatsAppRepository {
     }
   }
 
-  async updateMessageStatusByExternalId(externalId: string, status: 'sent' | 'failed' | 'delivered', errorLog?: string) {
+  async updateMessageStatusByExternalId(
+    externalId: string,
+    status: 'sent' | 'failed' | 'delivered',
+    errorLog?: string
+  ) {
     const admin = await getAdminClient();
     const { error } = await admin
       .from('whatsapp_messages')
@@ -98,7 +107,10 @@ export class WhatsAppRepository {
       .eq('external_id', externalId);
 
     if (error) {
-      logger.error(`[WhatsAppRepository] Failed to update message by external ID ${externalId} status:`, error);
+      logger.error(
+        `[WhatsAppRepository] Failed to update message by external ID ${externalId} status:`,
+        error
+      );
     }
   }
 
@@ -128,9 +140,16 @@ export class WhatsAppRepository {
 
   async getSystemStatus() {
     const admin = await getAdminClient();
-    const { data: session } = await admin.from('whatsapp_sessions').select('*').eq('session_name', 'default').maybeSingle();
-    const { count: failedCount } = await admin.from('whatsapp_messages').select('*', { count: 'exact', head: true }).eq('status', 'failed');
-    
+    const { data: session } = await admin
+      .from('whatsapp_sessions')
+      .select('*')
+      .eq('session_name', 'default')
+      .maybeSingle();
+    const { count: failedCount } = await admin
+      .from('whatsapp_messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'failed');
+
     return {
       session: session || null,
       failedCount: failedCount || 0,
@@ -139,7 +158,10 @@ export class WhatsAppRepository {
 
   async updateSessionLastActive() {
     const admin = await getAdminClient();
-    await admin.from('whatsapp_sessions').update({ last_active: new Date().toISOString() }).eq('session_name', 'default');
+    await admin
+      .from('whatsapp_sessions')
+      .update({ last_active: new Date().toISOString() })
+      .eq('session_name', 'default');
   }
 
   // --- Templates Management ---
@@ -167,11 +189,20 @@ export class WhatsAppRepository {
     return data;
   }
 
-  async createTemplate(template: { name: string, content: string, variables: any[], is_active?: boolean }) {
+  async createTemplate(template: {
+    name: string;
+    content: string;
+    variables: any[];
+    is_active?: boolean;
+  }) {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('whatsapp_templates')
-      .insert({ ...template, created_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+      .insert({
+        ...template,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
       .select()
       .single();
 
@@ -194,10 +225,7 @@ export class WhatsAppRepository {
 
   async deleteTemplate(id: string) {
     const admin = await getAdminClient();
-    const { error } = await admin
-      .from('whatsapp_templates')
-      .delete()
-      .eq('id', id);
+    const { error } = await admin.from('whatsapp_templates').delete().eq('id', id);
 
     if (error) throw error;
   }

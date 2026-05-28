@@ -1,3 +1,6 @@
+import { getAdminClient } from '../../../../config/supabase.js';
+import logger from '../../../../services/logger.js';
+
 import {
   IWhatsAppProvider,
   ProviderResponse,
@@ -5,8 +8,6 @@ import {
 } from './IWhatsAppProvider.js';
 import { MetaCloudProvider } from './metaCloudProvider.js';
 import { EvolutionProvider } from './evolutionProvider.js';
-import { getAdminClient } from '../../../../config/supabase.js';
-import logger from '../../../../services/logger.js';
 
 export class WhatsAppProviderFactory {
   private providers: Map<string, IWhatsAppProvider> = new Map();

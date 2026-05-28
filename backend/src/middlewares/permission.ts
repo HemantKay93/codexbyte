@@ -1,7 +1,9 @@
 import { Response, NextFunction } from 'express';
+
+import { RolePermissions, Permission } from '../config/permissions.js';
+
 import { AuthRequest } from './auth.js';
 import { AppError } from './error.js';
-import { RolePermissions, Permission } from '../config/permissions.js';
 
 export const requirePermission = (permission: Permission) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {

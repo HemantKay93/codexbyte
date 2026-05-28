@@ -1,9 +1,10 @@
 import express from 'express';
-import * as productController from './product.controller.js';
+
 import { authenticate, authorize } from '../../middlewares/auth.js';
 import { requirePermission } from '../../middlewares/permission.js';
-
 import { validate } from '../../middlewares/validate.js';
+
+import * as productController from './product.controller.js';
 import { productSchema, productUpdateSchema } from './product.validator.js';
 
 const router = express.Router();
