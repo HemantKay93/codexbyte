@@ -1,17 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
-import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
-  plugins: [
-    react(),
-    visualizer({
-      filename: './dist/bundle-analysis.html',
-      open: false,
-      title: 'ByteEvolvr Frontend Bundle Analysis'
-    })
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -27,9 +19,9 @@ export default defineConfig({
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-utils': ['date-fns']
-        }
-      }
-    }
-  }
+          'vendor-utils': ['date-fns'],
+        },
+      },
+    },
+  },
 });

@@ -217,7 +217,7 @@ export function SettingsPage() {
         workingHours: 'Mon-Sat: 9:00 AM - 7:00 PM',
       });
       // Invalidate cached CMS data so frontend reflects new currency
-      queryClient.invalidateQueries(['cms', 'global']);
+      queryClient.invalidateQueries({ queryKey: ['cms', 'global'] });
       setStoreStatus({ type: 'success', msg: 'Store details saved successfully!' });
     } catch (err: any) {
       const msg = err?.customMessage || err?.message || 'Failed to save store details.';
