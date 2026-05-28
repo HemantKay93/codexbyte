@@ -20,7 +20,7 @@ export const featureFlagMiddleware = (req: Request, res: Response, next: NextFun
     // We reuse the features loaded in the global instance
     features: growthbook.getFeatures(),
     attributes: {
-      id: req.user?.id || 'anonymous',
+      id: (req as any).user?.id || 'anonymous',
       userAgent: req.headers['user-agent'],
       url: req.originalUrl,
     },
