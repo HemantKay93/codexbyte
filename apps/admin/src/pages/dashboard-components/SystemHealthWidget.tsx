@@ -5,6 +5,7 @@ import { AdminService } from '@byteevolvr/api-client';
 
 export function SystemHealthWidget() {
   const [health, setHealth] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
   // eslint-disable-line @typescript-eslint/no-explicit-any
 
   useEffect(() => {
@@ -16,12 +17,35 @@ export function SystemHealthWidget() {
           setHealth(res?.data || res);
         }
       })
-      .catch((err) => console.error('Failed to fetch system health:', err));
+      .catch((err) => {
+        if (mounted) {
+          console.error('Failed to fetch system health:', err);
+          setError(err.customMessage || err.message || 'Failed to load system health');
+        }
+      });
 
     return () => {
       mounted = false;
     };
   }, []);
+
+  if (error) {
+    return (
+      <Card className="col-span-1 md:col-span-2 mt-6 border-l-4 border-l-error bg-error/5">
+        <div className="pb-2">
+          <div className="flex items-center justify-between">
+            <div className="text-error flex items-center gap-2 font-medium">
+              <Activity className="h-5 w-5" />
+              System & Integration Health
+            </div>
+          </div>
+        </div>
+        <div className="mt-2 text-sm text-error">
+          Failed to load health status: {error}. Please ensure you are logged in as an admin.
+        </div>
+      </Card>
+    );
+  }
 
   if (!health) return null;
 

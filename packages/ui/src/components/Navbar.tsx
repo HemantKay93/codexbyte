@@ -11,6 +11,7 @@ interface NavLink {
 interface NavbarProps {
   logo: React.ReactNode;
   links: NavLink[];
+  centerElement?: React.ReactNode;
   rightElement?: React.ReactNode;
   mobileRightElement?: React.ReactNode;
   LinkComponent: React.ComponentType<any>;
@@ -20,6 +21,7 @@ interface NavbarProps {
 export function Navbar({
   logo,
   links,
+  centerElement,
   rightElement,
   mobileRightElement,
   LinkComponent,
@@ -44,37 +46,43 @@ export function Navbar({
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-8">
         <div className="flex items-center gap-2">{logo}</div>
 
-        {/* Desktop Links */}
-        <div className="hidden items-center gap-2 rounded-full border border-white/5 bg-white/5 backdrop-blur-md px-3 py-1.5 lg:flex shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
-          {links.map((link) => (
-            <LinkComponent
-              key={link.label}
-              to={link.to}
-              className={({ isActive }: { isActive: boolean }) =>
-                `relative px-5 py-2 text-sm font-medium transition-all duration-300 rounded-full overflow-hidden group ${
-                  isActive ? 'text-white' : 'text-brand-muted hover:text-white'
-                }`
-              }
-            >
-              {({ isActive }: { isActive: boolean }) => (
-                <>
-                  {isActive && (
-                    <motion.div
-                      layoutId="navbar-active-bg"
-                      className="absolute inset-0 bg-primary rounded-full shadow-[0_0_20px_rgba(26,79,214,0.4)]"
-                      initial={false}
-                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                  {!isActive && (
-                    <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
-                  )}
-                  <span className="relative z-10">{link.label}</span>
-                </>
-              )}
-            </LinkComponent>
-          ))}
-        </div>
+        {/* Desktop Links or Center Element */}
+        {centerElement ? (
+          <div className="hidden lg:flex items-center justify-center flex-1 px-8">
+            {centerElement}
+          </div>
+        ) : (
+          <div className="hidden items-center gap-2 rounded-full border border-white/5 bg-white/5 backdrop-blur-md px-3 py-1.5 lg:flex shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
+            {links.map((link) => (
+              <LinkComponent
+                key={link.label}
+                to={link.to}
+                className={({ isActive }: { isActive: boolean }) =>
+                  `relative px-5 py-2 text-sm font-medium transition-all duration-300 rounded-full overflow-hidden group ${
+                    isActive ? 'text-white' : 'text-brand-muted hover:text-white'
+                  }`
+                }
+              >
+                {({ isActive }: { isActive: boolean }) => (
+                  <>
+                    {isActive && (
+                      <motion.div
+                        layoutId="navbar-active-bg"
+                        className="absolute inset-0 bg-primary rounded-full shadow-[0_0_20px_rgba(26,79,214,0.4)]"
+                        initial={false}
+                        transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                    {!isActive && (
+                      <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
+                    )}
+                    <span className="relative z-10">{link.label}</span>
+                  </>
+                )}
+              </LinkComponent>
+            ))}
+          </div>
+        )}
 
         <div className="hidden items-center gap-4 lg:flex">{rightElement}</div>
 

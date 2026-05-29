@@ -3,6 +3,8 @@ import { Navbar } from '@byteevolvr/ui';
 import { Mail, Phone, ShoppingCart, User } from 'lucide-react';
 import { useAuthStore, useCartStore } from '@byteevolvr/store';
 
+import { ShopMegaMenu } from './ShopMegaMenu';
+
 import { AppLogo } from '@/components/ui/AppLogo';
 import { useCMS } from '@/features/cms/useCMS';
 
@@ -12,6 +14,44 @@ const navLinks = [
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
 ];
+
+function ShopNavLinks() {
+  const shopLinks = [
+    { label: 'Gaming Gears', to: '/shop?category=gaming' },
+    { label: 'Networking', to: '/shop?category=networking' },
+    { label: 'Custom Build', to: '/shop/custom-build' },
+  ];
+
+  return (
+    <div className="hidden items-center gap-1 rounded-full border border-white/5 bg-white/5 backdrop-blur-md px-2 py-1.5 lg:flex shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
+      <ShopMegaMenu />
+
+      {shopLinks.map((link) => (
+        <NavLink
+          key={link.label}
+          to={link.to}
+          className={({ isActive }) =>
+            `relative px-4 py-1.5 text-sm font-medium transition-all duration-300 rounded-full overflow-hidden group ${
+              isActive ? 'text-white' : 'text-brand-muted hover:text-white'
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              {isActive && (
+                <div className="absolute inset-0 bg-primary/20 rounded-full border border-primary/30" />
+              )}
+              {!isActive && (
+                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
+              )}
+              <span className="relative z-10 whitespace-nowrap">{link.label}</span>
+            </>
+          )}
+        </NavLink>
+      ))}
+    </div>
+  );
+}
 
 export function Header() {
   const { user } = useAuthStore();
@@ -41,13 +81,14 @@ export function Header() {
         </NavLink>
       }
       links={navLinks}
+      centerElement={isShopRoute ? <ShopNavLinks /> : undefined}
       LinkComponent={NavLink}
       rightElement={
         <div className="flex flex-col lg:flex-row lg:items-center gap-4">
           <div className="flex flex-col lg:flex-row lg:items-center gap-3 text-xs font-medium lg:border-r border-white/10 lg:pr-5">
             <a
               href={`mailto:${contact.email}`}
-              className="group flex items-center gap-2 hover:text-white transition-all py-1.5 lg:py-1 px-3 rounded-full bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/10 text-brand-muted"
+              className="group flex items-center gap-2 hover:text-white transition-all py-1.5 lg:py-1 px-3 rounded-full bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/10 text-brand-muted whitespace-nowrap"
             >
               <div className="p-1 rounded-full bg-accent/10 group-hover:bg-accent/20 transition-colors shrink-0">
                 <Mail className="h-3 w-3 text-accent" />
@@ -56,7 +97,7 @@ export function Header() {
             </a>
             <a
               href={`tel:${contact.phone.replace(/\s+/g, '')}`}
-              className="group flex items-center gap-2 hover:text-white transition-all py-1.5 lg:py-1 px-3 rounded-full bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/10 text-brand-muted"
+              className="group flex items-center gap-2 hover:text-white transition-all py-1.5 lg:py-1 px-3 rounded-full bg-white/[0.02] hover:bg-white/[0.06] border border-white/[0.05] hover:border-white/10 text-brand-muted whitespace-nowrap"
             >
               <div className="p-1 rounded-full bg-accent/10 group-hover:bg-accent/20 transition-colors shrink-0">
                 <Phone className="h-3 w-3 text-accent" />

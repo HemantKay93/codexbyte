@@ -1,0 +1,257 @@
+{
+  "files": {
+    "apps/frontend/dist/assets/HomePage-D7rPdkBP.js": {
+      "size": 14495,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/SignupPage-B7W_ivQ3.js": {
+      "size": 5156,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/PrivacyPolicy-DiunTczW.js": {
+      "size": 1697,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/OrderFailedPage-CJvtCS_U.js": {
+      "size": 4312,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/products-Cz9imXvx.js": {
+      "size": 587,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/ServicesPage-DEjTi9KH.js": {
+      "size": 2314,
+      "mtime_nanos": 1780093980818011200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/TrackingPage-BZakdqvs.js": {
+      "size": 2756,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/shipping-lbhn0zy6.js": {
+      "size": 289,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/vendor-react-CH2QodNo.js": {
+      "size": 180588,
+      "mtime_nanos": 1780093980818011200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/AboutPage-Cz7jAF9F.js": {
+      "size": 3030,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/bundle-analysis.html": {
+      "size": 1341962,
+      "mtime_nanos": 1780093980795048500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/CheckoutPage-Bsy-N3Yh.js": {
+      "size": 21934,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/index-Cjgqd7dC.js": {
+      "size": 163511,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/auth-C_yu4ktk.js": {
+      "size": 839,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/.turbo/turbo-build.log": {
+      "size": 4184,
+      "mtime_nanos": 1780093980987308700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "apps/frontend/dist/assets/index-B636HLVe.css": {
+      "size": 71171,
+      "mtime_nanos": 1780093980818011200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/images/logo.webp": {
+      "size": 31184,
+      "mtime_nanos": 1777565343774563000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/ContactPage-BvAxWVBp.js": {
+      "size": 6904,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/DashboardPage-B2cKF_5g.js": {
+      "size": 25684,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/TermsAndConditions-GkTQvQ-5.js": {
+      "size": 908,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/CartPage-CwbR5kMf.js": {
+      "size": 10920,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/images": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "apps/frontend/dist/assets/RefundPolicy-U7Mmq8FA.js": {
+      "size": 904,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/users-CPAnOt62.js": {
+      "size": 805,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/index.html": {
+      "size": 853,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/marketing-DVDzpcdz.js": {
+      "size": 929,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/LoginPage-goFIy3h8.js": {
+      "size": 4739,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/CategoryPage-BOKVrxAa.js": {
+      "size": 10195,
+      "mtime_nanos": 1780093980820013700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/vendor-query-BuFOmY1p.js": {
+      "size": 39614,
+      "mtime_nanos": 1780093980818011200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/useStoreCurrency-TzkG8kDi.js": {
+      "size": 432,
+      "mtime_nanos": 1780093980820013700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/PageSeo-D6q-x1_O.js": {
+      "size": 990,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/ProductDetailPage-D2lCgjpB.js": {
+      "size": 15842,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/ShopPage-QwBIBJbs.js": {
+      "size": 17889,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/OrderSuccessPage-CN989GAe.js": {
+      "size": 7171,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "apps/frontend/dist/assets/vendor-ui-BPVqKS2J.js": {
+      "size": 153677,
+      "mtime_nanos": 1780093980818011200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/frontend/dist/assets/services-C7PTbo2a.js": {
+      "size": 1405,
+      "mtime_nanos": 1780093980819010400,
+      "mode": 420,
+      "is_dir": false
+    }
+  },
+  "order": [
+    "apps/frontend/.turbo/turbo-build.log",
+    "apps/frontend/dist",
+    "apps/frontend/dist/assets",
+    "apps/frontend/dist/assets/AboutPage-Cz7jAF9F.js",
+    "apps/frontend/dist/assets/CartPage-CwbR5kMf.js",
+    "apps/frontend/dist/assets/CategoryPage-BOKVrxAa.js",
+    "apps/frontend/dist/assets/CheckoutPage-Bsy-N3Yh.js",
+    "apps/frontend/dist/assets/ContactPage-BvAxWVBp.js",
+    "apps/frontend/dist/assets/DashboardPage-B2cKF_5g.js",
+    "apps/frontend/dist/assets/HomePage-D7rPdkBP.js",
+    "apps/frontend/dist/assets/LoginPage-goFIy3h8.js",
+    "apps/frontend/dist/assets/OrderFailedPage-CJvtCS_U.js",
+    "apps/frontend/dist/assets/OrderSuccessPage-CN989GAe.js",
+    "apps/frontend/dist/assets/PageSeo-D6q-x1_O.js",
+    "apps/frontend/dist/assets/PrivacyPolicy-DiunTczW.js",
+    "apps/frontend/dist/assets/ProductDetailPage-D2lCgjpB.js",
+    "apps/frontend/dist/assets/RefundPolicy-U7Mmq8FA.js",
+    "apps/frontend/dist/assets/ServicesPage-DEjTi9KH.js",
+    "apps/frontend/dist/assets/ShopPage-QwBIBJbs.js",
+    "apps/frontend/dist/assets/SignupPage-B7W_ivQ3.js",
+    "apps/frontend/dist/assets/TermsAndConditions-GkTQvQ-5.js",
+    "apps/frontend/dist/assets/TrackingPage-BZakdqvs.js",
+    "apps/frontend/dist/assets/auth-C_yu4ktk.js",
+    "apps/frontend/dist/assets/images",
+    "apps/frontend/dist/assets/images/logo.webp",
+    "apps/frontend/dist/assets/index-B636HLVe.css",
+    "apps/frontend/dist/assets/index-Cjgqd7dC.js",
+    "apps/frontend/dist/assets/marketing-DVDzpcdz.js",
+    "apps/frontend/dist/assets/products-Cz9imXvx.js",
+    "apps/frontend/dist/assets/services-C7PTbo2a.js",
+    "apps/frontend/dist/assets/shipping-lbhn0zy6.js",
+    "apps/frontend/dist/assets/useStoreCurrency-TzkG8kDi.js",
+    "apps/frontend/dist/assets/users-CPAnOt62.js",
+    "apps/frontend/dist/assets/vendor-query-BuFOmY1p.js",
+    "apps/frontend/dist/assets/vendor-react-CH2QodNo.js",
+    "apps/frontend/dist/assets/vendor-ui-BPVqKS2J.js",
+    "apps/frontend/dist/bundle-analysis.html",
+    "apps/frontend/dist/index.html"
+  ]
+}

@@ -1,0 +1,4801 @@
+{
+  "files": {
+    "backend/dist/workers/index.js": {
+      "size": 332,
+      "mtime_nanos": 1780095788451809100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/sockets/index.js.map": {
+      "size": 1506,
+      "mtime_nanos": 1780095786558329100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/smtpProvider.d.ts": {
+      "size": 380,
+      "mtime_nanos": 1780095787009801500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/__tests__/inventoryService.test.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788724182500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/webhooks/webhooks.controller.js": {
+      "size": 1196,
+      "mtime_nanos": 1780095787288838000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/__tests__/orderWorkflow.test.js": {
+      "size": 5050,
+      "mtime_nanos": 1780095788763406500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.routes.js": {
+      "size": 638,
+      "mtime_nanos": 1780095788029656500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.repository.js": {
+      "size": 1653,
+      "mtime_nanos": 1780095786825100300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.controller.js": {
+      "size": 3390,
+      "mtime_nanos": 1780095786337522500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/auditLogger.js": {
+      "size": 985,
+      "mtime_nanos": 1780095788743313400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.service.js.map": {
+      "size": 2547,
+      "mtime_nanos": 1780095788099753200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664875524900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/__tests__/rbac.middleware.test.js": {
+      "size": 1590,
+      "mtime_nanos": 1780095788646548300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/supabase.js.map": {
+      "size": 3008,
+      "mtime_nanos": 1780095786013477400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/index.d.ts": {
+      "size": 280,
+      "mtime_nanos": 1780095788528609700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/metaCloudProvider.d.ts": {
+      "size": 704,
+      "mtime_nanos": 1780095786680826900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/segment.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787740809800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/order/order.repository.js": {
+      "size": 6501,
+      "mtime_nanos": 1780095786207276800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787368624600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.routes.js.map": {
+      "size": 999,
+      "mtime_nanos": 1780095786369834500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm/OrderStateMachine.js.map": {
+      "size": 850,
+      "mtime_nanos": 1780095788624827600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.service.js": {
+      "size": 84,
+      "mtime_nanos": 1780095788666622800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.repository.js": {
+      "size": 3064,
+      "mtime_nanos": 1780095786852645000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.service.js": {
+      "size": 82,
+      "mtime_nanos": 1780095788673672500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/cacheService.d.ts": {
+      "size": 1284,
+      "mtime_nanos": 1780095786280796600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/workers.js": {
+      "size": 794,
+      "mtime_nanos": 1780095788538675500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/campaign.controller.js": {
+      "size": 1278,
+      "mtime_nanos": 1780095787698167000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.validator.js.map": {
+      "size": 1343,
+      "mtime_nanos": 1780095788058762800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/openwa-worker/index.d.ts": {
+      "size": 24,
+      "mtime_nanos": 1779722896223305000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/notifications": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/middlewares/auth.d.ts": {
+      "size": 1139,
+      "mtime_nanos": 1780095786144693100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/featureFlags.js.map": {
+      "size": 1548,
+      "mtime_nanos": 1780095788630910500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.controller.js": {
+      "size": 1855,
+      "mtime_nanos": 1780095787904871700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/queues/index.js": {
+      "size": 1459,
+      "mtime_nanos": 1780095786449147000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/redis.js": {
+      "size": 1580,
+      "mtime_nanos": 1780095786046321600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/template.controller.js": {
+      "size": 988,
+      "mtime_nanos": 1780095787758696700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.controller.js": {
+      "size": 4439,
+      "mtime_nanos": 1780095787221331800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/sockets.js.map": {
+      "size": 312,
+      "mtime_nanos": 1780095788541197000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.controller.js.map": {
+      "size": 4455,
+      "mtime_nanos": 1780095787453964300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.validator.d.ts": {
+      "size": 399,
+      "mtime_nanos": 1780095787244997000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-orchestrator.service.d.ts": {
+      "size": 491,
+      "mtime_nanos": 1780095787690084000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/seed-products.js.map": {
+      "size": 2900,
+      "mtime_nanos": 1779995631552029000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/AppError.js.map": {
+      "size": 512,
+      "mtime_nanos": 1780095788731246900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/sku.js": {
+      "size": 591,
+      "mtime_nanos": 1780095786294403900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.repository.js.map": {
+      "size": 150,
+      "mtime_nanos": 1779497664872356300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.controller.js.map": {
+      "size": 770,
+      "mtime_nanos": 1780095787950285900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/workflows/paymentWorkflow.service.d.ts": {
+      "size": 387,
+      "mtime_nanos": 1780095787351845600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/csrf.d.ts": {
+      "size": 192,
+      "mtime_nanos": 1780093967921832000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/firebaseProvider.js": {
+      "size": 3705,
+      "mtime_nanos": 1780095787017871600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.validator.js": {
+      "size": 967,
+      "mtime_nanos": 1780095786356215500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.routes.js.map": {
+      "size": 411,
+      "mtime_nanos": 1780095787395391100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.types.js.map": {
+      "size": 152,
+      "mtime_nanos": 1779497664896718900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.routes.js": {
+      "size": 499,
+      "mtime_nanos": 1780095787365062400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.service.d.ts": {
+      "size": 390,
+      "mtime_nanos": 1780095788127339000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.types.js.map": {
+      "size": 146,
+      "mtime_nanos": 1779497664844251700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/__tests__/rbac.middleware.test.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788649074600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/audit.js": {
+      "size": 1076,
+      "mtime_nanos": 1780095787409269600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.validator.js.map": {
+      "size": 556,
+      "mtime_nanos": 1780095787964806000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.types.d.ts": {
+      "size": 854,
+      "mtime_nanos": 1780095786623381700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/__tests__/inventoryService.test.js.map": {
+      "size": 4066,
+      "mtime_nanos": 1780095788722177100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.service.d.ts": {
+      "size": 115,
+      "mtime_nanos": 1780095787948235500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/analyticsService.js.map": {
+      "size": 5588,
+      "mtime_nanos": 1780095786979862600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.validator.d.ts": {
+      "size": 849,
+      "mtime_nanos": 1780095788076286700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/bootstrap/middleware.js": {
+      "size": 3202,
+      "mtime_nanos": 1780095785938793000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/dlq.service.js.map": {
+      "size": 2519,
+      "mtime_nanos": 1780095786947120300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/whatsapp-standalone.js": {
+      "size": 2649,
+      "mtime_nanos": 1779496388006392600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.repository.js.map": {
+      "size": 1317,
+      "mtime_nanos": 1780095787302925200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/paymentWorkflow.service.js": {
+      "size": 3823,
+      "mtime_nanos": 1780095787340294500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/routes.js": {
+      "size": 3073,
+      "mtime_nanos": 1780095788392505500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.routes.js": {
+      "size": 1186,
+      "mtime_nanos": 1780095787253721800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/__tests__/jobService.test.js.map": {
+      "size": 2086,
+      "mtime_nanos": 1780095788728234700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.service.d.ts": {
+      "size": 536,
+      "mtime_nanos": 1780095786552689800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.repository.d.ts": {
+      "size": 711,
+      "mtime_nanos": 1780095786211443200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.service.js.map": {
+      "size": 2153,
+      "mtime_nanos": 1780095788689349800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/requestId.js": {
+      "size": 276,
+      "mtime_nanos": 1780095785907749100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.controller.d.ts": {
+      "size": 426,
+      "mtime_nanos": 1780095787590638600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/workers.js.map": {
+      "size": 638,
+      "mtime_nanos": 1780095788532147000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.service.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788698953500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.controller.js": {
+      "size": 739,
+      "mtime_nanos": 1780095787309010700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/auditLogger.d.ts": {
+      "size": 170,
+      "mtime_nanos": 1780095788748363600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.routes.js.map": {
+      "size": 1330,
+      "mtime_nanos": 1780095787813578500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/segment.routes.js.map": {
+      "size": 594,
+      "mtime_nanos": 1780095787735162300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.controller.js.map": {
+      "size": 1748,
+      "mtime_nanos": 1780095788130859700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/sockets.d.ts": {
+      "size": 99,
+      "mtime_nanos": 1780095788543712800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/campaign.js": {
+      "size": 491,
+      "mtime_nanos": 1780095787022881600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.types.js": {
+      "size": 85,
+      "mtime_nanos": 1779497664847777800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/whatsapp.worker.js": {
+      "size": 4877,
+      "mtime_nanos": 1780095788499907500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.controller.d.ts": {
+      "size": 2124,
+      "mtime_nanos": 1780095787201744700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.controller.d.ts": {
+      "size": 723,
+      "mtime_nanos": 1780095786352176000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.validator.js": {
+      "size": 1038,
+      "mtime_nanos": 1780095788059762000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787271679400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/cacheService.js": {
+      "size": 5277,
+      "mtime_nanos": 1780095786275748600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/automation.worker.d.ts": {
+      "size": 160,
+      "mtime_nanos": 1780095788488379800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.validator.js": {
+      "size": 93,
+      "mtime_nanos": 1779497664867357700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/provider.d.ts": {
+      "size": 447,
+      "mtime_nanos": 1780095787031460000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.types.js": {
+      "size": 89,
+      "mtime_nanos": 1779497664879523900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.routes.js": {
+      "size": 487,
+      "mtime_nanos": 1780095787974344100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/template.controller.d.ts": {
+      "size": 515,
+      "mtime_nanos": 1780095787772311100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.repository.js": {
+      "size": 2173,
+      "mtime_nanos": 1780095787983868300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.types.js": {
+      "size": 87,
+      "mtime_nanos": 1779497664845763200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-state.service.d.ts": {
+      "size": 602,
+      "mtime_nanos": 1780095787679701800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787264071900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/requestLogger.d.ts": {
+      "size": 154,
+      "mtime_nanos": 1780095785925220200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.controller.js": {
+      "size": 859,
+      "mtime_nanos": 1780095787357044100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.service.js": {
+      "size": 1688,
+      "mtime_nanos": 1780095787121476400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.service.js": {
+      "size": 76,
+      "mtime_nanos": 1780095788670179700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/notificationService.d.ts": {
+      "size": 496,
+      "mtime_nanos": 1780095786425414700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.routes.js": {
+      "size": 464,
+      "mtime_nanos": 1780095787330161200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/__tests__/rbac.middleware.test.js.map": {
+      "size": 1880,
+      "mtime_nanos": 1780095788646548300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/template/TemplateEngine.js.map": {
+      "size": 1119,
+      "mtime_nanos": 1780095788406254600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664847777800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.routes.js": {
+      "size": 1035,
+      "mtime_nanos": 1780095786370357400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.repository.js": {
+      "size": 4659,
+      "mtime_nanos": 1780095787850734600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.routes.js.map": {
+      "size": 757,
+      "mtime_nanos": 1780095788026635700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.service.js": {
+      "size": 84,
+      "mtime_nanos": 1780095788694363900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/provider-health.service.d.ts": {
+      "size": 826,
+      "mtime_nanos": 1780095787093141800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.validator.js.map": {
+      "size": 160,
+      "mtime_nanos": 1779497664871356000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.service.js.map": {
+      "size": 4124,
+      "mtime_nanos": 1780095787881122200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/automation.controller.d.ts": {
+      "size": 263,
+      "mtime_nanos": 1780095787803908200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.repository.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664872522200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.validator.js": {
+      "size": 99,
+      "mtime_nanos": 1779497664907977900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/email.js": {
+      "size": 1370,
+      "mtime_nanos": 1780095786456355600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/notifications/SocketGateway.d.ts": {
+      "size": 754,
+      "mtime_nanos": 1780095787080989700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/report.controller.js": {
+      "size": 2323,
+      "mtime_nanos": 1780095786221577300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.service.js": {
+      "size": 3822,
+      "mtime_nanos": 1780095786479628100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/lead/lead.validator.d.ts": {
+      "size": 244,
+      "mtime_nanos": 1780095787968806100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.service.js.map": {
+      "size": 2037,
+      "mtime_nanos": 1780095786547128100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.service.d.ts": {
+      "size": 315,
+      "mtime_nanos": 1780095788692365000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/openwa-worker/index.js": {
+      "size": 4950,
+      "mtime_nanos": 1779722896222298000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/automation-runner.service.d.ts": {
+      "size": 265,
+      "mtime_nanos": 1780095788478380300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.controller.js.map": {
+      "size": 1548,
+      "mtime_nanos": 1780095786829651400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/MetaWhatsAppProvider.d.ts": {
+      "size": 393,
+      "mtime_nanos": 1779715972769706000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/validate.js": {
+      "size": 892,
+      "mtime_nanos": 1780095786259136100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.service.d.ts": {
+      "size": 497,
+      "mtime_nanos": 1780095786601804800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/types": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/bootstrap/events.js.map": {
+      "size": 291,
+      "mtime_nanos": 1780095788549783900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.controller.js": {
+      "size": 8005,
+      "mtime_nanos": 1780095787136589700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/webhooks/webhooks.controller.js.map": {
+      "size": 1403,
+      "mtime_nanos": 1780095787287824900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/ResendEmailProvider.js": {
+      "size": 2518,
+      "mtime_nanos": 1780095786992997100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/automation.worker.js.map": {
+      "size": 1612,
+      "mtime_nanos": 1780095788483381300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.service.d.ts": {
+      "size": 737,
+      "mtime_nanos": 1780095786502118600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/permissions.d.ts": {
+      "size": 322,
+      "mtime_nanos": 1780095786246866600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.routes.js.map": {
+      "size": 700,
+      "mtime_nanos": 1780095787259542900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.routes.js.map": {
+      "size": 564,
+      "mtime_nanos": 1780095787544513000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/brevoProvider.js.map": {
+      "size": 1930,
+      "mtime_nanos": 1780095787000620500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.service.js.map": {
+      "size": 5108,
+      "mtime_nanos": 1780095786323442400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm/OrderStateMachine.js": {
+      "size": 933,
+      "mtime_nanos": 1780095788625827400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/queues": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/marketing/providers/provider-health.service.js.map": {
+      "size": 1884,
+      "mtime_nanos": 1780095787086050800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.repository.js": {
+      "size": 92,
+      "mtime_nanos": 1779497664882523200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664896718900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/metaCloudProvider.js.map": {
+      "size": 4716,
+      "mtime_nanos": 1780095786676278600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.validator.js.map": {
+      "size": 148,
+      "mtime_nanos": 1779497664875524900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/app.js": {
+      "size": 603,
+      "mtime_nanos": 1780095788398634300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/queue.js.map": {
+      "size": 929,
+      "mtime_nanos": 1780095787055246700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.repository.d.ts": {
+      "size": 246,
+      "mtime_nanos": 1780095787989669300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/webhooks/webhooks.service.js": {
+      "size": 6662,
+      "mtime_nanos": 1780095787283248700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/apiResponse.js.map": {
+      "size": 511,
+      "mtime_nanos": 1780095787550090800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/telemetry.js": {
+      "size": 624,
+      "mtime_nanos": 1780095788597569600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.controller.js": {
+      "size": 598,
+      "mtime_nanos": 1780095787951287000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.repository.d.ts": {
+      "size": 447,
+      "mtime_nanos": 1780095788053773000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/openwa-worker/workerService.js": {
+      "size": 7108,
+      "mtime_nanos": 1779722896217074500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/inventory/inventory.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787431690000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.types.js": {
+      "size": 85,
+      "mtime_nanos": 1779497664861142900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/auth/auth.service.js.map": {
+      "size": 3424,
+      "mtime_nanos": 1780095786477879300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.controller.js.map": {
+      "size": 1777,
+      "mtime_nanos": 1780095787994182800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/template/TemplateEngine.d.ts": {
+      "size": 522,
+      "mtime_nanos": 1780095788409259600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.validator.js": {
+      "size": 89,
+      "mtime_nanos": 1779497664852507200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664870357900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/pdfService.js": {
+      "size": 5525,
+      "mtime_nanos": 1780095786182973500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/marketing/campaign.repository.js": {
+      "size": 3535,
+      "mtime_nanos": 1780095787669376500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events/EventSubscriber.d.ts": {
+      "size": 60,
+      "mtime_nanos": 1780095788548785200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/accounting/accounting.types.d.ts": {
+      "size": 1149,
+      "mtime_nanos": 1780095787823168100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.repository.js.map": {
+      "size": 2364,
+      "mtime_nanos": 1780095786851531800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-orchestrator.service.js.map": {
+      "size": 1773,
+      "mtime_nanos": 1780095787683701800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-audience.service.js": {
+      "size": 1309,
+      "mtime_nanos": 1780095787611377600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm/CampaignStateMachine.js.map": {
+      "size": 1247,
+      "mtime_nanos": 1780095787636674100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.service.js.map": {
+      "size": 690,
+      "mtime_nanos": 1780095787070415300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/idempotency.middleware.js.map": {
+      "size": 2550,
+      "mtime_nanos": 1780095786938355100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.controller.d.ts": {
+      "size": 391,
+      "mtime_nanos": 1780095786872336800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.validator.d.ts": {
+      "size": 1052,
+      "mtime_nanos": 1780095787424430000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.service.js": {
+      "size": 5371,
+      "mtime_nanos": 1780095786735399000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/logger.js.map": {
+      "size": 1048,
+      "mtime_nanos": 1780095785826999200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.repository.d.ts": {
+      "size": 592,
+      "mtime_nanos": 1780095787116928100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/smtpProvider.js": {
+      "size": 2756,
+      "mtime_nanos": 1780095787008842900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/support/support.service.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788695880100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.repository.js.map": {
+      "size": 3718,
+      "mtime_nanos": 1780095786307603600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/webhooks/webhooks.service.d.ts": {
+      "size": 426,
+      "mtime_nanos": 1780095787285263500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/automation": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/marketing/segment.controller.js": {
+      "size": 565,
+      "mtime_nanos": 1780095787711090800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/permission.js.map": {
+      "size": 726,
+      "mtime_nanos": 1780095786249886200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664874523900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/pos/pos.service.js.map": {
+      "size": 144,
+      "mtime_nanos": 1780095788669145600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/auth.js.map": {
+      "size": 9906,
+      "mtime_nanos": 1780095786129938200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.repository.js.map": {
+      "size": 5987,
+      "mtime_nanos": 1780095787113862700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.repository.js.map": {
+      "size": 153,
+      "mtime_nanos": 1779497664898222300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/index.js.map": {
+      "size": 230,
+      "mtime_nanos": 1780095787063278900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/openwaProvider.d.ts": {
+      "size": 860,
+      "mtime_nanos": 1779865656397963300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-audience.service.d.ts": {
+      "size": 425,
+      "mtime_nanos": 1780095787617509700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.types.js.map": {
+      "size": 155,
+      "mtime_nanos": 1779497664906976000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.service.js.map": {
+      "size": 156,
+      "mtime_nanos": 1780095788694363900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/__tests__": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/services/auditService.js": {
+      "size": 1809,
+      "mtime_nanos": 1780095786287367500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.controller.d.ts": {
+      "size": 687,
+      "mtime_nanos": 1780095787238475100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/permission.d.ts": {
+      "size": 277,
+      "mtime_nanos": 1780095786253422400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/middleware.d.ts": {
+      "size": 370,
+      "mtime_nanos": 1780095785999501700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.routes.js": {
+      "size": 321,
+      "mtime_nanos": 1780095787395921800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/auditService.js.map": {
+      "size": 1892,
+      "mtime_nanos": 1780095786286338600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.types.js": {
+      "size": 85,
+      "mtime_nanos": 1779497664900229600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/sockets/index.d.ts": {
+      "size": 668,
+      "mtime_nanos": 1780095786574938400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/env.js.map": {
+      "size": 1344,
+      "mtime_nanos": 1780095785863156900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/apiResponse.js": {
+      "size": 526,
+      "mtime_nanos": 1780095787551085800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/returnService.d.ts": {
+      "size": 630,
+      "mtime_nanos": 1780095786921701500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.types.js.map": {
+      "size": 155,
+      "mtime_nanos": 1779497664888727100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.repository.d.ts": {
+      "size": 110,
+      "mtime_nanos": 1780095787942492600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.routes.js.map": {
+      "size": 593,
+      "mtime_nanos": 1780095787972326800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.validator.js.map": {
+      "size": 154,
+      "mtime_nanos": 1779497664867357700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/ResendEmailProvider.d.ts": {
+      "size": 359,
+      "mtime_nanos": 1780095786995558800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/automation.routes.js": {
+      "size": 502,
+      "mtime_nanos": 1780095787805910500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/idempotency.middleware.js": {
+      "size": 3412,
+      "mtime_nanos": 1780095786938355100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/automation/AutomationEngine.js.map": {
+      "size": 1985,
+      "mtime_nanos": 1780095787782835500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.controller.js": {
+      "size": 3391,
+      "mtime_nanos": 1780095786880119000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/marketing/marketing.types.js.map": {
+      "size": 158,
+      "mtime_nanos": 1779497664863355000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/dlq.controller.d.ts": {
+      "size": 391,
+      "mtime_nanos": 1780095786965663500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/template.controller.js.map": {
+      "size": 1298,
+      "mtime_nanos": 1780095787757169400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.controller.js": {
+      "size": 1452,
+      "mtime_nanos": 1780095787994692600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/logger.d.ts": {
+      "size": 92,
+      "mtime_nanos": 1780095785841274800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.validator.d.ts": {
+      "size": 2421,
+      "mtime_nanos": 1780095787732159900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/sockets": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/types/index.d.ts": {
+      "size": 2694,
+      "mtime_nanos": 1780095786157129100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/queues/index.d.ts": {
+      "size": 440,
+      "mtime_nanos": 1780095786453317600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/brevoProvider.d.ts": {
+      "size": 377,
+      "mtime_nanos": 1780095787003615400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/dlq.controller.js.map": {
+      "size": 1161,
+      "mtime_nanos": 1780095786958319300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.repository.js": {
+      "size": 90,
+      "mtime_nanos": 1779497664868356200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664880525900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.validator.js": {
+      "size": 99,
+      "mtime_nanos": 1779497664889721800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/slugify.js.map": {
+      "size": 485,
+      "mtime_nanos": 1780095786297987600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/__tests__/jobService.test.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788729245000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.controller.js": {
+      "size": 1224,
+      "mtime_nanos": 1780095787561661300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664866357300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/.turbo/turbo-build.log": {
+      "size": 42,
+      "mtime_nanos": 1780095789145521600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/IProvider.js.map": {
+      "size": 131,
+      "mtime_nanos": 1780095786989001200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/permissions.js": {
+      "size": 994,
+      "mtime_nanos": 1780095786245344600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.types.js.map": {
+      "size": 143,
+      "mtime_nanos": 1779497664900229600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/__tests__/orderWorkflow.test.js.map": {
+      "size": 3903,
+      "mtime_nanos": 1780095788761899700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/seed-products.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779995631555754500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/orderWorkflow.service.js": {
+      "size": 4588,
+      "mtime_nanos": 1780095786609932400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664898222300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/notifications/SocketGateway.js": {
+      "size": 2517,
+      "mtime_nanos": 1780095787079481800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.repository.js": {
+      "size": 84,
+      "mtime_nanos": 1779497664899229600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787517725300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664901228900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.repository.js": {
+      "size": 6983,
+      "mtime_nanos": 1780095786647157900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.repository.js": {
+      "size": 1246,
+      "mtime_nanos": 1780095787302925200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.validator.js": {
+      "size": 555,
+      "mtime_nanos": 1780095787241486500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.validator.js": {
+      "size": 374,
+      "mtime_nanos": 1780095787964806000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/requestLogger.js.map": {
+      "size": 894,
+      "mtime_nanos": 1780095785918613200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664862145200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/queue.js": {
+      "size": 709,
+      "mtime_nanos": 1780095787056264700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events/EventSubscriber.js": {
+      "size": 2754,
+      "mtime_nanos": 1780095788547770500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664864356500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.controller.d.ts": {
+      "size": 828,
+      "mtime_nanos": 1780095786819051700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.controller.js": {
+      "size": 1324,
+      "mtime_nanos": 1780095786832178600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.routes.js": {
+      "size": 956,
+      "mtime_nanos": 1780095787248197600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.service.d.ts": {
+      "size": 1038,
+      "mtime_nanos": 1780095786445090200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/provider.service.js": {
+      "size": 5300,
+      "mtime_nanos": 1780095787103800500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.repository.js": {
+      "size": 6756,
+      "mtime_nanos": 1780095787113862700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.repository.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664882721200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.repository.js": {
+      "size": 4744,
+      "mtime_nanos": 1780095788048749000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.types.js.map": {
+      "size": 143,
+      "mtime_nanos": 1780095786619719200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664906976000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664881522600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/pdfService.js.map": {
+      "size": 6607,
+      "mtime_nanos": 1780095786181972900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/provider-health.service.js": {
+      "size": 2454,
+      "mtime_nanos": 1780095787087061400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.service.js": {
+      "size": 808,
+      "mtime_nanos": 1780095787071440500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.types.js": {
+      "size": 91,
+      "mtime_nanos": 1779497664896718900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.service.js": {
+      "size": 78,
+      "mtime_nanos": 1780095788697940600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.service.js.map": {
+      "size": 156,
+      "mtime_nanos": 1780095788665627000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm/CampaignStateMachine.d.ts": {
+      "size": 425,
+      "mtime_nanos": 1780095787639923700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/provider.service.js.map": {
+      "size": 3681,
+      "mtime_nanos": 1780095787102788900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/review/review.validator.js": {
+      "size": 95,
+      "mtime_nanos": 1779497664880525900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.types.js.map": {
+      "size": 149,
+      "mtime_nanos": 1780095787820113700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.repository.js": {
+      "size": 2925,
+      "mtime_nanos": 1780095788657596500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-state.service.js": {
+      "size": 1424,
+      "mtime_nanos": 1780095787676689000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/middleware.js.map": {
+      "size": 2510,
+      "mtime_nanos": 1780095785936232400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.repository.js": {
+      "size": 2794,
+      "mtime_nanos": 1780095786536027500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/telemetry.js.map": {
+      "size": 381,
+      "mtime_nanos": 1780095788596558500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/whatsapp-standalone.js.map": {
+      "size": 2267,
+      "mtime_nanos": 1779496388005410300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/routes.js.map": {
+      "size": 2546,
+      "mtime_nanos": 1780095788392505500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/provider.service.d.ts": {
+      "size": 460,
+      "mtime_nanos": 1780095787106323100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/events.js": {
+      "size": 303,
+      "mtime_nanos": 1780095788551297700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/whatsappProviderFactory.js.map": {
+      "size": 4021,
+      "mtime_nanos": 1780095786718810500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp": {
+      "size": 0,
+      "mtime_nanos": 0,
+      "mode": 0,
+      "is_dir": true
+    },
+    "backend/dist/modules/marketing/template.service.js.map": {
+      "size": 1912,
+      "mtime_nanos": 1780095787746334500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/orderWorkflow.service.js.map": {
+      "size": 2871,
+      "mtime_nanos": 1780095786608932300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.controller.js.map": {
+      "size": 903,
+      "mtime_nanos": 1780095787357044100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.worker.js.map": {
+      "size": 4976,
+      "mtime_nanos": 1779496387460782600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.types.js.map": {
+      "size": 143,
+      "mtime_nanos": 1779497664847777800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/audit.d.ts": {
+      "size": 221,
+      "mtime_nanos": 1780095787411269700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/whatsapp.worker.js.map": {
+      "size": 3683,
+      "mtime_nanos": 1780095788499907500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.validator.js": {
+      "size": 1106,
+      "mtime_nanos": 1780095787415302100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787210779000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm/OrderStateMachine.d.ts": {
+      "size": 417,
+      "mtime_nanos": 1780095788627342800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.routes.js": {
+      "size": 1397,
+      "mtime_nanos": 1780095787428489700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.repository.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664868356200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/config/env.d.ts": {
+      "size": 54,
+      "mtime_nanos": 1780095785868753600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/featureFlags.d.ts": {
+      "size": 324,
+      "mtime_nanos": 1780095788641657600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787251722500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.validator.js.map": {
+      "size": 1439,
+      "mtime_nanos": 1780095786356215500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.controller.js.map": {
+      "size": 12155,
+      "mtime_nanos": 1780095788315955500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.validator.js": {
+      "size": 592,
+      "mtime_nanos": 1780095788702488500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/notificationWorkflow.service.js.map": {
+      "size": 2587,
+      "mtime_nanos": 1780095786746647000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/campaign.d.ts": {
+      "size": 599,
+      "mtime_nanos": 1780095787027220200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.service.js": {
+      "size": 3365,
+      "mtime_nanos": 1780095788122347000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events/events.js": {
+      "size": 1063,
+      "mtime_nanos": 1780095786512231400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.webhook.controller.d.ts": {
+      "size": 720,
+      "mtime_nanos": 1780095788374311200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/automation-runner.service.js": {
+      "size": 3712,
+      "mtime_nanos": 1780095788476377000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/template.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787778310100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.validator.d.ts": {
+      "size": 2031,
+      "mtime_nanos": 1780095786367698600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/admin/dlq.service.d.ts": {
+      "size": 456,
+      "mtime_nanos": 1780095786952023000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.controller.js.map": {
+      "size": 1022,
+      "mtime_nanos": 1780095787309010700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/sockets/index.js": {
+      "size": 1550,
+      "mtime_nanos": 1780095786558837400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/idempotency.middleware.d.ts": {
+      "size": 208,
+      "mtime_nanos": 1780095786941369000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.types.js.map": {
+      "size": 140,
+      "mtime_nanos": 1779497664851294800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/webhooks/webhooks.controller.d.ts": {
+      "size": 320,
+      "mtime_nanos": 1780095787292836400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.repository.js": {
+      "size": 4070,
+      "mtime_nanos": 1780095786308602100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workers/campaign.worker.js": {
+      "size": 6586,
+      "mtime_nanos": 1780095788434708700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/inventoryWorkflow.service.js.map": {
+      "size": 2935,
+      "mtime_nanos": 1780095786772560000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.repository.d.ts": {
+      "size": 895,
+      "mtime_nanos": 1780095787864023100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/openwa-worker/workerService.js.map": {
+      "size": 5776,
+      "mtime_nanos": 1779722896216072000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/email.d.ts": {
+      "size": 258,
+      "mtime_nanos": 1780095786459438400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/order/order.types.js": {
+      "size": 87,
+      "mtime_nanos": 1779497664866357300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.repository.d.ts": {
+      "size": 223,
+      "mtime_nanos": 1780095787305441700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm/StateMachine.d.ts": {
+      "size": 507,
+      "mtime_nanos": 1780095787632625500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/webhooks/webhooks.service.js.map": {
+      "size": 4481,
+      "mtime_nanos": 1780095787283248700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/auditService.d.ts": {
+      "size": 630,
+      "mtime_nanos": 1780095786289882100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events/EventBus.js": {
+      "size": 956,
+      "mtime_nanos": 1780095786522367200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.controller.js.map": {
+      "size": 4108,
+      "mtime_nanos": 1780095787218821700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/campaign.repository.js.map": {
+      "size": 2797,
+      "mtime_nanos": 1780095787668375200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.routes.js.map": {
+      "size": 1097,
+      "mtime_nanos": 1780095787513321700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/wishlist/wishlist.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664908977500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/returnService.js": {
+      "size": 5397,
+      "mtime_nanos": 1780095786917170900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/whatsapp.worker.d.ts": {
+      "size": 96,
+      "mtime_nanos": 1780095788506941600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.types.js.map": {
+      "size": 152,
+      "mtime_nanos": 1779497664870357900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/redis.js.map": {
+      "size": 1534,
+      "mtime_nanos": 1780095786045298500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/csrf.js": {
+      "size": 2947,
+      "mtime_nanos": 1780093967919625200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/webhooks": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/middlewares/permission.js": {
+      "size": 611,
+      "mtime_nanos": 1780095786249886200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/__tests__/jobService.test.js": {
+      "size": 2236,
+      "mtime_nanos": 1780095788728234700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.service.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788674673500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.service.js": {
+      "size": 2742,
+      "mtime_nanos": 1780095788690363000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events/events.d.ts": {
+      "size": 2419,
+      "mtime_nanos": 1780095786518831600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/__tests__/orderWorkflow.test.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788764419200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/automation.js.map": {
+      "size": 1396,
+      "mtime_nanos": 1780095787033978600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.types.js": {
+      "size": 83,
+      "mtime_nanos": 1779497664851294800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/IWhatsAppProvider.js.map": {
+      "size": 175,
+      "mtime_nanos": 1780095786657386300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.service.js.map": {
+      "size": 153,
+      "mtime_nanos": 1780095788672657000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.types.js.map": {
+      "size": 140,
+      "mtime_nanos": 1779497664873523900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.controller.d.ts": {
+      "size": 852,
+      "mtime_nanos": 1780095786905299600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/logger.js": {
+      "size": 905,
+      "mtime_nanos": 1780095785827554600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.validator.js.map": {
+      "size": 163,
+      "mtime_nanos": 1779497664889721800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/server.d.ts": {
+      "size": 66,
+      "mtime_nanos": 1780095788622812600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/queues/index.js.map": {
+      "size": 1242,
+      "mtime_nanos": 1780095786447627700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/accounting/accounting.controller.d.ts": {
+      "size": 843,
+      "mtime_nanos": 1780095787926433500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.validator.js": {
+      "size": 93,
+      "mtime_nanos": 1779497664846776700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.controller.js.map": {
+      "size": 1909,
+      "mtime_nanos": 1780095786861732000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/openwaProvider.js": {
+      "size": 3291,
+      "mtime_nanos": 1779865656396962100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/template.routes.js": {
+      "size": 684,
+      "mtime_nanos": 1780095787775308800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/refundWorkflow.service.d.ts": {
+      "size": 220,
+      "mtime_nanos": 1780095786763398000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.repository.d.ts": {
+      "size": 657,
+      "mtime_nanos": 1780095786855162400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.worker.d.ts": {
+      "size": 501,
+      "mtime_nanos": 1779496387466007800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/IWhatsAppProvider.js": {
+      "size": 56,
+      "mtime_nanos": 1780095786657900200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.validator.js": {
+      "size": 97,
+      "mtime_nanos": 1779497664898222300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm/StateMachine.js": {
+      "size": 1196,
+      "mtime_nanos": 1780095787629625900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm/CampaignStateMachine.js": {
+      "size": 1251,
+      "mtime_nanos": 1780095787637692900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.repository.js.map": {
+      "size": 4407,
+      "mtime_nanos": 1780095787837143700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/dlq.controller.js": {
+      "size": 802,
+      "mtime_nanos": 1780095786959124900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/segment.service.d.ts": {
+      "size": 782,
+      "mtime_nanos": 1780095787601744600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/server.js.map": {
+      "size": 1723,
+      "mtime_nanos": 1780095788608650400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.repository.js.map": {
+      "size": 2532,
+      "mtime_nanos": 1780095786534516800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787548088300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/wishlist/wishlist.service.js": {
+      "size": 86,
+      "mtime_nanos": 1780095788712013100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/template": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/whatsapp/providers": {
+      "size": 0,
+      "mtime_nanos": 0,
+      "mode": 0,
+      "is_dir": true
+    },
+    "backend/dist/modules/lead/lead.service.js": {
+      "size": 602,
+      "mtime_nanos": 1780095787946042200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.types.js": {
+      "size": 93,
+      "mtime_nanos": 1779497664888727100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/sku.d.ts": {
+      "size": 237,
+      "mtime_nanos": 1780095786296976600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/template.service.js": {
+      "size": 2415,
+      "mtime_nanos": 1780095787746334500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm/StateMachine.js.map": {
+      "size": 1257,
+      "mtime_nanos": 1780095787628626600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/jobService.d.ts": {
+      "size": 505,
+      "mtime_nanos": 1780095786469042900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.repository.js": {
+      "size": 1014,
+      "mtime_nanos": 1780095787939957300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664860141600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664867357700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.routes.js.map": {
+      "size": 518,
+      "mtime_nanos": 1780095787364061600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095788033638100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/notificationWorkflow.service.d.ts": {
+      "size": 518,
+      "mtime_nanos": 1780095786750664600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.types.js": {
+      "size": 55,
+      "mtime_nanos": 1780095787820113700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.routes.js.map": {
+      "size": 1071,
+      "mtime_nanos": 1780095787253721800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.controller.d.ts": {
+      "size": 505,
+      "mtime_nanos": 1780095786842492600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.controller.js": {
+      "size": 2770,
+      "mtime_nanos": 1780095787381321500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.service.js": {
+      "size": 8505,
+      "mtime_nanos": 1780095786441577600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/automation/AutomationEngine.d.ts": {
+      "size": 416,
+      "mtime_nanos": 1780095787785840800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/index.d.ts": {
+      "size": 158,
+      "mtime_nanos": 1780095787064798400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/jobService.js.map": {
+      "size": 2115,
+      "mtime_nanos": 1780095786462954000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/core/contracts/index.js": {
+      "size": 191,
+      "mtime_nanos": 1780095787063278900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/whatsapp.queue.js.map": {
+      "size": 500,
+      "mtime_nanos": 1780095786613977200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workers/base.worker.d.ts": {
+      "size": 473,
+      "mtime_nanos": 1780095788421302800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787401462000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.repository.js.map": {
+      "size": 6190,
+      "mtime_nanos": 1780095786645622100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.types.js.map": {
+      "size": 158,
+      "mtime_nanos": 1779497664859133800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/utils/slugify.js": {
+      "size": 444,
+      "mtime_nanos": 1780095786298991500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/permissions.js.map": {
+      "size": 663,
+      "mtime_nanos": 1780095786244811000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.service.d.ts": {
+      "size": 954,
+      "mtime_nanos": 1780095787890122900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.service.js": {
+      "size": 12819,
+      "mtime_nanos": 1780095786595616700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/providers/IWhatsAppProvider.js": {
+      "size": 56,
+      "mtime_nanos": 1780095788709013100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/analyticsService.d.ts": {
+      "size": 596,
+      "mtime_nanos": 1780095786985971400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events/EventBus.d.ts": {
+      "size": 556,
+      "mtime_nanos": 1780095786525967200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/marketing/providers/whatsapp/whatsappProviderFactory.js": {
+      "size": 5394,
+      "mtime_nanos": 1780095786720830000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.controller.d.ts": {
+      "size": 428,
+      "mtime_nanos": 1780095787327556700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/sku.js.map": {
+      "size": 767,
+      "mtime_nanos": 1780095786293403500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.controller.d.ts": {
+      "size": 559,
+      "mtime_nanos": 1780095787542519200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workers/base.worker.js.map": {
+      "size": 2131,
+      "mtime_nanos": 1780095788417776100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/whatsapp.queue.js": {
+      "size": 520,
+      "mtime_nanos": 1780095786616053300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/webhooks/webhooks.routes.js.map": {
+      "size": 542,
+      "mtime_nanos": 1780095787294351100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.repository.d.ts": {
+      "size": 358,
+      "mtime_nanos": 1780095786539561500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/automation.d.ts": {
+      "size": 3691,
+      "mtime_nanos": 1780095787044099200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-analytics.service.js": {
+      "size": 568,
+      "mtime_nanos": 1780095788661624600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.routes.js": {
+      "size": 4475,
+      "mtime_nanos": 1780095787207783200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/ResendEmailProvider.js.map": {
+      "size": 1947,
+      "mtime_nanos": 1780095786992997100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/error.d.ts": {
+      "size": 427,
+      "mtime_nanos": 1780095785900521600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.repository.js.map": {
+      "size": 2092,
+      "mtime_nanos": 1780095787436318800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.routes.d.ts": {
+      "size": 83,
+      "mtime_nanos": 1780095787933435300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/IWhatsAppProvider.d.ts": {
+      "size": 1790,
+      "mtime_nanos": 1780095786662301600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.types.js.map": {
+      "size": 146,
+      "mtime_nanos": 1779497664865357700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.repository.js.map": {
+      "size": 165,
+      "mtime_nanos": 1779497664881522600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787817580700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/sockets.js": {
+      "size": 267,
+      "mtime_nanos": 1780095788542198300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.service.js.map": {
+      "size": 159,
+      "mtime_nanos": 1780095788712013100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/server.js": {
+      "size": 1617,
+      "mtime_nanos": 1780095788609659400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/providers/IWhatsAppProvider.d.ts": {
+      "size": 672,
+      "mtime_nanos": 1780095788710015500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664877526000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/types/index.js": {
+      "size": 110,
+      "mtime_nanos": 1780095786150499700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/index.js.map": {
+      "size": 4555,
+      "mtime_nanos": 1780095788522104000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events/events.js.map": {
+      "size": 519,
+      "mtime_nanos": 1780095786512231400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/cacheService.js.map": {
+      "size": 4002,
+      "mtime_nanos": 1780095786274237800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/provider.js": {
+      "size": 371,
+      "mtime_nanos": 1780095787029447700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/report.controller.d.ts": {
+      "size": 270,
+      "mtime_nanos": 1780095786241806700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/automation.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787811579400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.types.js.map": {
+      "size": 143,
+      "mtime_nanos": 1779497664861142900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.validator.js.map": {
+      "size": 746,
+      "mtime_nanos": 1780095787240492900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/fsm": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/pos/pos.controller.js": {
+      "size": 7126,
+      "mtime_nanos": 1780095787535724700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events/EventBus.js.map": {
+      "size": 855,
+      "mtime_nanos": 1780095786522367200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.types.js": {
+      "size": 95,
+      "mtime_nanos": 1779497664864356500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-audience.service.js.map": {
+      "size": 1075,
+      "mtime_nanos": 1780095787611377600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/notification.d.ts": {
+      "size": 589,
+      "mtime_nanos": 1780095787052231900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.repository.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664899229600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.types.js": {
+      "size": 95,
+      "mtime_nanos": 1779497664860141600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/segment.service.js.map": {
+      "size": 3969,
+      "mtime_nanos": 1780095787598744200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.validator.js": {
+      "size": 89,
+      "mtime_nanos": 1779497664875524900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.validator.js": {
+      "size": 1981,
+      "mtime_nanos": 1780095787722133800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664890721400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/index.js": {
+      "size": 5708,
+      "mtime_nanos": 1780095788525099700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/report.controller.js.map": {
+      "size": 2426,
+      "mtime_nanos": 1780095786220577300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/product/product.types.js": {
+      "size": 91,
+      "mtime_nanos": 1779497664876544300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.routes.js.map": {
+      "size": 759,
+      "mtime_nanos": 1780095788172609800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/__tests__/inventoryService.test.js": {
+      "size": 4183,
+      "mtime_nanos": 1780095788723178300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/notificationWorkflow.service.js": {
+      "size": 3255,
+      "mtime_nanos": 1780095786747672800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.repository.js.map": {
+      "size": 5609,
+      "mtime_nanos": 1780095786206265700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-analytics.service.d.ts": {
+      "size": 228,
+      "mtime_nanos": 1780095788663626200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/notificationService.js.map": {
+      "size": 1729,
+      "mtime_nanos": 1780095786422355800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.repository.d.ts": {
+      "size": 230,
+      "mtime_nanos": 1780095786827656500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/webhooks/webhooks.routes.js": {
+      "size": 498,
+      "mtime_nanos": 1780095787294351100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.routes.js": {
+      "size": 634,
+      "mtime_nanos": 1780095788193124700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.controller.d.ts": {
+      "size": 1790,
+      "mtime_nanos": 1780095788329502100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/automation.js": {
+      "size": 1125,
+      "mtime_nanos": 1780095787035519000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.controller.js.map": {
+      "size": 8514,
+      "mtime_nanos": 1780095787136079400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.types.js.map": {
+      "size": 143,
+      "mtime_nanos": 1779497664892721200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.repository.js.map": {
+      "size": 1830,
+      "mtime_nanos": 1780095787982866100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/openwaProvider.js.map": {
+      "size": 2815,
+      "mtime_nanos": 1779865656396245200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-dispatch.service.d.ts": {
+      "size": 152,
+      "mtime_nanos": 1780095787624058200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.service.js": {
+      "size": 2513,
+      "mtime_nanos": 1780095786548130000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.controller.js": {
+      "size": 3549,
+      "mtime_nanos": 1780095787455476100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.types.js": {
+      "size": 93,
+      "mtime_nanos": 1779497664906976000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workers/campaign.worker.js.map": {
+      "size": 4850,
+      "mtime_nanos": 1780095788433702800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/return.controller.d.ts": {
+      "size": 437,
+      "mtime_nanos": 1780095786932766100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664902229100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.validator.js.map": {
+      "size": 2818,
+      "mtime_nanos": 1780095787721625200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/whatsapp/whatsapp.service.js.map": {
+      "size": 3464,
+      "mtime_nanos": 1780095786734398300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.repository.js.map": {
+      "size": 3609,
+      "mtime_nanos": 1780095788046749400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/refundWorkflow.service.js.map": {
+      "size": 2411,
+      "mtime_nanos": 1780095786759875800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/template.service.d.ts": {
+      "size": 674,
+      "mtime_nanos": 1780095787749914500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/automation.service.js.map": {
+      "size": 1148,
+      "mtime_nanos": 1780095787788839200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.routes.js": {
+      "size": 1678,
+      "mtime_nanos": 1780095788381266900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/openwa-worker/index.js.map": {
+      "size": 3677,
+      "mtime_nanos": 1779722896222298000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.controller.d.ts": {
+      "size": 627,
+      "mtime_nanos": 1780095788167033300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workers": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/auth/auth.routes.js.map": {
+      "size": 1083,
+      "mtime_nanos": 1780095787247096500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.routes.js": {
+      "size": 1386,
+      "mtime_nanos": 1780095787813578500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.controller.js": {
+      "size": 1995,
+      "mtime_nanos": 1780095786791703300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.routes.js": {
+      "size": 640,
+      "mtime_nanos": 1780095787260544000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/evolutionProvider.d.ts": {
+      "size": 757,
+      "mtime_nanos": 1780095786702986800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/routes.d.ts": {
+      "size": 96,
+      "mtime_nanos": 1780095788394636300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.controller.d.ts": {
+      "size": 277,
+      "mtime_nanos": 1780095787363061000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.service.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788671143800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.controller.js.map": {
+      "size": 2541,
+      "mtime_nanos": 1780095787380309600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.controller.js": {
+      "size": 1493,
+      "mtime_nanos": 1780095788131861500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/queue.d.ts": {
+      "size": 1699,
+      "mtime_nanos": 1780095787061277700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.validator.js.map": {
+      "size": 154,
+      "mtime_nanos": 1779497664846776700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.repository.d.ts": {
+      "size": 343,
+      "mtime_nanos": 1780095788659611500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/campaign.repository.d.ts": {
+      "size": 1165,
+      "mtime_nanos": 1780095787673435300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664871356000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/app.d.ts": {
+      "size": 81,
+      "mtime_nanos": 1780095788401716500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/seed-big-catalog.js.map": {
+      "size": 5319,
+      "mtime_nanos": 1779995631537073100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/IProvider.js": {
+      "size": 48,
+      "mtime_nanos": 1780095786989001200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.webhook.controller.js": {
+      "size": 11593,
+      "mtime_nanos": 1780095788367308900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/analyticsService.js": {
+      "size": 6255,
+      "mtime_nanos": 1780095786982392500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workers/base.worker.js": {
+      "size": 2307,
+      "mtime_nanos": 1780095788419287800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/inventoryWorkflow.service.d.ts": {
+      "size": 1411,
+      "mtime_nanos": 1780095786778620300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.repository.js.map": {
+      "size": 913,
+      "mtime_nanos": 1780095787938439800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.repository.js.map": {
+      "size": 162,
+      "mtime_nanos": 1779497664868356200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/seed-big-catalog.js": {
+      "size": 6881,
+      "mtime_nanos": 1779995631539054700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/apiResponse.d.ts": {
+      "size": 473,
+      "mtime_nanos": 1780095787556105100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/paymentWorkflow.service.js.map": {
+      "size": 3229,
+      "mtime_nanos": 1780095787339282300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/campaign.js.map": {
+      "size": 801,
+      "mtime_nanos": 1780095787022881600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/auth.js": {
+      "size": 12645,
+      "mtime_nanos": 1780095786132466000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/whatsappProviderFactory.d.ts": {
+      "size": 863,
+      "mtime_nanos": 1780095786723818800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/IProvider.d.ts": {
+      "size": 874,
+      "mtime_nanos": 1780095786989998600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/validate.js.map": {
+      "size": 933,
+      "mtime_nanos": 1780095786259136100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787977342400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.types.js": {
+      "size": 53,
+      "mtime_nanos": 1779497664893721700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.routes.js": {
+      "size": 1065,
+      "mtime_nanos": 1780095787513831100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/events.d.ts": {
+      "size": 49,
+      "mtime_nanos": 1780095788553322600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.service.js.map": {
+      "size": 9265,
+      "mtime_nanos": 1780095786594103700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.worker.js": {
+      "size": 5787,
+      "mtime_nanos": 1779496387461792700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.routes.js.map": {
+      "size": 902,
+      "mtime_nanos": 1780095787929434600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.controller.js": {
+      "size": 1662,
+      "mtime_nanos": 1780095786862730500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/error.js": {
+      "size": 1588,
+      "mtime_nanos": 1780095785887526500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.controller.js.map": {
+      "size": 3735,
+      "mtime_nanos": 1780095786880119000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.controller.js.map": {
+      "size": 5836,
+      "mtime_nanos": 1780095787534216500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/firebaseProvider.d.ts": {
+      "size": 418,
+      "mtime_nanos": 1780095787019887600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/automation.worker.js": {
+      "size": 1898,
+      "mtime_nanos": 1780095788484384300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/redis.d.ts": {
+      "size": 130,
+      "mtime_nanos": 1780095786050346100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/requestLogger.js": {
+      "size": 897,
+      "mtime_nanos": 1780095785919626300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.controller.d.ts": {
+      "size": 1047,
+      "mtime_nanos": 1780095787508110600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/pdfService.d.ts": {
+      "size": 219,
+      "mtime_nanos": 1780095786185481700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/returnService.js.map": {
+      "size": 4103,
+      "mtime_nanos": 1780095786916156300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/types/index.js.map": {
+      "size": 121,
+      "mtime_nanos": 1780095786149484300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/slugify.d.ts": {
+      "size": 56,
+      "mtime_nanos": 1780095786300156200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/inventoryWorkflow.service.js": {
+      "size": 3505,
+      "mtime_nanos": 1780095786773564400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.routes.js.map": {
+      "size": 1262,
+      "mtime_nanos": 1780095787425937500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events/EventSubscriber.js.map": {
+      "size": 2214,
+      "mtime_nanos": 1780095788546259400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/env.js": {
+      "size": 1614,
+      "mtime_nanos": 1780095785863156900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/marketing.controller.js.map": {
+      "size": 1396,
+      "mtime_nanos": 1780095787560656100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/requestId.js.map": {
+      "size": 432,
+      "mtime_nanos": 1780095785906734600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.service.js.map": {
+      "size": 559,
+      "mtime_nanos": 1780095787945048200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.validator.d.ts": {
+      "size": 573,
+      "mtime_nanos": 1780095788706486800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/__tests__": {
+      "size": 0,
+      "mtime_nanos": 0,
+      "mode": 0,
+      "is_dir": true
+    },
+    "backend/dist/modules/cms/cms.routes.js": {
+      "size": 542,
+      "mtime_nanos": 1780095787267666800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.validator.js.map": {
+      "size": 880,
+      "mtime_nanos": 1780095788701472600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/jobService.js": {
+      "size": 2638,
+      "mtime_nanos": 1780095786463966800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/lead/lead.controller.d.ts": {
+      "size": 263,
+      "mtime_nanos": 1780095787961793700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/MetaWhatsAppProvider.js.map": {
+      "size": 2505,
+      "mtime_nanos": 1779715972767713800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/AppError.d.ts": {
+      "size": 201,
+      "mtime_nanos": 1780095788734248600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/supabase.d.ts": {
+      "size": 171,
+      "mtime_nanos": 1780095786023060700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.service.js.map": {
+      "size": 1375,
+      "mtime_nanos": 1780095787120467700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/MetaWhatsAppProvider.js": {
+      "size": 2898,
+      "mtime_nanos": 1779715972767713800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/template/TemplateEngine.js": {
+      "size": 1698,
+      "mtime_nanos": 1780095788407254900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/evolutionProvider.js": {
+      "size": 6014,
+      "mtime_nanos": 1780095786699987600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/audit.js.map": {
+      "size": 969,
+      "mtime_nanos": 1780095787408258000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.routes.js": {
+      "size": 812,
+      "mtime_nanos": 1780095787929434600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.controller.d.ts": {
+      "size": 603,
+      "mtime_nanos": 1780095788009569200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/dlq.service.js": {
+      "size": 2411,
+      "mtime_nanos": 1780095786948032800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/return.controller.js.map": {
+      "size": 1267,
+      "mtime_nanos": 1780095786925219000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.repository.js": {
+      "size": 82,
+      "mtime_nanos": 1779497664872522200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/product/product.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095786417839000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.types.js": {
+      "size": 91,
+      "mtime_nanos": 1779497664870357900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/validate.d.ts": {
+      "size": 221,
+      "mtime_nanos": 1780095786262133700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/requestId.d.ts": {
+      "size": 243,
+      "mtime_nanos": 1780095785913296600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-analytics.service.js.map": {
+      "size": 556,
+      "mtime_nanos": 1780095788661624600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/jobs/whatsapp.queue.d.ts": {
+      "size": 111,
+      "mtime_nanos": 1780095786617161500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services": {
+      "size": 0,
+      "mtime_nanos": 0,
+      "mode": 0,
+      "is_dir": true
+    },
+    "backend/dist/modules/product/product.types.js.map": {
+      "size": 152,
+      "mtime_nanos": 1779497664876544300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/__tests__": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/accounting/accounting.service.js": {
+      "size": 5389,
+      "mtime_nanos": 1780095787882122200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.service.d.ts": {
+      "size": 603,
+      "mtime_nanos": 1780095786741060000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/whatsapp-standalone.d.ts": {
+      "size": 24,
+      "mtime_nanos": 1779496388006392600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/automation.controller.js.map": {
+      "size": 795,
+      "mtime_nanos": 1780095787794424500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.validator.js": {
+      "size": 97,
+      "mtime_nanos": 1779497664871356000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-orchestrator.service.js": {
+      "size": 1986,
+      "mtime_nanos": 1780095787685563600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/metaCloudProvider.js": {
+      "size": 5902,
+      "mtime_nanos": 1780095786677293800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/notification.js.map": {
+      "size": 784,
+      "mtime_nanos": 1780095787046153400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/firebaseProvider.js.map": {
+      "size": 3235,
+      "mtime_nanos": 1780095787017361700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/error.js.map": {
+      "size": 1600,
+      "mtime_nanos": 1780095785885823600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.service.d.ts": {
+      "size": 402,
+      "mtime_nanos": 1780095786326965400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.service.js.map": {
+      "size": 147,
+      "mtime_nanos": 1780095788697394600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-dispatch.service.js": {
+      "size": 668,
+      "mtime_nanos": 1780095787621524100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workers/index.d.ts": {
+      "size": 141,
+      "mtime_nanos": 1780095788456806900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/automation.service.js": {
+      "size": 1500,
+      "mtime_nanos": 1780095787789837000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095788201647500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/seed-big-catalog.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779995631543996800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/segment.controller.js.map": {
+      "size": 779,
+      "mtime_nanos": 1780095787710577500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-state.service.js.map": {
+      "size": 1205,
+      "mtime_nanos": 1780095787676689000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.repository.d.ts": {
+      "size": 442,
+      "mtime_nanos": 1780095786310610500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/telemetry.d.ts": {
+      "size": 52,
+      "mtime_nanos": 1780095788603620900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting/accounting.controller.js.map": {
+      "size": 2414,
+      "mtime_nanos": 1780095787898990900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.routes.js.map": {
+      "size": 602,
+      "mtime_nanos": 1780095787267121300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/return.controller.js": {
+      "size": 967,
+      "mtime_nanos": 1780095786925219000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.service.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788713017900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.routes.js.map": {
+      "size": 4012,
+      "mtime_nanos": 1780095787206770300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/openwa-worker": {
+      "size": 0,
+      "mtime_nanos": 0,
+      "mode": 0,
+      "is_dir": true
+    },
+    "backend/dist/workflows/orderWorkflow.service.d.ts": {
+      "size": 145,
+      "mtime_nanos": 1780095786612462000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/config/supabase.js": {
+      "size": 3629,
+      "mtime_nanos": 1780095786013988900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/automation/AutomationEngine.js": {
+      "size": 2736,
+      "mtime_nanos": 1780095787782835500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/events": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/review/review.types.js.map": {
+      "size": 149,
+      "mtime_nanos": 1779497664879523900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.validator.js.map": {
+      "size": 157,
+      "mtime_nanos": 1779497664880525900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/csrf.js.map": {
+      "size": 2650,
+      "mtime_nanos": 1780093967918625700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/automation.routes.js.map": {
+      "size": 600,
+      "mtime_nanos": 1780095787804911500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/campaign.controller.d.ts": {
+      "size": 386,
+      "mtime_nanos": 1780095787707719200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/AppError.js": {
+      "size": 396,
+      "mtime_nanos": 1780095788732248700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workflows/refundWorkflow.service.js": {
+      "size": 3075,
+      "mtime_nanos": 1780095786760874300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/cms/cms.service.d.ts": {
+      "size": 344,
+      "mtime_nanos": 1780095787073427600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/brevoProvider.js": {
+      "size": 2308,
+      "mtime_nanos": 1780095787001622300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664845763200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.repository.d.ts": {
+      "size": 262,
+      "mtime_nanos": 1780095787440801100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/accounting": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "backend/dist/modules/inventory/inventory.validator.js.map": {
+      "size": 1421,
+      "mtime_nanos": 1780095787413792200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/automation.controller.js": {
+      "size": 562,
+      "mtime_nanos": 1780095787795371000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/campaign.controller.js.map": {
+      "size": 1433,
+      "mtime_nanos": 1780095787695634900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers": {
+      "size": 0,
+      "mtime_nanos": 0,
+      "mode": 0,
+      "is_dir": true
+    },
+    "backend/dist/modules/marketing/segment.routes.js": {
+      "size": 494,
+      "mtime_nanos": 1780095787736688500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.controller.js.map": {
+      "size": 3851,
+      "mtime_nanos": 1780095786337012300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.validator.js": {
+      "size": 91,
+      "mtime_nanos": 1779497664901228900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/providers/IWhatsAppProvider.js.map": {
+      "size": 162,
+      "mtime_nanos": 1780095788707999800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/notificationService.js": {
+      "size": 1914,
+      "mtime_nanos": 1780095786422892900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.repository.js": {
+      "size": 2298,
+      "mtime_nanos": 1780095787437265700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664889721800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/openwa-worker/workerService.d.ts": {
+      "size": 522,
+      "mtime_nanos": 1779722896219797500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/segment.service.js": {
+      "size": 4919,
+      "mtime_nanos": 1780095787598744200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workers/campaign.worker.d.ts": {
+      "size": 344,
+      "mtime_nanos": 1780095788435704300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/webhooks/webhooks.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787298396600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/workers/index.js.map": {
+      "size": 335,
+      "mtime_nanos": 1780095788443282200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/utils/auditLogger.js.map": {
+      "size": 808,
+      "mtime_nanos": 1780095788742317200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.types.js": {
+      "size": 53,
+      "mtime_nanos": 1780095786621336400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/template.routes.js.map": {
+      "size": 765,
+      "mtime_nanos": 1780095787774311200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/seed-products.js": {
+      "size": 3497,
+      "mtime_nanos": 1779995631552736800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/notifications/SocketGateway.js.map": {
+      "size": 1611,
+      "mtime_nanos": 1780095787078461900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/middlewares/featureFlags.js": {
+      "size": 1965,
+      "mtime_nanos": 1780095788632909900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/provider.js.map": {
+      "size": 614,
+      "mtime_nanos": 1780095787029447700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/auth/auth.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664849285300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/product/product.service.js": {
+      "size": 5306,
+      "mtime_nanos": 1780095786324441700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/supplier/supplier.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664893721700,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787257543400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.validator.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664852507200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.repository.js.map": {
+      "size": 2486,
+      "mtime_nanos": 1780095788656081400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.routes.js": {
+      "size": 678,
+      "mtime_nanos": 1780095787545021400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/shipping/shipping.controller.d.ts": {
+      "size": 274,
+      "mtime_nanos": 1780095787393377800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/providers/whatsapp/evolutionProvider.js.map": {
+      "size": 4671,
+      "mtime_nanos": 1780095786698989300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/support/support.validator.js.map": {
+      "size": 160,
+      "mtime_nanos": 1779497664896718900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/contracts/notification.js": {
+      "size": 466,
+      "mtime_nanos": 1780095787047709200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/core/providers/smtpProvider.js.map": {
+      "size": 2438,
+      "mtime_nanos": 1780095787007777800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/order/order.controller.js.map": {
+      "size": 2522,
+      "mtime_nanos": 1780095786790703200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/review/review.repository.js.map": {
+      "size": 1466,
+      "mtime_nanos": 1780095786823050900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/user/user.validator.js.map": {
+      "size": 151,
+      "mtime_nanos": 1779497664901228900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/segment.controller.d.ts": {
+      "size": 269,
+      "mtime_nanos": 1780095787717102800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.controller.js": {
+      "size": 11996,
+      "mtime_nanos": 1780095788317958900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095788388283100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/admin/admin.service.d.ts": {
+      "size": 623,
+      "mtime_nanos": 1780095787125463200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.routes.js.map": {
+      "size": 1783,
+      "mtime_nanos": 1780095788377838400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.validator.js.map": {
+      "size": 148,
+      "mtime_nanos": 1779497664852507200,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/automation.service.d.ts": {
+      "size": 545,
+      "mtime_nanos": 1780095787791838500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.webhook.controller.js.map": {
+      "size": 8797,
+      "mtime_nanos": 1780095788365313300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.routes.js.map": {
+      "size": 558,
+      "mtime_nanos": 1780095787329652000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.validator.js.map": {
+      "size": 163,
+      "mtime_nanos": 1779497664907977900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/automation-runner.service.js.map": {
+      "size": 3320,
+      "mtime_nanos": 1780095788474366300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/marketing/services/campaign-dispatch.service.js.map": {
+      "size": 693,
+      "mtime_nanos": 1780095787620521900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/payment/payment.service.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1780095788667623600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/inventory/inventory.service.js.map": {
+      "size": 7003,
+      "mtime_nanos": 1780095786440580500,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/pos/pos.types.js": {
+      "size": 83,
+      "mtime_nanos": 1779497664873523900,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/cms/cms.types.d.ts": {
+      "size": 11,
+      "mtime_nanos": 1779497664851294800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/workers.d.ts": {
+      "size": 50,
+      "mtime_nanos": 1780095788540196000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/wishlist/wishlist.routes.d.ts": {
+      "size": 89,
+      "mtime_nanos": 1780095787333176300,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/services/email.js.map": {
+      "size": 1009,
+      "mtime_nanos": 1780095786456355600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/bootstrap/app.js.map": {
+      "size": 578,
+      "mtime_nanos": 1780095788397559400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "backend/dist/modules/whatsapp/whatsapp.repository.d.ts": {
+      "size": 1353,
+      "mtime_nanos": 1780095786653720000,
+      "mode": 420,
+      "is_dir": false
+    }
+  },
+  "order": [
+    "backend/.turbo/turbo-build.log",
+    "backend/dist",
+    "backend/dist/bootstrap",
+    "backend/dist/bootstrap/app.d.ts",
+    "backend/dist/bootstrap/app.js",
+    "backend/dist/bootstrap/app.js.map",
+    "backend/dist/bootstrap/events.d.ts",
+    "backend/dist/bootstrap/events.js",
+    "backend/dist/bootstrap/events.js.map",
+    "backend/dist/bootstrap/middleware.d.ts",
+    "backend/dist/bootstrap/middleware.js",
+    "backend/dist/bootstrap/middleware.js.map",
+    "backend/dist/bootstrap/routes.d.ts",
+    "backend/dist/bootstrap/routes.js",
+    "backend/dist/bootstrap/routes.js.map",
+    "backend/dist/bootstrap/sockets.d.ts",
+    "backend/dist/bootstrap/sockets.js",
+    "backend/dist/bootstrap/sockets.js.map",
+    "backend/dist/bootstrap/telemetry.d.ts",
+    "backend/dist/bootstrap/telemetry.js",
+    "backend/dist/bootstrap/telemetry.js.map",
+    "backend/dist/bootstrap/workers.d.ts",
+    "backend/dist/bootstrap/workers.js",
+    "backend/dist/bootstrap/workers.js.map",
+    "backend/dist/config",
+    "backend/dist/config/env.d.ts",
+    "backend/dist/config/env.js",
+    "backend/dist/config/env.js.map",
+    "backend/dist/config/permissions.d.ts",
+    "backend/dist/config/permissions.js",
+    "backend/dist/config/permissions.js.map",
+    "backend/dist/config/redis.d.ts",
+    "backend/dist/config/redis.js",
+    "backend/dist/config/redis.js.map",
+    "backend/dist/config/supabase.d.ts",
+    "backend/dist/config/supabase.js",
+    "backend/dist/config/supabase.js.map",
+    "backend/dist/core",
+    "backend/dist/core/automation",
+    "backend/dist/core/automation/AutomationEngine.d.ts",
+    "backend/dist/core/automation/AutomationEngine.js",
+    "backend/dist/core/automation/AutomationEngine.js.map",
+    "backend/dist/core/contracts",
+    "backend/dist/core/contracts/automation.d.ts",
+    "backend/dist/core/contracts/automation.js",
+    "backend/dist/core/contracts/automation.js.map",
+    "backend/dist/core/contracts/campaign.d.ts",
+    "backend/dist/core/contracts/campaign.js",
+    "backend/dist/core/contracts/campaign.js.map",
+    "backend/dist/core/contracts/index.d.ts",
+    "backend/dist/core/contracts/index.js",
+    "backend/dist/core/contracts/index.js.map",
+    "backend/dist/core/contracts/notification.d.ts",
+    "backend/dist/core/contracts/notification.js",
+    "backend/dist/core/contracts/notification.js.map",
+    "backend/dist/core/contracts/provider.d.ts",
+    "backend/dist/core/contracts/provider.js",
+    "backend/dist/core/contracts/provider.js.map",
+    "backend/dist/core/contracts/queue.d.ts",
+    "backend/dist/core/contracts/queue.js",
+    "backend/dist/core/contracts/queue.js.map",
+    "backend/dist/core/events",
+    "backend/dist/core/events/EventBus.d.ts",
+    "backend/dist/core/events/EventBus.js",
+    "backend/dist/core/events/EventBus.js.map",
+    "backend/dist/core/events/EventSubscriber.d.ts",
+    "backend/dist/core/events/EventSubscriber.js",
+    "backend/dist/core/events/EventSubscriber.js.map",
+    "backend/dist/core/events/events.d.ts",
+    "backend/dist/core/events/events.js",
+    "backend/dist/core/events/events.js.map",
+    "backend/dist/core/fsm",
+    "backend/dist/core/fsm/CampaignStateMachine.d.ts",
+    "backend/dist/core/fsm/CampaignStateMachine.js",
+    "backend/dist/core/fsm/CampaignStateMachine.js.map",
+    "backend/dist/core/fsm/OrderStateMachine.d.ts",
+    "backend/dist/core/fsm/OrderStateMachine.js",
+    "backend/dist/core/fsm/OrderStateMachine.js.map",
+    "backend/dist/core/fsm/StateMachine.d.ts",
+    "backend/dist/core/fsm/StateMachine.js",
+    "backend/dist/core/fsm/StateMachine.js.map",
+    "backend/dist/core/notifications",
+    "backend/dist/core/notifications/SocketGateway.d.ts",
+    "backend/dist/core/notifications/SocketGateway.js",
+    "backend/dist/core/notifications/SocketGateway.js.map",
+    "backend/dist/core/providers",
+    "backend/dist/core/providers/IProvider.d.ts",
+    "backend/dist/core/providers/IProvider.js",
+    "backend/dist/core/providers/IProvider.js.map",
+    "backend/dist/core/providers/MetaWhatsAppProvider.d.ts",
+    "backend/dist/core/providers/MetaWhatsAppProvider.js",
+    "backend/dist/core/providers/MetaWhatsAppProvider.js.map",
+    "backend/dist/core/providers/ResendEmailProvider.d.ts",
+    "backend/dist/core/providers/ResendEmailProvider.js",
+    "backend/dist/core/providers/ResendEmailProvider.js.map",
+    "backend/dist/core/providers/brevoProvider.d.ts",
+    "backend/dist/core/providers/brevoProvider.js",
+    "backend/dist/core/providers/brevoProvider.js.map",
+    "backend/dist/core/providers/firebaseProvider.d.ts",
+    "backend/dist/core/providers/firebaseProvider.js",
+    "backend/dist/core/providers/firebaseProvider.js.map",
+    "backend/dist/core/providers/smtpProvider.d.ts",
+    "backend/dist/core/providers/smtpProvider.js",
+    "backend/dist/core/providers/smtpProvider.js.map",
+    "backend/dist/core/queues",
+    "backend/dist/core/queues/index.d.ts",
+    "backend/dist/core/queues/index.js",
+    "backend/dist/core/queues/index.js.map",
+    "backend/dist/core/template",
+    "backend/dist/core/template/TemplateEngine.d.ts",
+    "backend/dist/core/template/TemplateEngine.js",
+    "backend/dist/core/template/TemplateEngine.js.map",
+    "backend/dist/jobs",
+    "backend/dist/jobs/automation.worker.d.ts",
+    "backend/dist/jobs/automation.worker.js",
+    "backend/dist/jobs/automation.worker.js.map",
+    "backend/dist/jobs/index.d.ts",
+    "backend/dist/jobs/index.js",
+    "backend/dist/jobs/index.js.map",
+    "backend/dist/jobs/whatsapp.queue.d.ts",
+    "backend/dist/jobs/whatsapp.queue.js",
+    "backend/dist/jobs/whatsapp.queue.js.map",
+    "backend/dist/jobs/whatsapp.worker.d.ts",
+    "backend/dist/jobs/whatsapp.worker.js",
+    "backend/dist/jobs/whatsapp.worker.js.map",
+    "backend/dist/middlewares",
+    "backend/dist/middlewares/__tests__",
+    "backend/dist/middlewares/__tests__/rbac.middleware.test.d.ts",
+    "backend/dist/middlewares/__tests__/rbac.middleware.test.js",
+    "backend/dist/middlewares/__tests__/rbac.middleware.test.js.map",
+    "backend/dist/middlewares/audit.d.ts",
+    "backend/dist/middlewares/audit.js",
+    "backend/dist/middlewares/audit.js.map",
+    "backend/dist/middlewares/auth.d.ts",
+    "backend/dist/middlewares/auth.js",
+    "backend/dist/middlewares/auth.js.map",
+    "backend/dist/middlewares/csrf.d.ts",
+    "backend/dist/middlewares/csrf.js",
+    "backend/dist/middlewares/csrf.js.map",
+    "backend/dist/middlewares/error.d.ts",
+    "backend/dist/middlewares/error.js",
+    "backend/dist/middlewares/error.js.map",
+    "backend/dist/middlewares/featureFlags.d.ts",
+    "backend/dist/middlewares/featureFlags.js",
+    "backend/dist/middlewares/featureFlags.js.map",
+    "backend/dist/middlewares/idempotency.middleware.d.ts",
+    "backend/dist/middlewares/idempotency.middleware.js",
+    "backend/dist/middlewares/idempotency.middleware.js.map",
+    "backend/dist/middlewares/permission.d.ts",
+    "backend/dist/middlewares/permission.js",
+    "backend/dist/middlewares/permission.js.map",
+    "backend/dist/middlewares/requestId.d.ts",
+    "backend/dist/middlewares/requestId.js",
+    "backend/dist/middlewares/requestId.js.map",
+    "backend/dist/middlewares/requestLogger.d.ts",
+    "backend/dist/middlewares/requestLogger.js",
+    "backend/dist/middlewares/requestLogger.js.map",
+    "backend/dist/middlewares/validate.d.ts",
+    "backend/dist/middlewares/validate.js",
+    "backend/dist/middlewares/validate.js.map",
+    "backend/dist/modules",
+    "backend/dist/modules/accounting",
+    "backend/dist/modules/accounting/accounting.controller.d.ts",
+    "backend/dist/modules/accounting/accounting.controller.js",
+    "backend/dist/modules/accounting/accounting.controller.js.map",
+    "backend/dist/modules/accounting/accounting.repository.d.ts",
+    "backend/dist/modules/accounting/accounting.repository.js",
+    "backend/dist/modules/accounting/accounting.repository.js.map",
+    "backend/dist/modules/accounting/accounting.routes.d.ts",
+    "backend/dist/modules/accounting/accounting.routes.js",
+    "backend/dist/modules/accounting/accounting.routes.js.map",
+    "backend/dist/modules/accounting/accounting.service.d.ts",
+    "backend/dist/modules/accounting/accounting.service.js",
+    "backend/dist/modules/accounting/accounting.service.js.map",
+    "backend/dist/modules/accounting/accounting.types.d.ts",
+    "backend/dist/modules/accounting/accounting.types.js",
+    "backend/dist/modules/accounting/accounting.types.js.map",
+    "backend/dist/modules/admin",
+    "backend/dist/modules/admin/admin.controller.d.ts",
+    "backend/dist/modules/admin/admin.controller.js",
+    "backend/dist/modules/admin/admin.controller.js.map",
+    "backend/dist/modules/admin/admin.repository.d.ts",
+    "backend/dist/modules/admin/admin.repository.js",
+    "backend/dist/modules/admin/admin.repository.js.map",
+    "backend/dist/modules/admin/admin.routes.d.ts",
+    "backend/dist/modules/admin/admin.routes.js",
+    "backend/dist/modules/admin/admin.routes.js.map",
+    "backend/dist/modules/admin/admin.service.d.ts",
+    "backend/dist/modules/admin/admin.service.js",
+    "backend/dist/modules/admin/admin.service.js.map",
+    "backend/dist/modules/admin/admin.types.d.ts",
+    "backend/dist/modules/admin/admin.types.js",
+    "backend/dist/modules/admin/admin.types.js.map",
+    "backend/dist/modules/admin/admin.validator.d.ts",
+    "backend/dist/modules/admin/admin.validator.js",
+    "backend/dist/modules/admin/admin.validator.js.map",
+    "backend/dist/modules/admin/dlq.controller.d.ts",
+    "backend/dist/modules/admin/dlq.controller.js",
+    "backend/dist/modules/admin/dlq.controller.js.map",
+    "backend/dist/modules/admin/dlq.service.d.ts",
+    "backend/dist/modules/admin/dlq.service.js",
+    "backend/dist/modules/admin/dlq.service.js.map",
+    "backend/dist/modules/admin/report.controller.d.ts",
+    "backend/dist/modules/admin/report.controller.js",
+    "backend/dist/modules/admin/report.controller.js.map",
+    "backend/dist/modules/auth",
+    "backend/dist/modules/auth/auth.controller.d.ts",
+    "backend/dist/modules/auth/auth.controller.js",
+    "backend/dist/modules/auth/auth.controller.js.map",
+    "backend/dist/modules/auth/auth.repository.d.ts",
+    "backend/dist/modules/auth/auth.repository.js",
+    "backend/dist/modules/auth/auth.repository.js.map",
+    "backend/dist/modules/auth/auth.routes.d.ts",
+    "backend/dist/modules/auth/auth.routes.js",
+    "backend/dist/modules/auth/auth.routes.js.map",
+    "backend/dist/modules/auth/auth.service.d.ts",
+    "backend/dist/modules/auth/auth.service.js",
+    "backend/dist/modules/auth/auth.service.js.map",
+    "backend/dist/modules/auth/auth.types.d.ts",
+    "backend/dist/modules/auth/auth.types.js",
+    "backend/dist/modules/auth/auth.types.js.map",
+    "backend/dist/modules/auth/auth.validator.d.ts",
+    "backend/dist/modules/auth/auth.validator.js",
+    "backend/dist/modules/auth/auth.validator.js.map",
+    "backend/dist/modules/cms",
+    "backend/dist/modules/cms/cms.controller.d.ts",
+    "backend/dist/modules/cms/cms.controller.js",
+    "backend/dist/modules/cms/cms.controller.js.map",
+    "backend/dist/modules/cms/cms.repository.d.ts",
+    "backend/dist/modules/cms/cms.repository.js",
+    "backend/dist/modules/cms/cms.repository.js.map",
+    "backend/dist/modules/cms/cms.routes.d.ts",
+    "backend/dist/modules/cms/cms.routes.js",
+    "backend/dist/modules/cms/cms.routes.js.map",
+    "backend/dist/modules/cms/cms.service.d.ts",
+    "backend/dist/modules/cms/cms.service.js",
+    "backend/dist/modules/cms/cms.service.js.map",
+    "backend/dist/modules/cms/cms.types.d.ts",
+    "backend/dist/modules/cms/cms.types.js",
+    "backend/dist/modules/cms/cms.types.js.map",
+    "backend/dist/modules/cms/cms.validator.d.ts",
+    "backend/dist/modules/cms/cms.validator.js",
+    "backend/dist/modules/cms/cms.validator.js.map",
+    "backend/dist/modules/inventory",
+    "backend/dist/modules/inventory/inventory.controller.d.ts",
+    "backend/dist/modules/inventory/inventory.controller.js",
+    "backend/dist/modules/inventory/inventory.controller.js.map",
+    "backend/dist/modules/inventory/inventory.repository.d.ts",
+    "backend/dist/modules/inventory/inventory.repository.js",
+    "backend/dist/modules/inventory/inventory.repository.js.map",
+    "backend/dist/modules/inventory/inventory.routes.d.ts",
+    "backend/dist/modules/inventory/inventory.routes.js",
+    "backend/dist/modules/inventory/inventory.routes.js.map",
+    "backend/dist/modules/inventory/inventory.service.d.ts",
+    "backend/dist/modules/inventory/inventory.service.js",
+    "backend/dist/modules/inventory/inventory.service.js.map",
+    "backend/dist/modules/inventory/inventory.types.d.ts",
+    "backend/dist/modules/inventory/inventory.types.js",
+    "backend/dist/modules/inventory/inventory.types.js.map",
+    "backend/dist/modules/inventory/inventory.validator.d.ts",
+    "backend/dist/modules/inventory/inventory.validator.js",
+    "backend/dist/modules/inventory/inventory.validator.js.map",
+    "backend/dist/modules/lead",
+    "backend/dist/modules/lead/lead.controller.d.ts",
+    "backend/dist/modules/lead/lead.controller.js",
+    "backend/dist/modules/lead/lead.controller.js.map",
+    "backend/dist/modules/lead/lead.repository.d.ts",
+    "backend/dist/modules/lead/lead.repository.js",
+    "backend/dist/modules/lead/lead.repository.js.map",
+    "backend/dist/modules/lead/lead.routes.d.ts",
+    "backend/dist/modules/lead/lead.routes.js",
+    "backend/dist/modules/lead/lead.routes.js.map",
+    "backend/dist/modules/lead/lead.service.d.ts",
+    "backend/dist/modules/lead/lead.service.js",
+    "backend/dist/modules/lead/lead.service.js.map",
+    "backend/dist/modules/lead/lead.types.d.ts",
+    "backend/dist/modules/lead/lead.types.js",
+    "backend/dist/modules/lead/lead.types.js.map",
+    "backend/dist/modules/lead/lead.validator.d.ts",
+    "backend/dist/modules/lead/lead.validator.js",
+    "backend/dist/modules/lead/lead.validator.js.map",
+    "backend/dist/modules/marketing",
+    "backend/dist/modules/marketing/automation.controller.d.ts",
+    "backend/dist/modules/marketing/automation.controller.js",
+    "backend/dist/modules/marketing/automation.controller.js.map",
+    "backend/dist/modules/marketing/automation.routes.d.ts",
+    "backend/dist/modules/marketing/automation.routes.js",
+    "backend/dist/modules/marketing/automation.routes.js.map",
+    "backend/dist/modules/marketing/automation.service.d.ts",
+    "backend/dist/modules/marketing/automation.service.js",
+    "backend/dist/modules/marketing/automation.service.js.map",
+    "backend/dist/modules/marketing/campaign.controller.d.ts",
+    "backend/dist/modules/marketing/campaign.controller.js",
+    "backend/dist/modules/marketing/campaign.controller.js.map",
+    "backend/dist/modules/marketing/campaign.repository.d.ts",
+    "backend/dist/modules/marketing/campaign.repository.js",
+    "backend/dist/modules/marketing/campaign.repository.js.map",
+    "backend/dist/modules/marketing/marketing.controller.d.ts",
+    "backend/dist/modules/marketing/marketing.controller.js",
+    "backend/dist/modules/marketing/marketing.controller.js.map",
+    "backend/dist/modules/marketing/marketing.repository.d.ts",
+    "backend/dist/modules/marketing/marketing.repository.js",
+    "backend/dist/modules/marketing/marketing.repository.js.map",
+    "backend/dist/modules/marketing/marketing.routes.d.ts",
+    "backend/dist/modules/marketing/marketing.routes.js",
+    "backend/dist/modules/marketing/marketing.routes.js.map",
+    "backend/dist/modules/marketing/marketing.service.d.ts",
+    "backend/dist/modules/marketing/marketing.service.js",
+    "backend/dist/modules/marketing/marketing.service.js.map",
+    "backend/dist/modules/marketing/marketing.types.d.ts",
+    "backend/dist/modules/marketing/marketing.types.js",
+    "backend/dist/modules/marketing/marketing.types.js.map",
+    "backend/dist/modules/marketing/marketing.validator.d.ts",
+    "backend/dist/modules/marketing/marketing.validator.js",
+    "backend/dist/modules/marketing/marketing.validator.js.map",
+    "backend/dist/modules/marketing/providers",
+    "backend/dist/modules/marketing/providers/provider-health.service.d.ts",
+    "backend/dist/modules/marketing/providers/provider-health.service.js",
+    "backend/dist/modules/marketing/providers/provider-health.service.js.map",
+    "backend/dist/modules/marketing/providers/provider.service.d.ts",
+    "backend/dist/modules/marketing/providers/provider.service.js",
+    "backend/dist/modules/marketing/providers/provider.service.js.map",
+    "backend/dist/modules/marketing/providers/whatsapp",
+    "backend/dist/modules/marketing/providers/whatsapp/IWhatsAppProvider.d.ts",
+    "backend/dist/modules/marketing/providers/whatsapp/IWhatsAppProvider.js",
+    "backend/dist/modules/marketing/providers/whatsapp/IWhatsAppProvider.js.map",
+    "backend/dist/modules/marketing/providers/whatsapp/evolutionProvider.d.ts",
+    "backend/dist/modules/marketing/providers/whatsapp/evolutionProvider.js",
+    "backend/dist/modules/marketing/providers/whatsapp/evolutionProvider.js.map",
+    "backend/dist/modules/marketing/providers/whatsapp/metaCloudProvider.d.ts",
+    "backend/dist/modules/marketing/providers/whatsapp/metaCloudProvider.js",
+    "backend/dist/modules/marketing/providers/whatsapp/metaCloudProvider.js.map",
+    "backend/dist/modules/marketing/providers/whatsapp/openwaProvider.d.ts",
+    "backend/dist/modules/marketing/providers/whatsapp/openwaProvider.js",
+    "backend/dist/modules/marketing/providers/whatsapp/openwaProvider.js.map",
+    "backend/dist/modules/marketing/providers/whatsapp/whatsappProviderFactory.d.ts",
+    "backend/dist/modules/marketing/providers/whatsapp/whatsappProviderFactory.js",
+    "backend/dist/modules/marketing/providers/whatsapp/whatsappProviderFactory.js.map",
+    "backend/dist/modules/marketing/segment.controller.d.ts",
+    "backend/dist/modules/marketing/segment.controller.js",
+    "backend/dist/modules/marketing/segment.controller.js.map",
+    "backend/dist/modules/marketing/segment.routes.d.ts",
+    "backend/dist/modules/marketing/segment.routes.js",
+    "backend/dist/modules/marketing/segment.routes.js.map",
+    "backend/dist/modules/marketing/segment.service.d.ts",
+    "backend/dist/modules/marketing/segment.service.js",
+    "backend/dist/modules/marketing/segment.service.js.map",
+    "backend/dist/modules/marketing/services",
+    "backend/dist/modules/marketing/services/automation-runner.service.d.ts",
+    "backend/dist/modules/marketing/services/automation-runner.service.js",
+    "backend/dist/modules/marketing/services/automation-runner.service.js.map",
+    "backend/dist/modules/marketing/services/campaign-analytics.service.d.ts",
+    "backend/dist/modules/marketing/services/campaign-analytics.service.js",
+    "backend/dist/modules/marketing/services/campaign-analytics.service.js.map",
+    "backend/dist/modules/marketing/services/campaign-audience.service.d.ts",
+    "backend/dist/modules/marketing/services/campaign-audience.service.js",
+    "backend/dist/modules/marketing/services/campaign-audience.service.js.map",
+    "backend/dist/modules/marketing/services/campaign-dispatch.service.d.ts",
+    "backend/dist/modules/marketing/services/campaign-dispatch.service.js",
+    "backend/dist/modules/marketing/services/campaign-dispatch.service.js.map",
+    "backend/dist/modules/marketing/services/campaign-orchestrator.service.d.ts",
+    "backend/dist/modules/marketing/services/campaign-orchestrator.service.js",
+    "backend/dist/modules/marketing/services/campaign-orchestrator.service.js.map",
+    "backend/dist/modules/marketing/services/campaign-state.service.d.ts",
+    "backend/dist/modules/marketing/services/campaign-state.service.js",
+    "backend/dist/modules/marketing/services/campaign-state.service.js.map",
+    "backend/dist/modules/marketing/template.controller.d.ts",
+    "backend/dist/modules/marketing/template.controller.js",
+    "backend/dist/modules/marketing/template.controller.js.map",
+    "backend/dist/modules/marketing/template.routes.d.ts",
+    "backend/dist/modules/marketing/template.routes.js",
+    "backend/dist/modules/marketing/template.routes.js.map",
+    "backend/dist/modules/marketing/template.service.d.ts",
+    "backend/dist/modules/marketing/template.service.js",
+    "backend/dist/modules/marketing/template.service.js.map",
+    "backend/dist/modules/order",
+    "backend/dist/modules/order/order.controller.d.ts",
+    "backend/dist/modules/order/order.controller.js",
+    "backend/dist/modules/order/order.controller.js.map",
+    "backend/dist/modules/order/order.repository.d.ts",
+    "backend/dist/modules/order/order.repository.js",
+    "backend/dist/modules/order/order.repository.js.map",
+    "backend/dist/modules/order/order.routes.d.ts",
+    "backend/dist/modules/order/order.routes.js",
+    "backend/dist/modules/order/order.routes.js.map",
+    "backend/dist/modules/order/order.service.d.ts",
+    "backend/dist/modules/order/order.service.js",
+    "backend/dist/modules/order/order.service.js.map",
+    "backend/dist/modules/order/order.types.d.ts",
+    "backend/dist/modules/order/order.types.js",
+    "backend/dist/modules/order/order.types.js.map",
+    "backend/dist/modules/order/order.validator.d.ts",
+    "backend/dist/modules/order/order.validator.js",
+    "backend/dist/modules/order/order.validator.js.map",
+    "backend/dist/modules/order/return.controller.d.ts",
+    "backend/dist/modules/order/return.controller.js",
+    "backend/dist/modules/order/return.controller.js.map",
+    "backend/dist/modules/payment",
+    "backend/dist/modules/payment/payment.controller.d.ts",
+    "backend/dist/modules/payment/payment.controller.js",
+    "backend/dist/modules/payment/payment.controller.js.map",
+    "backend/dist/modules/payment/payment.repository.d.ts",
+    "backend/dist/modules/payment/payment.repository.js",
+    "backend/dist/modules/payment/payment.repository.js.map",
+    "backend/dist/modules/payment/payment.routes.d.ts",
+    "backend/dist/modules/payment/payment.routes.js",
+    "backend/dist/modules/payment/payment.routes.js.map",
+    "backend/dist/modules/payment/payment.service.d.ts",
+    "backend/dist/modules/payment/payment.service.js",
+    "backend/dist/modules/payment/payment.service.js.map",
+    "backend/dist/modules/payment/payment.types.d.ts",
+    "backend/dist/modules/payment/payment.types.js",
+    "backend/dist/modules/payment/payment.types.js.map",
+    "backend/dist/modules/payment/payment.validator.d.ts",
+    "backend/dist/modules/payment/payment.validator.js",
+    "backend/dist/modules/payment/payment.validator.js.map",
+    "backend/dist/modules/pos",
+    "backend/dist/modules/pos/pos.controller.d.ts",
+    "backend/dist/modules/pos/pos.controller.js",
+    "backend/dist/modules/pos/pos.controller.js.map",
+    "backend/dist/modules/pos/pos.repository.d.ts",
+    "backend/dist/modules/pos/pos.repository.js",
+    "backend/dist/modules/pos/pos.repository.js.map",
+    "backend/dist/modules/pos/pos.routes.d.ts",
+    "backend/dist/modules/pos/pos.routes.js",
+    "backend/dist/modules/pos/pos.routes.js.map",
+    "backend/dist/modules/pos/pos.service.d.ts",
+    "backend/dist/modules/pos/pos.service.js",
+    "backend/dist/modules/pos/pos.service.js.map",
+    "backend/dist/modules/pos/pos.types.d.ts",
+    "backend/dist/modules/pos/pos.types.js",
+    "backend/dist/modules/pos/pos.types.js.map",
+    "backend/dist/modules/pos/pos.validator.d.ts",
+    "backend/dist/modules/pos/pos.validator.js",
+    "backend/dist/modules/pos/pos.validator.js.map",
+    "backend/dist/modules/product",
+    "backend/dist/modules/product/product.controller.d.ts",
+    "backend/dist/modules/product/product.controller.js",
+    "backend/dist/modules/product/product.controller.js.map",
+    "backend/dist/modules/product/product.repository.d.ts",
+    "backend/dist/modules/product/product.repository.js",
+    "backend/dist/modules/product/product.repository.js.map",
+    "backend/dist/modules/product/product.routes.d.ts",
+    "backend/dist/modules/product/product.routes.js",
+    "backend/dist/modules/product/product.routes.js.map",
+    "backend/dist/modules/product/product.service.d.ts",
+    "backend/dist/modules/product/product.service.js",
+    "backend/dist/modules/product/product.service.js.map",
+    "backend/dist/modules/product/product.types.d.ts",
+    "backend/dist/modules/product/product.types.js",
+    "backend/dist/modules/product/product.types.js.map",
+    "backend/dist/modules/product/product.validator.d.ts",
+    "backend/dist/modules/product/product.validator.js",
+    "backend/dist/modules/product/product.validator.js.map",
+    "backend/dist/modules/review",
+    "backend/dist/modules/review/review.controller.d.ts",
+    "backend/dist/modules/review/review.controller.js",
+    "backend/dist/modules/review/review.controller.js.map",
+    "backend/dist/modules/review/review.repository.d.ts",
+    "backend/dist/modules/review/review.repository.js",
+    "backend/dist/modules/review/review.repository.js.map",
+    "backend/dist/modules/review/review.routes.d.ts",
+    "backend/dist/modules/review/review.routes.js",
+    "backend/dist/modules/review/review.routes.js.map",
+    "backend/dist/modules/review/review.service.d.ts",
+    "backend/dist/modules/review/review.service.js",
+    "backend/dist/modules/review/review.service.js.map",
+    "backend/dist/modules/review/review.types.d.ts",
+    "backend/dist/modules/review/review.types.js",
+    "backend/dist/modules/review/review.types.js.map",
+    "backend/dist/modules/review/review.validator.d.ts",
+    "backend/dist/modules/review/review.validator.js",
+    "backend/dist/modules/review/review.validator.js.map",
+    "backend/dist/modules/shipping",
+    "backend/dist/modules/shipping/shipping.controller.d.ts",
+    "backend/dist/modules/shipping/shipping.controller.js",
+    "backend/dist/modules/shipping/shipping.controller.js.map",
+    "backend/dist/modules/shipping/shipping.repository.d.ts",
+    "backend/dist/modules/shipping/shipping.repository.js",
+    "backend/dist/modules/shipping/shipping.repository.js.map",
+    "backend/dist/modules/shipping/shipping.routes.d.ts",
+    "backend/dist/modules/shipping/shipping.routes.js",
+    "backend/dist/modules/shipping/shipping.routes.js.map",
+    "backend/dist/modules/shipping/shipping.service.d.ts",
+    "backend/dist/modules/shipping/shipping.service.js",
+    "backend/dist/modules/shipping/shipping.service.js.map",
+    "backend/dist/modules/shipping/shipping.types.d.ts",
+    "backend/dist/modules/shipping/shipping.types.js",
+    "backend/dist/modules/shipping/shipping.types.js.map",
+    "backend/dist/modules/shipping/shipping.validator.d.ts",
+    "backend/dist/modules/shipping/shipping.validator.js",
+    "backend/dist/modules/shipping/shipping.validator.js.map",
+    "backend/dist/modules/supplier",
+    "backend/dist/modules/supplier/supplier.controller.d.ts",
+    "backend/dist/modules/supplier/supplier.controller.js",
+    "backend/dist/modules/supplier/supplier.controller.js.map",
+    "backend/dist/modules/supplier/supplier.repository.d.ts",
+    "backend/dist/modules/supplier/supplier.repository.js",
+    "backend/dist/modules/supplier/supplier.repository.js.map",
+    "backend/dist/modules/supplier/supplier.routes.d.ts",
+    "backend/dist/modules/supplier/supplier.routes.js",
+    "backend/dist/modules/supplier/supplier.routes.js.map",
+    "backend/dist/modules/supplier/supplier.service.d.ts",
+    "backend/dist/modules/supplier/supplier.service.js",
+    "backend/dist/modules/supplier/supplier.service.js.map",
+    "backend/dist/modules/supplier/supplier.types.d.ts",
+    "backend/dist/modules/supplier/supplier.types.js",
+    "backend/dist/modules/supplier/supplier.types.js.map",
+    "backend/dist/modules/supplier/supplier.validator.d.ts",
+    "backend/dist/modules/supplier/supplier.validator.js",
+    "backend/dist/modules/supplier/supplier.validator.js.map",
+    "backend/dist/modules/support",
+    "backend/dist/modules/support/support.controller.d.ts",
+    "backend/dist/modules/support/support.controller.js",
+    "backend/dist/modules/support/support.controller.js.map",
+    "backend/dist/modules/support/support.repository.d.ts",
+    "backend/dist/modules/support/support.repository.js",
+    "backend/dist/modules/support/support.repository.js.map",
+    "backend/dist/modules/support/support.routes.d.ts",
+    "backend/dist/modules/support/support.routes.js",
+    "backend/dist/modules/support/support.routes.js.map",
+    "backend/dist/modules/support/support.service.d.ts",
+    "backend/dist/modules/support/support.service.js",
+    "backend/dist/modules/support/support.service.js.map",
+    "backend/dist/modules/support/support.types.d.ts",
+    "backend/dist/modules/support/support.types.js",
+    "backend/dist/modules/support/support.types.js.map",
+    "backend/dist/modules/support/support.validator.d.ts",
+    "backend/dist/modules/support/support.validator.js",
+    "backend/dist/modules/support/support.validator.js.map",
+    "backend/dist/modules/user",
+    "backend/dist/modules/user/user.controller.d.ts",
+    "backend/dist/modules/user/user.controller.js",
+    "backend/dist/modules/user/user.controller.js.map",
+    "backend/dist/modules/user/user.repository.d.ts",
+    "backend/dist/modules/user/user.repository.js",
+    "backend/dist/modules/user/user.repository.js.map",
+    "backend/dist/modules/user/user.routes.d.ts",
+    "backend/dist/modules/user/user.routes.js",
+    "backend/dist/modules/user/user.routes.js.map",
+    "backend/dist/modules/user/user.service.d.ts",
+    "backend/dist/modules/user/user.service.js",
+    "backend/dist/modules/user/user.service.js.map",
+    "backend/dist/modules/user/user.types.d.ts",
+    "backend/dist/modules/user/user.types.js",
+    "backend/dist/modules/user/user.types.js.map",
+    "backend/dist/modules/user/user.validator.d.ts",
+    "backend/dist/modules/user/user.validator.js",
+    "backend/dist/modules/user/user.validator.js.map",
+    "backend/dist/modules/webhooks",
+    "backend/dist/modules/webhooks/webhooks.controller.d.ts",
+    "backend/dist/modules/webhooks/webhooks.controller.js",
+    "backend/dist/modules/webhooks/webhooks.controller.js.map",
+    "backend/dist/modules/webhooks/webhooks.routes.d.ts",
+    "backend/dist/modules/webhooks/webhooks.routes.js",
+    "backend/dist/modules/webhooks/webhooks.routes.js.map",
+    "backend/dist/modules/webhooks/webhooks.service.d.ts",
+    "backend/dist/modules/webhooks/webhooks.service.js",
+    "backend/dist/modules/webhooks/webhooks.service.js.map",
+    "backend/dist/modules/whatsapp",
+    "backend/dist/modules/whatsapp/providers",
+    "backend/dist/modules/whatsapp/providers/IWhatsAppProvider.d.ts",
+    "backend/dist/modules/whatsapp/providers/IWhatsAppProvider.js",
+    "backend/dist/modules/whatsapp/providers/IWhatsAppProvider.js.map",
+    "backend/dist/modules/whatsapp/whatsapp.controller.d.ts",
+    "backend/dist/modules/whatsapp/whatsapp.controller.js",
+    "backend/dist/modules/whatsapp/whatsapp.controller.js.map",
+    "backend/dist/modules/whatsapp/whatsapp.repository.d.ts",
+    "backend/dist/modules/whatsapp/whatsapp.repository.js",
+    "backend/dist/modules/whatsapp/whatsapp.repository.js.map",
+    "backend/dist/modules/whatsapp/whatsapp.routes.d.ts",
+    "backend/dist/modules/whatsapp/whatsapp.routes.js",
+    "backend/dist/modules/whatsapp/whatsapp.routes.js.map",
+    "backend/dist/modules/whatsapp/whatsapp.service.d.ts",
+    "backend/dist/modules/whatsapp/whatsapp.service.js",
+    "backend/dist/modules/whatsapp/whatsapp.service.js.map",
+    "backend/dist/modules/whatsapp/whatsapp.types.d.ts",
+    "backend/dist/modules/whatsapp/whatsapp.types.js",
+    "backend/dist/modules/whatsapp/whatsapp.types.js.map",
+    "backend/dist/modules/whatsapp/whatsapp.validator.d.ts",
+    "backend/dist/modules/whatsapp/whatsapp.validator.js",
+    "backend/dist/modules/whatsapp/whatsapp.validator.js.map",
+    "backend/dist/modules/whatsapp/whatsapp.webhook.controller.d.ts",
+    "backend/dist/modules/whatsapp/whatsapp.webhook.controller.js",
+    "backend/dist/modules/whatsapp/whatsapp.webhook.controller.js.map",
+    "backend/dist/modules/whatsapp/whatsapp.worker.d.ts",
+    "backend/dist/modules/whatsapp/whatsapp.worker.js",
+    "backend/dist/modules/whatsapp/whatsapp.worker.js.map",
+    "backend/dist/modules/wishlist",
+    "backend/dist/modules/wishlist/wishlist.controller.d.ts",
+    "backend/dist/modules/wishlist/wishlist.controller.js",
+    "backend/dist/modules/wishlist/wishlist.controller.js.map",
+    "backend/dist/modules/wishlist/wishlist.repository.d.ts",
+    "backend/dist/modules/wishlist/wishlist.repository.js",
+    "backend/dist/modules/wishlist/wishlist.repository.js.map",
+    "backend/dist/modules/wishlist/wishlist.routes.d.ts",
+    "backend/dist/modules/wishlist/wishlist.routes.js",
+    "backend/dist/modules/wishlist/wishlist.routes.js.map",
+    "backend/dist/modules/wishlist/wishlist.service.d.ts",
+    "backend/dist/modules/wishlist/wishlist.service.js",
+    "backend/dist/modules/wishlist/wishlist.service.js.map",
+    "backend/dist/modules/wishlist/wishlist.types.d.ts",
+    "backend/dist/modules/wishlist/wishlist.types.js",
+    "backend/dist/modules/wishlist/wishlist.types.js.map",
+    "backend/dist/modules/wishlist/wishlist.validator.d.ts",
+    "backend/dist/modules/wishlist/wishlist.validator.js",
+    "backend/dist/modules/wishlist/wishlist.validator.js.map",
+    "backend/dist/seed-big-catalog.d.ts",
+    "backend/dist/seed-big-catalog.js",
+    "backend/dist/seed-big-catalog.js.map",
+    "backend/dist/seed-products.d.ts",
+    "backend/dist/seed-products.js",
+    "backend/dist/seed-products.js.map",
+    "backend/dist/server.d.ts",
+    "backend/dist/server.js",
+    "backend/dist/server.js.map",
+    "backend/dist/services",
+    "backend/dist/services/__tests__",
+    "backend/dist/services/__tests__/inventoryService.test.d.ts",
+    "backend/dist/services/__tests__/inventoryService.test.js",
+    "backend/dist/services/__tests__/inventoryService.test.js.map",
+    "backend/dist/services/__tests__/jobService.test.d.ts",
+    "backend/dist/services/__tests__/jobService.test.js",
+    "backend/dist/services/__tests__/jobService.test.js.map",
+    "backend/dist/services/analyticsService.d.ts",
+    "backend/dist/services/analyticsService.js",
+    "backend/dist/services/analyticsService.js.map",
+    "backend/dist/services/auditService.d.ts",
+    "backend/dist/services/auditService.js",
+    "backend/dist/services/auditService.js.map",
+    "backend/dist/services/cacheService.d.ts",
+    "backend/dist/services/cacheService.js",
+    "backend/dist/services/cacheService.js.map",
+    "backend/dist/services/email.d.ts",
+    "backend/dist/services/email.js",
+    "backend/dist/services/email.js.map",
+    "backend/dist/services/jobService.d.ts",
+    "backend/dist/services/jobService.js",
+    "backend/dist/services/jobService.js.map",
+    "backend/dist/services/logger.d.ts",
+    "backend/dist/services/logger.js",
+    "backend/dist/services/logger.js.map",
+    "backend/dist/services/notificationService.d.ts",
+    "backend/dist/services/notificationService.js",
+    "backend/dist/services/notificationService.js.map",
+    "backend/dist/services/openwa-worker",
+    "backend/dist/services/openwa-worker/index.d.ts",
+    "backend/dist/services/openwa-worker/index.js",
+    "backend/dist/services/openwa-worker/index.js.map",
+    "backend/dist/services/openwa-worker/workerService.d.ts",
+    "backend/dist/services/openwa-worker/workerService.js",
+    "backend/dist/services/openwa-worker/workerService.js.map",
+    "backend/dist/services/pdfService.d.ts",
+    "backend/dist/services/pdfService.js",
+    "backend/dist/services/pdfService.js.map",
+    "backend/dist/services/returnService.d.ts",
+    "backend/dist/services/returnService.js",
+    "backend/dist/services/returnService.js.map",
+    "backend/dist/sockets",
+    "backend/dist/sockets/index.d.ts",
+    "backend/dist/sockets/index.js",
+    "backend/dist/sockets/index.js.map",
+    "backend/dist/types",
+    "backend/dist/types/index.d.ts",
+    "backend/dist/types/index.js",
+    "backend/dist/types/index.js.map",
+    "backend/dist/utils",
+    "backend/dist/utils/AppError.d.ts",
+    "backend/dist/utils/AppError.js",
+    "backend/dist/utils/AppError.js.map",
+    "backend/dist/utils/apiResponse.d.ts",
+    "backend/dist/utils/apiResponse.js",
+    "backend/dist/utils/apiResponse.js.map",
+    "backend/dist/utils/auditLogger.d.ts",
+    "backend/dist/utils/auditLogger.js",
+    "backend/dist/utils/auditLogger.js.map",
+    "backend/dist/utils/sku.d.ts",
+    "backend/dist/utils/sku.js",
+    "backend/dist/utils/sku.js.map",
+    "backend/dist/utils/slugify.d.ts",
+    "backend/dist/utils/slugify.js",
+    "backend/dist/utils/slugify.js.map",
+    "backend/dist/whatsapp-standalone.d.ts",
+    "backend/dist/whatsapp-standalone.js",
+    "backend/dist/whatsapp-standalone.js.map",
+    "backend/dist/workers",
+    "backend/dist/workers/base.worker.d.ts",
+    "backend/dist/workers/base.worker.js",
+    "backend/dist/workers/base.worker.js.map",
+    "backend/dist/workers/campaign.worker.d.ts",
+    "backend/dist/workers/campaign.worker.js",
+    "backend/dist/workers/campaign.worker.js.map",
+    "backend/dist/workers/index.d.ts",
+    "backend/dist/workers/index.js",
+    "backend/dist/workers/index.js.map",
+    "backend/dist/workflows",
+    "backend/dist/workflows/__tests__",
+    "backend/dist/workflows/__tests__/orderWorkflow.test.d.ts",
+    "backend/dist/workflows/__tests__/orderWorkflow.test.js",
+    "backend/dist/workflows/__tests__/orderWorkflow.test.js.map",
+    "backend/dist/workflows/inventoryWorkflow.service.d.ts",
+    "backend/dist/workflows/inventoryWorkflow.service.js",
+    "backend/dist/workflows/inventoryWorkflow.service.js.map",
+    "backend/dist/workflows/notificationWorkflow.service.d.ts",
+    "backend/dist/workflows/notificationWorkflow.service.js",
+    "backend/dist/workflows/notificationWorkflow.service.js.map",
+    "backend/dist/workflows/orderWorkflow.service.d.ts",
+    "backend/dist/workflows/orderWorkflow.service.js",
+    "backend/dist/workflows/orderWorkflow.service.js.map",
+    "backend/dist/workflows/paymentWorkflow.service.d.ts",
+    "backend/dist/workflows/paymentWorkflow.service.js",
+    "backend/dist/workflows/paymentWorkflow.service.js.map",
+    "backend/dist/workflows/refundWorkflow.service.d.ts",
+    "backend/dist/workflows/refundWorkflow.service.js",
+    "backend/dist/workflows/refundWorkflow.service.js.map"
+  ]
+}

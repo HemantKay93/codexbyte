@@ -6,12 +6,11 @@ import express from 'express';
 
 import logger from '../services/logger.js';
 import { requestIdCorrelation } from '../middlewares/requestId.js';
-import { csrfProtection } from '../middlewares/csrf.js';
 import { requestLogger } from '../middlewares/requestLogger.js';
 
 export function bootstrapMiddleware(app: Express) {
   app.set('trust proxy', 1);
-  
+
   // Security Middlewares
   app.use(
     helmet({
@@ -66,9 +65,8 @@ export function bootstrapMiddleware(app: Express) {
 
   app.use(express.json());
 
-  // Request ID Correlation & CSRF Protection
+  // Request ID Correlation
   app.use(requestIdCorrelation);
-  app.use(csrfProtection);
 
   // Request Logging
   app.use(requestLogger);

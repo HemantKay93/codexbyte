@@ -1,0 +1,432 @@
+{
+  "files": {
+    "apps/admin/dist/assets/DevelopersPage-Co5Gun0K.js": {
+      "size": 6668,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/Skeleton-3xuiRrRV.js": {
+      "size": 30574,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/TaxCompliancePage-BfJ1iSMy.js": {
+      "size": 4099,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/WhatsAppCampaigns-CjKWGuIE.js": {
+      "size": 7152,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/marketing-DCXWf6OD.js": {
+      "size": 829,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/AnalyticsPage-D3HT6-8I.js": {
+      "size": 6854,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/images/logo.webp": {
+      "size": 31184,
+      "mtime_nanos": 1777565343774563000,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/AccountingDashboard-C_jXe4Dk.js": {
+      "size": 5588,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/vendor-charts-Cd7bKGSe.js": {
+      "size": 393369,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/vendor-ui-DibAD5DT.js": {
+      "size": 49357,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/OrderManagementPage-DS4-CgCm.js": {
+      "size": 5255,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/POSPage-3DoJHfeP.js": {
+      "size": 10597,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/DiscountsPage-BhNAzLwW.js": {
+      "size": 7777,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/InvoicesPage-BuLZ5Zho.js": {
+      "size": 17784,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/Table-BuBeC_7q.js": {
+      "size": 1310,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/images": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "apps/admin/dist/assets/vendor-react-EA6n5f_8.js": {
+      "size": 179851,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/vendor-utils-C49ejByI.js": {
+      "size": 434707,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/useAdmin-Nx0X9LKX.js": {
+      "size": 1408,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/WarehousePage-DvWmjDjn.js": {
+      "size": 10711,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/TeamPage-BuXS-hGC.js": {
+      "size": 7505,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/cms-m_WwSsbV.js": {
+      "size": 346,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "apps/admin/dist/assets/index-C_yKOSL9.js": {
+      "size": 18990,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/SupportPage-DAQezH4e.js": {
+      "size": 3880,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist": { "size": 0, "mtime_nanos": 0, "mode": 0, "is_dir": true },
+    "apps/admin/dist/assets/vendor-supabase-l0sNRNKZ.js": {
+      "size": 1,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/CampaignBuilder-BAvokbvG.js": {
+      "size": 6087,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/products-1SmNws7u.js": {
+      "size": 587,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/CustomersPage-FEIOIt5z.js": {
+      "size": 5422,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/AutomationFlows-DyQuKEcF.js": {
+      "size": 5450,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/AudienceSegments-99vBklSp.js": {
+      "size": 4564,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/BulkImportDialog-CAoDTzIa.js": {
+      "size": 7046,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/ProfitLossPage-jYthoDZF.js": {
+      "size": 3531,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/ProductFormPage-BVvJA6BD.js": {
+      "size": 15078,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/.turbo/turbo-build.log": {
+      "size": 7539,
+      "mtime_nanos": 1780033748338485400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/TemplateManager-CjSX5kna.js": {
+      "size": 6067,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/DashboardPage-CwMyGdjR.js": {
+      "size": 11689,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/index-jkSRCdq4.css": {
+      "size": 80779,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/InventoryPage-hKYXE88Y.js": {
+      "size": 21299,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/InvoiceTemplatePage-BXfN91_q.js": {
+      "size": 11307,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/ProductManagementPage-CpFWUb5J.js": {
+      "size": 4718,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/WhatsAppTasks-BP1HYFV_.js": {
+      "size": 8511,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/SettingsPage-Bq-yaD9Z.js": {
+      "size": 14018,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/WhatsAppTemplates-HHZa_UFE.js": {
+      "size": 7161,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/GSTFilingPage-CSp6j4lT.js": {
+      "size": 3683,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/bundle-analysis.html": {
+      "size": 1825232,
+      "mtime_nanos": 1780033748136442100,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/index.html": {
+      "size": 649,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/CustomerDetailPage-vmLcAhuB.js": {
+      "size": 9879,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/MultiStorePage-D0PYMQxW.js": {
+      "size": 5248,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/OrderDetailPage-DAonS-7x.js": {
+      "size": 25773,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/JournalEntriesPage-MkpHjCJN.js": {
+      "size": 1892,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/SuppliersPage-C7Nc0HnB.js": {
+      "size": 10298,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/WhatsAppDashboard-ylzHqS5L.js": {
+      "size": 13004,
+      "mtime_nanos": 1780033748163315600,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/LoginPage-OMsFk5GS.js": {
+      "size": 8673,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/vendor-query-CgUbH_9G.js": {
+      "size": 42298,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/MarketingDashboard-DaN3RQNY.js": {
+      "size": 3947,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/ReviewsPage-DTAN3TvE.js": {
+      "size": 6583,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/index-CUM18aeZ.js": {
+      "size": 120009,
+      "mtime_nanos": 1780033748161315400,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/ActivityLogPage-BuGNFOP6.js": {
+      "size": 3831,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/invoice-wBt79tRX.js": {
+      "size": 11783,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/ReturnsPage-Cn0OYgxp.js": {
+      "size": 6281,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    },
+    "apps/admin/dist/assets/CMSBuilderPage-DJFdiqW5.js": {
+      "size": 20560,
+      "mtime_nanos": 1780033748162319800,
+      "mode": 420,
+      "is_dir": false
+    }
+  },
+  "order": [
+    "apps/admin/.turbo/turbo-build.log",
+    "apps/admin/dist",
+    "apps/admin/dist/assets",
+    "apps/admin/dist/assets/AccountingDashboard-C_jXe4Dk.js",
+    "apps/admin/dist/assets/ActivityLogPage-BuGNFOP6.js",
+    "apps/admin/dist/assets/AnalyticsPage-D3HT6-8I.js",
+    "apps/admin/dist/assets/AudienceSegments-99vBklSp.js",
+    "apps/admin/dist/assets/AutomationFlows-DyQuKEcF.js",
+    "apps/admin/dist/assets/BulkImportDialog-CAoDTzIa.js",
+    "apps/admin/dist/assets/CMSBuilderPage-DJFdiqW5.js",
+    "apps/admin/dist/assets/CampaignBuilder-BAvokbvG.js",
+    "apps/admin/dist/assets/CustomerDetailPage-vmLcAhuB.js",
+    "apps/admin/dist/assets/CustomersPage-FEIOIt5z.js",
+    "apps/admin/dist/assets/DashboardPage-CwMyGdjR.js",
+    "apps/admin/dist/assets/DevelopersPage-Co5Gun0K.js",
+    "apps/admin/dist/assets/DiscountsPage-BhNAzLwW.js",
+    "apps/admin/dist/assets/GSTFilingPage-CSp6j4lT.js",
+    "apps/admin/dist/assets/InventoryPage-hKYXE88Y.js",
+    "apps/admin/dist/assets/InvoiceTemplatePage-BXfN91_q.js",
+    "apps/admin/dist/assets/InvoicesPage-BuLZ5Zho.js",
+    "apps/admin/dist/assets/JournalEntriesPage-MkpHjCJN.js",
+    "apps/admin/dist/assets/LoginPage-OMsFk5GS.js",
+    "apps/admin/dist/assets/MarketingDashboard-DaN3RQNY.js",
+    "apps/admin/dist/assets/MultiStorePage-D0PYMQxW.js",
+    "apps/admin/dist/assets/OrderDetailPage-DAonS-7x.js",
+    "apps/admin/dist/assets/OrderManagementPage-DS4-CgCm.js",
+    "apps/admin/dist/assets/POSPage-3DoJHfeP.js",
+    "apps/admin/dist/assets/ProductFormPage-BVvJA6BD.js",
+    "apps/admin/dist/assets/ProductManagementPage-CpFWUb5J.js",
+    "apps/admin/dist/assets/ProfitLossPage-jYthoDZF.js",
+    "apps/admin/dist/assets/ReturnsPage-Cn0OYgxp.js",
+    "apps/admin/dist/assets/ReviewsPage-DTAN3TvE.js",
+    "apps/admin/dist/assets/SettingsPage-Bq-yaD9Z.js",
+    "apps/admin/dist/assets/Skeleton-3xuiRrRV.js",
+    "apps/admin/dist/assets/SuppliersPage-C7Nc0HnB.js",
+    "apps/admin/dist/assets/SupportPage-DAQezH4e.js",
+    "apps/admin/dist/assets/Table-BuBeC_7q.js",
+    "apps/admin/dist/assets/TaxCompliancePage-BfJ1iSMy.js",
+    "apps/admin/dist/assets/TeamPage-BuXS-hGC.js",
+    "apps/admin/dist/assets/TemplateManager-CjSX5kna.js",
+    "apps/admin/dist/assets/WarehousePage-DvWmjDjn.js",
+    "apps/admin/dist/assets/WhatsAppCampaigns-CjKWGuIE.js",
+    "apps/admin/dist/assets/WhatsAppDashboard-ylzHqS5L.js",
+    "apps/admin/dist/assets/WhatsAppTasks-BP1HYFV_.js",
+    "apps/admin/dist/assets/WhatsAppTemplates-HHZa_UFE.js",
+    "apps/admin/dist/assets/cms-m_WwSsbV.js",
+    "apps/admin/dist/assets/images",
+    "apps/admin/dist/assets/images/logo.webp",
+    "apps/admin/dist/assets/index-CUM18aeZ.js",
+    "apps/admin/dist/assets/index-C_yKOSL9.js",
+    "apps/admin/dist/assets/index-jkSRCdq4.css",
+    "apps/admin/dist/assets/invoice-wBt79tRX.js",
+    "apps/admin/dist/assets/marketing-DCXWf6OD.js",
+    "apps/admin/dist/assets/products-1SmNws7u.js",
+    "apps/admin/dist/assets/useAdmin-Nx0X9LKX.js",
+    "apps/admin/dist/assets/vendor-charts-Cd7bKGSe.js",
+    "apps/admin/dist/assets/vendor-query-CgUbH_9G.js",
+    "apps/admin/dist/assets/vendor-react-EA6n5f_8.js",
+    "apps/admin/dist/assets/vendor-supabase-l0sNRNKZ.js",
+    "apps/admin/dist/assets/vendor-ui-DibAD5DT.js",
+    "apps/admin/dist/assets/vendor-utils-C49ejByI.js",
+    "apps/admin/dist/bundle-analysis.html",
+    "apps/admin/dist/index.html"
+  ]
+}
