@@ -41,7 +41,7 @@ export const automationWorker = new Worker(
     }
   },
   {
-    connection: redis,
+    skipVersionCheck: true, connection: redis,
     stalledInterval: 300_000, // Check stalled jobs every 5 min (default: 30s)
     lockDuration: 600_000, // Lock for 10 min (must exceed stalledInterval)
     drainDelay: 60, // Poll every 60s when idle — saves ~1M Redis commands/month vs 10s

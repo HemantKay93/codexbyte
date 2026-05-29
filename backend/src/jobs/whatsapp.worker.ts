@@ -108,7 +108,7 @@ export const whatsappWorker = new Worker(
     }
   },
   {
-    connection: redis,
+    skipVersionCheck: true, connection: redis,
     concurrency: 5,
     stalledInterval: 300_000, // Check stalled jobs every 5 min (default: 30s)
     lockDuration: 600_000, // Hold job lock for 10 min

@@ -7,7 +7,7 @@ export class CampaignDispatchService {
   private campaignQueue: Queue;
 
   constructor() {
-    this.campaignQueue = new Queue('marketing-campaigns', { connection: redis });
+    this.campaignQueue = new Queue('marketing-campaigns', { skipVersionCheck: true, connection: redis });
   }
 
   async dispatchCampaign(campaignId: string) {

@@ -4,7 +4,7 @@ import { redis } from '../config/redis.js';
 
 // Define the Queue for WhatsApp Jobs
 export const whatsappQueue = new Queue('whatsapp-queue', {
-  connection: redis,
+  skipVersionCheck: true, connection: redis,
   defaultJobOptions: {
     attempts: 3,
     backoff: {

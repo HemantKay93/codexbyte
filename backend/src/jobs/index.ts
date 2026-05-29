@@ -25,7 +25,7 @@ import { whatsappWorker } from './whatsapp.worker.js';
 // Default is 30s which generates many Redis commands. We set it to 300s (5 min).
 // lockDuration must be larger than stalledInterval.
 const WORKER_OPTIONS = {
-  connection: redis,
+  skipVersionCheck: true, connection: redis,
   stalledInterval: 300_000, // Check for stalled jobs every 5 min (default: 30s)
   lockDuration: 600_000, // Hold job lock for 10 min
   drainDelay: 60, // Poll every 60s when queue is empty (was 10s).

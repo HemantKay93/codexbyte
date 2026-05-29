@@ -4,7 +4,7 @@ import { getAdminClient } from '../../config/supabase.js';
 import logger from '../../services/logger.js';
 import { redis } from '../../config/redis.js';
 
-export const automationQueue = new Queue('marketing-automation', { connection: redis });
+export const automationQueue = new Queue('marketing-automation', { skipVersionCheck: true, connection: redis });
 
 export class AutomationEngine {
   /**

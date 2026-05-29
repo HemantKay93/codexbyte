@@ -46,7 +46,7 @@ export class DLQService {
     logger.info(`[DLQService] Retrying job ${id} from queue ${dlqJob.queue_name}`);
 
     // 2. Add back to the original BullMQ queue
-    const queue = new Queue(dlqJob.queue_name, { connection: redis });
+    const queue = new Queue(dlqJob.queue_name, { skipVersionCheck: true, connection: redis });
     await queue.add(dlqJob.job_name, dlqJob.payload, {
       removeOnComplete: true,
       removeOnFail: false,

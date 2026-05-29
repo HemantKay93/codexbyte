@@ -10,6 +10,8 @@ import { csrfProtection } from '../middlewares/csrf.js';
 import { requestLogger } from '../middlewares/requestLogger.js';
 
 export function bootstrapMiddleware(app: Express) {
+  app.set('trust proxy', 1);
+  
   // Security Middlewares
   app.use(
     helmet({

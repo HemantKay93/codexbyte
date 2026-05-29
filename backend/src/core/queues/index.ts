@@ -13,26 +13,26 @@ const DEFAULT_JOB_OPTIONS = {
 };
 
 export const emailQueue = new Queue('email-queue', {
-  connection: redis,
+  skipVersionCheck: true, connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
 
 export const notificationQueue = new Queue('notification-queue', {
-  connection: redis,
+  skipVersionCheck: true, connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
 
 export const analyticsQueue = new Queue('analytics-queue', {
-  connection: redis,
+  skipVersionCheck: true, connection: redis,
   defaultJobOptions: { ...DEFAULT_JOB_OPTIONS, attempts: 1 }, // analytics failures are not retried
 });
 
 export const marketingAutomationQueue = new Queue('marketing-automation', {
-  connection: redis,
+  skipVersionCheck: true, connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
 
 export const whatsappQueue = new Queue('whatsapp-queue', {
-  connection: redis,
+  skipVersionCheck: true, connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
