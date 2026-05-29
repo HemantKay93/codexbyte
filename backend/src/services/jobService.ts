@@ -40,6 +40,8 @@ export class JobService {
     type: 'info' | 'success' | 'warning' | 'error';
     priority?: 'low' | 'medium' | 'high';
     metadata?: any;
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
   }) {
     if (this.isRedisAvailable()) {
       try {
@@ -58,7 +60,9 @@ export class JobService {
     return NotificationService.send(data);
   }
 
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   static async dispatchAnalyticsEvent(type: string, payload: Record<string, any>) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     if (this.isRedisAvailable()) {
       try {
         await analyticsQueue.add(

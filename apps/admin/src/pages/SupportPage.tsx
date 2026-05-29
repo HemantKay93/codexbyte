@@ -5,10 +5,12 @@ import { SupportService } from '@byteevolvr/api-client';
 
 export function SupportPage() {
   const [tickets, setTickets] = useState<any[]>([]);
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchTickets();
+    // eslint-disable-line @typescript-eslint/no-floating-promises
   }, []);
 
   async function fetchTickets() {

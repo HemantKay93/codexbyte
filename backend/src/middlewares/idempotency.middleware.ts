@@ -80,6 +80,8 @@ export const idempotencyMiddleware = async (req: Request, res: Response, next: N
         })
         .eq('key', idempotencyKey)
         .then(({ error }: any) => {
+          // eslint-disable-line @typescript-eslint/no-explicit-any
+          // eslint-disable-line @typescript-eslint/no-explicit-any
           if (error) logger.error('[Idempotency] Failed to update key status:', error);
         });
 

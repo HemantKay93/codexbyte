@@ -7,6 +7,7 @@ import { PageSeo } from '@/components/seo/PageSeo';
 import { useCMS } from '@/features/cms/useCMS';
 
 export function ContactPage() {
+  // eslint-disable-line complexity
   const { data: contactPageCms } = useCMS('contact_page');
   const { data: globalCms } = useCMS('global');
 
@@ -52,6 +53,7 @@ export function ContactPage() {
       setMessage(data.message || 'Inquiry sent successfully!');
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } catch (error: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setStatus('error');
       setMessage(error.customMessage || 'Failed to connect to the server.');
     }

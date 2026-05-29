@@ -8,6 +8,7 @@ const growthbook = new GrowthBook({
   trackingCallback: (experiment, result) => {
     // TODO: Connect to your analytics provider (e.g. Mixpanel, PostHog, GA)
     console.log('Experiment Viewed', {
+      // eslint-disable-line no-console
       experimentId: experiment.key,
       variationId: result.key,
     });

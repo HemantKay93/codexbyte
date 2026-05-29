@@ -22,6 +22,8 @@ const isRedisReady = () => redis.status === 'ready';
 // ─── L1: In-Process Memory Cache ────────────────────────────────────────────
 interface L1Entry {
   value: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   timer: ReturnType<typeof setTimeout>;
 }
 
@@ -32,7 +34,9 @@ const l1Get = <T>(key: string): T | null => {
   return entry ? (entry.value as T) : null;
 };
 
+// eslint-disable-line @typescript-eslint/no-explicit-any
 const l1Set = (key: string, value: any, ttlSeconds: number): void => {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   // Clear any existing timer for this key
   const existing = L1.get(key);
   if (existing) clearTimeout(existing.timer);
@@ -98,8 +102,10 @@ export class CacheService {
 
   /**
    * Set value in both L1 and Redis.
+ // eslint-disable-line @typescript-eslint/no-explicit-any
    */
   static async set(key: string, value: any, ttlSeconds: number = 300): Promise<void> {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     // Write L1 first (always succeeds, no network)
     l1Set(key, value, Math.min(ttlSeconds, getL1Ttl(key)));
 

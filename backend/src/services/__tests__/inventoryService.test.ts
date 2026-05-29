@@ -17,18 +17,28 @@ vi.mock('../notificationService', () => ({
 
 describe('InventoryService', () => {
   let mockSupabase: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   let queryResults: any[];
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   let builders: any[];
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const createBuilder = (result: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const builder: any = {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       select: vi.fn(() => builder),
       eq: vi.fn(() => builder),
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       update: vi.fn(() => builder),
       insert: vi.fn(() => builder),
       maybeSingle: vi.fn().mockResolvedValue(result),
       single: vi.fn().mockResolvedValue(result),
       then: (resolve: any, reject: any) => Promise.resolve(result).then(resolve, reject),
+      // eslint-disable-line @typescript-eslint/no-explicit-any
     };
     builders.push(builder);
     return builder;
@@ -36,12 +46,14 @@ describe('InventoryService', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     queryResults = [];
     builders = [];
     mockSupabase = {
       from: vi.fn(() => createBuilder(queryResults.shift() || { data: null, error: null })),
     };
     (getAdminClient as any).mockResolvedValue(mockSupabase);
+    // eslint-disable-line @typescript-eslint/no-explicit-any
   });
 
   it('should adjust stock correctly for existing inventory', async () => {

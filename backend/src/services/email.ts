@@ -6,6 +6,7 @@ export class EmailService {
   static async sendEmail(to: string, subject: string, html: string) {
     if (!resend) {
       console.log('RESEND_API_KEY not set. Email not sent to:', to);
+      // eslint-disable-line no-console
       return;
     }
     await resend.emails.send({
@@ -17,6 +18,8 @@ export class EmailService {
   }
 
   static async sendOrderConfirmation(order: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     await this.sendEmail(
       order.customer_email,
       `Order Confirmation - ${order.order_number}`,

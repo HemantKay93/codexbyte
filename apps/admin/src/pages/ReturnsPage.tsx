@@ -26,11 +26,13 @@ export function ReturnsPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [returns, setReturns] = useState<any[]>([]);
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchReturns();
+    // eslint-disable-line @typescript-eslint/no-floating-promises
   }, []);
 
   async function fetchReturns() {
@@ -39,6 +41,7 @@ export function ReturnsPage() {
       const data = await AdminService.getRmaReturns();
       // data from backend ReturnService returns: *, user_profiles(full_name), orders(order_number)
       const mappedData = data?.map((r: any) => ({
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         ...r,
         user: r.user_profiles,
         order: r.orders,

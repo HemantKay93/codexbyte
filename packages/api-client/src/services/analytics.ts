@@ -14,5 +14,5 @@ export const AnalyticsService = {
   getCustomerMetrics: async () => {
     const response = await apiClient.get('/analytics/customers');
     return response.data;
-  }
+  },
 };

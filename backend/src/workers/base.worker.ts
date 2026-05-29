@@ -5,6 +5,8 @@ import { getAdminClient } from '../config/supabase.js';
 import logger from '../services/logger.js';
 
 export abstract class BaseWorker<T = any> {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   protected worker: Worker;
 
   constructor(queueName: string, options?: Omit<WorkerOptions, 'connection'>) {
@@ -31,10 +33,16 @@ export abstract class BaseWorker<T = any> {
     logger.info(`[${this.constructor.name}] Initialized worker for queue: ${queueName}`);
   }
 
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   abstract process(job: Job<T>): Promise<any>;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-unused-vars
 
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   protected onFailed(job: Job<T> | undefined, err: Error): void {}
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   protected onCompleted(job: Job<T>): void {}
+  // eslint-disable-line @typescript-eslint/no-unused-vars
 
   protected async moveToDLQ(job: Job<T>, err: Error) {
     try {

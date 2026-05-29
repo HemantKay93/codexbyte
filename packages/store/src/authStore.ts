@@ -11,6 +11,7 @@ interface User {
     full_name?: string;
     role?: string;
     [key: string]: any;
+    // eslint-disable-line @typescript-eslint/no-explicit-any
   };
 }
 

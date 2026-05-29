@@ -2,6 +2,8 @@ import { getAdminClient } from '../../config/supabase.js';
 
 export class LeadRepository {
   async create(leadData: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('leads')

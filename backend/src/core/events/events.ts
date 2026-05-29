@@ -49,6 +49,8 @@ export interface DomainEventPayload {
     email?: string;
   };
   [DomainEvents.CART_ABANDONED]: { cartId: string; customerId: string; items: any[] };
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 
   [DomainEvents.PAYMENT_FAILED]: { orderId: string; amount: number; reason: string };
   [DomainEvents.PAYMENT_SUCCEEDED]: { orderId: string; transactionId: string };

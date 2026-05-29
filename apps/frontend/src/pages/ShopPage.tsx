@@ -16,7 +16,6 @@ import {
 import { CountdownTimer } from '../components/shop/CountdownTimer';
 import { ProductSlider } from '../components/shop/ProductSlider';
 
-
 export function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);

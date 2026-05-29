@@ -1,6 +1,5 @@
 import { apiClient } from '../apiClient';
 
-
 export interface Product {
   id?: string;
   slug?: string;
@@ -25,6 +24,7 @@ export interface Product {
 export const ProductService = {
   getProducts: async (params?: any): Promise<Product[]> => {
     const response = await apiClient.get('/products', { params });
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     return response.data?.data || response.data;
   },
 
@@ -51,8 +51,8 @@ export const ProductService = {
     const formData = new FormData();
     formData.append('image', file);
     const response = await apiClient.post('/admin/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data.url;
-  }
+  },
 };

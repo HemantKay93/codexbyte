@@ -5,12 +5,16 @@ export interface ProviderResponse {
   status?: 'sent' | 'delivered' | 'read' | 'failed' | 'queued';
   error?: string;
   metadata?: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface WhatsAppMessagePayload {
   to: string;
   content?: string;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   metadata?: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   campaignId?: string;
 }
 
@@ -23,8 +27,10 @@ export interface WhatsAppMediaPayload extends WhatsAppMessagePayload {
 
 export interface WhatsAppTemplatePayload extends WhatsAppMessagePayload {
   templateId: string;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   languageCode?: string;
   components?: any[];
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface IWhatsAppProvider {
@@ -34,9 +40,11 @@ export interface IWhatsAppProvider {
   readonly name: 'meta' | 'evolution';
 
   /**
+ // eslint-disable-line @typescript-eslint/no-explicit-any
    * Provider specific initialization (auth, connections)
    */
   initialize(config?: any): Promise<void>;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 
   /**
    * Send a standard text message

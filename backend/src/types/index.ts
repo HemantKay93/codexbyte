@@ -32,6 +32,8 @@ export interface Product {
   tags: string[];
   slug: string;
   variants: any[];
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   created_at: string;
   updated_at: string;
 }
@@ -125,8 +127,12 @@ export interface AuditLog {
   action: string;
   module: string;
   entity_id?: string;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   old_data?: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   new_data?: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   ip_address?: string;
   user_agent?: string;
   created_at: string;

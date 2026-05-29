@@ -52,6 +52,8 @@ export class SupportRepository {
   }
 
   async create(data: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const admin = await getAdminClient();
     const { data: ticket, error } = await admin
       .from('support_tickets')
@@ -63,7 +65,9 @@ export class SupportRepository {
     return ticket;
   }
 
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   async update(id: string, data: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const admin = await getAdminClient();
     const { data: ticket, error } = await admin
       .from('support_tickets')

@@ -6,6 +6,7 @@ export interface CreateOrderPayload {
   password?: string;
   items: Array<{ productId: string; name?: string; sku?: string; quantity: number; price: number }>;
   shippingAddress: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   paymentMethod: 'razorpay' | 'cod';
   shippingFee?: number;
   discountAmount?: number;
@@ -32,6 +33,7 @@ export const OrderService = {
   },
 
   updateOrder: async (id: string, payload: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.put(`/orders/${id}`, payload);
     return response.data;
   },

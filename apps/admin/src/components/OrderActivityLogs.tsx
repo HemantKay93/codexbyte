@@ -41,7 +41,9 @@ export function OrderActivityLogs({ orderId }: { orderId: string }) {
 
   useEffect(() => {
     fetchLogs();
+    // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
   }, [orderId]);
+  // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading)
     return (

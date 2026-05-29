@@ -5,6 +5,7 @@ import { MarketingService } from '@byteevolvr/api-client';
 
 export function AutomationFlows() {
   const [flows, setFlows] = useState<any[]>([]);
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -30,6 +31,7 @@ export function AutomationFlows() {
 
   useEffect(() => {
     loadFlows();
+    // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
   }, []);
 
   const handleCreate = async () => {

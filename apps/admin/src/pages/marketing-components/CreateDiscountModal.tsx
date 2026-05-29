@@ -38,6 +38,7 @@ export function CreateDiscountModal({ onClose, onSuccess }: CreateDiscountModalP
       onSuccess();
       onClose();
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       console.error('Failed to create discount', err?.response?.data || err);
       alert(
         `Failed to create discount. ${err?.response?.data?.message || err?.message || 'Please check inputs.'}`
@@ -49,19 +50,11 @@ export function CreateDiscountModal({ onClose, onSuccess }: CreateDiscountModalP
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative bg-surface w-full max-w-[600px] shadow-xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
         <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
           <h2 className="text-xl font-bold text-on-surface">Create Discount</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="rounded-full h-8 w-8 p-0"
-          >
+          <Button variant="ghost" size="sm" onClick={onClose} className="rounded-full h-8 w-8 p-0">
             <X className="h-5 w-5" />
           </Button>
         </div>
@@ -76,9 +69,7 @@ export function CreateDiscountModal({ onClose, onSuccess }: CreateDiscountModalP
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-on-surface-variant mb-1">
-                Type
-              </label>
+              <label className="block text-sm font-medium text-on-surface-variant mb-1">Type</label>
               <select
                 className="w-full h-11 px-3 rounded-lg border border-outline bg-surface text-body-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                 value={formData.type}
@@ -93,6 +84,7 @@ export function CreateDiscountModal({ onClose, onSuccess }: CreateDiscountModalP
               type="number"
               placeholder="e.g. 20"
               value={formData.value}
+              // eslint-disable-line @typescript-eslint/no-explicit-any
               onChange={(e) => setFormData({ ...formData, value: e.target.value })}
             />
           </div>

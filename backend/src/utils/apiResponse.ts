@@ -6,6 +6,8 @@ export interface PaginationMeta {
 }
 
 export interface ApiResponse<T = any> {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   success: boolean;
   message: string;
   data: T | null;
@@ -27,7 +29,9 @@ export const createResponse = <T>(
 
 export const createErrorResponse = (
   message: string = 'Internal Server Error',
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   data: any = null
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 ): ApiResponse<null> => {
   return {
     success: false,

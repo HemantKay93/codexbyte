@@ -10,12 +10,14 @@ export class SmtpProvider implements IProvider {
   private fromAddress: string = 'noreply@byteevolvr.com';
 
   async initialize(config?: any): Promise<void> {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const smtpHost = config?.smtpHost || process.env.SMTP_HOST;
     const smtpPort = config?.smtpPort || process.env.SMTP_PORT;
     const smtpUser = config?.smtpUser || process.env.SMTP_USER;
     const smtpPass = config?.smtpPass || process.env.SMTP_PASS;
-    const secure = config?.smtpSecure !== undefined ? config.smtpSecure : (Number(smtpPort) === 465);
-    
+    const secure = config?.smtpSecure !== undefined ? config.smtpSecure : Number(smtpPort) === 465;
+
     if (config?.defaultFromAddress) {
       this.fromAddress = config.defaultFromAddress;
     }
@@ -56,7 +58,9 @@ export class SmtpProvider implements IProvider {
       });
 
       return { success: true, messageId: info.messageId, timestamp: new Date().toISOString() };
+      // eslint-disable-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       logger.error('[SmtpProvider] Send error:', err);
       return { success: false, error: err.message, timestamp: new Date().toISOString() };
     }

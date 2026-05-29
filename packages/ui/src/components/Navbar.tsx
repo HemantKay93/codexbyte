@@ -14,9 +14,16 @@ interface NavbarProps {
   rightElement?: React.ReactNode;
   mobileRightElement?: React.ReactNode;
   LinkComponent: React.ComponentType<any>;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export function Navbar({ logo, links, rightElement, mobileRightElement, LinkComponent }: NavbarProps) {
+export function Navbar({
+  logo,
+  links,
+  rightElement,
+  mobileRightElement,
+  LinkComponent,
+}: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -29,15 +36,13 @@ export function Navbar({ logo, links, rightElement, mobileRightElement, LinkComp
   return (
     <nav
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-700 ${
-        scrolled 
-          ? 'bg-[#04080F]/70 backdrop-blur-2xl py-3 shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-b border-white/5' 
+        scrolled
+          ? 'bg-[#04080F]/70 backdrop-blur-2xl py-3 shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-b border-white/5'
           : 'bg-gradient-to-b from-[#04080F]/80 to-transparent py-5'
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-8">
-        <div className="flex items-center gap-2">
-          {logo}
-        </div>
+        <div className="flex items-center gap-2">{logo}</div>
 
         {/* Desktop Links */}
         <div className="hidden items-center gap-2 rounded-full border border-white/5 bg-white/5 backdrop-blur-md px-3 py-1.5 lg:flex shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]">
@@ -45,11 +50,9 @@ export function Navbar({ logo, links, rightElement, mobileRightElement, LinkComp
             <LinkComponent
               key={link.label}
               to={link.to}
-              className={({ isActive }: { isActive: boolean }) => 
+              className={({ isActive }: { isActive: boolean }) =>
                 `relative px-5 py-2 text-sm font-medium transition-all duration-300 rounded-full overflow-hidden group ${
-                  isActive 
-                    ? 'text-white' 
-                    : 'text-brand-muted hover:text-white'
+                  isActive ? 'text-white' : 'text-brand-muted hover:text-white'
                 }`
               }
             >
@@ -60,7 +63,7 @@ export function Navbar({ logo, links, rightElement, mobileRightElement, LinkComp
                       layoutId="navbar-active-bg"
                       className="absolute inset-0 bg-primary rounded-full shadow-[0_0_20px_rgba(26,79,214,0.4)]"
                       initial={false}
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />
                   )}
                   {!isActive && (
@@ -73,9 +76,7 @@ export function Navbar({ logo, links, rightElement, mobileRightElement, LinkComp
           ))}
         </div>
 
-        <div className="hidden items-center gap-4 lg:flex">
-          {rightElement}
-        </div>
+        <div className="hidden items-center gap-4 lg:flex">{rightElement}</div>
 
         <div className="flex items-center gap-4 lg:hidden">
           {mobileRightElement}
@@ -84,7 +85,11 @@ export function Navbar({ logo, links, rightElement, mobileRightElement, LinkComp
             onClick={() => setMenuOpen(!menuOpen)}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 lg:hidden"
           >
-            {menuOpen ? <X className="h-5 w-5 text-white" /> : <Menu className="h-5 w-5 text-white" />}
+            {menuOpen ? (
+              <X className="h-5 w-5 text-white" />
+            ) : (
+              <Menu className="h-5 w-5 text-white" />
+            )}
           </button>
         </div>
       </div>
@@ -104,7 +109,7 @@ export function Navbar({ logo, links, rightElement, mobileRightElement, LinkComp
                   key={link.label}
                   to={link.to}
                   onClick={() => setMenuOpen(false)}
-                  className={({ isActive }: { isActive: boolean }) => 
+                  className={({ isActive }: { isActive: boolean }) =>
                     `text-lg font-medium transition-colors ${
                       isActive ? 'text-accent' : 'text-brand-muted hover:text-white'
                     }`
@@ -113,9 +118,7 @@ export function Navbar({ logo, links, rightElement, mobileRightElement, LinkComp
                   {link.label}
                 </LinkComponent>
               ))}
-              <div className="pt-4 border-t border-white/5">
-                {rightElement}
-              </div>
+              <div className="pt-4 border-t border-white/5">{rightElement}</div>
             </div>
           </motion.div>
         )}

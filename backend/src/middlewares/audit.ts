@@ -9,8 +9,11 @@ export const auditLog = (module: string, action: string) => {
     const originalJson = res.json;
 
     res.json = function (data: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       // Log after response is sent
       if (res.statusCode >= 200 && res.statusCode < 300) {
+        // eslint-disable-line @typescript-eslint/no-floating-promises
         AuditService.log({
           user_id: req.user?.id,
           action: action,

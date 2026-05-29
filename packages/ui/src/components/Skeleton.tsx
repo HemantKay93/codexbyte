@@ -8,13 +8,12 @@ interface SkeletonProps {
   style?: React.CSSProperties;
 }
 
-export const Skeleton: React.FC<SkeletonProps> = ({ 
-  className = '', 
-  width, 
-  height, 
+export const Skeleton: React.FC<SkeletonProps> = ({
+  className = '',
+  width,
+  height,
   borderRadius,
-  style: customStyle
-
+  style: customStyle,
 }) => {
   const style: React.CSSProperties = {
     width: width,
@@ -24,7 +23,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
     backgroundImage: 'linear-gradient(90deg, #e2e8f0 0px, #f8fafc 40px, #e2e8f0 80px)',
     backgroundSize: '200% 100%',
     animation: 'skeleton-loading 1.5s infinite linear',
-    ...customStyle
+    ...customStyle,
   };
 
   return <div className={`skeleton ${className}`} style={style} />;

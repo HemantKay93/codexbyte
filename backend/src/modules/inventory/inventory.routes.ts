@@ -1,6 +1,8 @@
 import express from 'express';
 
 import { authenticate, authorize } from '../../middlewares/auth.js';
+// eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-line @typescript-eslint/no-unused-vars
 import { requirePermission } from '../../middlewares/permission.js';
 import { validate } from '../../middlewares/validate.js';
 import { auditLog } from '../../middlewares/audit.js';

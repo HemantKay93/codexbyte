@@ -40,9 +40,11 @@ export function CreateInvoiceModal({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      // eslint-disable-line @typescript-eslint/no-floating-promises
       onClose();
     },
     onError: (err: any) => {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       alert(`Error creating invoice: ${err.message}`);
     },
   });

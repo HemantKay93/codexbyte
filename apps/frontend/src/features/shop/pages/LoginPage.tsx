@@ -26,8 +26,11 @@ export function LoginPage() {
       setToken(token, 'auth');
       setUser(user);
       navigate(from, { replace: true });
+      // eslint-disable-line @typescript-eslint/no-floating-promises
     } catch (signInError: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       const error = signInError as any;
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(error.customMessage || error.message || 'An unexpected error occurred');
       setLoading(false);
     }

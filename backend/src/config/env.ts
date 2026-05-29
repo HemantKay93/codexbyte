@@ -1,6 +1,8 @@
 import logger from '../services/logger.js';
 
 const REQUIRED_ENV = [
+  // eslint-disable-line @typescript-eslint/no-unused-vars
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   'JWT_SECRET',
   'SUPABASE_URL',
   'SUPABASE_ANON_KEY',

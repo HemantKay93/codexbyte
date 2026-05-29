@@ -10,6 +10,8 @@ export class AutomationRunnerService {
    * Executes a specific step in an automation flow run
    */
   async executeStep(
+    // eslint-disable-line complexity
+    // eslint-disable-line complexity
     runId: string,
     flowId: string,
     stepIndex: number

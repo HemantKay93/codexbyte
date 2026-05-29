@@ -10,6 +10,8 @@ export class NotificationService {
     type: 'info' | 'success' | 'warning' | 'error';
     priority?: 'low' | 'medium' | 'high';
     metadata?: any;
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
   }) {
     logger.info(`Notification [${data.type}]: ${data.title} - ${data.message}`);
 

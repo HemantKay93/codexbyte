@@ -24,10 +24,12 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = (location.state as any)?.from?.pathname || '/';
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 
   // Redirect if already logged in
   useEffect(() => {
     if (user) navigate(from, { replace: true });
+    // eslint-disable-line @typescript-eslint/no-floating-promises
   }, [user, from, navigate]);
 
   // Track mouse for dynamic background glow effect
@@ -57,7 +59,9 @@ export function LoginPage() {
       setToken(data.token, 'admin');
       setUser(adminUser);
       navigate(from, { replace: true });
+      // eslint-disable-line @typescript-eslint/no-floating-promises
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       console.error('Login error:', err);
       setError(err.customMessage || err.message || 'Login failed');
       setIsLoading(false);

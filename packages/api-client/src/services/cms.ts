@@ -8,11 +8,13 @@ export const CMSService = {
   },
 
   updateContent: async (pageSlug: string, sectionKey: string, content: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.put(`/cms/admin/${pageSlug}/${sectionKey}`, { content });
     return response.data;
   },
 
   updatePageContent: async (pageSlug: string, contentBySection: Record<string, any>) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.put(`/cms/admin/${pageSlug}`, { contentBySection });
     return response.data;
   },

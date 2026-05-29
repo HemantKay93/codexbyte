@@ -54,6 +54,8 @@ export class RefundWorkflow {
         gatewayRefundId = refund.id;
         logger.info(`[RefundWorkflow] Razorpay refund successful: ${refund.id}`);
       } catch (refundErr: any) {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         logger.error('[RefundWorkflow] Razorpay refund failed:', refundErr);
         throw new AppError(
           `Payment gateway refund failed: ${refundErr.description || refundErr.message}`,

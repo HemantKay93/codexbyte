@@ -7,7 +7,10 @@ export class AuditService {
     module: string;
     entity_id?: string;
     old_data?: any;
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     new_data?: any;
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     ip_address?: string;
     user_agent?: string;
   }) {

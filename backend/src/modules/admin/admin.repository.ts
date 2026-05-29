@@ -1,204 +1,1 @@
-import { supabase, getAdminClient } from '../../config/supabase.js';
-
-export class AdminRepository {
-  async getCustomers() {
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('user_profiles')
-      .select('*, orders(total_amount)')
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-
-    return (data || []).map((profile: any) => {
-      const userOrders: any[] = profile.orders || [];
-      const totalSpent = userOrders.reduce(
-        (acc: number, o: any) => acc + Number(o.total_amount),
-        0
-      );
-      return {
-        ...profile,
-        orders: undefined,
-        orderCount: userOrders.length,
-        totalSpent,
-      };
-    });
-  }
-
-  async getCustomerDetail(id: string) {
-    const admin = await getAdminClient();
-
-    // 1. Profile
-    const { data: profile, error: profileError } = await admin
-      .from('user_profiles')
-      .select('*')
-      .eq('id', id)
-      .single();
-    if (profileError) throw profileError;
-
-    // 2. Orders
-    const { data: orders, error: ordersError } = await admin
-      .from('orders')
-      .select('*')
-      .eq('user_id', id)
-      .order('created_at', { ascending: false });
-    if (ordersError) throw ordersError;
-
-    // 3. Addresses
-    const { data: addresses, error: addressError } = await admin
-      .from('addresses')
-      .select('*')
-      .eq('user_id', id);
-    if (addressError) throw addressError;
-
-    // 4. Reviews Count
-    const { count: reviewsCount, error: reviewsError } = await admin
-      .from('product_reviews')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', id);
-
-    return {
-      profile,
-      orders: orders || [],
-      addresses: addresses || [],
-      reviewsCount: reviewsCount || 0,
-    };
-  }
-
-  async getSalesAnalytics(period: string = '30days') {
-    const admin = await getAdminClient();
-
-    let query = admin
-      .from('orders')
-      .select('total_amount, created_at')
-      .order('created_at', { ascending: true });
-
-    // Handle period filtering
-    const now = new Date();
-    if (period === '7days') {
-      const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7)).toISOString();
-      query = query.gte('created_at', sevenDaysAgo);
-    } else if (period === '30days') {
-      const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30)).toISOString();
-      query = query.gte('created_at', thirtyDaysAgo);
-    } else if (period === 'year') {
-      const oneYearAgo = new Date(now.setFullYear(now.getFullYear() - 1)).toISOString();
-      query = query.gte('created_at', oneYearAgo);
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
-  }
-
-  async getWarehouseTasks() {
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('order_items')
-      .select(
-        `
-        *,
-        order:order_id (
-          order_number,
-          status
-        ),
-        product:product_id (
-          name
-        )
-      `
-      )
-      .in('order.status', ['processing', 'confirmed'])
-      .order('created_at', { ascending: true });
-
-    if (error) throw error;
-    return data?.filter((item: any) => item.order) || [];
-  }
-
-  async getOrderActivity(id: string) {
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('order_activity_logs')
-      .select('*, user_profiles(full_name)')
-      .eq('order_id', id)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data;
-  }
-
-  async createWarehouse(data: any) {
-    const { name, location, address, is_active } = data;
-    const combinedLocation = address && location ? `${address}, ${location}` : address || location;
-
-    const admin = await getAdminClient();
-    const { data: warehouse, error } = await admin
-      .from('warehouses')
-      .insert({
-        name,
-        location: combinedLocation,
-        is_active,
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return warehouse;
-  }
-
-  async updateWarehouse(id: string, data: any) {
-    const { name, location, address, is_active } = data;
-    const combinedLocation = address && location ? `${address}, ${location}` : address || location;
-
-    const admin = await getAdminClient();
-    const { data: warehouse, error } = await admin
-      .from('warehouses')
-      .update({
-        name,
-        location: combinedLocation,
-        is_active,
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return warehouse;
-  }
-
-  async getWarehouses() {
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('warehouses')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data;
-  }
-
-  async getNotifications() {
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('notifications')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(50);
-
-    if (error) throw error;
-    return data;
-  }
-
-  async markNotificationRead(id: string) {
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('notifications')
-      .update({ is_read: true })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-}
+import { supabase, getAdminClient } from '../../config/supabase.js';// eslint-disable-line @typescript-eslint/no-unused-varsexport class AdminRepository {  async getCustomers() {    const admin = await getAdminClient();    const { data, error } = await admin      .from('user_profiles')      .select('*, orders(total_amount)')      .is('deleted_at', null)      .order('created_at', { ascending: false });    if (error) throw error;    return (data || []).map((profile: any) => {      // eslint-disable-line @typescript-eslint/no-explicit-any      const userOrders: any[] = profile.orders || [];      // eslint-disable-line @typescript-eslint/no-explicit-any      const totalSpent = userOrders.reduce(        (acc: number, o: any) => acc + Number(o.total_amount),        // eslint-disable-line @typescript-eslint/no-explicit-any        0      );      return {        ...profile,        orders: undefined,        orderCount: userOrders.length,        totalSpent,      };    });  }  async getCustomerDetail(id: string) {    const admin = await getAdminClient();    // 1. Profile    const { data: profile, error: profileError } = await admin      .from('user_profiles')      .select('*')      .eq('id', id)      .single();    if (profileError) throw profileError;    // 2. Orders    const { data: orders, error: ordersError } = await admin      .from('orders')      .select('*')      .eq('user_id', id)      .order('created_at', { ascending: false });    if (ordersError) throw ordersError;    // 3. Addresses    const { data: addresses, error: addressError } = await admin      .from('addresses')      .select('*')      .eq('user_id', id);    if (addressError) throw addressError;    // 4. Reviews Count    const { count: reviewsCount, error: reviewsError } = await admin      // eslint-disable-line @typescript-eslint/no-unused-vars      .from('product_reviews')      .select('*', { count: 'exact', head: true })      .eq('user_id', id);    return {      profile,      orders: orders || [],      addresses: addresses || [],      reviewsCount: reviewsCount || 0,    };  }  async getSalesAnalytics(period: string = '30days') {    const admin = await getAdminClient();    let query = admin      .from('orders')      .select('total_amount, created_at')      .order('created_at', { ascending: true });    // Handle period filtering    const now = new Date();    if (period === '7days') {      const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7)).toISOString();      query = query.gte('created_at', sevenDaysAgo);    } else if (period === '30days') {      const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30)).toISOString();      query = query.gte('created_at', thirtyDaysAgo);    } else if (period === 'year') {      const oneYearAgo = new Date(now.setFullYear(now.getFullYear() - 1)).toISOString();      query = query.gte('created_at', oneYearAgo);    }    const { data, error } = await query;    if (error) throw error;    return data;  }  async getWarehouseTasks() {    const admin = await getAdminClient();    const { data, error } = await admin      .from('order_items')      .select(        `        *,        order:order_id (          order_number,          status        ),        product:product_id (          name        )      `      )      .in('order.status', ['processing', 'confirmed'])      .order('created_at', { ascending: true });    if (error) throw error;    return data?.filter((item: any) => item.order) || [];    // eslint-disable-line @typescript-eslint/no-explicit-any  }  async getOrderActivity(id: string) {    const admin = await getAdminClient();    const { data, error } = await admin      .from('order_activity_logs')      .select('*, user_profiles(full_name)')      .eq('order_id', id)      .order('created_at', { ascending: false });    if (error) throw error;    return data;  }  async createWarehouse(data: any) {    // eslint-disable-line @typescript-eslint/no-explicit-any    const { name, location, address, is_active } = data;    const combinedLocation = address && location ? `${address}, ${location}` : address || location;    const admin = await getAdminClient();    const { data: warehouse, error } = await admin      .from('warehouses')      .insert({        name,        location: combinedLocation,        is_active,      })      .select()      .single();    if (error) throw error;    return warehouse;  }  async updateWarehouse(id: string, data: any) {    // eslint-disable-line @typescript-eslint/no-explicit-any    const { name, location, address, is_active } = data;    const combinedLocation = address && location ? `${address}, ${location}` : address || location;    const admin = await getAdminClient();    const { data: warehouse, error } = await admin      .from('warehouses')      .update({        name,        location: combinedLocation,        is_active,      })      .eq('id', id)      .select()      .single();    if (error) throw error;    return warehouse;  }  async getWarehouses() {    const admin = await getAdminClient();    const { data, error } = await admin      .from('warehouses')      .select('*')      .order('created_at', { ascending: false });    if (error) throw error;    return data;  }  async getNotifications() {    const admin = await getAdminClient();    const { data, error } = await admin      .from('notifications')      .select('*')      .order('created_at', { ascending: false })      .limit(50);    if (error) throw error;    return data;  }  async markNotificationRead(id: string) {    const admin = await getAdminClient();    const { data, error } = await admin      .from('notifications')      .update({ is_read: true })      .eq('id', id)      .select()      .single();    if (error) throw error;    return data;  }}

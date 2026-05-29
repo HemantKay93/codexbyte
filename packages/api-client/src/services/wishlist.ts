@@ -14,5 +14,5 @@ export const WishlistService = {
   checkWishlist: async (productId: string) => {
     const response = await apiClient.get(`/wishlist/${productId}/check`);
     return response.data.isWishlisted;
-  }
+  },
 };

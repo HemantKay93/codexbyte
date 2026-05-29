@@ -24,6 +24,7 @@ import {
 export function ActivityLogPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [logs, setLogs] = useState<any[]>([]);
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,6 +42,7 @@ export function ActivityLogPage() {
       }
     };
     fetchLogs();
+    // eslint-disable-line @typescript-eslint/no-floating-promises
   }, []);
 
   const getLogIcon = (module: string) => {

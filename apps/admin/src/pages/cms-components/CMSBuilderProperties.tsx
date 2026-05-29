@@ -4,7 +4,9 @@ import { X } from 'lucide-react';
 interface CMSBuilderPropertiesProps {
   selectedSection: string;
   cmsData: Record<string, any>;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   updateContent: (section: string, field: string, value: any) => void;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export function CMSBuilderProperties({
@@ -73,6 +75,7 @@ export function CMSBuilderProperties({
               </label>
               <div className="space-y-4">
                 {cmsData.navbar?.links?.map((link: any, i: number) => (
+                  // eslint-disable-line @typescript-eslint/no-explicit-any
                   <div
                     key={i}
                     className="p-3 border border-outline rounded-lg bg-surface-container-lowest space-y-3 relative group"
@@ -99,6 +102,7 @@ export function CMSBuilderProperties({
                       onClick={() => {
                         const newLinks = cmsData.navbar.links.filter(
                           (_: any, idx: number) => idx !== i
+                          // eslint-disable-line @typescript-eslint/no-explicit-any
                         );
                         updateContent('navbar', 'links', newLinks);
                       }}

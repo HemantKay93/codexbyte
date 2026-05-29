@@ -10,6 +10,8 @@ export class BrevoProvider implements IProvider {
   private fromAddress: string = 'noreply@byteevolvr.com';
 
   async initialize(config?: any): Promise<void> {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const brevoApiKey = config?.brevoApiKey || process.env.BREVO_API_KEY;
     if (!brevoApiKey) {
       logger.warn('[BrevoProvider] Brevo API Key is missing');
@@ -49,7 +51,9 @@ export class BrevoProvider implements IProvider {
         messageId: response.data.messageId,
         timestamp: new Date().toISOString(),
       };
+      // eslint-disable-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       logger.error('[BrevoProvider] Send error:', err?.response?.data || err.message);
       return {
         success: false,

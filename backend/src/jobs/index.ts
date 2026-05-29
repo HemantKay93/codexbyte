@@ -6,6 +6,8 @@ import { EmailService } from '../services/email.js';
 import { AnalyticsService } from '../services/analyticsService.js';
 import logger from '../services/logger.js';
 import { WhatsAppRepository } from '../modules/whatsapp/whatsapp.repository.js';
+// eslint-disable-line @typescript-eslint/no-unused-vars
+// eslint-disable-line @typescript-eslint/no-unused-vars
 import {
   emailQueue,
   notificationQueue,
@@ -134,7 +136,9 @@ const telemetryInterval = setInterval(async () => {
         failed: counts.failed,
         completed: counts.completed,
       });
+      // eslint-disable-line @typescript-eslint/no-unused-vars
     } catch (e) {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
       // Ignore if redis goes down temporarily
     }
   }

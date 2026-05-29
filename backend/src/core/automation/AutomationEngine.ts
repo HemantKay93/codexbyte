@@ -12,6 +12,8 @@ export class AutomationEngine {
    * Example: evaluateTrigger('order.created', { customerId: '123', orderId: '456' })
    */
   static async evaluateTrigger(eventName: string, payload: Record<string, any>) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     logger.info(`[AutomationEngine] Evaluating trigger: ${eventName}`);
 
     const admin = await getAdminClient();

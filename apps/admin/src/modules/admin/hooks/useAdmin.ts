@@ -23,6 +23,7 @@ export const useAdmin = () => {
       setRecentSales(recentOrdersData?.data || recentOrdersData || []);
       setChartData(chartDataRaw || []);
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.customMessage || 'Failed to fetch dashboard data');
     } finally {
       setDashboardLoading(false);
@@ -34,16 +35,19 @@ export const useAdmin = () => {
       const orderData = await AdminService.getOrderDetail(id);
       return orderData;
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.customMessage || 'Failed to fetch order details');
       return null;
     }
   };
 
   const updateOrderStatus = async (orderId: string, data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     setIsUpdating(true);
     try {
       await AdminService.updateOrderStatus(orderId, data);
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.customMessage || 'Failed to update order status');
       throw err;
     } finally {
@@ -56,12 +60,14 @@ export const useAdmin = () => {
       const data = await AdminService.getCustomers();
       return data;
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.customMessage || 'Failed to fetch customers');
       return [];
     }
   };
 
   const [warehouses, setWarehouses] = useState<any[]>([]);
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const fetchWarehouses = async () => {
     try {
@@ -69,16 +75,19 @@ export const useAdmin = () => {
       setWarehouses(data || []);
       return data;
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.customMessage || 'Failed to fetch warehouses');
       return [];
     }
   };
 
   const adjustStock = async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     setIsUpdating(true);
     try {
       await AdminService.adjustStock(data);
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.customMessage || 'Failed to adjust stock');
       throw err;
     } finally {

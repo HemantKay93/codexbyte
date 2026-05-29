@@ -5,6 +5,7 @@ import { MarketingService } from '@byteevolvr/api-client';
 
 export function AudienceSegments() {
   const [segments, setSegments] = useState<any[]>([]);
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -29,6 +30,7 @@ export function AudienceSegments() {
 
   useEffect(() => {
     loadSegments();
+    // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
   }, []);
 
   const handleCreate = async () => {

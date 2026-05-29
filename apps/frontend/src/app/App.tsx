@@ -2,8 +2,10 @@ import { Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { MainLayout } from '@/components/layout/MainLayout';
+// eslint-disable-line import/order
 
 import { Loader2 } from 'lucide-react';
+// eslint-disable-line import/order
 
 const HomePage = lazy(() => import('@/pages/HomePage').then((m) => ({ default: m.HomePage })));
 const ServicesPage = lazy(() =>

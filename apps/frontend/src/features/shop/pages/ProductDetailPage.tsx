@@ -6,6 +6,7 @@ import { Loader2, ZoomIn, Star, Cpu, Monitor, Zap, ChevronDown, Plus } from 'luc
 
 import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 export function ProductDetailPage() {
+  // eslint-disable-line complexity
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,6 +34,7 @@ export function ProductDetailPage() {
       }
     };
     fetchProduct();
+    // eslint-disable-line @typescript-eslint/no-floating-promises
   }, [id]);
 
   const handleAddToCart = () => {

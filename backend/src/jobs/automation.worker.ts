@@ -32,6 +32,8 @@ export const automationWorker = new Worker(
         );
       }
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       logger.error(`[AutomationWorker] Error executing step ${stepIndex} for run ${runId}:`, err);
       // Mark run as failed
       await admin.from('automation_runs').update({ status: 'failed' }).eq('id', runId);

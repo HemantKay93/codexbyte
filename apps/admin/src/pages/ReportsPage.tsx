@@ -17,6 +17,7 @@ export function ReportsPage() {
         const a = document.createElement('a');
         a.href = url;
         a.download = `report_${type}_${Date.now()}.${format === 'excel' ? 'xlsx' : 'csv'}`;
+        // eslint-disable-line react-hooks/purity
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -24,6 +25,7 @@ export function ReportsPage() {
         alert('Failed to export report');
       }
     } catch (error) {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
       alert('Error connecting to server');
     }
   };

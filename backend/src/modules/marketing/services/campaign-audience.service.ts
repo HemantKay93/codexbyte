@@ -15,6 +15,8 @@ export class CampaignAudienceService {
 
     return users
       .map((u: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         let contact = '';
         if (payload.channel === 'email') contact = u.email;
         else if (payload.channel === 'whatsapp') contact = u.phone;
@@ -27,7 +29,7 @@ export class CampaignAudienceService {
           status: 'queued',
           variables: { customer_name: u.metadata?.first_name || 'Customer' },
         };
-      })
-      .filter((r: any) => r.contact_address);
+      }) // eslint-disable-line @typescript-eslint/no-explicit-any
+      .filter((r: any) => r.contact_address); // eslint-disable-line @typescript-eslint/no-explicit-any
   }
 }

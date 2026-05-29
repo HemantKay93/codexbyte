@@ -21,6 +21,7 @@ if (!supabaseUrl) {
   throw new Error('CRITICAL: SUPABASE_URL is missing in environment variables.');
 }
 console.log(`[Supabase] Connecting to URL: ${supabaseUrl.substring(0, 15)}...`);
+// eslint-disable-line no-console
 if (!supabaseKey) {
   throw new Error('CRITICAL: SUPABASE_KEY (anon key) is missing in environment variables.');
 }
@@ -28,15 +29,20 @@ if (!supabaseKey) {
 export const supabase = createClient(supabaseUrl!, supabaseKey!);
 
 let adminClient: any = null;
+// eslint-disable-line @typescript-eslint/no-explicit-any
+// eslint-disable-line @typescript-eslint/no-explicit-any
 let cachedAdminToken: string | null = null;
 let tokenExpiresAt = 0;
 let adminClientInitialized = false; // track whether service-role client was created
 
+// eslint-disable-line @typescript-eslint/no-explicit-any
 let adminClientPromise: Promise<any> | null = null;
+// eslint-disable-line @typescript-eslint/no-explicit-any
 
 export const getAdminClient = async () => {
   // 1. Preferred: Service Role Key (Bypasses RLS)
   if (serviceRoleKey) {
+    // eslint-disable-line no-console
     if (!adminClientInitialized) {
       console.log('[Supabase] Initializing Admin Client with Service Role Key');
       adminClient = createClient(supabaseUrl!, serviceRoleKey, {

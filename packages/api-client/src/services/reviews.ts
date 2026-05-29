@@ -6,8 +6,7 @@ export const ReviewService = {
     return response.data;
   },
 
-
-  addReview: async (productId: string, payload: { rating: number, comment: string }) => {
+  addReview: async (productId: string, payload: { rating: number; comment: string }) => {
     const response = await apiClient.post(`/products/${productId}/reviews`, payload);
     return response.data;
   },
@@ -20,5 +19,5 @@ export const ReviewService = {
   updateReviewStatus: async (reviewId: string, status: string) => {
     const response = await apiClient.put(`/admin/reviews/${reviewId}`, { status });
     return response.data;
-  }
+  },
 };

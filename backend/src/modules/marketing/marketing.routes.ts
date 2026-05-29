@@ -17,11 +17,7 @@ import {
 const router = express.Router();
 
 // Public / Customer routes
-router.post(
-  '/validate-coupon',
-  validate(validateCouponSchema),
-  marketingController.validateCoupon
-);
+router.post('/validate-coupon', validate(validateCouponSchema), marketingController.validateCoupon);
 
 // Admin routes
 router.use(authenticate, authorize('admin', 'super-admin'));

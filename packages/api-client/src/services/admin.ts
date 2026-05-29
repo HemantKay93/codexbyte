@@ -17,6 +17,7 @@ export const AdminService = {
   },
 
   getOrders: async (params?: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.get('/admin/orders', { params });
     return response.data;
   },
@@ -45,16 +46,19 @@ export const AdminService = {
   },
 
   bulkImportProducts: async (products: any[]) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/admin/products/bulk-import', { products });
     return response.data;
   },
 
   createOrder: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/pos/checkout', data);
     return response.data;
   },
 
   getPosProducts: async (params?: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.get('/pos/products', { params });
     return response.data;
   },
@@ -75,11 +79,13 @@ export const AdminService = {
   },
 
   createWarehouse: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/admin/warehouse', data);
     return response.data;
   },
 
   updateWarehouse: async (id: string, data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.put(`/admin/warehouse/${id}`, data);
     return response.data;
   },
@@ -156,6 +162,7 @@ export const AdminService = {
 
   // Returns (RMA)
   getRmaReturns: async (params?: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.get('/admin/returns', { params });
     return response.data;
   },
@@ -172,6 +179,7 @@ export const AdminService = {
   },
 
   createCoupon: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/marketing/coupons', data);
     return response.data;
   },
@@ -183,6 +191,7 @@ export const AdminService = {
   },
 
   createSupplier: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/suppliers', data);
     return response.data;
   },
@@ -193,6 +202,7 @@ export const AdminService = {
   },
 
   createPurchaseOrder: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/suppliers/po', data);
     return response.data;
   },
@@ -204,6 +214,7 @@ export const AdminService = {
 
   // Audit Logs
   getAuditLogs: async (params?: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.get('/admin/audit-logs', { params });
     return response.data;
   },

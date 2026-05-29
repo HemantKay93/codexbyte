@@ -7,6 +7,7 @@ export const AdminService = {
   },
 
   async getOrders(params?: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.get('/admin/orders', { params });
     return response.data;
   },

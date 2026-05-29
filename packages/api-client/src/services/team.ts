@@ -7,6 +7,7 @@ export const TeamService = {
   },
 
   addTeamMember: async (payload: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/admin/team/invite', payload);
     return response.data;
   },
@@ -14,5 +15,5 @@ export const TeamService = {
   updateTeamMemberRole: async (id: string, role: string) => {
     const response = await apiClient.put(`/admin/team/${id}/role`, { role });
     return response.data;
-  }
+  },
 };

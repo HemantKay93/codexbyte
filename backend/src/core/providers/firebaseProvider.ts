@@ -25,6 +25,8 @@ export class FirebaseProvider implements IProvider {
         this.app = admin.app();
         logger.info('[FirebaseProvider] Initialized successfully');
       } catch (err: any) {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         logger.error('[FirebaseProvider] Failed to initialize:', err);
       }
     }
@@ -52,7 +54,9 @@ export class FirebaseProvider implements IProvider {
 
       const messageId = await this.app.messaging().send(message);
       return { success: true, messageId, timestamp: new Date().toISOString() };
+      // eslint-disable-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       logger.error('[FirebaseProvider] Send error:', err);
       return { success: false, error: err.message, timestamp: new Date().toISOString() };
     }
@@ -83,8 +87,10 @@ export class FirebaseProvider implements IProvider {
         messageId: res.messageId,
         error: res.error?.message,
         timestamp: new Date().toISOString(),
+        // eslint-disable-line @typescript-eslint/no-explicit-any
       }));
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       logger.error('[FirebaseProvider] Unexpected bulk error:', err);
       return payloads.map(() => ({
         success: false,

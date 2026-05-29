@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 interface CheckoutShippingFormProps {
   user: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   guestEmail: string;
   setGuestEmail: (email: string) => void;
   guestPassword: string;
   setGuestPassword: (password: string) => void;
   shippingAddress: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

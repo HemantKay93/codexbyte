@@ -2,6 +2,7 @@ import React from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 const Facebook = (props: any) => (
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -15,6 +16,7 @@ const Facebook = (props: any) => (
   </svg>
 );
 const Twitter = (props: any) => (
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -28,6 +30,7 @@ const Twitter = (props: any) => (
   </svg>
 );
 const Instagram = (props: any) => (
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -43,6 +46,7 @@ const Instagram = (props: any) => (
   </svg>
 );
 const Linkedin = (props: any) => (
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -74,6 +78,7 @@ interface FooterProps {
   sections: FooterSection[];
   copyright: string;
   LinkComponent: React.ComponentType<any>;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   socialLinks?: {
     facebook?: string;
     twitter?: string;
@@ -175,31 +180,43 @@ export function Footer({
                     <Mail className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest mb-1">Email Us</span>
-                    <a href={`mailto:${contactInfo?.email}`} className="text-sm text-brand-muted hover:text-white transition-colors">
+                    <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest mb-1">
+                      Email Us
+                    </span>
+                    <a
+                      href={`mailto:${contactInfo?.email}`}
+                      className="text-sm text-brand-muted hover:text-white transition-colors"
+                    >
                       {contactInfo?.email}
                     </a>
                   </div>
                 </li>
-                
+
                 <li className="group flex items-start gap-3">
                   <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 text-accent transition-colors group-hover:bg-accent/10">
                     <Phone className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest mb-1">Call Us</span>
-                    <a href={`tel:${contactInfo?.phone?.replace(/[^0-9+]/g, '')}`} className="text-sm text-brand-muted hover:text-white transition-colors">
+                    <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest mb-1">
+                      Call Us
+                    </span>
+                    <a
+                      href={`tel:${contactInfo?.phone?.replace(/[^0-9+]/g, '')}`}
+                      className="text-sm text-brand-muted hover:text-white transition-colors"
+                    >
                       {contactInfo?.phone}
                     </a>
                   </div>
                 </li>
-                
+
                 <li className="group flex items-start gap-3">
                   <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 text-accent transition-colors group-hover:bg-accent/10">
                     <MapPin className="h-4 w-4" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest mb-1">Visit Us</span>
+                    <span className="text-[10px] font-semibold text-white/40 uppercase tracking-widest mb-1">
+                      Visit Us
+                    </span>
                     <span className="text-sm text-brand-muted leading-relaxed">
                       {contactInfo?.address}
                     </span>
@@ -213,10 +230,16 @@ export function Footer({
         <div className="mt-10 border-t border-white/5 pt-6 flex flex-col md:flex-row justify-between gap-4">
           <p className="text-xs text-brand-subtle">{copyright}</p>
           <div className="flex gap-6">
-            <LinkComponent to="/legal/privacy" className="text-xs text-brand-subtle hover:text-white transition-colors">
+            <LinkComponent
+              to="/legal/privacy"
+              className="text-xs text-brand-subtle hover:text-white transition-colors"
+            >
               Privacy Policy
             </LinkComponent>
-            <LinkComponent to="/legal/terms" className="text-xs text-brand-subtle hover:text-white transition-colors">
+            <LinkComponent
+              to="/legal/terms"
+              className="text-xs text-brand-subtle hover:text-white transition-colors"
+            >
               Terms of Service
             </LinkComponent>
           </div>

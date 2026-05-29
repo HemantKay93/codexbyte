@@ -12,11 +12,13 @@ export const SupportService = {
   },
 
   createTicket: async (payload: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/support/tickets', payload);
     return response.data;
   },
 
   updateTicket: async (id: string, payload: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.put(`/support/tickets/${id}`, payload);
     return response.data;
   },

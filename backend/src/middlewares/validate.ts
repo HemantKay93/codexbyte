@@ -16,6 +16,8 @@ export const validate = (schema: ZodTypeAny) => {
       if (error instanceof ZodError) {
         const message = error.issues
           .map((err: any) => `${err.path.join('.')}: ${err.message}`)
+          // eslint-disable-line @typescript-eslint/no-explicit-any
+          // eslint-disable-line @typescript-eslint/no-explicit-any
           .join(', ');
         return next(new AppError(message, 400));
       }

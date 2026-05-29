@@ -13,7 +13,9 @@ export interface Product {
   featured?: boolean;
   sort_order?: number;
   specifications?: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   qna?: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   created_at: string;
 }
 

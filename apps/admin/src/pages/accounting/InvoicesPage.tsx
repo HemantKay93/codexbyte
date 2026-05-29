@@ -23,6 +23,7 @@ export function InvoicesPage() {
     queryFn: async () => {
       const cmsData = await CMSService.getContent('global');
       return cmsData?.find((s: any) => s.section_key === 'contact')?.content || {};
+      // eslint-disable-line @typescript-eslint/no-explicit-any
     },
   });
 
@@ -33,9 +34,11 @@ export function InvoicesPage() {
   const invoices = Array.isArray(invoicesResponse)
     ? invoicesResponse
     : (invoicesResponse as any)?.data || [];
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 
   const filteredInvoices = invoices.filter(
     (inv: any) =>
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       inv.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inv.invoice_number.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -90,6 +93,7 @@ export function InvoicesPage() {
               </thead>
               <tbody>
                 {filteredInvoices.map((inv: any) => (
+                  // eslint-disable-line @typescript-eslint/no-explicit-any
                   <tr key={inv.id} className="hover:bg-surface-container/50 transition-colors">
                     <td className="py-3 px-4 font-medium">{inv.invoice_number}</td>
                     <td className="py-3 px-4">

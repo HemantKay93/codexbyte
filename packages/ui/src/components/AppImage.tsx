@@ -17,7 +17,8 @@ export function AppImage({
   const [currentSrc, setCurrentSrc] = useState(src);
 
   // Generate a WebP variant if possible (standard suffix replacement)
-  const isCdnOrStatic = src && (src.endsWith('.png') || src.endsWith('.jpg') || src.endsWith('.jpeg'));
+  const isCdnOrStatic =
+    src && (src.endsWith('.png') || src.endsWith('.jpg') || src.endsWith('.jpeg'));
   const webpSrc = isCdnOrStatic ? src.replace(/\.(png|jpg|jpeg)$/, '.webp') : undefined;
 
   return (
@@ -33,7 +34,8 @@ export function AppImage({
           maxWidth: '100%',
           height: 'auto',
           display: 'block',
-          transition: 'filter 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out',
+          transition:
+            'filter 0.5s ease-in-out, opacity 0.5s ease-in-out, transform 0.5s ease-in-out',
           filter: isLoaded ? 'none' : 'blur(8px)',
           transform: isLoaded ? 'scale(1)' : 'scale(1.02)',
           opacity: isLoaded ? 1 : 0.6,

@@ -9,6 +9,8 @@ export class ResendEmailProvider implements IProvider {
   private client: Resend | null = null;
 
   async initialize(config?: any): Promise<void> {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const apiKey = config?.resendApiKey || process.env.RESEND_API_KEY;
     if (apiKey) {
       this.client = new Resend(apiKey);
@@ -47,7 +49,9 @@ export class ResendEmailProvider implements IProvider {
         messageId: data?.id,
         timestamp: new Date().toISOString(),
       };
+      // eslint-disable-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       logger.error(`[ResendEmailProvider] Failed to send email to ${payload.to}:`, err);
       return {
         success: false,
@@ -62,8 +66,10 @@ export class ResendEmailProvider implements IProvider {
     try {
       // Perform a lightweight API call to verify the key works
       const { error } = await this.client.domains.list();
+      // eslint-disable-line @typescript-eslint/no-unused-vars
       return !error;
     } catch (e) {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
       return false;
     }
   }

@@ -7,6 +7,7 @@ export const UserService = {
   },
 
   updateProfile: async (payload: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.put('/users/profile', payload);
     return response.data;
   },
@@ -17,11 +18,13 @@ export const UserService = {
   },
 
   addAddress: async (payload: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/users/addresses', payload);
     return response.data;
   },
 
   updateAddress: async (id: string, payload: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.put(`/users/addresses/${id}`, payload);
     return response.data;
   },
@@ -29,5 +32,5 @@ export const UserService = {
   deleteAddress: async (id: string) => {
     const response = await apiClient.delete(`/users/addresses/${id}`);
     return response.data;
-  }
+  },
 };

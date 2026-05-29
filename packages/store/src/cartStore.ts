@@ -15,13 +15,16 @@ interface CartState {
   isLoading: boolean;
   error: string | null;
   addItem: (item: any, quantity?: number) => void;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   totalAmount: () => number;
   totalItems: () => number;
   appliedDiscount: { code: string; discount: number; couponId: string } | null;
-  setAppliedDiscount: (discount: { code: string; discount: number; couponId: string } | null) => void;
+  setAppliedDiscount: (
+    discount: { code: string; discount: number; couponId: string } | null
+  ) => void;
 }
 
 export const useCartStore = create<CartState>()(

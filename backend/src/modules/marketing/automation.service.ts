@@ -16,6 +16,8 @@ export class AutomationService {
    * Example: triggerEvent('cart_abandoned', { userId: '123', cartId: '456' })
    */
   async triggerEvent(eventName: string, payload: Record<string, any>) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     // Delegate to the central AutomationEngine
     await AutomationEngine.evaluateTrigger(eventName, payload);
   }

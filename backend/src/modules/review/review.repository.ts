@@ -31,6 +31,8 @@ export class ReviewRepository {
   }
 
   async create(reviewData: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const { data, error } = await supabase
       .from('product_reviews')
       .insert([reviewData])

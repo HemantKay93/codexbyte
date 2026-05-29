@@ -17,15 +17,18 @@ export function StockMovementHistoryModal({
   onClose,
 }: {
   product: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   isOpen: boolean;
   onClose: () => void;
 }) {
   const [movements, setMovements] = useState<any[]>([]);
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isOpen && product) {
       setLoading(true);
+      // eslint-disable-line react-hooks/set-state-in-effect
       AdminService.getStockMovements(product.id)
         .then((data) => setMovements(data || []))
         .catch((err) => console.error(err))

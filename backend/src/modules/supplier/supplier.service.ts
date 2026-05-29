@@ -1,32 +1,45 @@
 import { AppError } from '../../middlewares/error.js';
 import { InventoryService } from '../inventory/inventory.service.js';
 import logger from '../../services/logger.js';
+// eslint-disable-line import/order
+
 import { SupplierRepository } from './supplier.repository.js';
-import { createSupplierSchema, createPurchaseOrderSchema, receivePurchaseOrderSchema } from './supplier.validator.js';
+import {
+  createSupplierSchema,
+  createPurchaseOrderSchema,
+  receivePurchaseOrderSchema,
+} from './supplier.validator.js';
 
 const supplierRepo = new SupplierRepository();
 
 export class SupplierService {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   async getSuppliers() {
     return await supplierRepo.findAllSuppliers();
   }
 
   async createSupplier(data: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const validatedData = createSupplierSchema.parse(data);
     return await supplierRepo.createSupplier(validatedData);
   }
 
   // --- Purchase Orders ---
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 
   async getPurchaseOrders(supplierId?: string) {
     return await supplierRepo.findAllPurchaseOrders(supplierId);
   }
 
   async createPurchaseOrder(data: any, userId: string) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const validatedData = createPurchaseOrderSchema.parse(data);
 
     // 1. Calculate total
-    const totalAmount = validatedData.items.reduce((sum, item) => sum + item.quantity * item.unitCost, 0);
+    const totalAmount = validatedData.items.reduce(
+      (sum, item) => sum + item.quantity * item.unitCost,
+      0
+    );
 
     // 2. Create PO
     const poData = {

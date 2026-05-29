@@ -33,6 +33,7 @@ export function ProductSlider({ products, tag, tagClass, label }: ProductSliderP
 
       <div
         ref={sliderRef as any}
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         className="flex gap-6 overflow-x-auto snap-x snap-mandatory stitch-no-scrollbar pb-8 pt-4"
       >
         {products.map((product) => (

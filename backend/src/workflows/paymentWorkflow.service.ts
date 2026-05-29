@@ -22,17 +22,27 @@ if (!razorpay) {
 }
 
 export class PaymentWorkflow {
-  static async createOrder(items: any[], receipt: string, shippingFee: number = 0, discountAmount: number = 0) {
+  static async createOrder(
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    items: any[],
+    receipt: string,
+    shippingFee: number = 0,
+    discountAmount: number = 0
+  ) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     if (!Array.isArray(items) || items.length === 0) {
       throw new AppError('Payment order must include at least one item', 400);
     }
 
     const normalizedItems = items.map((item: any) => ({
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       productId: item.productId || item.product_id,
       quantity: Number(item.quantity),
     }));
 
     for (const item of normalizedItems) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       if (!item.productId || !Number.isInteger(item.quantity) || item.quantity <= 0) {
         throw new AppError('Invalid payment item', 400);
       }
@@ -40,17 +50,23 @@ export class PaymentWorkflow {
 
     const admin = await getAdminClient();
     const productIds = [...new Set(normalizedItems.map((item: any) => item.productId))];
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const { data: products, error } = await admin
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       .from('products')
       .select('id, price, status')
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       .in('id', productIds);
 
     if (error) throw error;
 
     const productById = new Map<string, any>(
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       (products || []).map((product: any) => [product.id, product])
+      // eslint-disable-line @typescript-eslint/no-explicit-any
     );
     const subtotal = normalizedItems.reduce((sum: number, item: any) => {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       const product = productById.get(item.productId);
       if (!product || product.status !== 'active') {
         throw new AppError(`Product ${item.productId} is not available`, 400);

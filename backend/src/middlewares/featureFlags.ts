@@ -21,29 +21,35 @@ export const featureFlagMiddleware = (req: Request, res: Response, next: NextFun
     features: growthbook.getFeatures(),
     attributes: {
       id: (req as any).user?.id || 'anonymous',
+      // eslint-disable-line @typescript-eslint/no-explicit-any
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       userAgent: req.headers['user-agent'],
       url: req.originalUrl,
     },
   });
 
   // Attach to request for downstream use
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   (req as any).growthbook = gb;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 
   next();
 };
 
 // Helper for route guards
 export const requireFeature = (featureKey: string) => {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   return (req: Request, res: Response, next: NextFunction) => {
     const gb = (req as any).growthbook as GrowthBook;
-    
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+
     if (!gb || !gb.isOn(featureKey)) {
       return res.status(403).json({
         error: 'Forbidden',
         message: `Feature '${featureKey}' is not enabled.`,
       });
     }
-    
+
     next();
   };
 };

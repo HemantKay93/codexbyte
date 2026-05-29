@@ -28,6 +28,8 @@ export interface WhatsAppMessageRecord {
   job_id?: string;
   recipient: string;
   payload: Record<string, any>;
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   status: 'queued' | 'sent' | 'failed' | 'delivered';
   error_log?: string;
   created_at: string;

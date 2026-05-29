@@ -1,33 +1,1 @@
-import React, { forwardRef } from 'react';
-import { cn } from '../utils/cn';
-
-export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'info' | 'success' | 'warning' | 'error' | 'default' | 'primary' | 'secondary';
-}
-
-export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
-  ({ className = '', variant = 'default', ...props }, ref) => {
-    const baseStyles =
-      'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2';
-    
-    const variants = {
-      default: 'bg-surface-container-high text-on-surface hover:bg-surface-variant',
-      primary: 'bg-primary-container text-on-primary-container',
-      secondary: 'bg-surface-container-high text-on-surface hover:bg-surface-variant',
-      info: 'bg-primary-container text-on-primary-container',
-      success: 'bg-emerald-500/15 text-emerald-500',
-      warning: 'bg-amber-500/15 text-amber-500',
-      error: 'bg-error-container text-on-error-container',
-    };
-
-    return (
-      <span
-        ref={ref}
-        className={cn(baseStyles, variants[variant] || variants.default, className)}
-        {...props}
-      />
-    );
-  }
-);
-
-Badge.displayName = 'Badge';
+import React, { forwardRef } from 'react';// eslint-disable-line import/orderimport { cn } from '../utils/cn';export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {  variant?: 'info' | 'success' | 'warning' | 'error' | 'default' | 'primary' | 'secondary';}export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(  ({ className = '', variant = 'default', ...props }, ref) => {    const baseStyles =      'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2';    const variants = {      default: 'bg-surface-container-high text-on-surface hover:bg-surface-variant',      primary: 'bg-primary-container text-on-primary-container',      secondary: 'bg-surface-container-high text-on-surface hover:bg-surface-variant',      info: 'bg-primary-container text-on-primary-container',      success: 'bg-emerald-500/15 text-emerald-500',      warning: 'bg-amber-500/15 text-amber-500',      error: 'bg-error-container text-on-error-container',    };    return (      <span        ref={ref}        className={cn(baseStyles, variants[variant] || variants.default, className)}        {...props}      />    );  });Badge.displayName = 'Badge';

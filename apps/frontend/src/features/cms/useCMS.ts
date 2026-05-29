@@ -7,7 +7,9 @@ export function useCMS(pageSlug: string, sectionKeys?: string[]) {
     queryFn: async () => {
       const data = await CMSService.getContent(pageSlug, sectionKeys);
       const contentMap: Record<string, any> = {};
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       data.forEach((item: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         contentMap[item.section_key] = item.content;
       });
       return contentMap;

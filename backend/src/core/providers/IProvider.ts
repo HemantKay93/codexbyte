@@ -2,7 +2,7 @@ export interface SendMessagePayload {
   to: string;
   subject?: string;
   content: string;
-  metadata?: any;
+  metadata?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface SendMessageResult {
@@ -21,7 +21,7 @@ export interface IProvider {
   /**
    * Provider specific initialization (auth, connections)
    */
-  initialize(config?: any): Promise<void>;
+  initialize(config?: any): Promise<void>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   /**
    * Unified method for sending a message

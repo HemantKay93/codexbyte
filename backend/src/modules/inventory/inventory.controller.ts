@@ -3,10 +3,12 @@ import { Request, Response } from 'express';
 import { getAdminClient } from '../../config/supabase.js';
 
 import { InventoryService } from './inventory.service.js';
+// eslint-disable-line import/order
 
 import { AuditService } from '../../services/auditService.js';
 import { catchAsync } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';
+// eslint-disable-line import/order
 
 export const getAllWarehouses = catchAsync(async (req: Request, res: Response) => {
   const admin = await getAdminClient();

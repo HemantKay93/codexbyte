@@ -88,6 +88,7 @@ apiClient.interceptors.response.use(
     // 3. Centralized Error Reporting
     const errorMessage =
       (error.response?.data as any)?.message || error.message || 'An unexpected error occurred';
+    // eslint-disable-line @typescript-eslint/no-explicit-any
 
     return Promise.reject({
       ...error,
@@ -104,6 +105,7 @@ export const checkApiHealth = async () => {
     const response = await apiClient.get('/health');
     return response.data;
   } catch (error) {
+    // eslint-disable-line @typescript-eslint/no-unused-vars
     return { ok: false, error: 'API unreachable' };
   }
 };

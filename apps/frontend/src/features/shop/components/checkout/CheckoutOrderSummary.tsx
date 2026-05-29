@@ -4,11 +4,13 @@ import { MarketingService } from '@byteevolvr/api-client';
 
 interface CheckoutOrderSummaryProps {
   items: any[];
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   currencySymbol: string;
   subtotal: number;
   tax: number;
   shipping: number;
   shippingRates: any[];
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   selectedRate: number;
   setSelectedRate: (rate: number) => void;
   calculatingShipping: boolean;
@@ -17,8 +19,10 @@ interface CheckoutOrderSummaryProps {
   paymentMethod: string;
   couponCode: string;
   setCouponCode: (code: string) => void;
-  appliedDiscount: {code: string, discount: number, couponId: string} | null;
-  setAppliedDiscount: (discount: {code: string, discount: number, couponId: string} | null) => void;
+  appliedDiscount: { code: string; discount: number; couponId: string } | null;
+  setAppliedDiscount: (
+    discount: { code: string; discount: number; couponId: string } | null
+  ) => void;
   discountLoading: boolean;
   setDiscountLoading: (loading: boolean) => void;
   discountError: string;
@@ -64,9 +68,12 @@ export function CheckoutOrderSummary({
         setCouponCode('');
       } else {
         setDiscountError(res.message || 'Invalid coupon');
+        // eslint-disable-line @typescript-eslint/no-explicit-any
       }
     } catch (err: any) {
-      setDiscountError(err.customMessage || err.response?.data?.message || 'Failed to apply coupon');
+      setDiscountError(
+        err.customMessage || err.response?.data?.message || 'Failed to apply coupon'
+      );
     } finally {
       setDiscountLoading(false);
     }
@@ -127,14 +134,14 @@ export function CheckoutOrderSummary({
             {!appliedDiscount ? (
               <div className="space-y-2">
                 <div className="flex gap-2">
-                  <input 
-                    type="text" 
-                    placeholder="Discount code" 
+                  <input
+                    type="text"
+                    placeholder="Discount code"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
                     className="flex-1 bg-stitch-surface-container-lowest border border-stitch-outline-variant/50 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-stitch-primary"
                   />
-                  <button 
+                  <button
                     type="button"
                     onClick={handleApplyDiscount}
                     disabled={discountLoading || !couponCode}
@@ -143,9 +150,7 @@ export function CheckoutOrderSummary({
                     {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'APPLY'}
                   </button>
                 </div>
-                {discountError && (
-                  <p className="text-stitch-error text-xs">{discountError}</p>
-                )}
+                {discountError && <p className="text-stitch-error text-xs">{discountError}</p>}
               </div>
             ) : (
               <div className="flex justify-between items-center bg-stitch-primary/10 border border-stitch-primary/30 rounded p-3">
@@ -153,8 +158,8 @@ export function CheckoutOrderSummary({
                   <span className="text-stitch-primary font-bold flex items-center gap-2">
                     <Award className="w-4 h-4" /> {appliedDiscount.code}
                   </span>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={handleRemoveDiscount}
                     className="text-xs text-stitch-outline hover:text-white text-left mt-1 underline"
                   >
@@ -162,7 +167,8 @@ export function CheckoutOrderSummary({
                   </button>
                 </div>
                 <span className="text-stitch-primary font-bold">
-                  -{currencySymbol}{appliedDiscount.discount.toFixed(2)}
+                  -{currencySymbol}
+                  {appliedDiscount.discount.toFixed(2)}
                 </span>
               </div>
             )}

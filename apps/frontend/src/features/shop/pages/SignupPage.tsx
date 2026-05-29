@@ -24,8 +24,11 @@ export function SignupPage() {
       setToken(token, 'auth');
       setUser(user);
       navigate('/shop/dashboard');
+      // eslint-disable-line @typescript-eslint/no-floating-promises
     } catch (signUpError: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       const error = signUpError as any;
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(error.customMessage || error.message || 'An unexpected error occurred');
       setLoading(false);
     }

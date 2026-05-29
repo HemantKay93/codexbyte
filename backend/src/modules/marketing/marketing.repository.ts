@@ -29,9 +29,14 @@ export class MarketingRepository {
     return previousUsage;
   }
 
-  async recordCouponUsage(couponId: string, userId: string, orderId: string, discountApplied: number) {
+  async recordCouponUsage(
+    couponId: string,
+    userId: string,
+    orderId: string,
+    discountApplied: number
+  ) {
     const admin = await getAdminClient();
-    
+
     // 1. Insert Usage record
     await admin.from('coupon_usage').insert({
       coupon_id: couponId,
@@ -56,11 +61,13 @@ export class MarketingRepository {
           .from('coupons')
           .update({ usage_count: coupon.usage_count + 1 })
           .eq('id', couponId);
+        // eslint-disable-line @typescript-eslint/no-explicit-any
       }
     }
   }
 
   async createCoupon(data: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const admin = await getAdminClient();
     const { data: coupon, error } = await admin
       .from('coupons')

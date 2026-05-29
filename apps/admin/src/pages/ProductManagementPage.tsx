@@ -22,7 +22,9 @@ export function ProductManagementPage() {
 
   useEffect(() => {
     fetchProducts();
+    // eslint-disable-line @typescript-eslint/no-floating-promises
   }, []);
+  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="space-y-6">

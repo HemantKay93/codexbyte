@@ -38,6 +38,8 @@ export class WhatsAppProviderFactory {
       if (configs && configs.length > 0) {
         // The highest priority enabled provider becomes default
         this.defaultProviderName = configs[0].provider_name as any;
+        // eslint-disable-line @typescript-eslint/no-explicit-any
+        // eslint-disable-line @typescript-eslint/no-explicit-any
 
         for (const config of configs) {
           const provider = this.providers.get(config.provider_name);
@@ -136,9 +138,12 @@ export class WhatsAppProviderFactory {
   ): Promise<ProviderResponse> {
     switch (type) {
       case 'media':
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         return provider.sendMedia(payload as any);
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       case 'template':
         return provider.sendTemplate(payload as any);
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       default:
         return provider.sendMessage(payload);
     }

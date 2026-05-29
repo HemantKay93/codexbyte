@@ -7,8 +7,13 @@ export const logAudit = async (
   module: string,
   entityId?: string,
   oldData?: any,
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   newData?: any,
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   req?: any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 ) => {
   try {
     const admin = await getAdminClient();

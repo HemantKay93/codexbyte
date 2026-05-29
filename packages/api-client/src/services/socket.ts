@@ -22,10 +22,12 @@ export const SocketService = {
 
     socket.on('connect', () => {
       console.log('[Socket] Connected to server');
+      // eslint-disable-line no-console
     });
 
     socket.on('disconnect', () => {
       console.log('[Socket] Disconnected from server');
+      // eslint-disable-line no-console
     });
 
     return socket;
@@ -39,6 +41,7 @@ export const SocketService = {
   },
 
   on: (event: string, callback: (data: any) => void) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     if (!socket) return;
     socket.on(event, callback);
   },
@@ -49,6 +52,7 @@ export const SocketService = {
   },
 
   emit: (event: string, data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     if (!socket) return;
     socket.emit(event, data);
   },

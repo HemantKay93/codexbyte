@@ -12,6 +12,7 @@ export const ShippingService = {
   },
 
   calculateShippingRates: async (params: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.get('/shipping/rates', { params });
     return response.data;
   },

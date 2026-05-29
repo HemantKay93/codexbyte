@@ -5,6 +5,7 @@ import { AdminService } from '@byteevolvr/api-client';
 
 export function SystemHealthWidget() {
   const [health, setHealth] = useState<any>(null);
+  // eslint-disable-line @typescript-eslint/no-explicit-any
 
   useEffect(() => {
     let mounted = true;
@@ -16,8 +17,10 @@ export function SystemHealthWidget() {
         }
       })
       .catch((err) => console.error('Failed to fetch system health:', err));
-      
-    return () => { mounted = false; };
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   if (!health) return null;
@@ -25,9 +28,11 @@ export function SystemHealthWidget() {
   const services = [
     { name: 'Database', data: health.database },
     { name: 'Redis Cache', data: health.redis },
-    { 
-      name: health.email?.details?.includes('Provider:') ? health.email.details.split('Provider: ')[1].toUpperCase() : 'Email API', 
-      data: health.email 
+    {
+      name: health.email?.details?.includes('Provider:')
+        ? health.email.details.split('Provider: ')[1].toUpperCase()
+        : 'Email API',
+      data: health.email,
     },
     { name: 'WhatsApp API', data: health.whatsapp },
   ];

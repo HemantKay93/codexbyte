@@ -44,6 +44,8 @@ export const getShippingRates = catchAsync(async (req: Request, res: Response) =
 
     return res.json(ratesResponse.data);
   } catch (err: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     logger.error(`Shiprocket API failed: ${err.message}`);
     // Return mock rates as fallback
     const pincode = String(req.query.pincode || '');

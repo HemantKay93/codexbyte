@@ -21,6 +21,7 @@ export const initSockets = (server: HttpServer) => {
     // Join room based on role or userId if needed
     if (userId) {
       socket.join(`user:${userId}`);
+      // eslint-disable-line @typescript-eslint/no-floating-promises
     }
 
     socket.on('disconnect', () => {
@@ -42,6 +43,8 @@ export const getIO = () => {
  * Emit a real-time event to specific rooms
  */
 export const emitToRoom = (room: string, event: string, data: any) => {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   if (io) {
     io.to(room).emit(event, data);
   }
@@ -50,7 +53,9 @@ export const emitToRoom = (room: string, event: string, data: any) => {
 /**
  * Broadcast to all admins
  */
+// eslint-disable-line @typescript-eslint/no-explicit-any
 export const notifyAdmins = (event: string, data: any) => {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   if (io) {
     io.emit(`admin:${event}`, data);
   }

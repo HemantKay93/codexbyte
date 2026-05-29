@@ -18,5 +18,5 @@ export const DiscountService = {
   applyDiscount: async (code: string, cartTotal: number) => {
     const response = await apiClient.post('/discounts/apply', { code, cartTotal });
     return response.data;
-  }
+  },
 };

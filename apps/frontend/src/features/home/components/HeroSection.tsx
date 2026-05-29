@@ -20,6 +20,7 @@ export function HeroSection() {
       opacity: 1,
       y: 0,
       transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as any },
+      // eslint-disable-line @typescript-eslint/no-explicit-any
     },
   };
 
@@ -30,6 +31,7 @@ export function HeroSection() {
       scale: 1,
       rotateY: 0,
       transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as any, delay: 0.5 },
+      // eslint-disable-line @typescript-eslint/no-explicit-any
     },
   };
 

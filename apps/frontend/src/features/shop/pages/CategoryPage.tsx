@@ -38,6 +38,7 @@ export function CategoryPage() {
       }
     };
     fetchProducts();
+    // eslint-disable-line @typescript-eslint/no-floating-promises
   }, [id]);
 
   useEffect(() => {

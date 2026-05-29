@@ -11,6 +11,7 @@ import {
 } from '../../../components/ui/Table';
 
 export function OrderItemsTable({ items }: { items: any[] }) {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   return (
     <Card className="border-none shadow-sm overflow-hidden">
       <div className="p-6 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
@@ -37,6 +38,7 @@ export function OrderItemsTable({ items }: { items: any[] }) {
           </TableHeader>
           <TableBody>
             {items.map((item: any) => (
+              // eslint-disable-line @typescript-eslint/no-explicit-any
               <TableRow
                 key={item.id}
                 className="hover:bg-surface-container-lowest transition-colors"

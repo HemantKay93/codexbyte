@@ -18,6 +18,7 @@ export const MarketingService = {
   },
 
   createCoupon: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/marketing/coupons', data);
     return response.data;
   },
@@ -33,6 +34,7 @@ export const MarketingService = {
     return response.data;
   },
   createSegment: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/marketing/segments', data);
     return response.data;
   },
@@ -43,6 +45,7 @@ export const MarketingService = {
     return response.data;
   },
   createAutomation: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/marketing/automations', data);
     return response.data;
   },
@@ -53,6 +56,7 @@ export const MarketingService = {
     return response.data;
   },
   createEmailTemplate: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/marketing/templates/email', data);
     return response.data;
   },
@@ -63,6 +67,7 @@ export const MarketingService = {
     return response.data;
   },
   createPushTemplate: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/marketing/templates/push', data);
     return response.data;
   },

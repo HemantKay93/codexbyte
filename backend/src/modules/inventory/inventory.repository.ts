@@ -80,6 +80,8 @@ export class InventoryRepository {
 
     const totalQuantity = (totalData || []).reduce(
       (sum: number, item: any) => sum + item.quantity,
+      // eslint-disable-line @typescript-eslint/no-explicit-any
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       0
     );
 

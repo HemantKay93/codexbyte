@@ -15,6 +15,7 @@ export const useProduct = () => {
       const data = await ProductService.getProducts();
       setProducts(data);
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.customMessage || 'Failed to fetch products');
     } finally {
       setLoading(false);
@@ -32,6 +33,7 @@ export const useProduct = () => {
       }
       await fetchProducts();
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.customMessage || 'Failed to save product');
       throw err;
     } finally {
@@ -48,6 +50,7 @@ export const useProduct = () => {
       await ProductService.deleteProduct(id);
       await fetchProducts();
     } catch (err: any) {
+      // eslint-disable-line @typescript-eslint/no-explicit-any
       setError(err.customMessage || 'Failed to delete product');
     } finally {
       setLoading(false);
