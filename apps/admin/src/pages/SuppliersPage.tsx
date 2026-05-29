@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Search, Filter, Plus, Truck, Building2, ExternalLink, Loader2, X } from 'lucide-react';
+import { Search, Filter, Plus, Truck, Building2, ExternalLink, Loader2, X, FilePlus } from 'lucide-react';
 import { AdminService } from '@byteevolvr/api-client';
+import { CreatePOModal } from './suppliers-components/CreatePOModal';
 
 import {
   Table,
@@ -18,6 +19,7 @@ export function SuppliersPage() {
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSupplierForPO, setSelectedSupplierForPO] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '',
     contact_name: '',
@@ -193,8 +195,15 @@ export function SuppliersPage() {
                             ).toLocaleDateString()
                           : 'N/A'}
                       </TableCell>
-                      <TableCell>
-                        <button className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-surface-container transition-colors">
+                      <TableCell className="flex justify-end gap-2">
+                        <button 
+                          onClick={() => setSelectedSupplierForPO(supplier)}
+                          title="Create Purchase Order"
+                          className="text-primary hover:bg-primary/10 p-1.5 rounded-md transition-colors"
+                        >
+                          <FilePlus className="h-4 w-4" />
+                        </button>
+                        <button className="text-on-surface-variant hover:text-on-surface p-1.5 rounded-md hover:bg-surface-container transition-colors">
                           <ExternalLink className="h-4 w-4" />
                         </button>
                       </TableCell>
@@ -277,6 +286,16 @@ export function SuppliersPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {selectedSupplierForPO && (
+        <CreatePOModal 
+          supplier={selectedSupplierForPO} 
+          onClose={() => setSelectedSupplierForPO(null)} 
+          onSuccess={() => {
+            fetchData();
+          }}
+        />
       )}
     </div>
   );

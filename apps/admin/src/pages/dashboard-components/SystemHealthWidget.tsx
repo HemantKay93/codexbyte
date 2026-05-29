@@ -7,9 +7,17 @@ export function SystemHealthWidget() {
   const [health, setHealth] = useState<any>(null);
 
   useEffect(() => {
+    let mounted = true;
     AdminService.getIntegrationHealth()
-      .then((res) => setHealth(res.data))
+      .then((res) => {
+        if (mounted) {
+          // If the interceptor unwrapped it, res might be the actual object, or it might be in res.data
+          setHealth(res?.data || res);
+        }
+      })
       .catch((err) => console.error('Failed to fetch system health:', err));
+      
+    return () => { mounted = false; };
   }, []);
 
   if (!health) return null;
@@ -17,7 +25,10 @@ export function SystemHealthWidget() {
   const services = [
     { name: 'Database', data: health.database },
     { name: 'Redis Cache', data: health.redis },
-    { name: 'Email API', data: health.email },
+    { 
+      name: health.email?.details?.includes('Provider:') ? health.email.details.split('Provider: ')[1].toUpperCase() : 'Email API', 
+      data: health.email 
+    },
     { name: 'WhatsApp API', data: health.whatsapp },
   ];
 

@@ -9,6 +9,7 @@ import { eventBus } from '../../core/events/EventBus.js';
 import { DomainEvents } from '../../core/events/events.js';
 
 import { OrderRepository } from './order.repository.js';
+import { MarketingService } from '../marketing/marketing.service.js';
 
 const orderRepo = new OrderRepository();
 
@@ -84,28 +85,47 @@ export class OrderService {
 
     const orderNumber = orderData.order_number || `ORD-${Date.now()}`;
 
-    // Use Transactional RPC for atomic creation
-    const { data: order, error } = await admin.rpc('create_checkout_order', {
-      p_user_id: finalUserId || null,
-      p_order_number: orderNumber,
-      p_status: orderData.status || 'pending',
-      p_payment_status: 'pending',
-      p_payment_method: paymentMethod || 'cash',
-      p_shipping_address: shippingAddress,
-      p_customer_name: shippingAddress?.full_name || shippingAddress?.name || 'Walk-in Customer',
-      p_customer_email:
-        shippingAddress?.email || orderData.email || userEmail || 'walkin@customer.com',
-      p_shipping_amount: orderData.shippingFee || 0,
-      p_warehouse_id: warehouseId,
-      p_items: items.map((i: any) => ({
-        productId: i.productId || i.product_id,
-        quantity: Number(i.quantity),
-      })),
-    });
-
-    if (error) {
-      logger.error('[OrderService] RPC Error:', error);
+    // Use Transactional RPC for atomic creation via Repository
+    let order;
+    try {
+      order = await orderRepo.createCheckoutOrder({
+        p_user_id: finalUserId || null,
+        p_order_number: orderNumber,
+        p_status: orderData.status || 'pending',
+        p_payment_status: 'pending',
+        p_payment_method: paymentMethod || 'cash',
+        p_shipping_address: shippingAddress,
+        p_customer_name: shippingAddress?.full_name || shippingAddress?.name || 'Walk-in Customer',
+        p_customer_email:
+          shippingAddress?.email || orderData.email || userEmail || 'walkin@customer.com',
+        p_shipping_amount: (orderData.shippingFee || 0) - (orderData.discountAmount || 0),
+        p_warehouse_id: warehouseId,
+        p_items: items.map((i: any) => ({
+          productId: i.productId || i.product_id,
+          quantity: Number(i.quantity),
+        })),
+      });
+    } catch (error: any) {
       throw new AppError(error.message, 400);
+    }
+
+    // Adjust shipping and discount in DB after RPC creates it
+    if (orderData.discountAmount > 0) {
+      await orderRepo.updateOrderAmounts(order.id, {
+        discount_amount: orderData.discountAmount,
+        shipping_amount: orderData.shippingFee || 0,
+      });
+    }
+
+    // Record coupon usage
+    if (orderData.couponId) {
+      const marketingSvc = new MarketingService();
+      await marketingSvc.recordUsage(
+        orderData.couponId, 
+        finalUserId || 'guest', 
+        order.id, 
+        orderData.discountAmount
+      ).catch(e => logger.error('[OrderService] Failed to record coupon usage:', e));
     }
 
     // 2. Log Activity

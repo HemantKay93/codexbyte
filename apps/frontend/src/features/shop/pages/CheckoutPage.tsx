@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartStore, useAuthStore } from '@byteevolvr/store';
-import { OrderService, ShippingService, UserService } from '@byteevolvr/api-client';
+import { OrderService, ShippingService, UserService, PaymentService } from '@byteevolvr/api-client';
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 import { CheckoutProgressIndicator } from '../components/checkout/CheckoutProgressIndicator';
 import { CheckoutShippingForm } from '../components/checkout/CheckoutShippingForm';
@@ -11,7 +17,7 @@ import { CheckoutOrderSummary } from '../components/checkout/CheckoutOrderSummar
 import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 
 export function CheckoutPage() {
-  const { items, clearCart, totalAmount } = useCartStore();
+  const { items, clearCart, totalAmount, appliedDiscount, setAppliedDiscount } = useCartStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const currencySymbol = useStoreCurrency();
@@ -37,6 +43,10 @@ export function CheckoutPage() {
   const [shippingRates, setShippingRates] = useState<any[]>([]);
   const [selectedRate, setSelectedRate] = useState<number>(0);
   const [calculatingShipping, setCalculatingShipping] = useState(false);
+
+  const [couponCode, setCouponCode] = useState('');
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountError, setDiscountError] = useState('');
 
   React.useEffect(() => {
     const fetchRates = async () => {
@@ -108,7 +118,8 @@ export function CheckoutPage() {
 
   const tax = subtotal * 0.18; // 18% GST
   const shipping = selectedRate;
-  const finalTotalAmount = subtotal + tax + shipping;
+  const discountAmount = appliedDiscount?.discount || 0;
+  const finalTotalAmount = Math.max(0, subtotal + tax + shipping - discountAmount);
 
   // Redirect if cart is empty
   if (items.length === 0 && !loading) {
@@ -119,6 +130,20 @@ export function CheckoutPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setShippingAddress((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
   };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -142,23 +167,96 @@ export function CheckoutPage() {
         shippingAddress,
         paymentMethod,
         shippingFee: selectedRate,
+        discountAmount: appliedDiscount?.discount || 0,
+        couponCode: appliedDiscount?.code,
+        couponId: appliedDiscount?.couponId,
         totalAmount: finalTotalAmount,
       };
 
-      await OrderService.createOrder(payload);
-
       if (paymentMethod === 'razorpay') {
-        alert('Payment integration pending. Order placed successfully!');
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          throw new Error('Razorpay SDK failed to load. Are you online?');
+        }
+
+        // Generate Razorpay Order
+        const rzpOrderData = await PaymentService.createRazorpayOrder({
+          items: payload.items,
+          receipt: `rcpt_${Date.now()}`,
+          shippingFee: selectedRate,
+          discountAmount: appliedDiscount?.discount || 0
+        });
+
+        if (!rzpOrderData || !rzpOrderData.order) {
+          throw new Error('Failed to create Razorpay order');
+        }
+
+        const options = {
+          key: rzpOrderData.key,
+          amount: rzpOrderData.order.amount,
+          currency: rzpOrderData.order.currency,
+          name: 'ByteEvolvr',
+          description: 'Order Checkout',
+          order_id: rzpOrderData.order.id,
+          handler: async function (response: any) {
+            try {
+              const verified = await PaymentService.verifyRazorpayPayment({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              });
+
+              if (verified?.verified) {
+                // Now create the actual order in our system
+                await OrderService.createOrder({
+                  ...payload,
+                  status: 'confirmed'
+                });
+                clearCart();
+                navigate('/shop/order-success');
+              } else {
+                throw new Error('Payment verification failed');
+              }
+            } catch (err: any) {
+               console.error('Payment verification error', err);
+               setError('Payment verification failed. Please contact support if amount was deducted.');
+               setLoading(false);
+            }
+          },
+          prefill: {
+            name: shippingAddress.full_name,
+            email: user?.email || guestEmail,
+            contact: shippingAddress.phone,
+          },
+          theme: {
+            color: '#0f172a',
+          },
+          modal: {
+            ondismiss: function() {
+              setLoading(false);
+            }
+          }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response: any){
+          setError(`Payment failed: ${response.error.description}`);
+          setLoading(false);
+        });
+        rzp.open();
+
+      } else {
+        // COD logic
+        await OrderService.createOrder(payload);
+        clearCart();
+        navigate('/shop/order-success');
       }
 
-      clearCart();
-      navigate('/shop/order-success');
     } catch (err: any) {
       console.error('Order creation failed:', err);
       setError(
         err.response?.data?.message || err.message || 'Failed to place order. Please try again.'
       );
-    } finally {
       setLoading(false);
     }
   };
@@ -211,6 +309,15 @@ export function CheckoutPage() {
             finalTotalAmount={finalTotalAmount}
             loading={loading}
             paymentMethod={paymentMethod}
+            couponCode={couponCode}
+            setCouponCode={setCouponCode}
+            appliedDiscount={appliedDiscount}
+            setAppliedDiscount={setAppliedDiscount}
+            discountLoading={discountLoading}
+            setDiscountLoading={setDiscountLoading}
+            discountError={discountError}
+            setDiscountError={setDiscountError}
+            subtotalForDiscount={subtotal}
           />
         </form>
       </main>

@@ -1,27 +1,51 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCartStore } from '@byteevolvr/store';
-import { ProductService, Product } from '@byteevolvr/api-client';
-import {
-  ShoppingCart,
-  Minus,
-  Plus,
-  Trash2,
-  ArrowRight,
-  ShieldCheck,
-  Lock,
-  ArrowLeft,
-} from 'lucide-react';
+import { ProductService, Product, MarketingService } from '@byteevolvr/api-client';
+import { Loader2, ShoppingCart, Minus, Plus, Trash2, ArrowRight, ShieldCheck, Lock, ArrowLeft, Award } from 'lucide-react';
 
 import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 
 export function CartPage() {
   const navigate = useNavigate();
-  const { items, removeItem, updateQuantity, totalAmount, addItem } = useCartStore();
+  const { items, removeItem, updateQuantity, totalAmount, addItem, appliedDiscount, setAppliedDiscount } = useCartStore();
   const total = totalAmount();
   const currencySymbol = useStoreCurrency();
 
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  
+  const [couponCode, setCouponCode] = useState('');
+  const [discountLoading, setDiscountLoading] = useState(false);
+  const [discountError, setDiscountError] = useState('');
+
+  const handleApplyDiscount = async () => {
+    if (!couponCode) return;
+    setDiscountLoading(true);
+    setDiscountError('');
+    try {
+      const res = await MarketingService.validateCoupon(couponCode, total);
+      if (res.couponId && res.code) {
+        setAppliedDiscount({
+          code: res.code,
+          discount: res.discount,
+          couponId: res.couponId,
+        });
+        setCouponCode('');
+      } else {
+        setDiscountError(res.message || 'Invalid coupon');
+      }
+    } catch (err: any) {
+      setDiscountError(err.customMessage || err.response?.data?.message || 'Failed to apply coupon');
+    } finally {
+      setDiscountLoading(false);
+    }
+  };
+
+  const handleRemoveDiscount = () => {
+    setAppliedDiscount(null);
+  };
+
+  const finalTotalAmount = Math.max(0, total + (total * 0.1) - (appliedDiscount?.discount || 0));
 
   useEffect(() => {
     if (items.length > 0) {
@@ -223,27 +247,67 @@ export function CartPage() {
             </div>
 
             <div className="border-t border-stitch-outline-variant/30 pt-6 mb-8">
+              {appliedDiscount && (
+                <div className="flex justify-between items-baseline mb-4">
+                  <span className="font-stitch-body-md text-stitch-primary">Discount</span>
+                  <span className="font-stitch-body-md text-stitch-primary">
+                    -{currencySymbol}
+                    {appliedDiscount.discount.toFixed(2)}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between items-baseline">
                 <span className="font-stitch-headline-lg-mobile text-white">TOTAL</span>
                 <span className="font-stitch-display-lg-mobile text-stitch-display-lg-mobile text-stitch-primary">
                   {currencySymbol}
-                  {(total * 1.1).toFixed(2)}
+                  {finalTotalAmount.toFixed(2)}
                 </span>
               </div>
             </div>
 
             {/* Coupon Input */}
             <div className="mb-8">
-              <div className="relative flex items-center bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg p-1 transition-all focus-within:border-stitch-primary focus-within:shadow-[0_0_15px_rgba(173,198,255,0.3)]">
-                <input
-                  className="bg-transparent border-none focus:ring-0 font-stitch-label-sm text-stitch-label-sm w-full px-4 text-white placeholder:text-stitch-outline/50 uppercase"
-                  placeholder="COUPON_CODE"
-                  type="text"
-                />
-                <button className="bg-stitch-surface-variant text-white font-stitch-label-sm text-stitch-label-sm px-4 py-2 rounded-md hover:bg-stitch-outline-variant transition-colors">
-                  APPLY
-                </button>
-              </div>
+              {!appliedDiscount ? (
+                <div className="space-y-2">
+                  <div className="relative flex items-center bg-stitch-surface-container-lowest border border-stitch-outline-variant/30 rounded-lg p-1 transition-all focus-within:border-stitch-primary focus-within:shadow-[0_0_15px_rgba(173,198,255,0.3)]">
+                    <input
+                      className="bg-transparent border-none focus:ring-0 font-stitch-label-sm text-stitch-label-sm w-full px-4 text-white placeholder:text-stitch-outline/50 uppercase"
+                      placeholder="COUPON_CODE"
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)}
+                    />
+                    <button 
+                      onClick={handleApplyDiscount}
+                      disabled={discountLoading || !couponCode}
+                      className="bg-stitch-surface-variant text-white font-stitch-label-sm text-stitch-label-sm px-4 py-2 rounded-md hover:bg-stitch-outline-variant transition-colors disabled:opacity-50"
+                    >
+                      {discountLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'APPLY'}
+                    </button>
+                  </div>
+                  {discountError && (
+                    <p className="text-stitch-error text-xs">{discountError}</p>
+                  )}
+                </div>
+              ) : (
+                <div className="flex justify-between items-center bg-stitch-primary/10 border border-stitch-primary/30 rounded p-3">
+                  <div className="flex flex-col">
+                    <span className="text-stitch-primary font-bold flex items-center gap-2">
+                      <Award className="w-4 h-4" /> {appliedDiscount.code}
+                    </span>
+                    <button 
+                      type="button" 
+                      onClick={handleRemoveDiscount}
+                      className="text-xs text-stitch-outline hover:text-white text-left mt-1 underline"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <span className="text-stitch-primary font-bold">
+                    -{currencySymbol}{appliedDiscount.discount.toFixed(2)}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Checkout CTA */}

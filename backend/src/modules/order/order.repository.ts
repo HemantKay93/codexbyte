@@ -61,6 +61,22 @@ export class OrderRepository {
     return data;
   }
 
+  async createCheckoutOrder(payload: any) {
+    const admin = await getAdminClient();
+    const { data: order, error } = await admin.rpc('create_checkout_order', payload);
+    
+    if (error) {
+      logger.error('[OrderRepository] RPC Error:', error);
+      throw error;
+    }
+    return order;
+  }
+
+  async updateOrderAmounts(orderId: string, payload: { discount_amount: number, shipping_amount: number }) {
+    const admin = await getAdminClient();
+    await admin.from('orders').update(payload).eq('id', orderId);
+  }
+
   async create(orderData: any, items: any[], userId?: string) {
     const admin = await getAdminClient();
 

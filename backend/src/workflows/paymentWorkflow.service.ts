@@ -22,7 +22,7 @@ if (!razorpay) {
 }
 
 export class PaymentWorkflow {
-  static async createOrder(items: any[], receipt: string) {
+  static async createOrder(items: any[], receipt: string, shippingFee: number = 0, discountAmount: number = 0) {
     if (!Array.isArray(items) || items.length === 0) {
       throw new AppError('Payment order must include at least one item', 400);
     }
@@ -58,7 +58,8 @@ export class PaymentWorkflow {
       return sum + Number(product.price) * item.quantity;
     }, 0);
     const tax = Math.round(subtotal * 0.18 * 100) / 100;
-    const amount = Math.round((subtotal + tax) * 100);
+    const finalTotal = Math.max(0, subtotal + tax + shippingFee - discountAmount);
+    const amount = Math.round(finalTotal * 100); // Razorpay expects amount in paise
 
     if (!razorpay) {
       throw new AppError('Payment system is not configured', 500);

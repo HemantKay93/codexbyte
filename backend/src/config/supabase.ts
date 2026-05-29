@@ -30,17 +30,19 @@ export const supabase = createClient(supabaseUrl!, supabaseKey!);
 let adminClient: any = null;
 let cachedAdminToken: string | null = null;
 let tokenExpiresAt = 0;
+let adminClientInitialized = false; // track whether service-role client was created
 
 let adminClientPromise: Promise<any> | null = null;
 
 export const getAdminClient = async () => {
   // 1. Preferred: Service Role Key (Bypasses RLS)
   if (serviceRoleKey) {
-    if (!adminClient || adminClient.supabaseKey !== serviceRoleKey) {
+    if (!adminClientInitialized) {
       console.log('[Supabase] Initializing Admin Client with Service Role Key');
       adminClient = createClient(supabaseUrl!, serviceRoleKey, {
         auth: { persistSession: false },
       });
+      adminClientInitialized = true;
     }
     return adminClient;
   }

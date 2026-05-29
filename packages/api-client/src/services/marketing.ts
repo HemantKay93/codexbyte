@@ -22,6 +22,11 @@ export const MarketingService = {
     return response.data;
   },
 
+  validateCoupon: async (code: string, orderAmount: number) => {
+    const response = await apiClient.post('/marketing/validate-coupon', { code, orderAmount });
+    return response.data;
+  },
+
   // Segments
   getSegments: async () => {
     const response = await apiClient.get('/marketing/segments');

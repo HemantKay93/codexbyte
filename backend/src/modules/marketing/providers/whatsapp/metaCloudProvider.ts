@@ -116,7 +116,15 @@ export class MetaCloudProvider implements IWhatsAppProvider {
   }
 
   async healthCheck(): Promise<boolean> {
-    return this.accessToken !== null && this.phoneNumberId !== null;
+    if (!this.accessToken || !this.phoneNumberId) return false;
+    try {
+      const url = `https://graph.facebook.com/v19.0/${this.phoneNumberId}?fields=verified_name,display_phone_number`;
+      const response = await axios.get(url, this.getHeaders());
+      return !!response.data?.id;
+    } catch (e) {
+      logger.warn('[MetaCloudProvider] Health check failed:', e);
+      return false;
+    }
   }
 
   private getHeaders() {

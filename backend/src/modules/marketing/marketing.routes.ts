@@ -19,7 +19,6 @@ const router = express.Router();
 // Public / Customer routes
 router.post(
   '/validate-coupon',
-  authenticate,
   validate(validateCouponSchema),
   marketingController.validateCoupon
 );

@@ -2,10 +2,17 @@ import { apiClient } from '../apiClient';
 
 export interface CreateOrderPayload {
   userId?: string;
-  items: Array<{ productId: string; quantity: number; price: number }>;
+  email?: string;
+  password?: string;
+  items: Array<{ productId: string; name?: string; sku?: string; quantity: number; price: number }>;
   shippingAddress: any;
   paymentMethod: 'razorpay' | 'cod';
+  shippingFee?: number;
+  discountAmount?: number;
+  couponCode?: string;
+  couponId?: string;
   totalAmount: number;
+  status?: string;
 }
 
 export const OrderService = {

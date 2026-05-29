@@ -20,6 +20,8 @@ interface CartState {
   clearCart: () => void;
   totalAmount: () => number;
   totalItems: () => number;
+  appliedDiscount: { code: string; discount: number; couponId: string } | null;
+  setAppliedDiscount: (discount: { code: string; discount: number; couponId: string } | null) => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -28,6 +30,9 @@ export const useCartStore = create<CartState>()(
       items: [],
       isLoading: false,
       error: null,
+      appliedDiscount: null,
+
+      setAppliedDiscount: (discount) => set({ appliedDiscount: discount }),
 
       addItem: (item, quantity = 1) => {
         const items = get().items;
@@ -61,7 +66,7 @@ export const useCartStore = create<CartState>()(
         });
       },
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], appliedDiscount: null }),
 
       totalAmount: () => {
         return get().items.reduce((total, item) => {

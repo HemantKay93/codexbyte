@@ -9,8 +9,8 @@ export class BrevoProvider implements IProvider {
   private client: AxiosInstance | null = null;
   private fromAddress: string = 'noreply@byteevolvr.com';
 
-  async initialize(): Promise<void> {
-    const brevoApiKey = process.env.BREVO_API_KEY;
+  async initialize(config?: any): Promise<void> {
+    const brevoApiKey = config?.brevoApiKey || process.env.BREVO_API_KEY;
     if (!brevoApiKey) {
       logger.warn('[BrevoProvider] Brevo API Key is missing');
     } else {

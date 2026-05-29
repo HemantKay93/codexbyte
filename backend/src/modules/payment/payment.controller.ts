@@ -5,7 +5,8 @@ import { AppError } from '../../middlewares/error.js';
 import { PaymentWorkflow } from '../../workflows/paymentWorkflow.service.js';
 
 export const createRazorpayOrder = catchAsync(async (req: Request, res: Response) => {
-  const result = await PaymentWorkflow.createOrder(req.body.items, req.body.receipt);
+  const { items, receipt, shippingFee, discountAmount } = req.body;
+  const result = await PaymentWorkflow.createOrder(items, receipt, shippingFee || 0, discountAmount || 0);
   res.json(result);
 });
 

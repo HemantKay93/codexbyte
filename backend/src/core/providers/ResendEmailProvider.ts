@@ -8,12 +8,13 @@ export class ResendEmailProvider implements IProvider {
   public readonly name = 'resend-email';
   private client: Resend | null = null;
 
-  async initialize(): Promise<void> {
-    if (process.env.RESEND_API_KEY) {
-      this.client = new Resend(process.env.RESEND_API_KEY);
+  async initialize(config?: any): Promise<void> {
+    const apiKey = config?.resendApiKey || process.env.RESEND_API_KEY;
+    if (apiKey) {
+      this.client = new Resend(apiKey);
       logger.info('[ResendEmailProvider] Initialized successfully');
     } else {
-      logger.warn('[ResendEmailProvider] Missing RESEND_API_KEY, provider running in mock mode');
+      logger.warn('[ResendEmailProvider] Missing API KEY, provider running in mock mode');
     }
   }
 
@@ -57,6 +58,13 @@ export class ResendEmailProvider implements IProvider {
   }
 
   async isHealthy(): Promise<boolean> {
-    return this.client !== null;
+    if (!this.client) return false;
+    try {
+      // Perform a lightweight API call to verify the key works
+      const { error } = await this.client.domains.list();
+      return !error;
+    } catch (e) {
+      return false;
+    }
   }
 }

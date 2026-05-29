@@ -1,8 +1,8 @@
 import { apiClient } from '../apiClient';
 
 export const PaymentService = {
-  createRazorpayOrder: async (amount: number, receipt: string) => {
-    const response = await apiClient.post('/payments/razorpay/order', { amount, receipt });
+  createRazorpayOrder: async (payload: { items: any[], receipt: string, shippingFee: number, discountAmount: number }) => {
+    const response = await apiClient.post('/payments/razorpay/order', payload);
     return response.data;
   },
 
