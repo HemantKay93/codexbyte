@@ -1,43 +1,44 @@
 import { motion } from 'framer-motion';
 
 import { PageSeo } from '@/components/seo/PageSeo';
+import { useCMS } from '@/features/cms/useCMS';
+import { Loader2 } from 'lucide-react';
 
 export default function PrivacyPolicy() {
+  const { data: cms, isLoading } = useCMS('privacy');
+  const content = cms?.main;
+
   return (
     <>
       <PageSeo
-        title="Privacy Policy | ByteeVolvr"
+        title={content?.title || 'Privacy Policy | ByteeVolvr'}
         description="ByteeVolvr Privacy Policy and Data Protection guidelines."
       />
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mx-auto max-w-4xl px-6 pb-24 pt-40 lg:px-8"
+        className="mx-auto max-w-4xl px-6 pb-24 pt-40 lg:px-8 min-h-[60vh]"
       >
-        <h1 className="font-display text-4xl font-bold text-white mb-8">Privacy Policy</h1>
-        <div className="prose prose-invert max-w-none text-brand-muted space-y-6">
-          <p>Last Updated: April 25, 2026</p>
-          <p>
-            At ByteeVolvr Enterprises, we prioritize your privacy. This policy outlines how we
-            collect, use, and protect your personal information when you use our website and
-            services.
-          </p>
-          <h2 className="text-white text-xl font-bold mt-8">1. Information We Collect</h2>
-          <p>
-            We collect information you provide directly to us (name, email, phone number) when you
-            contact us for services or make a purchase in our shop.
-          </p>
-          <h2 className="text-white text-xl font-bold mt-8">2. How We Use Your Information</h2>
-          <p>
-            We use your data to provide services, process orders, and communicate with you about
-            your technical requirements.
-          </p>
-          <h2 className="text-white text-xl font-bold mt-8">3. Data Security</h2>
-          <p>
-            We implement industry-standard security measures to protect your data from unauthorized
-            access or disclosure.
-          </p>
-        </div>
+        <h1 className="font-display text-4xl font-bold text-white mb-8">
+          {content?.title || 'Privacy Policy'}
+        </h1>
+        
+        {isLoading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="w-8 h-8 text-stitch-primary animate-spin" />
+          </div>
+        ) : (
+          <div className="prose prose-invert max-w-none text-brand-muted space-y-6 whitespace-pre-wrap">
+            {content?.lastUpdated && (
+              <p className="text-sm text-stitch-outline">Last Updated: {content.lastUpdated}</p>
+            )}
+            {content?.content ? (
+              content.content
+            ) : (
+              <p>Privacy policy content is currently unavailable. Please check back later.</p>
+            )}
+          </div>
+        )}
       </motion.section>
     </>
   );

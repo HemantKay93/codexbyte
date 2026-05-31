@@ -3,19 +3,21 @@ import { fileURLToPath } from 'url';
 
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import { env } from './/env.js';
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
 const supabaseUrl =
-  process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  env.SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL || env.VITE_SUPABASE_URL;
 
 const supabaseKey =
-  process.env.SUPABASE_KEY ||
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  process.env.VITE_SUPABASE_ANON_KEY;
+  env.SUPABASE_KEY ||
+  env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+  env.VITE_SUPABASE_ANON_KEY;
 
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
+const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_KEY;
 
 if (!supabaseUrl) {
   throw new Error('CRITICAL: SUPABASE_URL is missing in environment variables.');
@@ -66,8 +68,8 @@ export const getAdminClient = async () => {
   adminClientPromise = (async () => {
     try {
       console.warn('[Supabase] Service Role Key missing. Falling back to Admin Auth.');
-      const adminEmail = process.env.ADMIN_EMAIL;
-      const adminPassword = process.env.ADMIN_PASSWORD;
+      const adminEmail = env.ADMIN_EMAIL;
+      const adminPassword = env.ADMIN_PASSWORD;
 
       if (!adminEmail || !adminPassword) {
         throw new Error('Missing Admin credentials');

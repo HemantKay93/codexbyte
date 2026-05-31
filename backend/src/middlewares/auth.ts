@@ -6,8 +6,10 @@ import logger from '../services/logger.js';
 import { redis } from '../config/redis.js';
 
 import { AppError } from './error.js';
+import { env } from '../config/env.js';
 
-const jwtSecret = process.env.JWT_SECRET;
+
+const jwtSecret = env.JWT_SECRET;
 
 if (!jwtSecret) {
   throw new Error('JWT_SECRET is required for backend authentication');

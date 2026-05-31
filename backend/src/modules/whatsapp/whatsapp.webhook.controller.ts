@@ -11,6 +11,8 @@ import { getAdminClient } from '../../config/supabase.js';
 import { redis } from '../../config/redis.js';
 
 import { WhatsAppRepository } from './whatsapp.repository.js';
+import { env } from '../../config/env.js';
+
 
 const repository = new WhatsAppRepository();
 
@@ -112,7 +114,7 @@ export const verifyWebhook = async (req: Request, res: Response) => {
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
 
-    let expectedToken = process.env.WHATSAPP_VERIFY_TOKEN;
+    let expectedToken = env.WHATSAPP_VERIFY_TOKEN;
     const admin = await getAdminClient();
     const { data: metaConfig } = await admin
       .from('provider_configs')
@@ -146,7 +148,7 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
   // 1. Signature Verification for Meta Cloud API
   const signature = req.headers['x-hub-signature-256'] as string;
   if (signature) {
-    const appSecret = process.env.WHATSAPP_APP_SECRET;
+    const appSecret = env.WHATSAPP_APP_SECRET;
     if (appSecret) {
       const elements = signature.split('=');
       const signatureHash = elements[1];

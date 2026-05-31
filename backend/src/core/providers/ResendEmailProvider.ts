@@ -3,6 +3,8 @@ import { Resend } from 'resend';
 import logger from '../../services/logger.js';
 
 import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
+import { env } from '../../config/env.js';
+
 
 export class ResendEmailProvider implements IProvider {
   public readonly name = 'resend-email';
@@ -11,7 +13,7 @@ export class ResendEmailProvider implements IProvider {
   async initialize(config?: any): Promise<void> {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     // eslint-disable-line @typescript-eslint/no-explicit-any
-    const apiKey = config?.resendApiKey || process.env.RESEND_API_KEY;
+    const apiKey = config?.resendApiKey || env.RESEND_API_KEY;
     if (apiKey) {
       this.client = new Resend(apiKey);
       logger.info('[ResendEmailProvider] Initialized successfully');

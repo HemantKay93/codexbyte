@@ -48,14 +48,21 @@ export const useCartStore = create<CartState>()(
             items: items.map((i) =>
               i.id === item.id ? { ...i, quantity: i.quantity + itemQty } : i
             ),
+            appliedDiscount: null,
           });
         } else {
-          set({ items: [...items, { ...item, price: itemPrice, quantity: itemQty }] });
+          set({ 
+            items: [...items, { ...item, price: itemPrice, quantity: itemQty }],
+            appliedDiscount: null 
+          });
         }
       },
 
       removeItem: (id) => {
-        set({ items: get().items.filter((i) => i.id !== id) });
+        set({ 
+          items: get().items.filter((i) => i.id !== id),
+          appliedDiscount: null 
+        });
       },
 
       updateQuantity: (id, quantity) => {
@@ -66,6 +73,7 @@ export const useCartStore = create<CartState>()(
         }
         set({
           items: get().items.map((i) => (i.id === id ? { ...i, quantity: newQty } : i)),
+          appliedDiscount: null
         });
       },
 

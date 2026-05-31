@@ -18,6 +18,10 @@ export class SupplierService {
     return await supplierRepo.findAllSuppliers();
   }
 
+  async getSupplierById(id: string) {
+    return await supplierRepo.findSupplierById(id);
+  }
+
   async createSupplier(data: any) {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     const validatedData = createSupplierSchema.parse(data);

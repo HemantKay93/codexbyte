@@ -1,6 +1,8 @@
 import { Resend } from 'resend';
+import { env } from '../config/env.js';
 
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
+const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 export class EmailService {
   static async sendEmail(to: string, subject: string, html: string) {

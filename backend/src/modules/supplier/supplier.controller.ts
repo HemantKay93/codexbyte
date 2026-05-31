@@ -13,6 +13,12 @@ export const getSuppliers = catchAsync(async (req: Request, res: Response) => {
   res.json(createResponse(suppliers, 'Suppliers fetched successfully'));
 });
 
+export const getSupplierById = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const supplier = await supplierService.getSupplierById(id);
+  res.json(createResponse(supplier, 'Supplier fetched successfully'));
+});
+
 export const createSupplier = catchAsync(async (req: Request, res: Response) => {
   const supplier = await supplierService.createSupplier(req.body);
   res.status(201).json(createResponse(supplier, 'Supplier created successfully'));

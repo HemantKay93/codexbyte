@@ -14,6 +14,18 @@ export class SupplierRepository {
     return data;
   }
 
+  async findSupplierById(id: string) {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('suppliers')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error || !data) throw new AppError('Supplier not found', 404);
+    return data;
+  }
+
   async createSupplier(supplierData: any) {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     // eslint-disable-line @typescript-eslint/no-explicit-any

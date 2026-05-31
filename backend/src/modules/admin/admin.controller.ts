@@ -209,7 +209,7 @@ export const getTeamMembers = catchAsync(async (req: Request, res: Response) => 
   const { data, error } = await admin
     .from('user_profiles')
     .select('*')
-    .neq('role', 'customer')
+    .in('role', ['admin', 'super-admin', 'manager', 'support', 'warehouse-staff'])
     .order('created_at', { ascending: false });
 
   if (error) throw error;

@@ -1,8 +1,4 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { createServer } from 'http';
-
-import dotenv from 'dotenv';
 
 import logger from './services/logger.js';
 import { validateEnvironment } from './config/env.js';
@@ -11,15 +7,12 @@ import { bootstrapWorkers } from './bootstrap/workers.js';
 import { bootstrapSockets } from './bootstrap/sockets.js';
 import { bootstrapEvents } from './bootstrap/events.js';
 import { bootstrapTelemetry } from './bootstrap/telemetry.js';
-
-// Environment Setup
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+import { env } from './config/env.js';
 
 // Run startup environment variable validation
 validateEnvironment();
 
-const PORT = process.env.PORT || 8080;
+const PORT = env.PORT || 8080;
 
 // Initialize telemetry/tracing
 bootstrapTelemetry();
@@ -41,7 +34,7 @@ bootstrapSockets(httpServer);
 httpServer.listen(Number(PORT), '0.0.0.0', () => {
   logger.info(`🚀 Backend is LIVE!`);
   logger.info(`URL: http://0.0.0.0:${PORT}`);
-  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`Environment: ${env.NODE_ENV}`);
 });
 
 process.on('unhandledRejection', (reason, promise) => {

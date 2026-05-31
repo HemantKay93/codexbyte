@@ -3,6 +3,8 @@ import axios, { AxiosInstance } from 'axios';
 import logger from '../../services/logger.js';
 
 import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
+import { env } from '../../config/env.js';
+
 
 export class BrevoProvider implements IProvider {
   public readonly name = 'brevo-email';
@@ -12,7 +14,7 @@ export class BrevoProvider implements IProvider {
   async initialize(config?: any): Promise<void> {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     // eslint-disable-line @typescript-eslint/no-explicit-any
-    const brevoApiKey = config?.brevoApiKey || process.env.BREVO_API_KEY;
+    const brevoApiKey = config?.brevoApiKey || env.BREVO_API_KEY;
     if (!brevoApiKey) {
       logger.warn('[BrevoProvider] Brevo API Key is missing');
     } else {

@@ -5,9 +5,11 @@ import Razorpay from 'razorpay';
 import { getAdminClient } from '../config/supabase.js';
 import { AppError } from '../middlewares/error.js';
 import logger from '../services/logger.js';
+import { env } from '../config/env.js';
 
-const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+
+const RAZORPAY_KEY_ID = env.RAZORPAY_KEY_ID;
+const RAZORPAY_KEY_SECRET = env.RAZORPAY_KEY_SECRET;
 
 const razorpay =
   RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET
@@ -89,14 +91,14 @@ export class PaymentWorkflow {
 
     return {
       provider: 'razorpay',
-      key: process.env.RAZORPAY_KEY_ID,
+      key: env.RAZORPAY_KEY_ID,
       order,
     };
   }
 
   static verifyPayment(orderId: string, paymentId: string, signature: string): boolean {
     const expectedSignature = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || '')
+      .createHmac('sha256', env.RAZORPAY_KEY_SECRET || '')
       .update(`${orderId}|${paymentId}`)
       .digest('hex');
 

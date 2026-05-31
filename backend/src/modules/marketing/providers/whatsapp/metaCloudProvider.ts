@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 import logger from '../../../../services/logger.js';
+import { env } from '../../../../config/env.js';
+
 
 import {
   IWhatsAppProvider,
@@ -18,8 +20,8 @@ export class MetaCloudProvider implements IWhatsAppProvider {
   async initialize(config?: any): Promise<void> {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     // eslint-disable-line @typescript-eslint/no-explicit-any
-    this.accessToken = config?.accessToken || process.env.WHATSAPP_ACCESS_TOKEN || null;
-    this.phoneNumberId = config?.phoneNumberId || process.env.WHATSAPP_PHONE_NUMBER_ID || null;
+    this.accessToken = config?.accessToken || env.WHATSAPP_ACCESS_TOKEN || null;
+    this.phoneNumberId = config?.phoneNumberId || env.WHATSAPP_PHONE_NUMBER_ID || null;
 
     if (!this.accessToken || !this.phoneNumberId) {
       logger.warn('[MetaCloudProvider] Initialized without credentials. Messages will fail.');

@@ -190,6 +190,11 @@ export const AdminService = {
     return response.data;
   },
 
+  getSupplierById: async (id: string) => {
+    const response = await apiClient.get(`/suppliers/${id}`);
+    return response.data;
+  },
+
   createSupplier: async (data: any) => {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     const response = await apiClient.post('/suppliers', data);

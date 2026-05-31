@@ -64,67 +64,77 @@ export function CreatePOModal({ supplier, onClose, onSuccess }: CreatePOModalPro
           </Button>
         </div>
 
-        <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
-          <Input
-            label="Expected Delivery (Optional)"
-            type="date"
-            value={expectedDelivery}
-            onChange={(e) => setExpectedDelivery(e.target.value)}
-          />
+        <div className="p-6 space-y-8 max-h-[60vh] overflow-y-auto">
+          <div className="w-1/2">
+            <Input
+              label="Expected Delivery (Optional)"
+              type="date"
+              fullWidth
+              value={expectedDelivery}
+              onChange={(e) => setExpectedDelivery(e.target.value)}
+            />
+          </div>
 
-          <div className="space-y-4 mt-6">
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-on-surface">PO Items</h3>
-              <Button variant="outline" size="sm" onClick={handleAddItem}>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-outline-variant">
+              <h3 className="font-semibold text-on-surface text-lg">Order Items</h3>
+              <Button variant="outline" size="sm" onClick={handleAddItem} className="bg-surface">
                 <Plus className="h-4 w-4 mr-2" /> Add Item
               </Button>
             </div>
 
-            {items.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-end gap-3 p-4 bg-surface-container-lowest border border-outline-variant rounded-xl"
-              >
-                <div className="flex-1">
-                  <Input
-                    label="Product ID (UUID)"
-                    value={item.productId}
-                    onChange={(e) => handleChangeItem(index, 'productId', e.target.value)}
-                    placeholder="Enter existing product ID"
-                  />
-                </div>
-                <div className="w-24">
-                  <Input
-                    label="Qty"
-                    type="number"
-                    min="1"
-                    value={item.quantity.toString()}
-                    onChange={(e) =>
-                      handleChangeItem(index, 'quantity', parseInt(e.target.value) || 1)
-                    }
-                  />
-                </div>
-                <div className="w-32">
-                  <Input
-                    label="Unit Cost ($)"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={item.unitCost.toString()}
-                    onChange={(e) =>
-                      handleChangeItem(index, 'unitCost', parseFloat(e.target.value) || 0)
-                    }
-                  />
-                </div>
-                <Button
-                  variant="ghost"
-                  className="text-error mb-1 p-2 h-10 w-10"
-                  onClick={() => handleRemoveItem(index)}
+            <div className="space-y-3">
+              {items.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-start gap-4 p-4 bg-surface-container rounded-xl border border-outline-variant/30 transition-all hover:border-outline-variant"
                 >
-                  <Trash className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
+                  <div className="flex-1">
+                    <Input
+                      label="Product ID (UUID)"
+                      fullWidth
+                      value={item.productId}
+                      onChange={(e) => handleChangeItem(index, 'productId', e.target.value)}
+                      placeholder="Enter existing product ID"
+                    />
+                  </div>
+                  <div className="w-28 shrink-0">
+                    <Input
+                      label="Qty"
+                      type="number"
+                      min="1"
+                      fullWidth
+                      value={item.quantity.toString()}
+                      onChange={(e) =>
+                        handleChangeItem(index, 'quantity', parseInt(e.target.value) || 1)
+                      }
+                    />
+                  </div>
+                  <div className="w-36 shrink-0">
+                    <Input
+                      label="Unit Cost ($)"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      fullWidth
+                      value={item.unitCost.toString()}
+                      onChange={(e) =>
+                        handleChangeItem(index, 'unitCost', parseFloat(e.target.value) || 0)
+                      }
+                    />
+                  </div>
+                  <div className="pt-7 flex items-center justify-center shrink-0">
+                    <Button
+                      variant="ghost"
+                      className="text-error hover:bg-error/10 hover:text-error h-10 w-10 p-0 rounded-lg"
+                      onClick={() => handleRemoveItem(index)}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

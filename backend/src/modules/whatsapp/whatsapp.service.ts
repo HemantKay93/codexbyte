@@ -3,6 +3,8 @@ import logger from '../../services/logger.js';
 
 import { WhatsAppMessagePayload } from './whatsapp.types.js';
 import { WhatsAppRepository } from './whatsapp.repository.js';
+import { env } from '../../config/env.js';
+
 
 const repository = new WhatsAppRepository();
 
@@ -25,7 +27,7 @@ export class WhatsAppService {
     });
 
     const isServerlessOrProd =
-      !!process.env.VERCEL || !!process.env.RENDER || process.env.NODE_ENV === 'production';
+      !!env.VERCEL || !!env.RENDER || env.NODE_ENV === 'production';
 
     if (isServerlessOrProd) {
       logger.info(

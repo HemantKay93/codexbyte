@@ -7,13 +7,14 @@ export function SystemHealthWidget() {
   const [health, setHealth] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
+    setIsLoading(true);
     AdminService.getIntegrationHealth()
       .then((res) => {
         if (mounted) {
-          // If the interceptor unwrapped it, res might be the actual object, or it might be in res.data
           setHealth(res?.data || res);
         }
       })
@@ -21,6 +22,11 @@ export function SystemHealthWidget() {
         if (mounted) {
           console.error('Failed to fetch system health:', err);
           setError(err.customMessage || err.message || 'Failed to load system health');
+        }
+      })
+      .finally(() => {
+        if (mounted) {
+          setIsLoading(false);
         }
       });
 
@@ -42,6 +48,30 @@ export function SystemHealthWidget() {
         </div>
         <div className="mt-2 text-sm text-error">
           Failed to load health status: {error}. Please ensure you are logged in as an admin.
+        </div>
+      </Card>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Card className="col-span-1 md:col-span-2 mt-6 border-l-4 border-l-outline bg-surface-container-low animate-pulse">
+        <div className="pb-2">
+          <div className="flex items-center gap-2 font-medium text-on-surface-variant">
+            <Activity className="h-5 w-5 opacity-50" />
+            Checking System & Integration Health...
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="flex flex-col space-y-2">
+              <div className="h-3 w-20 bg-outline-variant/30 rounded" />
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-outline-variant/50" />
+                <div className="h-4 w-16 bg-outline-variant/30 rounded" />
+              </div>
+            </div>
+          ))}
         </div>
       </Card>
     );

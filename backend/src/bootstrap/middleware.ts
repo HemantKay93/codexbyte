@@ -7,6 +7,8 @@ import express from 'express';
 import logger from '../services/logger.js';
 import { requestIdCorrelation } from '../middlewares/requestId.js';
 import { requestLogger } from '../middlewares/requestLogger.js';
+import { env } from '../config/env.js';
+
 
 export function bootstrapMiddleware(app: Express) {
   app.set('trust proxy', 1);
@@ -14,9 +16,31 @@ export function bootstrapMiddleware(app: Express) {
   // Security Middlewares
   app.use(
     helmet({
-      crossOriginResourcePolicy: false,
-      crossOriginOpenerPolicy: false,
-      contentSecurityPolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Support frontend integrations
+          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+          fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+          imgSrc: ["'self'", "data:", "https://*"], // Relaxed to support external product images
+          connectSrc: ["'self'", "https://*"], // Allowed for external APIs
+          frameSrc: ["'none'"],
+          objectSrc: ["'none'"],
+          upgradeInsecureRequests: [],
+        },
+      },
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
+      referrerPolicy: {
+        policy: 'strict-origin-when-cross-origin',
+      },
+      frameguard: {
+        action: 'deny',
+      },
+      xContentTypeOptions: true,
     })
   );
 
@@ -38,7 +62,7 @@ export function bootstrapMiddleware(app: Express) {
           'https://shop.byteevolvr.com',
         ];
 
-        const envOrigins = (process.env.ALLOWED_ORIGINS || '').split(',').map((o) => o.trim());
+        const envOrigins = (env.ALLOWED_ORIGINS || '').split(',').map((o) => o.trim());
         const allAllowed = [...allowedOrigins, ...envOrigins].filter(Boolean);
 
         if (!origin || allAllowed.includes(origin) || origin.startsWith('http://localhost:')) {

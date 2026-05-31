@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
 import {
   Search,
@@ -58,8 +59,8 @@ export function SuppliersPage() {
         AdminService.getSuppliers(),
         AdminService.getPurchaseOrders(),
       ]);
-      setSuppliers(Array.isArray(suppRes?.data) ? suppRes.data : []);
-      setPurchaseOrders(Array.isArray(poRes?.data) ? poRes.data : []);
+      setSuppliers(Array.isArray(suppRes) ? suppRes : []);
+      setPurchaseOrders(Array.isArray(poRes) ? poRes : []);
     } catch (error) {
       console.error('Failed to fetch supplier data:', error);
     } finally {
@@ -190,7 +191,7 @@ export function SuppliersPage() {
                   .map((supplier) => (
                     <TableRow key={supplier.id}>
                       <TableCell className="font-medium text-primary hover:underline cursor-pointer">
-                        {supplier.name}
+                        <Link to={`/suppliers/${supplier.id}`}>{supplier.name}</Link>
                       </TableCell>
                       <TableCell>
                         <div className="text-sm text-on-surface">{supplier.contact_name}</div>

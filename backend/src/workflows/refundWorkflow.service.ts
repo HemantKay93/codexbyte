@@ -5,9 +5,11 @@ import { getAdminClient } from '../config/supabase.js';
 import { AppError } from '../middlewares/error.js';
 
 import { NotificationWorkflow } from './notificationWorkflow.service.js';
+import { env } from '../config/env.js';
 
-const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+
+const RAZORPAY_KEY_ID = env.RAZORPAY_KEY_ID;
+const RAZORPAY_KEY_SECRET = env.RAZORPAY_KEY_SECRET;
 
 const razorpay =
   RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET

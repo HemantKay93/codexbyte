@@ -3,11 +3,13 @@ import { fileURLToPath } from 'url';
 
 import { Redis } from 'ioredis';
 import dotenv from 'dotenv';
+import { env } from './/env.js';
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-let REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+let REDIS_URL = env.REDIS_URL || 'redis://localhost:6379';
 
 // Auto-fix: Upstash requires TLS but sometimes users copy the non-TLS string
 if (REDIS_URL.includes('upstash.io') && REDIS_URL.startsWith('redis://')) {

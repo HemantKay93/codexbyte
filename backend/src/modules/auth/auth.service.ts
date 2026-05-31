@@ -3,9 +3,11 @@ import bcrypt from 'bcryptjs';
 
 import { supabase, getAdminClient } from '../../config/supabase.js';
 import { AppError } from '../../middlewares/error.js';
+import { env } from '../../config/env.js';
 
-const jwtSecret = process.env.JWT_SECRET;
-const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH;
+
+const jwtSecret = env.JWT_SECRET;
+const ADMIN_PASSWORD_HASH = env.ADMIN_PASSWORD_HASH;
 
 if (!jwtSecret) {
   throw new Error('JWT_SECRET is required for backend authentication');
@@ -15,35 +17,11 @@ const JWT_SECRET: string = jwtSecret;
 
 export class AuthService {
   async login(email: string, password: string, options: { requireAdmin?: boolean } = {}) {
-    // 1. Check hardcoded admin
-    if (
-      email === 'admin@byteevolvr.com' &&
-      ADMIN_PASSWORD_HASH &&
-      bcrypt.compareSync(password, ADMIN_PASSWORD_HASH)
-    ) {
-      const token = jwt.sign(
-        { id: '00000000-0000-0000-0000-000000000000', email, role: 'admin' },
-        JWT_SECRET,
-        {
-          expiresIn: '12h',
-        }
-      );
-      return {
-        token,
-        user: {
-          id: '00000000-0000-0000-0000-000000000000',
-          email,
-          full_name: 'Main Admin',
-          role: 'admin',
-          user_metadata: { full_name: 'Main Admin', role: 'admin' },
-        },
-      };
-    }
-
-    // 2. Check Supabase
+    // 1. Authenticate via Identity Provider (Supabase)
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      throw new AppError(error.message, 401);
+      // Prevent internal error details from leaking to the client
+      throw new AppError('Invalid credentials', 401);
     }
 
     // 3. Check profile role
@@ -73,16 +51,6 @@ export class AuthService {
   }
 
   async getMe(userId: string) {
-    if (userId === '00000000-0000-0000-0000-000000000000' || userId === 'admin') {
-      return {
-        id: '00000000-0000-0000-0000-000000000000',
-        email: 'admin@byteevolvr.com',
-        full_name: 'Main Admin',
-        role: 'admin',
-        user_metadata: { full_name: 'Main Admin', role: 'admin' },
-      };
-    }
-
     const admin = await getAdminClient();
     const {
       data: { user },

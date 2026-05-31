@@ -90,6 +90,9 @@ const InvoiceTemplatePage = lazy(() =>
 const SuppliersPage = lazy(() =>
   import('./pages/SuppliersPage').then((m) => ({ default: m.SuppliersPage }))
 );
+const SupplierProfilePage = lazy(() =>
+  import('./pages/SupplierProfilePage').then((m) => ({ default: m.SupplierProfilePage }))
+);
 const MultiStorePage = lazy(() =>
   import('./pages/MultiStorePage').then((m) => ({ default: m.MultiStorePage }))
 );
@@ -187,6 +190,7 @@ const Main = () => {
                   <Route path="/cms" element={<CMSBuilderPage />} />
                   <Route path="/invoice-template" element={<InvoiceTemplatePage />} />
                   <Route path="/suppliers" element={<SuppliersPage />} />
+                  <Route path="/suppliers/:id" element={<SupplierProfilePage />} />
                   <Route path="/stores" element={<MultiStorePage />} />
                   <Route path="/tax-compliance" element={<TaxCompliancePage />} />
                   <Route path="/activity-log" element={<ActivityLogPage />} />

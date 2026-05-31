@@ -70,11 +70,10 @@ export function CartPage() {
   const finalTotalAmount = Math.max(0, total + total * 0.1 - (appliedDiscount?.discount || 0));
 
   useEffect(() => {
-    if (items.length > 0) {
-      // eslint-disable-line @typescript-eslint/no-floating-promises
-      const fetchRelated = async () => {
-        try {
-          const allProducts = await ProductService.getProducts();
+    const fetchRelated = async () => {
+      try {
+        const allProducts = await ProductService.getProducts();
+        if (items.length > 0) {
           const cartItemIds = items.map((item) => item.id);
           const cartProducts = allProducts.filter((p) => cartItemIds.includes(p.id!));
           const cartCategories = [...new Set(cartProducts.map((p) => p.category))];
@@ -88,27 +87,78 @@ export function CartPage() {
           }
 
           setRelatedProducts(related.slice(0, 4));
-        } catch (error) {
-          console.error('Failed to fetch related products:', error);
+        } else {
+          // If cart is empty, show some generic recommendations
+          setRelatedProducts(allProducts.slice(0, 4));
         }
-      };
-      fetchRelated();
-    }
+      } catch (error) {
+        console.error('Failed to fetch related products:', error);
+      }
+    };
+    fetchRelated();
   }, [items]);
 
   if (items.length === 0) {
     return (
-      <div className="flex h-[calc(100vh-160px)] flex-col items-center justify-center space-y-4">
-        <ShoppingCart className="w-16 h-16 text-stitch-outline" />
-        <h2 className="text-2xl font-bold text-white">Your Crate is Empty</h2>
-        <p className="text-stitch-on-surface-variant">Looks like you haven't added any gear yet.</p>
-        <Link
-          to="/shop"
-          className="mt-4 bg-stitch-primary text-stitch-on-primary px-8 py-3 rounded-full font-stitch-cta-button hover:brightness-110 transition-all uppercase"
-        >
-          Explore Shop
-        </Link>
-      </div>
+      <main className="flex-grow pt-24 pb-stitch-section-gap px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop max-w-7xl mx-auto w-full min-h-[calc(100vh-160px)] flex flex-col">
+        <div className="flex flex-col items-center justify-center space-y-4 py-16">
+          <ShoppingCart className="w-16 h-16 text-stitch-outline" />
+          <h2 className="text-2xl font-bold text-white">Your Crate is Empty</h2>
+          <p className="text-stitch-on-surface-variant">Looks like you haven't added any gear yet.</p>
+          <Link
+            to="/shop"
+            className="mt-4 bg-stitch-primary text-stitch-on-primary px-8 py-3 rounded-full font-stitch-cta-button hover:brightness-110 transition-all uppercase"
+          >
+            Explore Shop
+          </Link>
+        </div>
+        
+        {/* Recommended Products for Empty Cart */}
+        {relatedProducts.length > 0 && (
+          <div className="mt-8 border-t border-stitch-outline-variant/20 pt-12">
+            <h3 className="font-stitch-headline-md text-center text-white mb-8 tracking-widest uppercase">
+              POPULAR_GEAR_TO_START
+            </h3>
+            <div className="flex flex-wrap justify-center gap-stitch-gutter">
+              {relatedProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="w-[240px] stitch-glass-panel rounded-xl p-4 group flex flex-col justify-between"
+                >
+                  <Link
+                    to={`/shop/product/${product.id}`}
+                    className="block h-40 bg-stitch-surface rounded mb-4 overflow-hidden cursor-pointer"
+                  >
+                    <img
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      src={product.image_url || 'https://via.placeholder.com/200'}
+                      alt={product.name}
+                    />
+                  </Link>
+                  <div>
+                    <Link
+                      to={`/shop/product/${product.id}`}
+                      className="font-stitch-label-sm text-white text-sm truncate block hover:text-stitch-primary transition-colors"
+                    >
+                      {product.name}
+                    </Link>
+                    <p className="font-stitch-label-sm text-stitch-secondary text-sm mt-2 mb-4">
+                      {currencySymbol}
+                      {product.price.toFixed(2)}
+                    </p>
+                    <button
+                      onClick={() => addItem(product)}
+                      className="w-full py-2 bg-stitch-primary/20 text-stitch-primary hover:bg-stitch-primary/40 font-bold text-xs rounded transition-colors flex items-center justify-center gap-2 uppercase tracking-wide"
+                    >
+                      <Plus className="w-4 h-4" /> ADD TO CRATE
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </main>
     );
   }
 
