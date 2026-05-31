@@ -54,9 +54,8 @@ export const handleMetaWhatsAppWebhook = async (req: Request, res: Response) => 
     const expectedSignature = `sha256=${crypto.createHmac('sha256', env.WHATSAPP_APP_SECRET).update(rawBody).digest('hex')}`;
     
     if (!CryptoUtils.constantTimeCompare(signature, expectedSignature)) {
-       console.warn('[Webhooks] Invalid signature on Meta webhook (bypassed for dev/debug)');
-       // res.status(401).send('Invalid signature');
-       // return;
+       res.status(401).send('Invalid signature');
+       return;
     }
   }
 
