@@ -115,10 +115,10 @@ setupDLQ(automationWorker);
 setupDLQ(whatsappWorker);
 
 import { whatsappIngestionWorker, emailIngestionWorker } from './support-ingestion.worker.js';
+import { whatsappIngestionQueue, emailIngestionQueue, supportSlaQueue } from '../core/queues/index.js';
+
 setupDLQ(whatsappIngestionWorker);
 setupDLQ(emailIngestionWorker);
-
-import { whatsappIngestionQueue, emailIngestionQueue, supportSlaQueue } from '../core/queues/index.js';
 
 // Telemetry loop for Admin Panel Dashboard
 const queues = [

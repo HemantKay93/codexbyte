@@ -44,6 +44,8 @@ export const createTicket = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+import { SupportService } from './support.service.js';
+
 export const updateTicket = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const data = await supportRepo.update(id as string, req.body);
@@ -53,8 +55,6 @@ export const updateTicket = catchAsync(async (req: Request, res: Response) => {
     data,
   });
 });
-
-import { SupportService } from './support.service.js';
 
 export const replyTicket = catchAsync(async (req: AuthRequest, res: Response) => {
   const { id } = req.params;

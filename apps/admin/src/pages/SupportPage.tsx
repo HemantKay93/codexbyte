@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input, Avatar } from '@byteevolvr/ui';
 import { LifeBuoy, Filter, MessageSquare, Loader2, Send, Phone, Mail, Clock, Shield, Search, MoreVertical, RefreshCcw } from 'lucide-react';
-import { SupportService } from '@byteevolvr/api-client';
-import { useSocket } from '../contexts/SocketContext'; // Assuming socket context exists
-import { useAuth } from '../contexts/AuthContext';
+import { SupportService, SocketService } from '@byteevolvr/api-client';
+import { useAuthStore } from '@byteevolvr/store';
 
 export function SupportPage() {
   const [tickets, setTickets] = useState<any[]>([]);
@@ -13,25 +12,28 @@ export function SupportPage() {
   const [replying, setReplying] = useState(false);
   const [filter, setFilter] = useState('all');
 
-  const { socket } = useSocket();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     fetchTickets();
   }, []);
 
   useEffect(() => {
-    if (!socket) return;
+    const socket = SocketService.connect('admin-session');
+    
     const handleSystemAlert = (data: any) => {
       if (data.event === 'new-ticket' || data.event === 'new-message') {
         fetchTickets(); // Optimistic refetch
       }
     };
+    
     socket.on('system_alert', handleSystemAlert);
+    
     return () => {
       socket.off('system_alert', handleSystemAlert);
+      SocketService.disconnect();
     };
-  }, [socket]);
+  }, []);
 
   async function fetchTickets() {
     setLoading(true);

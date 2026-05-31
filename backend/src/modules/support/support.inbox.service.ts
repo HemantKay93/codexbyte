@@ -138,9 +138,11 @@ export class SupportInboxService {
     
     // Notify via socket
     try {
-      // @ts-ignore
+      // @ts-expect-error - socket gateway types
       SocketGateway.broadcastSystemAlert('new-ticket', `New ticket created: ${data.subject}`);
-    } catch (err) {}
+    } catch (err) {
+      // ignore
+    }
     
     return data;
   }
@@ -172,9 +174,11 @@ export class SupportInboxService {
 
     // Notify via socket
     try {
-      // @ts-ignore
+      // @ts-expect-error - socket gateway types
       SocketGateway.broadcastSystemAlert('new-message', `New message on ticket #${ticketId.substring(0,8)}`);
-    } catch (err) {}
+    } catch (err) {
+      // ignore
+    }
   }
 
   private determinePriority(text: string = ''): string {
