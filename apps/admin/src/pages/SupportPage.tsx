@@ -234,7 +234,9 @@ export function SupportPage() {
 
               {/* Thread Messages */}
               <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                {(selectedTicket.messages || []).map((msg: any) => {
+                {[...(selectedTicket.messages || [])]
+                  .sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+                  .map((msg: any) => {
                   const isInbound = msg.direction === 'inbound';
                   return (
                     <div key={msg.id} className={`flex ${isInbound ? 'justify-start' : 'justify-end'}`}>

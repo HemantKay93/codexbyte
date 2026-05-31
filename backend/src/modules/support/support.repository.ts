@@ -10,7 +10,8 @@ export class SupportRepository {
         *,
         user:user_id (
           full_name
-        )
+        ),
+        messages:support_messages (*)
       `
       )
       .order('updated_at', { ascending: false });
