@@ -11,6 +11,7 @@ export function SupportPage() {
   const [replyText, setReplyText] = useState('');
   const [replying, setReplying] = useState(false);
   const [filter, setFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { user } = useAuthStore();
 
@@ -121,7 +122,13 @@ export function SupportPage() {
   };
 
   const selectedTicket = tickets.find(t => t.id === selectedTicketId);
-  const filteredTickets = tickets.filter(t => filter === 'all' || t.status === filter);
+  const filteredTickets = tickets.filter(t => {
+    const matchesFilter = filter === 'all' || t.status === filter;
+    const matchesSearch = !searchQuery || 
+      t.subject?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      t.customer_name?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesFilter && matchesSearch;
+  });
 
   return (
     <div className="h-[calc(100vh-6rem)] flex flex-col space-y-4">
@@ -137,7 +144,7 @@ export function SupportPage() {
           <Button variant="outline" onClick={fetchTickets} disabled={loading}>
             <RefreshCcw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
           </Button>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={() => alert('Manual ticket creation coming soon')}>
             <LifeBuoy className="h-4 w-4" />
             New Ticket
           </Button>
@@ -155,6 +162,8 @@ export function SupportPage() {
               <Input 
                 placeholder="Search conversations..." 
                 className="w-full pl-9"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
@@ -219,7 +228,7 @@ export function SupportPage() {
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={handleAssign}>Assign</Button>
                   <Button variant="outline" size="sm" onClick={handleResolve}>Resolve</Button>
-                  <Button variant="ghost" size="sm"><MoreVertical className="h-4 w-4" /></Button>
+                  <Button variant="ghost" size="sm" onClick={() => alert('More options coming soon')}><MoreVertical className="h-4 w-4" /></Button>
                 </div>
               </div>
 
@@ -262,7 +271,7 @@ export function SupportPage() {
                   </div>
                   <div className="flex justify-between items-center">
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="sm" className="text-on-surface-variant">Internal Note</Button>
+                      <Button variant="ghost" size="sm" className="text-on-surface-variant" onClick={() => alert('Internal notes coming soon')}>Internal Note</Button>
                     </div>
                     <Button onClick={handleReply} disabled={replying || !replyText.trim()} className="gap-2">
                       {replying ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
