@@ -160,12 +160,31 @@ export function ViewInvoiceModal({
           </div>
         </div>
       </Card>
-      {/* Basic print styles */}
       <style>{`
         @media print {
-          body * { visibility: hidden; }
-          #invoice-printable-area, #invoice-printable-area * { visibility: visible; }
-          #invoice-printable-area { position: absolute; left: 0; top: 0; width: 100%; }
+          body * {
+            visibility: hidden;
+          }
+          #invoice-printable-area, #invoice-printable-area * {
+            visibility: visible;
+          }
+          #invoice-printable-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+          }
+          /* Ensure the modal overlay doesn't prevent scrolling */
+          .fixed {
+            position: absolute !important;
+          }
+          .overflow-y-auto {
+            overflow: visible !important;
+          }
+          /* Hide scrollbar on modal for clean print */
+          .max-h-[90vh] {
+            max-height: none !important;
+          }
         }
       `}</style>
     </div>
