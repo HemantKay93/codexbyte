@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, Button } from '@byteevolvr/ui';
 import { Download, Printer, Loader2 } from 'lucide-react';
 import { AccountingService } from '@byteevolvr/api-client';

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Card, Button, Badge } from '@byteevolvr/ui';
-import { IndianRupee, FileText, ArrowUpRight, ArrowDownRight, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { Card, Button } from '@byteevolvr/ui';
+import { IndianRupee, FileText, ArrowDownRight, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AccountingService } from '@byteevolvr/api-client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';

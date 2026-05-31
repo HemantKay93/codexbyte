@@ -12,7 +12,6 @@ export function ChartOfAccountsPage() {
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [type, setType] = useState('Asset');
-  const [currency, setCurrency] = useState('INR');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchAccounts = async () => {
@@ -41,7 +40,7 @@ export function ChartOfAccountsPage() {
         code,
         name,
         type,
-        currency
+        currency: 'INR'
       });
       setIsModalOpen(false);
       setCode('');
@@ -100,7 +99,7 @@ export function ChartOfAccountsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant">
-                {accs.map(acc => (
+                {(accs as any[]).map((acc: any) => (
                   <tr key={acc.id} className="hover:bg-surface-variant/30">
                     <td className="py-3 px-4 text-on-surface-variant font-mono">{acc.code}</td>
                     <td className="py-3 px-4 font-medium text-on-surface">{acc.name}</td>
