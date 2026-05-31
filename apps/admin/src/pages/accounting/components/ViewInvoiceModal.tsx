@@ -289,24 +289,17 @@ export function ViewInvoiceModal({
                 </div>
               </div>
 
-              <div className="address-section">
+              <div className="address-section" style={{ gridTemplateColumns: '1fr' }}>
                 <div className="address-box">
                   <h3>Billed To</h3>
                   <div className="address-content">
                     <p className="name">{invoice.customer_name || 'Customer'}</p>
-                    {invoice.customer_email && <p>{invoice.customer_email}</p>}
-                    {invoice.customer_phone && <p>Phone: {invoice.customer_phone}</p>}
-                    {invoice.customer_gst && <p>GSTIN: {invoice.customer_gst}</p>}
-                  </div>
-                </div>
-                <div className="address-box">
-                  <h3>Billing Address</h3>
-                  <div className="address-content">
-                    {invoice.customer_address ? (
+                    {invoice.customer_address && (
                       <p dangerouslySetInnerHTML={{ __html: invoice.customer_address.replace(/\n/g, '<br/>') }}></p>
-                    ) : (
-                      <p>As per Billed To</p>
                     )}
+                    {invoice.customer_phone && <p>Phone: {invoice.customer_phone}</p>}
+                    {invoice.customer_email && <p>Email: {invoice.customer_email}</p>}
+                    {invoice.customer_gst && <p style={{ marginTop: '4px' }}>GSTIN: {invoice.customer_gst}</p>}
                   </div>
                 </div>
               </div>
