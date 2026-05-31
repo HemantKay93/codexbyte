@@ -39,57 +39,74 @@ export const getIntegrationHealth = catchAsync(async (req: Request, res: Respons
     whatsapp: { status: 'unknown', details: '' },
   };
 
-  // Database
-  try {
-    const adminClient = await getAdminClient();
-    const { error } = await adminClient.from('user_profiles').select('id').limit(1);
-    health.database = error
-      ? { status: 'error', details: error.message }
-      : { status: 'connected', details: 'Connected to Supabase' };
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-  } catch (e: any) {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-    health.database = { status: 'error', details: e.message };
-  }
+  const timeoutMs = 5000;
 
-  // Redis
-  try {
-    const ping = await redis.ping();
-    health.redis =
-      ping === 'PONG'
-        ? { status: 'connected', details: 'Connected to Redis' }
-        : // eslint-disable-line @typescript-eslint/no-explicit-any
-          { status: 'error', details: 'No PONG response' };
-  } catch (e: any) {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-    health.redis = { status: 'error', details: e.message };
-  }
+  const withTimeout = <T>(promise: Promise<T>, name: string): Promise<T> => {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error(`${name} health check timed out`)), timeoutMs);
+      promise.then(resolve).catch(reject).finally(() => clearTimeout(timer));
+    });
+  };
 
-  // Email
-  try {
-    const emailProvider = await ProviderService.getEmailProvider();
-    const isHealthy = await emailProvider.isHealthy();
-    health.email = isHealthy
-      ? // eslint-disable-line @typescript-eslint/no-explicit-any
-        { status: 'connected', details: `Provider: ${emailProvider.name}` }
-      : { status: 'error', details: 'Health check failed' };
-  } catch (e: any) {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-    health.email = { status: 'error', details: e.message };
-  }
+  await Promise.allSettled([
+    // Database
+    withTimeout(
+      getAdminClient().then((client) => client.from('user_profiles').select('id').limit(1)),
+      'Database'
+    )
+      .then(({ error }) => {
+        health.database = error
+          ? { status: 'error', details: error.message }
+          : { status: 'connected', details: 'Connected to Supabase' };
+      })
+      .catch((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+        health.database = { status: 'error', details: e.message };
+      }),
 
-  // WhatsApp
-  try {
-    const waProvider = await ProviderService.getWhatsAppProvider();
-    const isHealthy = await waProvider.isHealthy();
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-    health.whatsapp = isHealthy
-      ? { status: 'connected', details: `Provider: ${waProvider.name}` }
-      : { status: 'error', details: 'Health check failed' };
-  } catch (e: any) {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-    health.whatsapp = { status: 'error', details: e.message };
-  }
+    // Redis
+    withTimeout(redis.ping(), 'Redis')
+      .then((ping) => {
+        health.redis =
+          ping === 'PONG'
+            ? { status: 'connected', details: 'Connected to Redis' }
+            : { status: 'error', details: 'No PONG response' };
+      })
+      .catch((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+        health.redis = { status: 'error', details: e.message };
+      }),
+
+    // Email
+    withTimeout(
+      ProviderService.getEmailProvider().then((p) =>
+        p.isHealthy().then((h) => ({ name: p.name, isHealthy: h }))
+      ),
+      'Email API'
+    )
+      .then(({ name, isHealthy }) => {
+        health.email = isHealthy
+          ? { status: 'connected', details: `Provider: ${name}` }
+          : { status: 'error', details: 'Health check failed' };
+      })
+      .catch((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+        health.email = { status: 'error', details: e.message };
+      }),
+
+    // WhatsApp
+    withTimeout(
+      ProviderService.getWhatsAppProvider().then((p) =>
+        p.isHealthy().then((h) => ({ name: p.name, isHealthy: h }))
+      ),
+      'WhatsApp API'
+    )
+      .then(({ name, isHealthy }) => {
+        health.whatsapp = isHealthy
+          ? { status: 'connected', details: `Provider: ${name}` }
+          : { status: 'error', details: 'Health check failed' };
+      })
+      .catch((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+        health.whatsapp = { status: 'error', details: e.message };
+      }),
+  ]);
 
   res.json({ success: true, data: health });
 });
