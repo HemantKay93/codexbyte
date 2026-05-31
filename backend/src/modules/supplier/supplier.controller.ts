@@ -15,7 +15,7 @@ export const getSuppliers = catchAsync(async (req: Request, res: Response) => {
 
 export const getSupplierById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const supplier = await supplierService.getSupplierById(id);
+  const supplier = await supplierService.getSupplierById(id as string);
   res.json(createResponse(supplier, 'Supplier fetched successfully'));
 });
 
