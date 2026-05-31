@@ -20,8 +20,8 @@ export function ViewInvoiceModal({
     },
   });
 
-  const { data: cmsDataResponse } = useQuery({
-    queryKey: ['global-settings'],
+  const { data: cmsDataResponse, isLoading: isCmsLoading } = useQuery({
+    queryKey: ['cms-global-full'],
     queryFn: () => CMSService.getContent('global'),
   });
 
@@ -43,7 +43,7 @@ export function ViewInvoiceModal({
   const isMinimalist = layout === 'minimalist';
   const isModern = layout === 'modern';
 
-  if (isLoading) {
+  if (isLoading || isCmsLoading) {
     return (
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-4xl p-10 flex flex-col items-center justify-center bg-surface">
