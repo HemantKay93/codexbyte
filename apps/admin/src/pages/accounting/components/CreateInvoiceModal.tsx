@@ -271,6 +271,7 @@ export function CreateInvoiceModal({
                           <Input
                             placeholder="HSN"
                             value={item.hsn_code}
+                            fullWidth
                             onChange={(e) => {
                               const newItems = [...lineItems];
                               newItems[idx].hsn_code = e.target.value;
@@ -284,6 +285,7 @@ export function CreateInvoiceModal({
                             placeholder="1"
                             min="1"
                             value={item.quantity}
+                            fullWidth
                             onChange={(e) => {
                               const newItems = [...lineItems];
                               newItems[idx].quantity = Number(e.target.value) || 0;
@@ -296,6 +298,7 @@ export function CreateInvoiceModal({
                             type="number"
                             placeholder="0.00"
                             value={item.unit_price}
+                            fullWidth
                             onChange={(e) => {
                               const newItems = [...lineItems];
                               newItems[idx].unit_price = Number(e.target.value) || 0;

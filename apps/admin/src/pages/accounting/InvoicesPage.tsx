@@ -5,9 +5,11 @@ import { useQuery } from '@tanstack/react-query';
 import { apiClient, CMSService } from '@byteevolvr/api-client';
 
 import { CreateInvoiceModal } from './components/CreateInvoiceModal';
+import { ViewInvoiceModal } from './components/ViewInvoiceModal';
 
 export function InvoicesPage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [viewInvoiceId, setViewInvoiceId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const { data: invoicesResponse, isLoading } = useQuery({
@@ -134,6 +136,7 @@ export function InvoicesPage() {
                         variant="ghost"
                         size="sm"
                         className="text-primary hover:text-primary/80"
+                        onClick={() => setViewInvoiceId(inv.id)}
                       >
                         <FileText className="w-4 h-4 mr-2" /> View
                       </Button>
@@ -156,6 +159,14 @@ export function InvoicesPage() {
       {showCreateModal && (
         <CreateInvoiceModal
           onClose={() => setShowCreateModal(false)}
+          currencySymbol={currencySymbol}
+        />
+      )}
+
+      {viewInvoiceId && (
+        <ViewInvoiceModal
+          invoiceId={viewInvoiceId}
+          onClose={() => setViewInvoiceId(null)}
           currencySymbol={currencySymbol}
         />
       )}
