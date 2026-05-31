@@ -261,6 +261,7 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
           }
         }
       }
+    }
     // eslint-disable-line @typescript-eslint/no-explicit-any
   } catch (error) {
     logger.error('[WhatsApp Webhook] Error processing webhook event:', error);
