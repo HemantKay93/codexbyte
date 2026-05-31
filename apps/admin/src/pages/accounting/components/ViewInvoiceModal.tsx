@@ -20,8 +20,8 @@ export function ViewInvoiceModal({
     },
   });
 
-  const invoice = invoiceData?.invoice;
-  const lineItems = invoiceData?.lineItems || [];
+  const invoice = invoiceData;
+  const lineItems = invoiceData?.line_items || [];
 
   if (isLoading) {
     return (
