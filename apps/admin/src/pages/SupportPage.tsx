@@ -82,6 +82,26 @@ export function SupportPage() {
     }
   };
 
+  const handleAssign = async () => {
+    if (!selectedTicketId || !user) return;
+    try {
+      await SupportService.updateTicket(selectedTicketId, { assigned_to: user.id });
+      setTickets(tickets.map(t => t.id === selectedTicketId ? { ...t, assigned_to: user.id } : t));
+    } catch (error) {
+      console.error('Failed to assign ticket:', error);
+    }
+  };
+
+  const handleResolve = async () => {
+    if (!selectedTicketId) return;
+    try {
+      await SupportService.updateTicket(selectedTicketId, { status: 'resolved' });
+      setTickets(tickets.map(t => t.id === selectedTicketId ? { ...t, status: 'resolved' } : t));
+    } catch (error) {
+      console.error('Failed to resolve ticket:', error);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'new': return <Badge variant="error">New</Badge>;
@@ -197,8 +217,8 @@ export function SupportPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">Assign</Button>
-                  <Button variant="outline" size="sm">Resolve</Button>
+                  <Button variant="outline" size="sm" onClick={handleAssign}>Assign</Button>
+                  <Button variant="outline" size="sm" onClick={handleResolve}>Resolve</Button>
                   <Button variant="ghost" size="sm"><MoreVertical className="h-4 w-4" /></Button>
                 </div>
               </div>
