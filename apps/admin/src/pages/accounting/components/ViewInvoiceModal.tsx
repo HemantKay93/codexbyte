@@ -20,10 +20,14 @@ export function ViewInvoiceModal({
     },
   });
 
-  const { data: cmsData } = useQuery({
+  const { data: cmsDataResponse } = useQuery({
     queryKey: ['global-settings'],
     queryFn: () => CMSService.getContent('global'),
   });
+
+  const cmsData = Array.isArray(cmsDataResponse) 
+    ? cmsDataResponse 
+    : (cmsDataResponse as any)?.data || [];
 
   const invoice = invoiceData;
   const lineItems = invoiceData?.line_items || [];
