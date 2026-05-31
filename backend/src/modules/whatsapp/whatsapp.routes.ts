@@ -26,9 +26,9 @@ import { webhookHealth, verifyWebhook, handleWebhookEvent } from './whatsapp.web
 
 const router = Router();
 
-// Public Webhook Routes (Meta API)
+// Public Webhook Routes (Meta API & Evolution API)
 router.get('/webhook', verifyWebhook);
-router.post('/webhook', handleWebhookEvent);
+router.post(['/webhook', '/webhook/*'], handleWebhookEvent);
 
 // Protect all whatsapp dashboard routes, admin only
 router.use(authenticate, requireAdmin);
