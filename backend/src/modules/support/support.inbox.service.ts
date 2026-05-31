@@ -38,6 +38,7 @@ export class SupportInboxService {
       customer_phone: senderPhone,
       source: 'whatsapp',
       user_id: customerId,
+      description: body,
     });
 
     // 4. Append message
@@ -70,6 +71,7 @@ export class SupportInboxService {
       customer_email: senderEmail,
       source: 'email',
       user_id: customerId,
+      description: body,
     });
 
     await this.appendMessage(newTicket.id, 'email', 'inbound', body, senderEmail, senderEmail, null, raw_payload);
