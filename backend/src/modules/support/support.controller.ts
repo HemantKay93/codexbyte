@@ -53,3 +53,22 @@ export const updateTicket = catchAsync(async (req: Request, res: Response) => {
     data,
   });
 });
+
+import { SupportService } from './support.service.js';
+
+export const replyTicket = catchAsync(async (req: AuthRequest, res: Response) => {
+  const { id } = req.params;
+  const { messageBody } = req.body;
+  
+  if (!req.user) throw new AppError('Unauthorized', 401);
+  const senderName = req.user.full_name || req.user.email || 'Agent';
+  const senderEmail = req.user.email || '';
+
+  const message = await SupportService.replyToTicket(id as string, messageBody, senderName, senderEmail);
+  
+  res.status(201).json({
+    success: true,
+    message: 'Reply sent successfully',
+    data: message,
+  });
+});

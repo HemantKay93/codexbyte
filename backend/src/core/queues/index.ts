@@ -36,3 +36,18 @@ export const whatsappQueue = new Queue('whatsapp-queue', {
   skipVersionCheck: true, connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
+
+export const whatsappIngestionQueue = new Queue('whatsapp-ingestion-queue', {
+  skipVersionCheck: true, connection: redis,
+  defaultJobOptions: DEFAULT_JOB_OPTIONS,
+});
+
+export const emailIngestionQueue = new Queue('email-ingestion-queue', {
+  skipVersionCheck: true, connection: redis,
+  defaultJobOptions: DEFAULT_JOB_OPTIONS,
+});
+
+export const supportSlaQueue = new Queue('support-sla-queue', {
+  skipVersionCheck: true, connection: redis,
+  defaultJobOptions: DEFAULT_JOB_OPTIONS,
+});

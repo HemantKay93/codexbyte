@@ -22,4 +22,14 @@ export const SupportService = {
     const response = await apiClient.put(`/support/tickets/${id}`, payload);
     return response.data;
   },
+
+  getTicket: async (id: string) => {
+    const response = await apiClient.get(`/support/tickets/${id}`);
+    return response.data;
+  },
+
+  replyToTicket: async (id: string, messageBody: string) => {
+    const response = await apiClient.post(`/support/tickets/${id}/reply`, { messageBody });
+    return response.data;
+  }
 };

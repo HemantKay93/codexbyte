@@ -79,4 +79,28 @@ export class SupportRepository {
     if (error) throw error;
     return ticket;
   }
+
+  async replyToTicket(ticketId: string, messageBody: string, senderName: string, senderEmail: string, channel: string = 'portal') {
+    const admin = await getAdminClient();
+    
+    const { data: message, error } = await admin
+      .from('support_messages')
+      .insert({
+        ticket_id: ticketId,
+        direction: 'outbound',
+        channel,
+        sender_name: senderName,
+        sender_email: senderEmail,
+        message_body: messageBody
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    
+    // Bump ticket
+    await admin.from('support_tickets').update({ updated_at: new Date().toISOString(), status: 'waiting_customer' }).eq('id', ticketId);
+    
+    return message;
+  }
 }

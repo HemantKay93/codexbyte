@@ -114,6 +114,12 @@ setupDLQ(analyticsWorker);
 setupDLQ(automationWorker);
 setupDLQ(whatsappWorker);
 
+import { whatsappIngestionWorker, emailIngestionWorker } from './support-ingestion.worker.js';
+setupDLQ(whatsappIngestionWorker);
+setupDLQ(emailIngestionWorker);
+
+import { whatsappIngestionQueue, emailIngestionQueue, supportSlaQueue } from '../core/queues/index.js';
+
 // Telemetry loop for Admin Panel Dashboard
 const queues = [
   emailQueue,
@@ -121,6 +127,9 @@ const queues = [
   analyticsQueue,
   marketingAutomationQueue,
   whatsappQueue,
+  whatsappIngestionQueue,
+  emailIngestionQueue,
+  supportSlaQueue
 ];
 
 // Telemetry broadcasts queue stats to the admin panel via WebSocket.
@@ -152,11 +161,16 @@ export const shutdownJobs = async () => {
   await whatsappQueue.close();
   await analyticsQueue.close();
   await marketingAutomationQueue.close();
+  await whatsappIngestionQueue.close();
+  await emailIngestionQueue.close();
+  await supportSlaQueue.close();
   await emailWorker.close();
   await notificationWorker.close();
   await analyticsWorker.close();
   await automationWorker.close();
   await whatsappWorker.close();
+  await whatsappIngestionWorker.close();
+  await emailIngestionWorker.close();
 };
 
 logger.info('[Jobs] Background workers initialized. Queue telemetry active.');

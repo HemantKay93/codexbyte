@@ -28,6 +28,24 @@ export class WebhooksService {
   private async handleResendEvent(payload: Record<string, any>) {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     const { type, data } = payload; // eslint-disable-line @typescript-eslint/no-explicit-any
+
+    // Handle Inbound Parse for Support Hub
+    // Resend Inbound Webhooks usually contain 'from', 'to', 'subject', 'text' directly in the root or data
+    const emailPayload = data || payload;
+    if (emailPayload.from && (emailPayload.subject !== undefined || emailPayload.text !== undefined) && !type?.startsWith('email.')) {
+      import('../../core/queues/index.js').then(({ emailIngestionQueue }) => {
+        emailIngestionQueue.add('process-inbound-email', {
+          raw_payload: payload
+        }, {
+          attempts: 3,
+          backoff: { type: 'exponential', delay: 2000 }
+        }).catch(err => {
+          logger.error('[WebhooksService] Failed to enqueue inbound email', err);
+        });
+      });
+      return;
+    }
+
     const recipientId = data?.tags?.find((t: any) => t.name === 'recipientId')?.value; // eslint-disable-line @typescript-eslint/no-explicit-any
     const campaignId = data?.tags?.find((t: any) => t.name === 'campaignId')?.value; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -135,6 +153,29 @@ export class WebhooksService {
               await this.updateRecipientStatus(data.id, data.campaign_id, status);
             }
           }
+        }
+
+        // Handle Inbound Messages for Omnichannel Support Hub
+        const messages = change.value?.messages || [];
+        const contacts = change.value?.contacts || [];
+        for (const message of messages) {
+          const senderPhone = message.from;
+          const senderName = contacts.find((c: any) => c.wa_id === senderPhone)?.profile?.name || '';
+          
+          import('../../core/queues/index.js').then(({ whatsappIngestionQueue }) => {
+            whatsappIngestionQueue.add('process-inbound-whatsapp', {
+              message,
+              senderPhone,
+              senderName,
+              raw_payload: payload
+            }, {
+              jobId: `wa-inbound-${message.id}`,
+              attempts: 3,
+              backoff: { type: 'exponential', delay: 2000 }
+            }).catch((err) => {
+               logger.error('[WebhooksService] Failed to enqueue inbound WhatsApp message', err);
+            });
+          });
         }
       }
     }
