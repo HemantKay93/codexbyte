@@ -15,3 +15,4 @@ export * from './services/auth';
 export * from './services/wishlist';
 export * from './services/marketing';
 export * from './services/socket';
+export * from './services/accounting';

@@ -111,6 +111,9 @@ const TeamPage = lazy(() => import('./pages/TeamPage').then((m) => ({ default: m
 const AccountingDashboard = lazy(() =>
   import('./pages/accounting/AccountingDashboard').then((m) => ({ default: m.AccountingDashboard }))
 );
+const ChartOfAccountsPage = lazy(() =>
+  import('./pages/accounting/ChartOfAccountsPage').then((m) => ({ default: m.ChartOfAccountsPage }))
+);
 const InvoicesPage = lazy(() =>
   import('./pages/accounting/InvoicesPage').then((m) => ({ default: m.InvoicesPage }))
 );
@@ -119,6 +122,12 @@ const JournalEntriesPage = lazy(() =>
 );
 const ProfitLossPage = lazy(() =>
   import('./pages/accounting/ProfitLossPage').then((m) => ({ default: m.ProfitLossPage }))
+);
+const BalanceSheetPage = lazy(() =>
+  import('./pages/accounting/BalanceSheetPage').then((m) => ({ default: m.BalanceSheetPage }))
+);
+const BankingReconciliationPage = lazy(() =>
+  import('./pages/accounting/BankingReconciliationPage').then((m) => ({ default: m.BankingReconciliationPage }))
 );
 const GSTFilingPage = lazy(() =>
   import('./pages/accounting/GSTFilingPage').then((m) => ({ default: m.GSTFilingPage }))
@@ -198,9 +207,12 @@ const Main = () => {
                   <Route path="/team" element={<TeamPage />} />
                   <Route path="/accounting">
                     <Route index element={<AccountingDashboard />} />
+                    <Route path="chart-of-accounts" element={<ChartOfAccountsPage />} />
                     <Route path="invoices" element={<InvoicesPage />} />
                     <Route path="journal" element={<JournalEntriesPage />} />
                     <Route path="profit-loss" element={<ProfitLossPage />} />
+                    <Route path="balance-sheet" element={<BalanceSheetPage />} />
+                    <Route path="banking-reconciliation" element={<BankingReconciliationPage />} />
                     <Route path="gst" element={<GSTFilingPage />} />
                   </Route>
                   <Route path="/support" element={<SupportPage />} />

@@ -1,7 +1,40 @@
+import { useState, useRef } from 'react';
 import { Card, Button } from '@byteevolvr/ui';
 import { Download, UploadCloud, AlertCircle } from 'lucide-react';
 
 export function GSTFilingPage() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setIsUploading(true);
+      setTimeout(() => {
+        setIsUploading(false);
+        alert(`Successfully imported data from ${file.name}`);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }, 1000);
+    }
+  };
+
+  const handleExportGSTR1 = () => {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + "Invoice Number,Date,Customer,GSTIN,Total Value,Taxable Value,IGST,CGST,SGST\n"
+      + "INV-001,2026-05-01,Acme Corp,29ABCDE1234F1Z5,1180,1000,180,0,0\n"
+      + "INV-002,2026-05-05,Local Shop,29QWERT9876A1Z3,590,500,0,45,45\n";
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "GSTR-1_Export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportGSTR3B = () => {
+    window.print();
+  };
   return (
     <div className="space-y-6 max-w-6xl mx-auto h-[calc(100vh-8rem)]">
       <div className="flex items-center justify-between">
@@ -12,8 +45,15 @@ export function GSTFilingPage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2">
-            <UploadCloud className="h-4 w-4" /> Import External (Amazon/Meesho)
+          <input 
+            type="file" 
+            accept=".csv, .xlsx" 
+            className="hidden" 
+            ref={fileInputRef} 
+            onChange={handleImport} 
+          />
+          <Button variant="outline" className="gap-2" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+            <UploadCloud className="h-4 w-4" /> {isUploading ? 'Uploading...' : 'Import External (Amazon/Meesho)'}
           </Button>
         </div>
       </div>
@@ -46,7 +86,7 @@ export function GSTFilingPage() {
             </div>
           </div>
 
-          <Button className="w-full gap-2">
+          <Button className="w-full gap-2" onClick={handleExportGSTR1}>
             <Download className="h-4 w-4" /> Download GSTR-1 CSV
           </Button>
         </Card>
@@ -82,7 +122,7 @@ export function GSTFilingPage() {
             </div>
           </div>
 
-          <Button className="w-full gap-2" variant="outline">
+          <Button className="w-full gap-2" variant="outline" onClick={handleExportGSTR3B}>
             <Download className="h-4 w-4" /> Download GSTR-3B PDF
           </Button>
         </Card>

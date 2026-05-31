@@ -1,3 +1,40 @@
+export interface Account {
+  id?: string;
+  code: string;
+  name: string;
+  type: 'Asset' | 'Liability' | 'Equity' | 'Revenue' | 'Expense';
+  subtype?: string;
+  parent_account_id?: string;
+  description?: string;
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface JournalHeader {
+  id?: string;
+  reference_type?: 'invoice' | 'order' | 'payment' | 'manual' | 'bill' | 'expense' | 'bank_transaction';
+  reference_id?: string;
+  transaction_date: string;
+  description?: string;
+  status?: 'draft' | 'posted' | 'void';
+  created_by?: string;
+  approved_by?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface JournalLine {
+  id?: string;
+  journal_header_id?: string;
+  account_id: string;
+  debit_amount: number;
+  credit_amount: number;
+  created_at?: string;
+}
+
+// Keeping basic legacy invoice for compatibility if needed elsewhere, 
+// but we will eventually replace this with AR/AP modules.
 export interface InvoiceLineItem {
   id?: string;
   invoice_id?: string;
@@ -29,18 +66,4 @@ export interface Invoice {
   created_at?: string;
   updated_at?: string;
   line_items?: InvoiceLineItem[];
-}
-
-export interface JournalEntry {
-  id?: string;
-  entry_date: string;
-  account_type: 'Revenue' | 'Expense' | 'Asset' | 'Liability' | 'Equity';
-  account_name: string;
-  amount: number;
-  is_credit: boolean;
-  description?: string;
-  reference_type?: 'invoice' | 'order' | 'manual';
-  reference_id?: string;
-  created_by?: string;
-  created_at?: string;
 }

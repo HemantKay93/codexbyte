@@ -18,6 +18,28 @@ router.post('/journal', accountingController.createJournalEntry);
 router.get('/journal', accountingController.getJournalEntries);
 
 router.get('/profit-loss', accountingController.getProfitLoss);
-router.get('/gst-report', accountingController.getGSTReport);
+router.get('/balance-sheet', accountingController.getBalanceSheet);
+
+router.post('/periods/:periodId/close', accountingController.closePeriod);
+router.get('/periods', accountingController.getPeriods);
+router.get('/ledger', accountingController.getAccountLedger);
+router.get('/trial-balance', accountingController.getTrialBalance);
+
+router.get('/ar/aging', accountingController.getARAging);
+router.get('/ar/customer-ledger/:customerId', accountingController.getCustomerLedger);
+
+router.get('/ap/aging', accountingController.getAPAging);
+router.get('/ap/vendor-ledger/:vendorId', accountingController.getVendorLedger);
+
+router.post('/expenses', accountingController.submitExpense);
+
+router.post('/banking/accounts', accountingController.createBankAccount);
+router.get('/banking/accounts', accountingController.getBankAccounts);
+router.get('/banking/reconcile/:bankAccountId', accountingController.getUnreconciled);
+router.post('/banking/reconcile/:transactionId', accountingController.reconcileTransaction);
+
+router.get('/gst/rates', accountingController.getTaxRates);
+router.post('/gst/returns/gstr3b', accountingController.prepareGSTR3B);
+router.post('/gst/returns/:returnId/file', accountingController.fileReturn);
 
 export const accountingRoutes = router;

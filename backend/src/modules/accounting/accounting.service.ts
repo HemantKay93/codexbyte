@@ -1,5 +1,5 @@
 import { AccountingRepository } from './accounting.repository.js';
-import { Invoice, InvoiceLineItem, JournalEntry } from './accounting.types.js';
+import { Invoice, InvoiceLineItem, JournalHeader, JournalLine } from './accounting.types.js';
 // eslint-disable-line @typescript-eslint/no-unused-vars
 // eslint-disable-line @typescript-eslint/no-unused-vars
 
@@ -89,29 +89,31 @@ export class AccountingService {
   ) {
     const description = `Auto-generated entry for ${type.toUpperCase()} Invoice ${invoiceNumber}`;
 
-    // Debit Accounts Receivable
-    await AccountingRepository.createJournalEntry({
-      entry_date: new Date().toISOString(),
-      account_type: 'Asset',
-      account_name: 'Accounts Receivable',
-      amount: amount,
-      is_credit: false,
-      description,
-      reference_type: 'invoice',
-      reference_id: invoiceId,
-    });
+    // 1200: Accounts Receivable, 4000: Sales Revenue
+    const arAccount = await AccountingRepository.getAccountByCode('1200');
+    const revAccount = await AccountingRepository.getAccountByCode('4000');
 
-    // Credit Sales Revenue
-    await AccountingRepository.createJournalEntry({
-      entry_date: new Date().toISOString(),
-      account_type: 'Revenue',
-      account_name: 'Sales Revenue',
-      amount: amount,
-      is_credit: true,
-      description,
-      reference_type: 'invoice',
-      reference_id: invoiceId,
-    });
+    await AccountingRepository.createDoubleEntryJournal(
+      {
+        transaction_date: new Date().toISOString(),
+        description,
+        reference_type: 'invoice',
+        reference_id: invoiceId,
+        status: 'posted',
+      },
+      [
+        {
+          account_id: arAccount.id,
+          debit_amount: amount,
+          credit_amount: 0,
+        },
+        {
+          account_id: revAccount.id,
+          debit_amount: 0,
+          credit_amount: amount,
+        },
+      ]
+    );
   }
 
   static async getProfitLossReport() {

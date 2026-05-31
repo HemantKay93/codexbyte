@@ -59,8 +59,8 @@ export function SuppliersPage() {
         AdminService.getSuppliers(),
         AdminService.getPurchaseOrders(),
       ]);
-      setSuppliers(Array.isArray(suppRes) ? suppRes : []);
-      setPurchaseOrders(Array.isArray(poRes) ? poRes : []);
+      setSuppliers(Array.isArray(suppRes?.data) ? suppRes.data : Array.isArray(suppRes) ? suppRes : []);
+      setPurchaseOrders(Array.isArray(poRes?.data) ? poRes.data : Array.isArray(poRes) ? poRes : []);
     } catch (error) {
       console.error('Failed to fetch supplier data:', error);
     } finally {

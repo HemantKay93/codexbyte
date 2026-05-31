@@ -1,6 +1,8 @@
 import { getAdminClient } from '../../config/supabase.js';
+import { PeriodService } from './period.service.js';
+import { AuditService } from '../../services/auditService.js';
 
-import { Invoice, InvoiceLineItem, JournalEntry } from './accounting.types.js';
+import { Invoice, InvoiceLineItem, JournalHeader, JournalLine } from './accounting.types.js';
 
 export class AccountingRepository {
   // --- Invoices ---
@@ -68,29 +70,91 @@ export class AccountingRepository {
     return { ...invoice, line_items: items };
   }
 
-  // --- Journal Entries ---
-  static async createJournalEntry(entry: Omit<JournalEntry, 'id' | 'created_at' | 'updated_at'>) {
+  static async getAccountByCode(code: string) {
     const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('journal_entries')
-      .insert([entry])
+    const { data, error } = await admin.from('accounts').select('id').eq('code', code).single();
+    if (error) throw new Error(`Error fetching account ${code}: ${error.message}`);
+    return data;
+  }
+
+  static async createDoubleEntryJournal(
+    header: Omit<JournalHeader, 'id' | 'created_at' | 'updated_at'>,
+    lines: Omit<JournalLine, 'id' | 'journal_header_id' | 'created_at'>[],
+    userId?: string
+  ) {
+    // Validate period lock (Phase 12)
+    await PeriodService.validatePeriodIsOpen(header.transaction_date);
+
+    const admin = await getAdminClient();
+
+    // 1. Insert Header
+    const { data: headerData, error: headerError } = await admin
+      .from('journal_headers')
+      .insert([header])
       .select('*')
       .single();
 
-    if (error) throw new Error(`Error creating journal entry: ${error.message}`);
-    return data;
+    if (headerError) throw new Error(`Error creating journal header: ${headerError.message}`);
+
+    // 2. Insert Lines
+    const linesToInsert = lines.map((line) => ({
+      ...line,
+      journal_header_id: headerData.id,
+    }));
+
+    const { data: linesData, error: linesError } = await admin
+      .from('journal_lines')
+      .insert(linesToInsert)
+      .select('*');
+
+    if (linesError) {
+      // Manual rollback attempt since REST API lacks atomic transactions
+      await admin.from('journal_headers').delete().eq('id', headerData.id);
+      
+      if (userId) {
+        await AuditService.log({
+          user_id: userId,
+          action: 'CREATE_JOURNAL_FAILED_ROLLBACK',
+          module: 'Accounting',
+          entity_id: headerData.id,
+        });
+      }
+
+      throw new Error(`Error creating journal lines: ${linesError.message}`);
+    }
+
+    if (userId) {
+      await AuditService.log({
+        user_id: userId,
+        action: 'CREATE_JOURNAL',
+        module: 'Accounting',
+        entity_id: headerData.id,
+        new_data: { header: headerData, lines: linesData }
+      });
+    }
+
+    return { ...headerData, lines: linesData };
   }
 
   static async getJournalEntries(filters?: { account_type?: string }) {
     const admin = await getAdminClient();
-    let query = admin.from('journal_entries').select('*').order('entry_date', { ascending: false });
-
-    if (filters?.account_type) {
-      query = query.eq('account_type', filters.account_type);
-    }
+    
+    // Fetch headers with their related lines and accounts
+    let query = admin
+      .from('journal_headers')
+      .select('*, lines:journal_lines(*, account:accounts(name, type, code))')
+      .order('transaction_date', { ascending: false });
 
     const { data, error } = await query;
     if (error) throw new Error(error.message);
+
+    // Optional client side filtering for account_type
+    if (filters?.account_type) {
+      return data.filter(header => 
+        header.lines.some((line: any) => line.account.type === filters.account_type)
+      );
+    }
+
     return data;
   }
 
