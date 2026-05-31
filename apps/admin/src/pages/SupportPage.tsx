@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Badge, Input, Avatar } from '@byteevolvr/ui';
+import { Card, Button, Badge, Input } from '@byteevolvr/ui';
 import { LifeBuoy, Filter, MessageSquare, Loader2, Send, Phone, Mail, Clock, Shield, Search, MoreVertical, RefreshCcw } from 'lucide-react';
 import { SupportService, SocketService } from '@byteevolvr/api-client';
 import { useAuthStore } from '@byteevolvr/store';
@@ -207,8 +207,10 @@ export function SupportPage() {
                   const isInbound = msg.direction === 'inbound';
                   return (
                     <div key={msg.id} className={`flex ${isInbound ? 'justify-start' : 'justify-end'}`}>
-                      <div className={`max-w-[80%] flex gap-3 ${isInbound ? 'flex-row' : 'flex-row-reverse'}`}>
-                        <Avatar fallback={isInbound ? (msg.sender_name?.[0] || 'U') : 'A'} className="mt-1" />
+                      <div className="flex gap-3 max-w-[80%] flex-row">
+                        <div className="h-8 w-8 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant text-xs font-semibold mt-1 shrink-0">
+                          {isInbound ? (msg.sender_name?.[0] || 'U') : 'A'}
+                        </div>
                         <div className={`flex flex-col ${isInbound ? 'items-start' : 'items-end'}`}>
                           <span className="text-xs text-on-surface-variant mb-1 ml-1">{msg.sender_name} • {new Date(msg.created_at).toLocaleTimeString()}</span>
                           <div className={`p-3 rounded-2xl text-sm ${
@@ -260,7 +262,9 @@ export function SupportPage() {
         {selectedTicket && (
           <div className="w-72 border-l border-outline-variant flex flex-col bg-surface shrink-0 overflow-y-auto">
             <div className="p-4 border-b border-outline-variant flex items-center justify-center flex-col text-center">
-               <Avatar fallback={selectedTicket.customer_name?.[0] || 'U'} className="h-16 w-16 mb-3 text-xl" />
+               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xl font-bold mb-3 shrink-0">
+                 {selectedTicket.customer_name?.[0] || 'U'}
+               </div>
                <h3 className="font-semibold text-on-surface text-lg">{selectedTicket.customer_name || 'Unknown User'}</h3>
                <p className="text-sm text-on-surface-variant">{selectedTicket.customer_email || 'No email'}</p>
             </div>
