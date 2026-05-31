@@ -175,13 +175,34 @@ export function CreateInvoiceModal({
                   onChange={(e) => setFormData({ ...formData, customer_email: e.target.value })}
                 />
 
-                {formData.type === 'b2b' ? (
-                  <Input
-                    label="GSTIN Number *"
-                    placeholder="22AAAAA0000A1Z5"
-                    value={formData.customer_gst}
-                    onChange={(e) => setFormData({ ...formData, customer_gst: e.target.value })}
+                <Input
+                  label="Customer Phone"
+                  type="tel"
+                  placeholder="+91 9876543210"
+                  value={formData.customer_phone}
+                  onChange={(e) => setFormData({ ...formData, customer_phone: e.target.value })}
+                />
+
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-on-surface mb-1.5">Billing Address</label>
+                  <textarea
+                    rows={2}
+                    className="w-full px-3 py-2 bg-surface border border-outline rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-on-surface"
+                    placeholder="123 Main St, City, State, ZIP"
+                    value={formData.customer_address}
+                    onChange={(e) => setFormData({ ...formData, customer_address: e.target.value })}
                   />
+                </div>
+
+                {formData.type === 'b2b' ? (
+                  <div className="sm:col-span-2">
+                    <Input
+                      label="GSTIN Number *"
+                      placeholder="22AAAAA0000A1Z5"
+                      value={formData.customer_gst}
+                      onChange={(e) => setFormData({ ...formData, customer_gst: e.target.value })}
+                    />
+                  </div>
                 ) : (
                   <div className="hidden sm:block" />
                 )}
