@@ -39,7 +39,7 @@ export function SupportPage() {
     setLoading(true);
     try {
       const response = await SupportService.getAllTickets();
-      setTickets(response.data || []);
+      setTickets(Array.isArray(response) ? response : (response?.data || []));
     } catch (error) {
       console.error('Error fetching tickets:', error);
     } finally {
