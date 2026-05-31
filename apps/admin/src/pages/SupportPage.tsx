@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { LifeBuoy, Filter, MessageSquare, Loader2, Send, Phone, Mail, Clock, Shield, Search, MoreVertical, RefreshCcw } from 'lucide-react';
+import { LifeBuoy, MessageSquare, Loader2, Send, Phone, Mail, Clock, Shield, Search, MoreVertical, RefreshCcw } from 'lucide-react';
 import { SupportService, SocketService } from '@byteevolvr/api-client';
 import { useAuthStore } from '@byteevolvr/store';
 
@@ -88,7 +88,7 @@ export function SupportPage() {
       case 'open': return <Badge variant="warning">Open</Badge>;
       case 'waiting_customer': return <Badge variant="secondary">Waiting</Badge>;
       case 'resolved': return <Badge variant="success">Resolved</Badge>;
-      default: return <Badge variant="outline">{status}</Badge>;
+      default: return <Badge variant="default">{status}</Badge>;
     }
   };
 
@@ -130,11 +130,13 @@ export function SupportPage() {
         {/* PANE 1: Ticket List */}
         <div className="w-80 border-r border-outline-variant flex flex-col bg-surface">
           <div className="p-4 border-b border-outline-variant flex flex-col gap-3">
-            <Input 
-              icon={<Search className="h-4 w-4" />} 
-              placeholder="Search conversations..." 
-              className="w-full"
-            />
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-on-surface-variant" />
+              <Input 
+                placeholder="Search conversations..." 
+                className="w-full pl-9"
+              />
+            </div>
             <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
               <Button size="sm" variant={filter === 'all' ? 'primary' : 'outline'} onClick={() => setFilter('all')}>All</Button>
               <Button size="sm" variant={filter === 'new' ? 'primary' : 'outline'} onClick={() => setFilter('new')}>New</Button>
