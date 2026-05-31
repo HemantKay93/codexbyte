@@ -1,6 +1,6 @@
 import { Card, Button } from '@byteevolvr/ui';
 import { useQuery } from '@tanstack/react-query';
-import { apiClient } from '@byteevolvr/api-client';
+import { apiClient, CMSService } from '@byteevolvr/api-client';
 import { Download, FileText } from 'lucide-react';
 
 export function ViewInvoiceModal({
@@ -20,8 +20,24 @@ export function ViewInvoiceModal({
     },
   });
 
+  const { data: cmsData } = useQuery({
+    queryKey: ['global-settings'],
+    queryFn: () => CMSService.getContent('global'),
+  });
+
   const invoice = invoiceData;
   const lineItems = invoiceData?.line_items || [];
+
+  const contactSettings = cmsData?.find((s: any) => s.section_key === 'contact')?.content || {};
+  const templateSettings = cmsData?.find((s: any) => s.section_key === 'invoice_template')?.content || {};
+
+  const layout = templateSettings.layout || 'classic';
+  const primaryColor = templateSettings.primaryColor || '#004ac6';
+  const showLogo = templateSettings.showLogo ?? true;
+  const showSignatory = templateSettings.showSignatory ?? true;
+
+  const isMinimalist = layout === 'minimalist';
+  const isModern = layout === 'modern';
 
   if (isLoading) {
     return (
@@ -77,7 +93,6 @@ export function ViewInvoiceModal({
                 const pri = iframe.contentWindow;
                 if (pri) {
                   pri.document.open();
-                  // Copy all styles to maintain Tailwind formatting
                   const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
                     .map((s) => s.outerHTML)
                     .join('\n');
@@ -118,82 +133,168 @@ export function ViewInvoiceModal({
           </div>
         </div>
 
-        <div className="p-8 space-y-8 flex-1 bg-white text-black" id="invoice-printable-area">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-lg font-bold text-black mb-2">Billed To:</h3>
-              <p className="text-black font-medium">{invoice.customer_name}</p>
-              {invoice.customer_email && <p className="text-gray-600 text-sm">{invoice.customer_email}</p>}
-              {invoice.customer_phone && <p className="text-gray-600 text-sm">{invoice.customer_phone}</p>}
-              {invoice.customer_gst && <p className="text-gray-600 text-sm mt-1">GSTIN: {invoice.customer_gst}</p>}
-              {invoice.customer_address && <p className="text-gray-600 text-sm mt-1 whitespace-pre-wrap">{invoice.customer_address}</p>}
-            </div>
-            <div className="text-right">
-              <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
-                <span className="text-gray-600 font-medium">Invoice Date:</span>
-                <span className="text-black font-semibold">{new Date(invoice.created_at).toLocaleDateString()}</span>
-                <span className="text-gray-600 font-medium">Due Date:</span>
-                <span className="text-black font-semibold">{new Date(invoice.due_date).toLocaleDateString()}</span>
-                <span className="text-gray-600 font-medium">Type:</span>
-                <span className="text-black font-semibold uppercase">{invoice.type}</span>
-                <span className="text-gray-600 font-medium">Supply Type:</span>
-                <span className="text-black font-semibold capitalize">{invoice.supply_type}</span>
+        <div className="flex-1 bg-surface-container-lowest border border-outline-variant p-8 overflow-y-auto">
+          <div className="max-w-3xl mx-auto bg-white border border-outline shadow-sm p-10 min-h-[800px] text-black" id="invoice-printable-area">
+            {/* Template Header */}
+            <div
+              className={`flex justify-between items-start mb-6 ${isMinimalist ? 'pb-4 border-b border-gray-200' : isModern ? 'p-6 rounded-xl' : 'pb-6 border-b-2'}`}
+              style={{
+                borderColor: isMinimalist ? undefined : primaryColor,
+                backgroundColor: isModern ? `${primaryColor}10` : 'transparent',
+              }}
+            >
+              <div>
+                <div className="text-2xl font-bold mb-1" style={{ color: primaryColor }}>
+                  {showLogo && <span className="mr-2">■</span>}
+                  {contactSettings.storeName || 'ByteEvolvr'}
+                </div>
+                <div className="text-xs text-gray-600">
+                  {contactSettings.email || 'hello@byteevolvr.com'}
+                  <br />
+                  {(contactSettings.address || '101, Tech Park\nMumbai, Maharashtra 400069')
+                    .split('\n')
+                    .map((line: string, i: number) => (
+                      <span key={i}>
+                        {line}
+                        <br />
+                      </span>
+                    ))}
+                  {contactSettings.gstNumber && `GSTIN: ${contactSettings.gstNumber}`}
+                </div>
+              </div>
+              <div className="text-right">
+                <h2
+                  className="text-xl font-bold mb-2 uppercase tracking-widest"
+                  style={{ color: primaryColor }}
+                >
+                  Tax Invoice
+                </h2>
+                <div className="text-sm grid grid-cols-2 gap-x-4 gap-y-1 text-gray-600">
+                  <span>Invoice No:</span>{' '}
+                  <span className="font-semibold text-black">{invoice.invoice_number}</span>
+                  <span>Date:</span> <span className="font-semibold text-black">{new Date(invoice.created_at).toLocaleDateString()}</span>
+                  {invoice.due_date && (
+                    <>
+                      <span>Due Date:</span> <span className="font-semibold text-black">{new Date(invoice.due_date).toLocaleDateString()}</span>
+                    </>
+                  )}
+                  <span>Place of Supply:</span>{' '}
+                  <span className="font-semibold text-black capitalize">{invoice.supply_type}</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="mt-8">
-            <table className="w-full text-left border-collapse">
+            {/* Billed To */}
+            <div className="grid grid-cols-2 gap-8 mb-8">
+              <div>
+                <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 border-b border-gray-200 pb-1">
+                  Billed To
+                </h4>
+                <div className="text-sm">
+                  <p className="font-bold text-black">{invoice.customer_name}</p>
+                  {invoice.customer_address && (
+                    <p className="text-gray-600 whitespace-pre-wrap">{invoice.customer_address}</p>
+                  )}
+                  {invoice.customer_phone && <p className="text-gray-600">{invoice.customer_phone}</p>}
+                  {invoice.customer_email && <p className="text-gray-600">{invoice.customer_email}</p>}
+                  {invoice.customer_gst && <p className="text-gray-600 mt-1">GSTIN: {invoice.customer_gst}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Line Items Table */}
+            <table className="w-full text-sm mb-8 border-collapse">
               <thead>
-                <tr className="bg-gray-100 border-y border-gray-300">
-                  <th className="py-3 px-4 font-semibold text-sm text-gray-700 uppercase">Item Description</th>
-                  <th className="py-3 px-4 font-semibold text-sm text-gray-700 uppercase text-center">HSN/SAC</th>
-                  <th className="py-3 px-4 font-semibold text-sm text-gray-700 uppercase text-center">Qty</th>
-                  <th className="py-3 px-4 font-semibold text-sm text-gray-700 uppercase text-right">Rate</th>
-                  <th className="py-3 px-4 font-semibold text-sm text-gray-700 uppercase text-center">GST %</th>
-                  <th className="py-3 px-4 font-semibold text-sm text-gray-700 uppercase text-right">Amount</th>
+                <tr
+                  style={{
+                    backgroundColor: isModern
+                      ? `${primaryColor}20`
+                      : isMinimalist
+                        ? 'transparent'
+                        : `${primaryColor}10`,
+                    borderTop: isMinimalist ? '1px solid #e5e7eb' : 'none',
+                    borderBottom: isMinimalist
+                      ? '1px solid #e5e7eb'
+                      : `1px solid ${primaryColor}40`,
+                  }}
+                >
+                  <th className="text-left py-2 px-2 font-semibold text-black">Description</th>
+                  <th className="text-center py-2 px-2 font-semibold text-black">HSN/SAC</th>
+                  <th className="text-right py-2 px-2 font-semibold text-black">Qty</th>
+                  <th className="text-right py-2 px-2 font-semibold text-black">Rate</th>
+                  <th className="text-right py-2 px-2 font-semibold text-black">GST</th>
+                  <th className="text-right py-2 px-2 font-semibold text-black">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {lineItems.map((item: any) => (
-                  <tr key={item.id} className="border-b border-gray-200">
-                    <td className="py-3 px-4 text-black">{item.description}</td>
-                    <td className="py-3 px-4 text-black text-center">{item.hsn_code || '-'}</td>
-                    <td className="py-3 px-4 text-black text-center">{item.quantity}</td>
-                    <td className="py-3 px-4 text-black text-right">
-                      {currencySymbol}{Number(item.unit_price).toFixed(2)}
-                    </td>
-                    <td className="py-3 px-4 text-black text-center">{item.tax_rate}%</td>
-                    <td className="py-3 px-4 text-black font-medium text-right">
-                      {currencySymbol}{(item.quantity * item.unit_price).toFixed(2)}
-                    </td>
+                  <tr key={item.id} className="border-b border-gray-100 text-gray-700">
+                    <td className="py-3 px-2">{item.description}</td>
+                    <td className="text-center py-3 px-2">{item.hsn_code || '-'}</td>
+                    <td className="text-right py-3 px-2">{item.quantity}</td>
+                    <td className="text-right py-3 px-2">{currencySymbol}{Number(item.unit_price).toFixed(2)}</td>
+                    <td className="text-right py-3 px-2">{item.tax_rate}%</td>
+                    <td className="text-right py-3 px-2">{currencySymbol}{(item.quantity * item.unit_price).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
 
-          <div className="flex justify-end pt-6">
-            <div className="w-full sm:w-1/2 md:w-1/3 space-y-3">
-              <div className="flex justify-between text-sm text-gray-600 px-2">
-                <span>Subtotal</span>
-                <span className="font-medium text-black">
-                  {currencySymbol}{Number(invoice.subtotal).toFixed(2)}
-                </span>
+            {/* Totals */}
+            <div className="flex justify-end mb-10">
+              <div className="w-1/2">
+                <table className="w-full text-sm">
+                  <tbody className="text-gray-700">
+                    <tr>
+                      <td className="py-1">Subtotal</td>
+                      <td className="py-1 text-right font-medium text-black">{currencySymbol}{Number(invoice.subtotal).toFixed(2)}</td>
+                    </tr>
+                    {invoice.supply_type === 'intra-state' ? (
+                      <>
+                        <tr>
+                          <td className="py-1">CGST</td>
+                          <td className="py-1 text-right text-black">{currencySymbol}{(Number(invoice.tax_total) / 2).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-1">SGST</td>
+                          <td className="py-1 text-right text-black">{currencySymbol}{(Number(invoice.tax_total) / 2).toFixed(2)}</td>
+                        </tr>
+                      </>
+                    ) : (
+                      <tr>
+                        <td className="py-1">IGST</td>
+                        <td className="py-1 text-right text-black">{currencySymbol}{Number(invoice.tax_total).toFixed(2)}</td>
+                      </tr>
+                    )}
+                    
+                    <tr
+                      className="font-bold text-lg"
+                      style={{
+                        borderTop: isMinimalist ? '1px solid #e5e7eb' : `2px solid ${primaryColor}`,
+                        color: primaryColor,
+                      }}
+                    >
+                      <td className="py-2 pt-4">Invoice Total</td>
+                      <td className="py-2 pt-4 text-right">{currencySymbol}{Number(invoice.total).toFixed(2)}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <div className="flex justify-between text-sm text-gray-600 px-2">
-                <span>Tax Total</span>
-                <span className="font-medium text-black">
-                  {currencySymbol}{Number(invoice.tax_total).toFixed(2)}
-                </span>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-auto border-t border-gray-200 pt-4 flex justify-between items-end">
+              <div className="text-xs text-gray-500">
+                <p className="font-bold mb-1 text-gray-600">Terms & Conditions:</p>
+                <p>1. Goods once sold will not be taken back.</p>
+                <p>2. Subject to company jurisdiction.</p>
               </div>
-              <hr className="border-gray-300 my-2" />
-              <div className="flex justify-between items-center text-lg font-bold text-black px-2 bg-gray-100 py-3 rounded-lg border border-gray-200">
-                <span>Grand Total</span>
-                <span>
-                  {currencySymbol}{Number(invoice.total).toFixed(2)}
-                </span>
-              </div>
+              {showSignatory && (
+                <div className="text-center w-48">
+                  <div className="h-12 border-b border-gray-400 mb-2"></div>
+                  <p className="text-xs font-medium text-gray-700">Authorized Signatory</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
