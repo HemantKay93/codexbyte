@@ -87,7 +87,11 @@ export function bootstrapMiddleware(app: Express) {
     })
   );
 
-  app.use(express.json());
+  app.use(express.json({
+    verify: (req: any, res, buf) => {
+      req.rawBody = buf.toString();
+    }
+  }));
 
   // Request ID Correlation
   app.use(requestIdCorrelation);

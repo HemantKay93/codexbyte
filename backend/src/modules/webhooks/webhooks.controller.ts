@@ -50,7 +50,7 @@ export const handleMetaWhatsAppWebhook = async (req: Request, res: Response) => 
   // Handle Event & signature verification
   const signature = req.headers['x-hub-signature-256'] as string;
   if (env.WHATSAPP_APP_SECRET && signature) {
-    const rawBody = JSON.stringify(req.body);
+    const rawBody = (req as any).rawBody || JSON.stringify(req.body);
     const expectedSignature = `sha256=${crypto.createHmac('sha256', env.WHATSAPP_APP_SECRET).update(rawBody).digest('hex')}`;
     
     if (!CryptoUtils.constantTimeCompare(signature, expectedSignature)) {
