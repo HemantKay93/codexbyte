@@ -238,8 +238,29 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
       // Incoming Evolution Messages
       if (body.event === 'messages.upsert') {
         logger.info(`[WhatsApp Webhook] Incoming Evolution message`);
+        
+        const data = body.data;
+        if (data && !data.key?.fromMe) {
+          const senderPhone = data.key.remoteJid?.split('@')[0] || 'unknown';
+          const senderName = data.pushName || senderPhone;
+          const textBody = data.message?.conversation || data.message?.extendedTextMessage?.text || '';
+          
+          if (textBody) {
+            import('../../core/queues/index.js').then(({ whatsappIngestionQueue }) => {
+              whatsappIngestionQueue.add('process-inbound-whatsapp', {
+                message: { text: { body: textBody }, id: data.key.id },
+                senderPhone,
+                senderName,
+                raw_payload: body
+              }, {
+                jobId: `evo-inbound-${data.key.id}`,
+                attempts: 3,
+                backoff: { type: 'exponential', delay: 2000 }
+              }).catch(err => logger.error('[WhatsApp Webhook] Failed to enqueue evolution msg', err));
+            });
+          }
+        }
       }
-    }
     // eslint-disable-line @typescript-eslint/no-explicit-any
   } catch (error) {
     logger.error('[WhatsApp Webhook] Error processing webhook event:', error);
