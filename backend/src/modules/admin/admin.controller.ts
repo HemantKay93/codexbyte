@@ -43,8 +43,14 @@ export const getIntegrationHealth = catchAsync(async (req: Request, res: Respons
 
   const withTimeout = <T>(promise: Promise<T>, name: string): Promise<T> => {
     return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => reject(new Error(`${name} health check timed out`)), timeoutMs);
-      promise.then(resolve).catch(reject).finally(() => clearTimeout(timer));
+      const timer = setTimeout(
+        () => reject(new Error(`${name} health check timed out`)),
+        timeoutMs
+      );
+      promise
+        .then(resolve)
+        .catch(reject)
+        .finally(() => clearTimeout(timer));
     });
   };
 
@@ -59,7 +65,8 @@ export const getIntegrationHealth = catchAsync(async (req: Request, res: Respons
           ? { status: 'error', details: error.message }
           : { status: 'connected', details: 'Connected to Supabase' };
       })
-      .catch((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+      .catch((e: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         health.database = { status: 'error', details: e.message };
       }),
 
@@ -71,7 +78,8 @@ export const getIntegrationHealth = catchAsync(async (req: Request, res: Respons
             ? { status: 'connected', details: 'Connected to Redis' }
             : { status: 'error', details: 'No PONG response' };
       })
-      .catch((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+      .catch((e: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         health.redis = { status: 'error', details: e.message };
       }),
 
@@ -87,7 +95,8 @@ export const getIntegrationHealth = catchAsync(async (req: Request, res: Respons
           ? { status: 'connected', details: `Provider: ${name}` }
           : { status: 'error', details: 'Health check failed' };
       })
-      .catch((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+      .catch((e: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         health.email = { status: 'error', details: e.message };
       }),
 
@@ -103,7 +112,8 @@ export const getIntegrationHealth = catchAsync(async (req: Request, res: Respons
           ? { status: 'connected', details: `Provider: ${name}` }
           : { status: 'error', details: 'Health check failed' };
       })
-      .catch((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+      .catch((e: any) => {
+        // eslint-disable-line @typescript-eslint/no-explicit-any
         health.whatsapp = { status: 'error', details: e.message };
       }),
   ]);

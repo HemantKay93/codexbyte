@@ -14,38 +14,38 @@ export class SlaRepository {
 
   async createPolicy(tenantId: string, payload: any, targets: any[]) {
     const admin = await getAdminClient();
-    
+
     // Create Policy
     const { data: policy, error: policyError } = await admin
       .from('sla_policies')
-      .insert([{
-        tenant_id: tenantId,
-        name: payload.name,
-        description: payload.description,
-        module: payload.module,
-        entity_type: payload.entity_type,
-        conditions: payload.conditions,
-        is_active: payload.is_active !== undefined ? payload.is_active : true
-      }])
+      .insert([
+        {
+          tenant_id: tenantId,
+          name: payload.name,
+          description: payload.description,
+          module: payload.module,
+          entity_type: payload.entity_type,
+          conditions: payload.conditions,
+          is_active: payload.is_active !== undefined ? payload.is_active : true,
+        },
+      ])
       .select()
       .single();
     if (policyError) throw policyError;
 
     // Create Targets
     if (targets && targets.length > 0) {
-      const targetsToInsert = targets.map(t => ({
+      const targetsToInsert = targets.map((t) => ({
         tenant_id: tenantId,
         policy_id: policy.id,
         metric: t.metric,
         target_value_minutes: t.target_value_minutes,
         warning_threshold_minutes: t.warning_threshold_minutes,
-        business_hours_only: t.business_hours_only || false
+        business_hours_only: t.business_hours_only || false,
       }));
 
-      const { error: targetsError } = await admin
-        .from('sla_targets')
-        .insert(targetsToInsert);
-      
+      const { error: targetsError } = await admin.from('sla_targets').insert(targetsToInsert);
+
       if (targetsError) throw targetsError;
     }
 

@@ -9,10 +9,9 @@ import { CMSService } from '../cms/cms.service.js';
 // eslint-disable-line @typescript-eslint/no-unused-vars
 import { getAdminClient } from '../../config/supabase.js';
 import { redis } from '../../config/redis.js';
-
-import { WhatsAppRepository } from './whatsapp.repository.js';
 import { env } from '../../config/env.js';
 
+import { WhatsAppRepository } from './whatsapp.repository.js';
 
 const repository = new WhatsAppRepository();
 
@@ -238,25 +237,34 @@ export const handleWebhookEvent = async (req: Request, res: Response) => {
       // Incoming Evolution Messages
       if (body.event === 'messages.upsert') {
         logger.info(`[WhatsApp Webhook] Incoming Evolution message`);
-        
+
         const data = body.data;
         if (data && !data.key?.fromMe) {
           const senderPhone = data.key.remoteJid?.split('@')[0] || 'unknown';
           const senderName = data.pushName || senderPhone;
-          const textBody = data.message?.conversation || data.message?.extendedTextMessage?.text || '';
-          
+          const textBody =
+            data.message?.conversation || data.message?.extendedTextMessage?.text || '';
+
           if (textBody) {
             import('../../core/queues/index.js').then(({ whatsappIngestionQueue }) => {
-              whatsappIngestionQueue.add('process-inbound-whatsapp', {
-                message: { text: { body: textBody }, id: data.key.id },
-                senderPhone,
-                senderName,
-                raw_payload: body
-              }, {
-                jobId: `evo-inbound-${data.key.id}`,
-                attempts: 3,
-                backoff: { type: 'exponential', delay: 2000 }
-              }).catch(err => logger.error('[WhatsApp Webhook] Failed to enqueue evolution msg', err));
+              whatsappIngestionQueue
+                .add(
+                  'process-inbound-whatsapp',
+                  {
+                    message: { text: { body: textBody }, id: data.key.id },
+                    senderPhone,
+                    senderName,
+                    raw_payload: body,
+                  },
+                  {
+                    jobId: `evo-inbound-${data.key.id}`,
+                    attempts: 3,
+                    backoff: { type: 'exponential', delay: 2000 },
+                  }
+                )
+                .catch((err) =>
+                  logger.error('[WhatsApp Webhook] Failed to enqueue evolution msg', err)
+                );
             });
           }
         }

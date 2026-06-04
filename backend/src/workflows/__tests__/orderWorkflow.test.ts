@@ -3,10 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { OrderWorkflow } from '../orderWorkflow.service.js';
 import { InventoryService } from '../../modules/inventory/inventory.service.js';
 import { OrderService } from '../../modules/order/order.service.js';
-// eslint-disable-line @typescript-eslint/no-unused-vars
-// eslint-disable-line @typescript-eslint/no-unused-vars
 import { JobService } from '../../services/jobService.js';
-// eslint-disable-line import/order
 import { getAdminClient } from '../../config/supabase.js';
 
 // Mock dependencies

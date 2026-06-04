@@ -8,7 +8,7 @@ export class ARService {
    */
   static async getAgingReport() {
     const admin = await getAdminClient();
-    
+
     // Get all outstanding invoices
     const { data: invoices, error } = await admin
       .from('invoices')
@@ -26,23 +26,30 @@ export class ARService {
       '61_90': 0,
       '90_plus': 0,
       total_outstanding: 0,
-      customer_breakdown: {} as Record<string, any>
+      customer_breakdown: {} as Record<string, any>,
     };
 
     const now = new Date();
-    
+
     for (const inv of invoices) {
       const dueDate = new Date(inv.due_date);
       const diffTime = now.getTime() - dueDate.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      
+
       const amount = Number(inv.outstanding_amount);
       report.total_outstanding += amount;
-      
+
       if (!report.customer_breakdown[inv.customer_name]) {
-        report.customer_breakdown[inv.customer_name] = { total: 0, current: 0, '1_30': 0, '31_60': 0, '61_90': 0, '90_plus': 0 };
+        report.customer_breakdown[inv.customer_name] = {
+          total: 0,
+          current: 0,
+          '1_30': 0,
+          '31_60': 0,
+          '61_90': 0,
+          '90_plus': 0,
+        };
       }
-      
+
       report.customer_breakdown[inv.customer_name].total += amount;
 
       if (diffDays <= 0) {
@@ -75,16 +82,19 @@ export class ARService {
       .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
-    
-    const totalOutstanding = invoices.reduce((sum: number, inv: any) => sum + Number(inv.outstanding_amount), 0);
+
+    const totalOutstanding = invoices.reduce(
+      (sum: number, inv: any) => sum + Number(inv.outstanding_amount),
+      0
+    );
     const totalPaid = invoices.reduce((sum: number, inv: any) => sum + Number(inv.paid_amount), 0);
 
     return {
       invoices,
       metrics: {
         totalOutstanding,
-        totalPaid
-      }
+        totalPaid,
+      },
     };
   }
 }

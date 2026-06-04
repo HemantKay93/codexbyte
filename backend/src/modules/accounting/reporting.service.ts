@@ -17,12 +17,14 @@ export class ReportingService {
       .from('accounts')
       .select('*')
       .in('type', ['Revenue', 'Expense']);
-    
+
     if (accErr) throw new Error(accErr.message);
 
     let query = admin
       .from('journal_lines')
-      .select('account_id, debit_amount, credit_amount, journal_headers!inner(status, transaction_date)')
+      .select(
+        'account_id, debit_amount, credit_amount, journal_headers!inner(status, transaction_date)'
+      )
       .eq('journal_headers.status', 'posted');
 
     if (filters.startDate) {
@@ -43,7 +45,10 @@ export class ReportingService {
     accounts.forEach((acc: any) => {
       const accLines = lines.filter((l: any) => l.account_id === acc.id);
       const totalDebit = accLines.reduce((sum: number, l: any) => sum + Number(l.debit_amount), 0);
-      const totalCredit = accLines.reduce((sum: number, l: any) => sum + Number(l.credit_amount), 0);
+      const totalCredit = accLines.reduce(
+        (sum: number, l: any) => sum + Number(l.credit_amount),
+        0
+      );
 
       let balance = 0;
       if (acc.type === 'Revenue') {
@@ -63,8 +68,8 @@ export class ReportingService {
       net_profit: totalRevenue - totalExpense,
       breakdowns: {
         revenue: revenueBreakdown,
-        expense: expenseBreakdown
-      }
+        expense: expenseBreakdown,
+      },
     };
   }
 
@@ -79,12 +84,14 @@ export class ReportingService {
       .from('accounts')
       .select('*')
       .in('type', ['Asset', 'Liability', 'Equity']);
-    
+
     if (accErr) throw new Error(accErr.message);
 
     let query = admin
       .from('journal_lines')
-      .select('account_id, debit_amount, credit_amount, journal_headers!inner(status, transaction_date)')
+      .select(
+        'account_id, debit_amount, credit_amount, journal_headers!inner(status, transaction_date)'
+      )
       .eq('journal_headers.status', 'posted');
 
     if (asOfDate) {
@@ -97,7 +104,7 @@ export class ReportingService {
     let totalAssets = 0;
     let totalLiabilities = 0;
     let totalEquity = 0;
-    
+
     const assetBreakdown: Record<string, number> = {};
     const liabilityBreakdown: Record<string, number> = {};
     const equityBreakdown: Record<string, number> = {};
@@ -105,7 +112,10 @@ export class ReportingService {
     accounts.forEach((acc: any) => {
       const accLines = lines.filter((l: any) => l.account_id === acc.id);
       const totalDebit = accLines.reduce((sum: number, l: any) => sum + Number(l.debit_amount), 0);
-      const totalCredit = accLines.reduce((sum: number, l: any) => sum + Number(l.credit_amount), 0);
+      const totalCredit = accLines.reduce(
+        (sum: number, l: any) => sum + Number(l.credit_amount),
+        0
+      );
 
       let balance = 0;
       if (acc.type === 'Asset') {
@@ -123,7 +133,7 @@ export class ReportingService {
       }
     });
 
-    // In a real Balance Sheet, you must calculate Retained Earnings (Net Income from P&L) 
+    // In a real Balance Sheet, you must calculate Retained Earnings (Net Income from P&L)
     // and add it to Equity if the books haven't been closed for the year.
     // For this prototype, we just calculate the pure P&L net income and add it as a line item to Equity.
     const pl = await this.getProfitLoss({ endDate: asOfDate });
@@ -134,12 +144,12 @@ export class ReportingService {
       total_assets: totalAssets,
       total_liabilities: totalLiabilities,
       total_equity: totalEquity,
-      is_balanced: totalAssets === (totalLiabilities + totalEquity),
+      is_balanced: totalAssets === totalLiabilities + totalEquity,
       breakdowns: {
         assets: assetBreakdown,
         liabilities: liabilityBreakdown,
-        equity: equityBreakdown
-      }
+        equity: equityBreakdown,
+      },
     };
   }
 }

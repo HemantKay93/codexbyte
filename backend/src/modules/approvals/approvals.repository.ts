@@ -27,7 +27,7 @@ export class ApprovalsRepository {
   // --- Requests ---
   async getRequests(tenantId: string, userId?: string) {
     const admin = await getAdminClient();
-    let query = admin
+    const query = admin
       .from('approval_requests')
       .select('*, approval_templates(name, module, entity_type), users!requester_id(email)')
       .eq('tenant_id', tenantId)
@@ -37,7 +37,7 @@ export class ApprovalsRepository {
       // In a real scenario, we might want to fetch requests where this user is the *approver*
       // or the *requester*. For simplicity, we'll just fetch all or filter later.
     }
-    
+
     const { data, error } = await query;
     if (error) throw error;
     return data || [];
@@ -52,40 +52,40 @@ export class ApprovalsRepository {
       .eq('tenant_id', tenantId)
       .eq('approver_user_id', approverId)
       .eq('status', 'pending');
-    
+
     if (error) throw error;
     return data || [];
   }
 
   async createRequest(tenantId: string, payload: any, steps: any[]) {
     const admin = await getAdminClient();
-    
+
     const { data: request, error: reqError } = await admin
       .from('approval_requests')
-      .insert([{
-        tenant_id: tenantId,
-        template_id: payload.template_id,
-        entity_id: payload.entity_id,
-        requester_id: payload.requester_id,
-        payload: payload.payload
-      }])
+      .insert([
+        {
+          tenant_id: tenantId,
+          template_id: payload.template_id,
+          entity_id: payload.entity_id,
+          requester_id: payload.requester_id,
+          payload: payload.payload,
+        },
+      ])
       .select()
       .single();
-      
+
     if (reqError) throw reqError;
 
     // Create Steps
-    const stepsToInsert = steps.map(s => ({
+    const stepsToInsert = steps.map((s) => ({
       tenant_id: tenantId,
       request_id: request.id,
       approver_role: s.approver_role,
       approver_user_id: s.approver_user_id,
-      step_order: s.step_order
+      step_order: s.step_order,
     }));
 
-    const { error: stepError } = await admin
-      .from('approval_steps')
-      .insert(stepsToInsert);
+    const { error: stepError } = await admin.from('approval_steps').insert(stepsToInsert);
 
     if (stepError) throw stepError;
 

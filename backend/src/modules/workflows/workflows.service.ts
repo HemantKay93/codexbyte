@@ -1,5 +1,6 @@
-import { WorkflowsRepository } from './workflows.repository.js';
 import { AppError } from '../../middlewares/error.js';
+
+import { WorkflowsRepository } from './workflows.repository.js';
 
 export class WorkflowsService {
   private repo: WorkflowsRepository;

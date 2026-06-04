@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-
 import crypto from 'crypto';
+
+import { Request, Response } from 'express';
 
 import { env } from '../../config/env.js';
 import { CryptoUtils } from '../../utils/crypto.util.js';
@@ -20,7 +20,7 @@ export const handleResendWebhook = async (req: Request, res: Response) => {
     // const isValid = CryptoUtils.verifyHmacSignature(JSON.stringify(req.body), signature, env.RESEND_API_KEY);
     // if (!isValid) throw new AppError('Invalid webhook signature', 401);
   }
-  
+
   await webhooksService.handleEvent(req.body, 'resend');
   res.status(200).send('OK');
 };
@@ -52,10 +52,10 @@ export const handleMetaWhatsAppWebhook = async (req: Request, res: Response) => 
   if (env.WHATSAPP_APP_SECRET && signature) {
     const rawBody = (req as any).rawBody || JSON.stringify(req.body);
     const expectedSignature = `sha256=${crypto.createHmac('sha256', env.WHATSAPP_APP_SECRET).update(rawBody).digest('hex')}`;
-    
+
     if (!CryptoUtils.constantTimeCompare(signature, expectedSignature)) {
-       res.status(401).send('Invalid signature');
-       return;
+      res.status(401).send('Invalid signature');
+      return;
     }
   }
 

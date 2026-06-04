@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+
 import { DocumentsService } from './documents.service.js';
 
 export class DocumentsController {
@@ -26,14 +27,14 @@ export class DocumentsController {
 
   async getDocumentVersions(req: Request, res: Response) {
     const tenantId = (req as any).user.tenant_id;
-    const { id } = (req.params as Record<string, string>);
+    const { id } = req.params as Record<string, string>;
     const data = await this.service.getDocumentVersions(tenantId, id);
     res.json({ success: true, data });
   }
 
   async addVersion(req: Request, res: Response) {
     const tenantId = (req as any).user.tenant_id;
-    const { id } = (req.params as Record<string, string>);
+    const { id } = req.params as Record<string, string>;
     req.body.uploaded_by = (req as any).user.id;
     const data = await this.service.addVersion(tenantId, id, req.body);
     res.status(201).json({ success: true, data });
@@ -57,7 +58,13 @@ export class DocumentsController {
     }
 
     try {
-      const data = await this.service.uploadToS3AndCreate(tenantId, ownerId, folderId, req.file, allowedRoles);
+      const data = await this.service.uploadToS3AndCreate(
+        tenantId,
+        ownerId,
+        folderId,
+        req.file,
+        allowedRoles
+      );
       res.status(201).json({ success: true, data });
     } catch (error: any) {
       res.status(500).json({ success: false, message: error.message });
@@ -66,7 +73,7 @@ export class DocumentsController {
 
   async archiveDocument(req: Request, res: Response) {
     const tenantId = (req as any).user.tenant_id;
-    const { id } = (req.params as Record<string, string>);
+    const { id } = req.params as Record<string, string>;
     const data = await this.service.archiveDocument(tenantId, id);
     res.json({ success: true, data });
   }

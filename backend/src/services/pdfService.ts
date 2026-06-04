@@ -9,9 +9,8 @@ export class PdfService {
   /**
    * Generates a professional tax invoice PDF for an order
    */
-  // eslint-disable-line complexity // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line complexity, @typescript-eslint/no-explicit-any
   static async generateInvoice(order: any, res: Response) {
-    // eslint-disable-line complexity
     const doc = new PDFDocument({ margin: 50, size: 'A4' });
 
     // Stream the PDF to the response

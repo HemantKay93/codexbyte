@@ -1,5 +1,4 @@
 import { AppError } from '../../middlewares/error.js';
-
 import { getAdminClient } from '../../config/supabase.js';
 
 export class Customer360Service {
@@ -22,7 +21,12 @@ export class Customer360Service {
       .eq('customer_id', customerId)
       .eq('tenant_id', tenantId)
       .single();
-    const metrics = metricsData || { health_score: 100, lifetime_value: 0, open_invoices_amount: 0, total_refunds: 0 };
+    const metrics = metricsData || {
+      health_score: 100,
+      lifetime_value: 0,
+      open_invoices_amount: 0,
+      total_refunds: 0,
+    };
 
     // 3. Fetch Timeline Events
     const { data: timelineData } = await admin
@@ -40,7 +44,7 @@ export class Customer360Service {
       .select('status')
       .eq('customer_id', customerId)
       .eq('tenant_id', tenantId);
-    
+
     const supportSummary = (supportData || []).reduce((acc: any, row: any) => {
       acc[row.status] = (acc[row.status] || 0) + 1;
       return acc;
@@ -54,10 +58,10 @@ export class Customer360Service {
       .eq('tenant_id', tenantId)
       .eq('status', 'open')
       .order('created_at', { ascending: false });
-    
+
     const openDeals = (dealsData || []).map((d: any) => ({
       ...d,
-      stage_name: d.crm_stages?.name
+      stage_name: d.crm_stages?.name,
     }));
 
     return {
@@ -65,7 +69,7 @@ export class Customer360Service {
       metrics,
       supportSummary,
       timeline,
-      openDeals
+      openDeals,
     };
   }
 }

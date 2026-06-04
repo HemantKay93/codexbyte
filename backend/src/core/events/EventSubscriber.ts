@@ -1,10 +1,10 @@
 import { NotificationWorkflow } from '../../workflows/notificationWorkflow.service.js';
 import logger from '../../services/logger.js';
 import { AutomationEngine } from '../automation/AutomationEngine.js';
+import { AutoPostingEngine } from '../../modules/accounting/posting.service.js';
 
 import { DomainEvents } from './events.js';
 import { eventBus } from './EventBus.js';
-import { AutoPostingEngine } from '../../modules/accounting/posting.service.js';
 
 export function initializeEventSubscribers() {
   logger.info('[EventSubscriber] Initializing domain event listeners...');
@@ -79,21 +79,32 @@ export function initializeEventSubscribers() {
 
   eventBus.subscribe(DomainEvents.PAYMENT_SUCCEEDED, async (payload) => {
     logger.info(`[EventSubscriber] Handling PAYMENT_SUCCEEDED for order ${payload.orderId}`);
-    
+
     // We need the order amount to post the journal. We can fetch it via AccountingRepository or OrderService.
     // However, to keep it simple, we'll fetch it using getAdminClient directly here or pass it through.
     // A better approach is fetching the order inside the subscriber.
     try {
       const { getAdminClient } = await import('../../config/supabase.js');
       const admin = await getAdminClient();
-      const { data: order } = await admin.from('orders').select('total_amount').eq('id', payload.orderId).single();
-      
+      const { data: order } = await admin
+        .from('orders')
+        .select('total_amount')
+        .eq('id', payload.orderId)
+        .single();
+
       if (order && order.total_amount) {
-        await AutoPostingEngine.postPaymentReceived(payload.transactionId, payload.orderId, order.total_amount);
+        await AutoPostingEngine.postPaymentReceived(
+          payload.transactionId,
+          payload.orderId,
+          order.total_amount
+        );
         logger.info(`[AutoPostingEngine] Posted journal for payment ${payload.transactionId}`);
       }
     } catch (err: any) {
-      logger.error(`[AutoPostingEngine] Failed to post journal for payment ${payload.transactionId}:`, err);
+      logger.error(
+        `[AutoPostingEngine] Failed to post journal for payment ${payload.transactionId}:`,
+        err
+      );
     }
   });
 }

@@ -18,7 +18,7 @@ export class AutoPostingEngine {
     // DR Accounts Receivable (1200)
     // CR Sales Revenue (4000)
     const acc = await this.getAccountIds(['1200', '4000']);
-    
+
     return AccountingRepository.createDoubleEntryJournal(
       {
         transaction_date: new Date().toISOString(),

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+
 import { CrmService } from './crm.service.js';
 import { Customer360Service } from './customer360.service.js';
 
@@ -14,7 +15,7 @@ export class CrmController {
   // Customer 360
   async getCustomer360(req: Request, res: Response) {
     const tenantId = (req as any).user.tenant_id;
-    const { id } = (req.params as Record<string, string>);
+    const { id } = req.params as Record<string, string>;
     const profile = await this.c360Service.getCustomer360Profile(tenantId, id);
     res.json({ success: true, data: profile });
   }
@@ -52,7 +53,7 @@ export class CrmController {
 
   async moveDeal(req: Request, res: Response) {
     const tenantId = (req as any).user.tenant_id;
-    const { id } = (req.params as Record<string, string>);
+    const { id } = req.params as Record<string, string>;
     const { stage_id } = req.body;
     const deal = await this.crmService.moveDealStage(tenantId, id, stage_id);
     res.json({ success: true, data: deal });
@@ -61,7 +62,10 @@ export class CrmController {
   // Activities
   async getDealActivities(req: Request, res: Response) {
     const tenantId = (req as any).user.tenant_id;
-    const activities = await this.crmService.getDealActivities(tenantId, (req.params as Record<string, string>).id);
+    const activities = await this.crmService.getDealActivities(
+      tenantId,
+      (req.params as Record<string, string>).id
+    );
     res.json({ success: true, data: activities });
   }
 

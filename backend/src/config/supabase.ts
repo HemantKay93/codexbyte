@@ -3,19 +3,16 @@ import { fileURLToPath } from 'url';
 
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
-import { env } from './/env.js';
 
+import { env } from './/env.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 
-const supabaseUrl =
-  env.SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL || env.VITE_SUPABASE_URL;
+const supabaseUrl = env.SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL || env.VITE_SUPABASE_URL;
 
 const supabaseKey =
-  env.SUPABASE_KEY ||
-  env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-  env.VITE_SUPABASE_ANON_KEY;
+  env.SUPABASE_KEY || env.NEXT_PUBLIC_SUPABASE_ANON_KEY || env.VITE_SUPABASE_ANON_KEY;
 
 const serviceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_KEY;
 

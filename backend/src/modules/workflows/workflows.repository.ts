@@ -16,15 +16,17 @@ export class WorkflowsRepository {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('workflow_definitions')
-      .insert([{ 
-        tenant_id: tenantId, 
-        name: payload.name, 
-        description: payload.description,
-        trigger_event: payload.trigger_event,
-        nodes: payload.nodes || [],
-        edges: payload.edges || [],
-        is_active: payload.is_active || false
-      }])
+      .insert([
+        {
+          tenant_id: tenantId,
+          name: payload.name,
+          description: payload.description,
+          trigger_event: payload.trigger_event,
+          nodes: payload.nodes || [],
+          edges: payload.edges || [],
+          is_active: payload.is_active || false,
+        },
+      ])
       .select()
       .single();
     if (error) throw error;
@@ -36,13 +38,13 @@ export class WorkflowsRepository {
     const { data, error } = await admin
       .from('workflow_definitions')
       .update({
-        name: payload.name, 
+        name: payload.name,
         description: payload.description,
         trigger_event: payload.trigger_event,
         nodes: payload.nodes,
         edges: payload.edges,
         is_active: payload.is_active,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .eq('tenant_id', tenantId)
@@ -59,7 +61,7 @@ export class WorkflowsRepository {
       .select('*, workflow_definitions(name)')
       .eq('tenant_id', tenantId)
       .order('started_at', { ascending: false });
-    
+
     if (workflowId) {
       query = query.eq('workflow_id', workflowId);
     }

@@ -16,11 +16,7 @@ export class SupplierRepository {
 
   async findSupplierById(id: string) {
     const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('suppliers')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const { data, error } = await admin.from('suppliers').select('*').eq('id', id).single();
 
     if (error || !data) throw new AppError('Supplier not found', 404);
     return data;

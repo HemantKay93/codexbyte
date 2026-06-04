@@ -1,5 +1,6 @@
-import { SlaRepository } from './sla.repository.js';
 import { AppError } from '../../middlewares/error.js';
+
+import { SlaRepository } from './sla.repository.js';
 
 export class SlaService {
   private repo: SlaRepository;

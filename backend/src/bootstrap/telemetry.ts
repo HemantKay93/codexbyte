@@ -1,7 +1,6 @@
 import logger from '../services/logger.js';
 import { env } from '../config/env.js';
 
-
 export function bootstrapTelemetry() {
   logger.info('[Bootstrap] Initializing basic telemetry and correlation tracking...');
   // In a real-world scenario with OpenTelemetry, you would initialize the NodeTracerProvider here.

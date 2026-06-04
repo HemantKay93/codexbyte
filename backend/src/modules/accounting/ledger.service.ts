@@ -29,7 +29,8 @@ export class LedgerService {
     // 2. Fetch the journal lines for this account
     let query = admin
       .from('journal_lines')
-      .select(`
+      .select(
+        `
         id,
         debit_amount,
         credit_amount,
@@ -41,18 +42,19 @@ export class LedgerService {
           reference_type,
           reference_id
         )
-      `)
+      `
+      )
       .eq('account_id', filters.accountId)
       .order('created_at', { ascending: true }); // Need chronological order for running balance
 
     if (filters.startDate) {
-      // Need to cast to inner join column filter in Supabase if needed, 
+      // Need to cast to inner join column filter in Supabase if needed,
       // but simpler to filter by created_at of the line for now, or use a view.
-      // Since journal_headers holds transaction_date, doing it at the API layer 
+      // Since journal_headers holds transaction_date, doing it at the API layer
       // or using PostgREST embedding filters.
       query = query.gte('journal_headers.transaction_date', filters.startDate);
     }
-    
+
     if (filters.endDate) {
       query = query.lte('journal_headers.transaction_date', filters.endDate);
     }
@@ -66,18 +68,18 @@ export class LedgerService {
     const isDebitNormal = account.type === 'Asset' || account.type === 'Expense';
 
     let runningBalance = 0;
-    
+
     const transactions = lines
       // Filter out null headers (due to Supabase inner join limitations on outer filters sometimes)
       .filter((line: any) => line.journal_headers !== null)
       .map((line: any) => {
         const debit = Number(line.debit_amount) || 0;
         const credit = Number(line.credit_amount) || 0;
-        
+
         if (isDebitNormal) {
-          runningBalance += (debit - credit);
+          runningBalance += debit - credit;
         } else {
-          runningBalance += (credit - debit);
+          runningBalance += credit - debit;
         }
 
         return {
@@ -89,7 +91,7 @@ export class LedgerService {
           reference_id: line.journal_headers.reference_id,
           debit,
           credit,
-          balance: runningBalance
+          balance: runningBalance,
         };
       });
 
@@ -97,18 +99,18 @@ export class LedgerService {
       account,
       transactions,
       ending_balance: runningBalance,
-      is_debit_normal: isDebitNormal
+      is_debit_normal: isDebitNormal,
     };
   }
 
   /**
    * Fetch Trial Balance (Aggregated balances for all accounts)
-   * We will fully flesh this out in Phase 11 (Financial Reporting), 
+   * We will fully flesh this out in Phase 11 (Financial Reporting),
    * but it's fundamentally a ledger operation.
    */
   static async getTrialBalance(asOfDate?: string) {
     const admin = await getAdminClient();
-    
+
     // In a real ERP, you'd use a SQL View or RPC to sum this up efficiently.
     // For now, we fetch aggregated sums per account.
     const { data: accounts, error: accError } = await admin.from('accounts').select('*');
@@ -121,12 +123,15 @@ export class LedgerService {
     if (linesError) throw new Error(linesError.message);
 
     const activeLines = lines.filter((l: any) => l.journal_headers?.status === 'posted');
-    
+
     const trialBalance = accounts.map((acc: any) => {
       const accLines = activeLines.filter((l: any) => l.account_id === acc.id);
       const totalDebit = accLines.reduce((sum: number, l: any) => sum + Number(l.debit_amount), 0);
-      const totalCredit = accLines.reduce((sum: number, l: any) => sum + Number(l.credit_amount), 0);
-      
+      const totalCredit = accLines.reduce(
+        (sum: number, l: any) => sum + Number(l.credit_amount),
+        0
+      );
+
       let balance = 0;
       if (acc.type === 'Asset' || acc.type === 'Expense') {
         balance = totalDebit - totalCredit;
@@ -138,7 +143,7 @@ export class LedgerService {
         ...acc,
         totalDebit,
         totalCredit,
-        balance
+        balance,
       };
     });
 

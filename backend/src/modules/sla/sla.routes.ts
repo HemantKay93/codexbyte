@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import { SlaController } from './sla.controller.js';
+
 import { authenticate } from '../../middlewares/auth.js';
+
+import { SlaController } from './sla.controller.js';
 
 export const slaRoutes = Router();
 const controller = new SlaController();

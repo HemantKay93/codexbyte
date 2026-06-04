@@ -5,7 +5,6 @@ import { supabase, getAdminClient } from '../../config/supabase.js';
 import { AppError } from '../../middlewares/error.js';
 import { env } from '../../config/env.js';
 
-
 const jwtSecret = env.JWT_SECRET;
 const ADMIN_PASSWORD_HASH = env.ADMIN_PASSWORD_HASH;
 
@@ -88,7 +87,9 @@ export class AuthService {
   }
 
   async forgotPassword(email: string) {
-    const frontendUrl = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',')[0] : 'http://localhost:5173';
+    const frontendUrl = env.ALLOWED_ORIGINS
+      ? env.ALLOWED_ORIGINS.split(',')[0]
+      : 'http://localhost:5173';
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${frontendUrl}/shop/reset-password`,
     });

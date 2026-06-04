@@ -1,13 +1,12 @@
 import express from 'express';
-
 import rateLimit from 'express-rate-limit';
 
 import { authenticate, authorize } from '../../middlewares/auth.js';
 import { validate } from '../../middlewares/validate.js';
 import { requirePermission } from '../../middlewares/permission.js';
 import { idempotencyMiddleware } from '../../middlewares/idempotency.middleware.js';
-import { createOrderSchema } from './order.validator.js';
 
+import { createOrderSchema } from './order.validator.js';
 import * as orderController from './order.controller.js';
 
 const orderRateLimiter = rateLimit({

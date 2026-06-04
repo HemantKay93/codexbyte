@@ -1,7 +1,7 @@
 import { getAdminClient } from '../../config/supabase.js';
-import { PeriodService } from './period.service.js';
 import { AuditService } from '../../services/auditService.js';
 
+import { PeriodService } from './period.service.js';
 import { Invoice, InvoiceLineItem, JournalHeader, JournalLine } from './accounting.types.js';
 
 export class AccountingRepository {
@@ -110,7 +110,7 @@ export class AccountingRepository {
     if (linesError) {
       // Manual rollback attempt since REST API lacks atomic transactions
       await admin.from('journal_headers').delete().eq('id', headerData.id);
-      
+
       if (userId) {
         await AuditService.log({
           user_id: userId,
@@ -129,7 +129,7 @@ export class AccountingRepository {
         action: 'CREATE_JOURNAL',
         module: 'Accounting',
         entity_id: headerData.id,
-        new_data: { header: headerData, lines: linesData }
+        new_data: { header: headerData, lines: linesData },
       });
     }
 
@@ -138,9 +138,9 @@ export class AccountingRepository {
 
   static async getJournalEntries(filters?: { account_type?: string }) {
     const admin = await getAdminClient();
-    
+
     // Fetch headers with their related lines and accounts
-    let query = admin
+    const query = admin
       .from('journal_headers')
       .select('*, lines:journal_lines(*, account:accounts(name, type, code))')
       .order('transaction_date', { ascending: false });
@@ -150,7 +150,7 @@ export class AccountingRepository {
 
     // Optional client side filtering for account_type
     if (filters?.account_type) {
-      return data.filter((header: any) => 
+      return data.filter((header: any) =>
         header.lines.some((line: any) => line.account.type === filters.account_type)
       );
     }

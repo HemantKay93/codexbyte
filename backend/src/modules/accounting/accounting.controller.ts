@@ -4,6 +4,15 @@ import { catchAsync } from '../../middlewares/error.js';
 
 import { AccountingService } from './accounting.service.js';
 import { AccountingRepository } from './accounting.repository.js';
+import { LedgerService } from './ledger.service.js';
+import { ARService } from './ar.service.js';
+import { APService } from './ap.service.js';
+import { ExpenseService } from './expense.service.js';
+import { BankingService } from './banking.service.js';
+import { ReconciliationService } from './reconciliation.service.js';
+import { GSTService } from './gst.service.js';
+import { ReportingService } from './reporting.service.js';
+import { PeriodService } from './period.service.js';
 
 export const createInvoice = catchAsync(async (req: Request, res: Response) => {
   const { invoice, lineItems } = req.body;
@@ -28,11 +37,14 @@ export const getInvoiceById = catchAsync(async (req: Request, res: Response) => 
 export const createJournalEntry = catchAsync(async (req: Request, res: Response) => {
   const { header, lines } = req.body;
   const userId = (req as any).user?.id || 'system';
-  
+
   // Phase 14: Role-based approval (Admin or Accounting Manager only)
   const role = (req as any).user?.role;
   if (role && role !== 'admin' && role !== 'accounting_manager') {
-    return res.status(403).json({ status: 'error', message: 'You do not have permission to post journal entries directly.' });
+    return res.status(403).json({
+      status: 'error',
+      message: 'You do not have permission to post journal entries directly.',
+    });
   }
 
   const entry = await AccountingRepository.createDoubleEntryJournal(header, lines, userId);
@@ -47,16 +59,12 @@ export const getJournalEntries = catchAsync(async (req: Request, res: Response) 
   res.status(200).json({ status: 'success', data: entries });
 });
 
-
-
-import { LedgerService } from './ledger.service.js';
-
 export const getAccountLedger = catchAsync(async (req: Request, res: Response) => {
   const { accountId, startDate, endDate } = req.query;
   const ledger = await LedgerService.getAccountLedger({
     accountId: accountId as string,
     startDate: startDate as string,
-    endDate: endDate as string
+    endDate: endDate as string,
   });
   res.status(200).json({ status: 'success', data: ledger });
 });
@@ -66,9 +74,6 @@ export const getTrialBalance = catchAsync(async (req: Request, res: Response) =>
   const tb = await LedgerService.getTrialBalance(asOfDate as string);
   res.status(200).json({ status: 'success', data: tb });
 });
-
-import { ARService } from './ar.service.js';
-import { APService } from './ap.service.js';
 
 export const getARAging = catchAsync(async (req: Request, res: Response) => {
   const report = await ARService.getAgingReport();
@@ -92,9 +97,6 @@ export const getVendorLedger = catchAsync(async (req: Request, res: Response) =>
   res.status(200).json({ status: 'success', data: ledger });
 });
 
-import { ExpenseService } from './expense.service.js';
-import { BankingService } from './banking.service.js';
-
 export const submitExpense = catchAsync(async (req: Request, res: Response) => {
   const data = await ExpenseService.submitExpense(req.body);
   res.status(201).json({ status: 'success', data });
@@ -110,9 +112,6 @@ export const getBankAccounts = catchAsync(async (req: Request, res: Response) =>
   res.status(200).json({ status: 'success', data });
 });
 
-import { ReconciliationService } from './reconciliation.service.js';
-import { GSTService } from './gst.service.js';
-
 export const getUnreconciled = catchAsync(async (req: Request, res: Response) => {
   const { bankAccountId } = req.params;
   const data = await ReconciliationService.getUnreconciledTransactions(bankAccountId as string);
@@ -122,7 +121,10 @@ export const getUnreconciled = catchAsync(async (req: Request, res: Response) =>
 export const reconcileTransaction = catchAsync(async (req: Request, res: Response) => {
   const { transactionId } = req.params;
   const { journalHeaderId } = req.body;
-  const data = await ReconciliationService.reconcileTransaction(transactionId as string, journalHeaderId);
+  const data = await ReconciliationService.reconcileTransaction(
+    transactionId as string,
+    journalHeaderId
+  );
   res.status(200).json({ status: 'success', data });
 });
 
@@ -143,14 +145,11 @@ export const fileReturn = catchAsync(async (req: Request, res: Response) => {
   res.status(200).json({ status: 'success', data });
 });
 
-import { ReportingService } from './reporting.service.js';
-import { PeriodService } from './period.service.js';
-
 export const getProfitLoss = catchAsync(async (req: Request, res: Response) => {
   const { startDate, endDate } = req.query;
   const data = await ReportingService.getProfitLoss({
     startDate: startDate as string,
-    endDate: endDate as string
+    endDate: endDate as string,
   });
   res.status(200).json({ status: 'success', data });
 });

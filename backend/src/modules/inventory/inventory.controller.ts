@@ -1,13 +1,15 @@
 import { Request, Response } from 'express';
 
 import { getAdminClient } from '../../config/supabase.js';
-
-import { InventoryService } from './inventory.service.js';
-// eslint-disable-line import/order
-
 import { AuditService } from '../../services/auditService.js';
 import { catchAsync } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';
+import { InventoryWorkflow } from '../../workflows/inventoryWorkflow.service.js';
+
+import { InventoryService } from './inventory.service.js';
+
+// eslint-disable-line import/order
+
 // eslint-disable-line import/order
 
 export const getAllWarehouses = catchAsync(async (req: Request, res: Response) => {
@@ -62,8 +64,6 @@ export const adjustStock = catchAsync(async (req: AuthRequest, res: Response) =>
     data: result,
   });
 });
-
-import { InventoryWorkflow } from '../../workflows/inventoryWorkflow.service.js';
 
 export const transferStock = catchAsync(async (req: AuthRequest, res: Response) => {
   const result = await InventoryWorkflow.transferStock({

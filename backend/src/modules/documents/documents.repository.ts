@@ -1,7 +1,12 @@
 import { getAdminClient } from '../../config/supabase.js';
 
 export class DocumentsRepository {
-  async getDocuments(tenantId: string, folderId: string | null = null, userRole: string = 'admin', userId: string = '') {
+  async getDocuments(
+    tenantId: string,
+    folderId: string | null = null,
+    userRole: string = 'admin',
+    userId: string = ''
+  ) {
     const admin = await getAdminClient();
     let query = admin
       .from('documents')
@@ -16,12 +21,12 @@ export class DocumentsRepository {
     } else {
       query = query.is('folder_id', null);
     }
-    
+
     const { data, error } = await query;
     if (error) throw error;
-    
+
     const docs = data || [];
-    
+
     if (['admin', 'super-admin'].includes(userRole)) {
       return docs;
     }
@@ -37,15 +42,17 @@ export class DocumentsRepository {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('documents')
-      .insert([{ 
-        tenant_id: tenantId, 
-        name: payload.name, 
-        folder_id: payload.folder_id || null, 
-        file_path: payload.file_path, 
-        file_type: payload.file_type, 
-        file_size_bytes: payload.file_size_bytes, 
-        owner_id: payload.owner_id 
-      }])
+      .insert([
+        {
+          tenant_id: tenantId,
+          name: payload.name,
+          folder_id: payload.folder_id || null,
+          file_path: payload.file_path,
+          file_type: payload.file_type,
+          file_size_bytes: payload.file_size_bytes,
+          owner_id: payload.owner_id,
+        },
+      ])
       .select()
       .single();
     if (error) throw error;
@@ -66,7 +73,7 @@ export class DocumentsRepository {
 
   async addDocumentVersion(tenantId: string, documentId: string, payload: any) {
     const admin = await getAdminClient();
-    
+
     // Get latest version number
     const { data: latest } = await admin
       .from('document_versions')
@@ -76,29 +83,35 @@ export class DocumentsRepository {
       .order('version_number', { ascending: false })
       .limit(1)
       .single();
-      
+
     const nextVersion = latest ? latest.version_number + 1 : 1;
 
     const { data, error } = await admin
       .from('document_versions')
-      .insert([{
-        tenant_id: tenantId,
-        document_id: documentId,
-        file_path: payload.file_path,
-        file_size_bytes: payload.file_size_bytes,
-        uploaded_by: payload.uploaded_by,
-        version_number: nextVersion
-      }])
+      .insert([
+        {
+          tenant_id: tenantId,
+          document_id: documentId,
+          file_path: payload.file_path,
+          file_size_bytes: payload.file_size_bytes,
+          uploaded_by: payload.uploaded_by,
+          version_number: nextVersion,
+        },
+      ])
       .select()
       .single();
     if (error) throw error;
 
     // Update main document metadata
-    await admin.from('documents').update({ 
-      file_path: payload.file_path,
-      file_size_bytes: payload.file_size_bytes,
-      updated_at: new Date().toISOString()
-    }).eq('id', documentId).eq('tenant_id', tenantId);
+    await admin
+      .from('documents')
+      .update({
+        file_path: payload.file_path,
+        file_size_bytes: payload.file_size_bytes,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', documentId)
+      .eq('tenant_id', tenantId);
 
     return data;
   }
@@ -118,11 +131,11 @@ export class DocumentsRepository {
 
   async addDocumentPermissions(tenantId: string, documentId: string, roles: string[]) {
     const admin = await getAdminClient();
-    const payload = roles.map(role => ({
+    const payload = roles.map((role) => ({
       tenant_id: tenantId,
       document_id: documentId,
       role: role,
-      permission_level: 'view'
+      permission_level: 'view',
     }));
     const { error } = await admin.from('document_permissions').insert(payload);
     if (error) throw error;

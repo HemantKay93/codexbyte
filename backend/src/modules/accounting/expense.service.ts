@@ -1,4 +1,5 @@
 import { getAdminClient } from '../../config/supabase.js';
+
 import { AutoPostingEngine } from './posting.service.js';
 
 export class ExpenseService {
@@ -8,14 +9,16 @@ export class ExpenseService {
   static async submitExpense(payload: any) {
     const admin = await getAdminClient();
     const expenseNumber = payload.expense_number || `EXP-${Date.now()}`;
-    
+
     const { data, error } = await admin
       .from('expenses')
-      .insert([{
-        ...payload,
-        expense_number: expenseNumber,
-        status: 'submitted'
-      }])
+      .insert([
+        {
+          ...payload,
+          expense_number: expenseNumber,
+          status: 'submitted',
+        },
+      ])
       .select('*')
       .single();
 
@@ -33,7 +36,7 @@ export class ExpenseService {
       .update({
         status: 'approved',
         approved_by: approverId,
-        approval_date: new Date().toISOString()
+        approval_date: new Date().toISOString(),
       })
       .eq('id', expenseId)
       .select('*')
@@ -53,7 +56,7 @@ export class ExpenseService {
       .select('*')
       .eq('id', expenseId)
       .single();
-      
+
     if (fetchErr || !expense) throw new Error(fetchErr?.message || 'Expense not found');
     if (expense.status !== 'approved') throw new Error('Expense must be approved before payment');
 
@@ -67,7 +70,7 @@ export class ExpenseService {
       .from('expenses')
       .update({
         status: 'posted',
-        journal_header_id: journal.id
+        journal_header_id: journal.id,
       })
       .eq('id', expenseId)
       .select('*')

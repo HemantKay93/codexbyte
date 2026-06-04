@@ -37,7 +37,13 @@ export class CrmRepository {
     return data || [];
   }
 
-  async createStage(tenantId: string, pipelineId: string, name: string, sequence: number, probability: number) {
+  async createStage(
+    tenantId: string,
+    pipelineId: string,
+    name: string,
+    sequence: number,
+    probability: number
+  ) {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('crm_stages')
@@ -56,13 +62,13 @@ export class CrmRepository {
       .select('*, customers(first_name, last_name, email), crm_stages(name), user_profiles(email)')
       .eq('tenant_id', tenantId)
       .order('created_at', { ascending: false });
-    
+
     if (pipelineId) {
       query = query.eq('pipeline_id', pipelineId);
     }
     const { data, error } = await query;
     if (error) throw error;
-    
+
     // Flatten joins for frontend
     return (data || []).map((d: any) => ({
       ...d,
@@ -70,7 +76,7 @@ export class CrmRepository {
       first_name: d.customers?.first_name,
       last_name: d.customers?.last_name,
       stage_name: d.crm_stages?.name,
-      assigned_user_email: d.user_profiles?.email
+      assigned_user_email: d.user_profiles?.email,
     }));
   }
 
@@ -78,16 +84,18 @@ export class CrmRepository {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('crm_deals')
-      .insert([{
-        tenant_id: tenantId,
-        customer_id: payload.customer_id,
-        title: payload.title,
-        value: payload.value || 0,
-        pipeline_id: payload.pipeline_id,
-        stage_id: payload.stage_id,
-        expected_close_date: payload.expected_close_date,
-        assigned_to: payload.assigned_to
-      }])
+      .insert([
+        {
+          tenant_id: tenantId,
+          customer_id: payload.customer_id,
+          title: payload.title,
+          value: payload.value || 0,
+          pipeline_id: payload.pipeline_id,
+          stage_id: payload.stage_id,
+          expected_close_date: payload.expected_close_date,
+          assigned_to: payload.assigned_to,
+        },
+      ])
       .select()
       .single();
     if (error) throw error;
@@ -117,10 +125,10 @@ export class CrmRepository {
       .eq('deal_id', dealId)
       .order('created_at', { ascending: false });
     if (error) throw error;
-    
+
     return (data || []).map((a: any) => ({
       ...a,
-      assigned_user_email: a.user_profiles?.email
+      assigned_user_email: a.user_profiles?.email,
     }));
   }
 
@@ -128,16 +136,18 @@ export class CrmRepository {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('crm_activities')
-      .insert([{
-        tenant_id: tenantId,
-        deal_id: payload.deal_id,
-        customer_id: payload.customer_id,
-        activity_type: payload.activity_type,
-        title: payload.title,
-        notes: payload.notes,
-        due_date: payload.due_date,
-        assigned_to: payload.assigned_to
-      }])
+      .insert([
+        {
+          tenant_id: tenantId,
+          deal_id: payload.deal_id,
+          customer_id: payload.customer_id,
+          activity_type: payload.activity_type,
+          title: payload.title,
+          notes: payload.notes,
+          due_date: payload.due_date,
+          assigned_to: payload.assigned_to,
+        },
+      ])
       .select()
       .single();
     if (error) throw error;

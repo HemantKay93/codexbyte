@@ -1,8 +1,11 @@
-import { DocumentsRepository } from './documents.repository.js';
+import path from 'path';
+
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+
 import { eventBus } from '../../core/events/EventBus.js';
 import { AppError } from '../../middlewares/error.js';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import path from 'path';
+
+import { DocumentsRepository } from './documents.repository.js';
 
 export class DocumentsService {
   private repo: DocumentsRepository;
@@ -19,7 +22,12 @@ export class DocumentsService {
     });
   }
 
-  async getDocuments(tenantId: string, folderId?: string, userRole: string = 'admin', userId: string = '') {
+  async getDocuments(
+    tenantId: string,
+    folderId?: string,
+    userRole: string = 'admin',
+    userId: string = ''
+  ) {
     return await this.repo.getDocuments(tenantId, folderId || null, userRole, userId);
   }
 
@@ -28,13 +36,13 @@ export class DocumentsService {
       throw new AppError('Name and owner_id are required', 400);
     }
     const doc = await this.repo.createDocument(tenantId, payload);
-    
+
     // Auto-create version 1 if it's a file (not a folder)
     if (payload.file_type !== 'folder' && payload.file_path) {
       await this.repo.addDocumentVersion(tenantId, doc.id, {
         file_path: payload.file_path,
         file_size_bytes: payload.file_size_bytes,
-        uploaded_by: payload.owner_id
+        uploaded_by: payload.owner_id,
       });
     }
 
@@ -62,7 +70,13 @@ export class DocumentsService {
     return doc;
   }
 
-  async uploadToS3AndCreate(tenantId: string, ownerId: string, folderId: string | null, file: Express.Multer.File, allowedRoles: string[] = []) {
+  async uploadToS3AndCreate(
+    tenantId: string,
+    ownerId: string,
+    folderId: string | null,
+    file: Express.Multer.File,
+    allowedRoles: string[] = []
+  ) {
     const bucketName = process.env.AWS_S3_BUCKET_NAME;
     if (!bucketName) throw new Error('AWS_S3_BUCKET_NAME is not configured');
 

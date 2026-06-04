@@ -13,7 +13,14 @@ export interface Account {
 
 export interface JournalHeader {
   id?: string;
-  reference_type?: 'invoice' | 'order' | 'payment' | 'manual' | 'bill' | 'expense' | 'bank_transaction';
+  reference_type?:
+    | 'invoice'
+    | 'order'
+    | 'payment'
+    | 'manual'
+    | 'bill'
+    | 'expense'
+    | 'bank_transaction';
   reference_id?: string;
   transaction_date: string;
   description?: string;
@@ -33,7 +40,7 @@ export interface JournalLine {
   created_at?: string;
 }
 
-// Keeping basic legacy invoice for compatibility if needed elsewhere, 
+// Keeping basic legacy invoice for compatibility if needed elsewhere,
 // but we will eventually replace this with AR/AP modules.
 export interface InvoiceLineItem {
   id?: string;

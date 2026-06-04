@@ -9,7 +9,6 @@ import { requestIdCorrelation } from '../middlewares/requestId.js';
 import { requestLogger } from '../middlewares/requestLogger.js';
 import { env } from '../config/env.js';
 
-
 export function bootstrapMiddleware(app: Express) {
   app.set('trust proxy', 1);
 
@@ -20,10 +19,10 @@ export function bootstrapMiddleware(app: Express) {
         directives: {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Support frontend integrations
-          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-          fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-          imgSrc: ["'self'", "data:", "https://*"], // Relaxed to support external product images
-          connectSrc: ["'self'", "https://*"], // Allowed for external APIs
+          styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+          fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
+          imgSrc: ["'self'", 'data:', 'https://*'], // Relaxed to support external product images
+          connectSrc: ["'self'", 'https://*'], // Allowed for external APIs
           frameSrc: ["'none'"],
           objectSrc: ["'none'"],
           upgradeInsecureRequests: [],
@@ -87,11 +86,13 @@ export function bootstrapMiddleware(app: Express) {
     })
   );
 
-  app.use(express.json({
-    verify: (req: any, res, buf) => {
-      req.rawBody = buf.toString();
-    }
-  }));
+  app.use(
+    express.json({
+      verify: (req: any, res, buf) => {
+        req.rawBody = buf.toString();
+      },
+    })
+  );
 
   // Request ID Correlation
   app.use(requestIdCorrelation);

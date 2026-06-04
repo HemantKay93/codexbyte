@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, Nextany } from 'express';
 
 import logger from '../services/logger.js';
 import { env } from '../config/env.js';
-
 
 export class AppError extends Error {
   statusCode: number;
@@ -17,8 +16,8 @@ export class AppError extends Error {
   }
 }
 
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-  // eslint-disable-line @typescript-eslint/no-explicit-any // eslint-disable-line @typescript-eslint/no-unused-vars
+export const errorHandler = (err: any, req: Request, res: Response, next: Nextany) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   // eslint-disable-line @typescript-eslint/no-explicit-any
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -51,8 +50,8 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
 };
 
 // eslint-disable-line @typescript-eslint/no-unsafe-function-type
-export const catchAsync = (fn: Function) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+export const catchAsync = (fn: any) => {
+  return (req: Request, res: Response, next: Nextany) => {
     fn(req, res, next).catch(next);
   };
 };

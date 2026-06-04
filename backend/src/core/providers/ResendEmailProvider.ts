@@ -1,10 +1,9 @@
 import { Resend } from 'resend';
 
 import logger from '../../services/logger.js';
-
-import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
 import { env } from '../../config/env.js';
 
+import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
 
 export class ResendEmailProvider implements IProvider {
   public readonly name = 'resend-email';

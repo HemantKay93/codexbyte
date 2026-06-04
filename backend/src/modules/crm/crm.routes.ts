@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import { CrmController } from './crm.controller.js';
+
 import { authenticate } from '../../middlewares/auth.js';
+
+import { CrmController } from './crm.controller.js';
 
 export const crmRoutes = Router();
 const crmController = new CrmController();

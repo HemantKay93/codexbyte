@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+
 import { WorkflowsService } from './workflows.service.js';
 
 export class WorkflowsController {
@@ -22,7 +23,7 @@ export class WorkflowsController {
 
   async updateWorkflow(req: Request, res: Response) {
     const tenantId = (req as any).user.tenant_id;
-    const { id } = (req.params as Record<string, string>);
+    const { id } = req.params as Record<string, string>;
     const data = await this.service.updateWorkflow(tenantId, id, req.body);
     res.json({ success: true, data });
   }

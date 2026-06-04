@@ -3,7 +3,6 @@ import axios from 'axios';
 import logger from '../../../../services/logger.js';
 import { env } from '../../../../config/env.js';
 
-
 import {
   IWhatsAppProvider,
   ProviderResponse,

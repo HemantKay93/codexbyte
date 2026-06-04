@@ -1,6 +1,7 @@
-import { ApprovalsRepository } from './approvals.repository.js';
 import { AppError } from '../../middlewares/error.js';
 import { eventBus } from '../../core/events/EventBus.js';
+
+import { ApprovalsRepository } from './approvals.repository.js';
 
 export class ApprovalsService {
   private repo: ApprovalsRepository;
@@ -28,13 +29,28 @@ export class ApprovalsService {
     return await this.repo.getRequests(tenantId);
   }
 
-  async triggerApproval(tenantId: string, payload: { template_id: string, entity_id: string, requester_id: string, payload: any, steps: any[] }) {
+  async triggerApproval(
+    tenantId: string,
+    payload: {
+      template_id: string;
+      entity_id: string;
+      requester_id: string;
+      payload: any;
+      steps: any[];
+    }
+  ) {
     const request = await this.repo.createRequest(tenantId, payload, payload.steps);
     eventBus.publish(<any>'approval.requested', { tenantId, requestId: request.id });
     return request;
   }
 
-  async processStep(tenantId: string, stepId: string, requestId: string, status: 'approved' | 'rejected', comments?: string) {
+  async processStep(
+    tenantId: string,
+    stepId: string,
+    requestId: string,
+    status: 'approved' | 'rejected',
+    comments?: string
+  ) {
     // 1. Mark step
     await this.repo.actOnStep(tenantId, stepId, status, comments);
 

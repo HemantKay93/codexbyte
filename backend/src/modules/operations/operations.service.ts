@@ -5,7 +5,7 @@ import * as queues from '../../core/queues/index.js';
 export class OperationsService {
   async getSystemHealth(tenantId: string) {
     const timestamp = new Date().toISOString();
-    
+
     // 1. Database & Storage Health
     const dbStart = Date.now();
     let dbStatus = 'offline';
@@ -18,7 +18,10 @@ export class OperationsService {
       // Sum active storage from documents
       const { data: docs } = await admin.from('documents').select('file_size_bytes');
       if (docs) {
-        const totalBytes = docs.reduce((acc: number, d: any) => acc + (Number(d.file_size_bytes) || 0), 0);
+        const totalBytes = docs.reduce(
+          (acc: number, d: any) => acc + (Number(d.file_size_bytes) || 0),
+          0
+        );
         storageGb = Number((totalBytes / (1024 * 1024 * 1024)).toFixed(3));
       }
     } catch (err) {
@@ -54,7 +57,7 @@ export class OperationsService {
             active: counts.active || 0,
             waiting: counts.waiting || 0,
             failed: counts.failed || 0,
-            processed_1h: counts.completed || 0 // approximate completed
+            processed_1h: counts.completed || 0, // approximate completed
           });
         }
       }
@@ -63,19 +66,25 @@ export class OperationsService {
     }
 
     return {
-      status: (dbStatus === 'online' && redisStatus === 'online') ? 'healthy' : 'degraded',
+      status: dbStatus === 'online' && redisStatus === 'online' ? 'healthy' : 'degraded',
       timestamp,
       services: {
         database: { status: dbStatus, latency_ms: dbLatency },
         redis: { status: redisStatus, memory_usage_mb: redisMemMb, uptime_hrs: 0 },
-        storage: { status: 'online', space_used_gb: storageGb } // AWS SLA, size driven by DB
+        storage: { status: 'online', space_used_gb: storageGb }, // AWS SLA, size driven by DB
       },
-      queues: queueStats.length > 0 ? queueStats : [
-        { name: 'no_queues_found', active: 0, waiting: 0, failed: 0, processed_1h: 0 }
-      ],
+      queues:
+        queueStats.length > 0
+          ? queueStats
+          : [{ name: 'no_queues_found', active: 0, waiting: 0, failed: 0, processed_1h: 0 }],
       recent_events: [
-        { type: 'info', source: 'system', message: 'System health check executed', time: timestamp }
-      ]
+        {
+          type: 'info',
+          source: 'system',
+          message: 'System health check executed',
+          time: timestamp,
+        },
+      ],
     };
   }
 }

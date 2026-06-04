@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+
 import { ApprovalsService } from './approvals.service.js';
 
 export class ApprovalsController {
@@ -43,7 +44,7 @@ export class ApprovalsController {
 
   async processStep(req: Request, res: Response) {
     const tenantId = (req as any).user.tenant_id;
-    const { stepId, requestId } = (req.params as Record<string, string>);
+    const { stepId, requestId } = req.params as Record<string, string>;
     const { status, comments } = req.body;
     const data = await this.service.processStep(tenantId, stepId, requestId, status, comments);
     res.json({ success: true, data });

@@ -11,7 +11,8 @@ export abstract class BaseWorker<T = any> {
 
   constructor(queueName: string, options?: Omit<WorkerOptions, 'connection'>) {
     this.worker = new Worker<T>(queueName, async (job: Job<T>) => this.process(job), {
-      skipVersionCheck: true, connection: redis,
+      skipVersionCheck: true,
+      connection: redis,
       ...options,
     });
 

@@ -45,7 +45,7 @@ export class OrderService {
   async getMyOrders(userId: string, email?: string) {
     return await orderRepo.findByUserId(userId, email);
   }
-  // eslint-disable-line complexity // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line complexity, @typescript-eslint/no-explicit-any
 
   async createOrder(userId: string | undefined, orderData: any, userEmail?: string) {
     // eslint-disable-line complexity
@@ -181,7 +181,7 @@ export class OrderService {
       logger.error('[OrderService] Failed to emit socket event for new order:', err);
     }
 
-    // eslint-disable-line complexity // eslint-disable-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line complexity, @typescript-eslint/no-explicit-any
     return order;
   }
 

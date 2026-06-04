@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+
 import logger from '../services/logger.js';
 
 export class SecurityLogger {

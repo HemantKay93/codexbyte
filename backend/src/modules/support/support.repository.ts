@@ -81,9 +81,15 @@ export class SupportRepository {
     return ticket;
   }
 
-  async replyToTicket(ticketId: string, messageBody: string, senderName: string, senderEmail: string, channel: string = 'portal') {
+  async replyToTicket(
+    ticketId: string,
+    messageBody: string,
+    senderName: string,
+    senderEmail: string,
+    channel: string = 'portal'
+  ) {
     const admin = await getAdminClient();
-    
+
     const { data: message, error } = await admin
       .from('support_messages')
       .insert({
@@ -92,16 +98,19 @@ export class SupportRepository {
         channel,
         sender_name: senderName,
         sender_email: senderEmail,
-        message_body: messageBody
+        message_body: messageBody,
       })
       .select()
       .single();
 
     if (error) throw error;
-    
+
     // Bump ticket
-    await admin.from('support_tickets').update({ updated_at: new Date().toISOString(), status: 'waiting_customer' }).eq('id', ticketId);
-    
+    await admin
+      .from('support_tickets')
+      .update({ updated_at: new Date().toISOString(), status: 'waiting_customer' })
+      .eq('id', ticketId);
+
     return message;
   }
 }

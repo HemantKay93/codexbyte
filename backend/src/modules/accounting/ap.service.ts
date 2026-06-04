@@ -8,7 +8,7 @@ export class APService {
    */
   static async getAgingReport() {
     const admin = await getAdminClient();
-    
+
     const { data: bills, error } = await admin
       .from('vendor_bills')
       .select('id, bill_number, vendor_name, due_date, outstanding_amount')
@@ -24,23 +24,30 @@ export class APService {
       '61_90': 0,
       '90_plus': 0,
       total_outstanding: 0,
-      vendor_breakdown: {} as Record<string, any>
+      vendor_breakdown: {} as Record<string, any>,
     };
 
     const now = new Date();
-    
+
     for (const bill of bills) {
       const dueDate = new Date(bill.due_date);
       const diffTime = now.getTime() - dueDate.getTime();
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      
+
       const amount = Number(bill.outstanding_amount);
       report.total_outstanding += amount;
-      
+
       if (!report.vendor_breakdown[bill.vendor_name]) {
-        report.vendor_breakdown[bill.vendor_name] = { total: 0, current: 0, '1_30': 0, '31_60': 0, '61_90': 0, '90_plus': 0 };
+        report.vendor_breakdown[bill.vendor_name] = {
+          total: 0,
+          current: 0,
+          '1_30': 0,
+          '31_60': 0,
+          '61_90': 0,
+          '90_plus': 0,
+        };
       }
-      
+
       report.vendor_breakdown[bill.vendor_name].total += amount;
 
       if (diffDays <= 0) {
@@ -73,16 +80,19 @@ export class APService {
       .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
-    
-    const totalOutstanding = bills.reduce((sum: number, b: any) => sum + Number(b.outstanding_amount), 0);
+
+    const totalOutstanding = bills.reduce(
+      (sum: number, b: any) => sum + Number(b.outstanding_amount),
+      0
+    );
     const totalPaid = bills.reduce((sum: number, b: any) => sum + Number(b.paid_amount), 0);
 
     return {
       bills,
       metrics: {
         totalOutstanding,
-        totalPaid
-      }
+        totalPaid,
+      },
     };
   }
 }

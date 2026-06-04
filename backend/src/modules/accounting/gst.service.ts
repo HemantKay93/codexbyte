@@ -18,13 +18,13 @@ export class GSTService {
   static async prepareGSTR3B(month: string, year: string) {
     const admin = await getAdminClient();
 
-    // In a real implementation, we would query `invoice_line_items` and `vendor_bill_lines` 
+    // In a real implementation, we would query `invoice_line_items` and `vendor_bill_lines`
     // for the given month, aggregating CGST, SGST, IGST.
     // For this prototype, we will create a dummy draft based on total ledger balances in GST accounts.
 
     // Calculate total Sales (Revenue) and Purchases (Expenses) for the month
     // We can query journal_lines for accounts 4000 (Revenue) and 6000 (Expenses)
-    
+
     // For now, we will create a draft record in `gst_returns`
     const { data: existing, error: existErr } = await admin
       .from('gst_returns')
@@ -41,17 +41,19 @@ export class GSTService {
     // Create a new draft
     const { data, error } = await admin
       .from('gst_returns')
-      .insert([{
-        return_type: 'GSTR-3B',
-        month,
-        financial_year: year,
-        status: 'draft',
-        total_sales: 500000.00, // Dummy data for prototype
-        total_purchases: 300000.00,
-        total_cgst: 45000.00,
-        total_sgst: 45000.00,
-        total_igst: 0.00
-      }])
+      .insert([
+        {
+          return_type: 'GSTR-3B',
+          month,
+          financial_year: year,
+          status: 'draft',
+          total_sales: 500000.0, // Dummy data for prototype
+          total_purchases: 300000.0,
+          total_cgst: 45000.0,
+          total_sgst: 45000.0,
+          total_igst: 0.0,
+        },
+      ])
       .select('*')
       .single();
 
@@ -68,7 +70,7 @@ export class GSTService {
       .from('gst_returns')
       .update({
         status: 'filed',
-        filed_on: new Date().toISOString()
+        filed_on: new Date().toISOString(),
       })
       .eq('id', returnId)
       .select('*')

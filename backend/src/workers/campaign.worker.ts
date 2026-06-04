@@ -58,8 +58,7 @@ export class CampaignWorker extends BaseWorker<CampaignPayload> {
       // 2. Resolve the correct Provider
       let provider: IProvider;
       if (campaign.type === 'email') provider = await ProviderService.getEmailProvider();
-      else if (campaign.type === 'whatsapp')
-        provider = await ProviderService.getWhatsAppProvider();
+      else if (campaign.type === 'whatsapp') provider = await ProviderService.getWhatsAppProvider();
       else if (campaign.type === 'push') provider = await ProviderService.getPushProvider();
       else throw new Error(`Unknown campaign type: ${campaign.type}`);
 
@@ -88,19 +87,31 @@ export class CampaignWorker extends BaseWorker<CampaignPayload> {
         if (campaign.template_id) {
           const admin = await getAdminClient();
           if (campaign.type === 'email') {
-            const { data: tpl } = await admin.from('email_templates').select('*').eq('id', campaign.template_id).single();
+            const { data: tpl } = await admin
+              .from('email_templates')
+              .select('*')
+              .eq('id', campaign.template_id)
+              .single();
             if (tpl) {
               baseSubject = tpl.subject || campaign.name;
               baseContent = tpl.html_content || 'No Content';
             }
           } else if (campaign.type === 'push') {
-            const { data: tpl } = await admin.from('push_templates').select('*').eq('id', campaign.template_id).single();
+            const { data: tpl } = await admin
+              .from('push_templates')
+              .select('*')
+              .eq('id', campaign.template_id)
+              .single();
             if (tpl) {
               baseSubject = tpl.title || campaign.name;
               baseContent = tpl.body || 'No Content';
             }
           } else if (campaign.type === 'whatsapp') {
-            const { data: tpl } = await admin.from('whatsapp_templates').select('*').eq('id', campaign.template_id).single();
+            const { data: tpl } = await admin
+              .from('whatsapp_templates')
+              .select('*')
+              .eq('id', campaign.template_id)
+              .single();
             if (tpl) {
               baseSubject = campaign.name; // WA usually doesn't have subject
               baseContent = tpl.body || 'No Content';

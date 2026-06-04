@@ -1,10 +1,9 @@
 import axios, { AxiosInstance } from 'axios';
 
 import logger from '../../services/logger.js';
-
-import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
 import { env } from '../../config/env.js';
 
+import { IProvider, SendMessagePayload, SendMessageResult } from './IProvider.js';
 
 export class BrevoProvider implements IProvider {
   public readonly name = 'brevo-email';

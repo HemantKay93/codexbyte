@@ -1,10 +1,12 @@
 import { Worker, Job } from 'bullmq';
+
 import { redis } from '../config/redis.js';
 import logger from '../services/logger.js';
 import { SupportInboxService } from '../modules/support/support.inbox.service.js';
 
 const WORKER_OPTIONS = {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   stalledInterval: 300_000,
   lockDuration: 600_000,
   drainDelay: 60,

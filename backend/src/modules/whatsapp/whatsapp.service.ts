@@ -1,10 +1,9 @@
 import { whatsappQueue } from '../../jobs/whatsapp.queue.js';
 import logger from '../../services/logger.js';
+import { env } from '../../config/env.js';
 
 import { WhatsAppMessagePayload } from './whatsapp.types.js';
 import { WhatsAppRepository } from './whatsapp.repository.js';
-import { env } from '../../config/env.js';
-
 
 const repository = new WhatsAppRepository();
 
@@ -26,8 +25,7 @@ export class WhatsAppService {
       status: 'queued',
     });
 
-    const isServerlessOrProd =
-      !!env.VERCEL || !!env.RENDER || env.NODE_ENV === 'production';
+    const isServerlessOrProd = !!env.VERCEL || !!env.RENDER || env.NODE_ENV === 'production';
 
     if (isServerlessOrProd) {
       logger.info(

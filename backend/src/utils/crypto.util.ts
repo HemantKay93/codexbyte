@@ -22,10 +22,7 @@ export class CryptoUtils {
    * Verifies a signature using HMAC SHA256.
    */
   static verifyHmacSignature(payload: string, signature: string, secret: string): boolean {
-    const expectedSignature = crypto
-      .createHmac('sha256', secret)
-      .update(payload)
-      .digest('hex');
+    const expectedSignature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
 
     return this.constantTimeCompare(expectedSignature, signature);
   }

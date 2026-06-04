@@ -4,10 +4,9 @@ import jwt from 'jsonwebtoken';
 import { supabase, getAdminClient } from '../config/supabase.js';
 import logger from '../services/logger.js';
 import { redis } from '../config/redis.js';
-
-import { AppError } from './error.js';
 import { env } from '../config/env.js';
 
+import { AppError } from './error.js';
 
 const jwtSecret = env.JWT_SECRET;
 

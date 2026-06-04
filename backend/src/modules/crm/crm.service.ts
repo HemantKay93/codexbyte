@@ -1,6 +1,7 @@
-import { CrmRepository } from './crm.repository.js';
 import { AppError } from '../../middlewares/error.js';
 import { eventBus } from '../../core/events/EventBus.js';
+
+import { CrmRepository } from './crm.repository.js';
 
 export class CrmService {
   private crmRepo: CrmRepository;
@@ -38,7 +39,7 @@ export class CrmService {
     return stages.map((stage: any) => {
       return {
         ...stage,
-        deals: deals.filter((d: any) => d.stage_id === stage.id)
+        deals: deals.filter((d: any) => d.stage_id === stage.id),
       };
     });
   }
@@ -52,7 +53,7 @@ export class CrmService {
     if (!payload.title || !payload.pipeline_id || !payload.stage_id) {
       throw new AppError('Title, pipeline, and stage are required to create a deal', 400);
     }
-    
+
     const deal = await this.crmRepo.createDeal(tenantId, payload);
     eventBus.publish(<any>'crm.deal.created', { tenantId, dealId: deal.id });
     return deal;

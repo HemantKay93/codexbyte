@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import { WorkflowsController } from './workflows.controller.js';
+
 import { authenticate } from '../../middlewares/auth.js';
+
+import { WorkflowsController } from './workflows.controller.js';
 
 export const workflowsRoutes = Router();
 const controller = new WorkflowsController();

@@ -13,41 +13,49 @@ const DEFAULT_JOB_OPTIONS = {
 };
 
 export const emailQueue = new Queue('email-queue', {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
 
 export const notificationQueue = new Queue('notification-queue', {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
 
 export const analyticsQueue = new Queue('analytics-queue', {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   defaultJobOptions: { ...DEFAULT_JOB_OPTIONS, attempts: 1 }, // analytics failures are not retried
 });
 
 export const marketingAutomationQueue = new Queue('marketing-automation', {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
 
 export const whatsappQueue = new Queue('whatsapp-queue', {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
 
 export const whatsappIngestionQueue = new Queue('whatsapp-ingestion-queue', {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
 
 export const emailIngestionQueue = new Queue('email-ingestion-queue', {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });
 
 export const supportSlaQueue = new Queue('support-sla-queue', {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   defaultJobOptions: DEFAULT_JOB_OPTIONS,
 });

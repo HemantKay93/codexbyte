@@ -3,8 +3,8 @@ import { fileURLToPath } from 'url';
 
 import { Redis } from 'ioredis';
 import dotenv from 'dotenv';
-import { env } from './/env.js';
 
+import { env } from './/env.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') });

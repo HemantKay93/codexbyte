@@ -4,6 +4,7 @@ import { catchAsync, AppError } from '../../middlewares/error.js';
 import { AuthRequest } from '../../middlewares/auth.js';
 
 import { SupportRepository } from './support.repository.js';
+import { SupportService } from './support.service.js';
 
 const supportRepo = new SupportRepository();
 
@@ -44,8 +45,6 @@ export const createTicket = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-import { SupportService } from './support.service.js';
-
 export const updateTicket = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const data = await supportRepo.update(id as string, req.body);
@@ -59,13 +58,18 @@ export const updateTicket = catchAsync(async (req: Request, res: Response) => {
 export const replyTicket = catchAsync(async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
   const { messageBody } = req.body;
-  
+
   if (!req.user) throw new AppError('Unauthorized', 401);
   const senderName = req.user.full_name || req.user.email || 'Agent';
   const senderEmail = req.user.email || '';
 
-  const message = await SupportService.replyToTicket(id as string, messageBody, senderName, senderEmail);
-  
+  const message = await SupportService.replyToTicket(
+    id as string,
+    messageBody,
+    senderName,
+    senderEmail
+  );
+
   res.status(201).json({
     success: true,
     message: 'Reply sent successfully',

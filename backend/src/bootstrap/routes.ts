@@ -2,9 +2,6 @@ import { Express } from 'express';
 
 import { authenticate, authorize } from '../middlewares/auth.js';
 import * as reportController from '../modules/admin/report.controller.js';
-// eslint-disable-line import/order
-
-// Route Imports
 import productRoutes from '../modules/product/product.routes.js';
 import adminRoutes from '../modules/admin/admin.routes.js';
 import authRoutes from '../modules/auth/auth.routes.js';

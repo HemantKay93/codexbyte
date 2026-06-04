@@ -7,7 +7,7 @@ export class PeriodService {
    */
   static async validatePeriodIsOpen(transactionDate: string) {
     const admin = await getAdminClient();
-    
+
     const { data: closedPeriods, error } = await admin
       .from('financial_periods')
       .select('*')
@@ -18,9 +18,11 @@ export class PeriodService {
     if (error) throw new Error(error.message);
 
     if (closedPeriods && closedPeriods.length > 0) {
-      throw new Error(`Transaction date ${transactionDate} falls in a closed financial period: ${closedPeriods[0].name}`);
+      throw new Error(
+        `Transaction date ${transactionDate} falls in a closed financial period: ${closedPeriods[0].name}`
+      );
     }
-    
+
     return true;
   }
 
@@ -35,7 +37,7 @@ export class PeriodService {
       .update({
         status: 'closed',
         closed_by: userId,
-        closed_at: new Date().toISOString()
+        closed_at: new Date().toISOString(),
       })
       .eq('id', periodId)
       .select('*')
@@ -50,7 +52,10 @@ export class PeriodService {
    */
   static async getPeriods() {
     const admin = await getAdminClient();
-    const { data, error } = await admin.from('financial_periods').select('*').order('start_date', { ascending: false });
+    const { data, error } = await admin
+      .from('financial_periods')
+      .select('*')
+      .order('start_date', { ascending: false });
     if (error) throw new Error(error.message);
     return data;
   }

@@ -45,7 +45,7 @@ export class ProductService {
 
     return await productRepo.create(sanitizedData, userId);
   }
-  // eslint-disable-line complexity // eslint-disable-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line complexity, @typescript-eslint/no-explicit-any
 
   async updateProduct(id: string, data: any, userId?: string) {
     // eslint-disable-line complexity

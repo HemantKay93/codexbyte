@@ -1,12 +1,14 @@
 import { z } from 'zod';
 
 export const createOrderSchema = z.object({
-  items: z.array(
-    z.object({
-      productId: z.string().uuid('Invalid product ID'),
-      quantity: z.number().int().positive('Quantity must be positive'),
-    })
-  ).min(1, 'At least one item is required'),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid('Invalid product ID'),
+        quantity: z.number().int().positive('Quantity must be positive'),
+      })
+    )
+    .min(1, 'At least one item is required'),
   shippingAddress: z.object({
     fullName: z.string().min(2, 'Full name is required'),
     street: z.string().min(5, 'Street address is required'),

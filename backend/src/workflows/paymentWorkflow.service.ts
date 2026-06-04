@@ -7,7 +7,6 @@ import { AppError } from '../middlewares/error.js';
 import logger from '../services/logger.js';
 import { env } from '../config/env.js';
 
-
 const RAZORPAY_KEY_ID = env.RAZORPAY_KEY_ID;
 const RAZORPAY_KEY_SECRET = env.RAZORPAY_KEY_SECRET;
 

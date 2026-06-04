@@ -16,6 +16,11 @@ import {
   whatsappQueue,
 } from '../core/queues/index.js';
 import { SocketGateway } from '../core/notifications/SocketGateway.js';
+import {
+  whatsappIngestionQueue,
+  emailIngestionQueue,
+  supportSlaQueue,
+} from '../core/queues/index.js';
 
 import { automationWorker } from './automation.worker.js';
 import { whatsappWorker } from './whatsapp.worker.js';
@@ -25,7 +30,8 @@ import { whatsappWorker } from './whatsapp.worker.js';
 // Default is 30s which generates many Redis commands. We set it to 300s (5 min).
 // lockDuration must be larger than stalledInterval.
 const WORKER_OPTIONS = {
-  skipVersionCheck: true, connection: redis,
+  skipVersionCheck: true,
+  connection: redis,
   stalledInterval: 300_000, // Check for stalled jobs every 5 min (default: 30s)
   lockDuration: 600_000, // Hold job lock for 10 min
   drainDelay: 60, // Poll every 60s when queue is empty (was 10s).
@@ -115,7 +121,6 @@ setupDLQ(automationWorker);
 setupDLQ(whatsappWorker);
 
 import { whatsappIngestionWorker, emailIngestionWorker } from './support-ingestion.worker.js';
-import { whatsappIngestionQueue, emailIngestionQueue, supportSlaQueue } from '../core/queues/index.js';
 
 setupDLQ(whatsappIngestionWorker);
 setupDLQ(emailIngestionWorker);
@@ -129,7 +134,7 @@ const queues = [
   whatsappQueue,
   whatsappIngestionQueue,
   emailIngestionQueue,
-  supportSlaQueue
+  supportSlaQueue,
 ];
 
 // Telemetry broadcasts queue stats to the admin panel via WebSocket.

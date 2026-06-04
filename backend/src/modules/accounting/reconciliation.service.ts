@@ -22,15 +22,15 @@ export class ReconciliationService {
    */
   static async reconcileTransaction(bankTransactionId: string, journalHeaderId: string) {
     const admin = await getAdminClient();
-    
+
     // In a real ERP, we would verify amounts match, dates are close, etc.
     // For this prototype, we just link them and mark as reconciled.
-    
+
     const { data, error } = await admin
       .from('bank_transactions')
       .update({
         status: 'reconciled',
-        journal_header_id: journalHeaderId
+        journal_header_id: journalHeaderId,
       })
       .eq('id', bankTransactionId)
       .select('*')
