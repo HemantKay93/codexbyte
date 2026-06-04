@@ -1,21 +1,14 @@
-import crypto from 'node:crypto';
+import crypto from 'crypto';
 
 import { Request, Response, NextFunction } from 'express';
 
-export interface CorrelatedRequest extends Request {
-  id?: string;
-}
-
-export const requestIdCorrelation = (req: CorrelatedRequest, res: Response, next: NextFunction) => {
-  const reqId = (req.headers['x-request-id'] as string) || crypto.randomUUID();
+export const traceMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const traceId = (req.headers['x-trace-id'] as string) || crypto.randomUUID();
   const correlationId = (req.headers['x-correlation-id'] as string) || crypto.randomUUID();
 
-  req.id = reqId;
   (req as any).traceId = traceId;
   (req as any).correlationId = correlationId;
 
-  res.setHeader('X-Request-ID', reqId);
   res.setHeader('X-Trace-Id', traceId);
   res.setHeader('X-Correlation-Id', correlationId);
 

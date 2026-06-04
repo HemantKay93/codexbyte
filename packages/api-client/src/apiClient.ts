@@ -30,6 +30,22 @@ apiClient.interceptors.request.use(
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Inject Observability Headers
+    if (config.headers) {
+      const traceId =
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : Math.random().toString(36).substring(2, 15);
+      config.headers['X-Trace-Id'] = traceId;
+      config.headers['X-Correlation-Id'] = traceId; // Using traceId as correlationId for frontend requests for simplicity
+
+      const tenantId = localStorage.getItem('tenant_id');
+      if (tenantId) {
+        config.headers['X-Tenant-Id'] = tenantId;
+      }
+    }
+
     return config;
   },
   (error) => Promise.reject(error)

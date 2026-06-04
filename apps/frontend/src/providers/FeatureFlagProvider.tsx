@@ -19,6 +19,7 @@ export function FeatureFlagProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     // Load feature definitions from API
     growthbook.loadFeatures().catch((err) => {
+      // eslint-disable-next-line no-console
       console.warn('Failed to load GrowthBook features', err);
     });
   }, []);

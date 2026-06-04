@@ -18,25 +18,32 @@ export class GSTService {
   static async prepareGSTR3B(month: string, year: string) {
     const admin = await getAdminClient();
 
-    // In a real implementation, we would query `invoice_line_items` and `vendor_bill_lines`
-    // for the given month, aggregating CGST, SGST, IGST.
-    // For this prototype, we will create a dummy draft based on total ledger balances in GST accounts.
+    // Fetch aggregate Profit/Loss for total sales and purchases
+    const pl = await admin
+      .from('accounting_journal_lines')
+      .select('debit_amount, credit_amount, accounting_accounts!inner(type)')
+      .eq('accounting_journals.tenant_id', '00000000-0000-0000-0000-000000000000') // Placeholder for single tenant context if not passed
+      .in('accounting_accounts.type', ['revenue', 'expense']);
 
-    // Calculate total Sales (Revenue) and Purchases (Expenses) for the month
-    // We can query journal_lines for accounts 4000 (Revenue) and 6000 (Expenses)
+    let totalSales = 0;
+    let totalPurchases = 0;
 
-    // For now, we will create a draft record in `gst_returns`
-    const { data: existing, error: existErr } = await admin
-      .from('gst_returns')
-      .select('*')
-      .eq('return_type', 'GSTR-3B')
-      .eq('month', month)
-      .eq('financial_year', year)
-      .single();
-
-    if (existing) {
-      return existing; // Return existing draft
+    if (pl.data) {
+      for (const line of pl.data as any[]) {
+        const debit = Number(line.debit_amount || 0);
+        const credit = Number(line.credit_amount || 0);
+        if (line.accounting_accounts.type === 'revenue') {
+          totalSales += credit - debit;
+        } else if (line.accounting_accounts.type === 'expense') {
+          totalPurchases += debit - credit;
+        }
+      }
     }
+
+    // Estimate GST as 18% of Net for prototype, separated into CGST/SGST
+    const netGst = totalSales * 0.18;
+    const total_cgst = netGst / 2;
+    const total_sgst = netGst / 2;
 
     // Create a new draft
     const { data, error } = await admin
@@ -47,10 +54,10 @@ export class GSTService {
           month,
           financial_year: year,
           status: 'draft',
-          total_sales: 500000.0, // Dummy data for prototype
-          total_purchases: 300000.0,
-          total_cgst: 45000.0,
-          total_sgst: 45000.0,
+          total_sales: totalSales,
+          total_purchases: totalPurchases,
+          total_cgst: total_cgst,
+          total_sgst: total_sgst,
           total_igst: 0.0,
         },
       ])

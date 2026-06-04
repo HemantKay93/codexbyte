@@ -5,18 +5,32 @@ import * as XLSX from 'xlsx';
 import { catchAsync, AppError } from '../../middlewares/error.js';
 import { PdfService } from '../../services/pdfService.js';
 import { OrderRepository } from '../order/order.repository.js';
+import { ReportingService } from '../reporting/reporting.service.js';
 
 const orderRepo = new OrderRepository();
 
 export const exportReport = catchAsync(async (req: Request, res: Response) => {
-  const { type, format } = req.query;
+  const { type, format, startDate, endDate } = req.query;
+  const tenantId = (req as any).user?.tenant_id || '00000000-0000-0000-0000-000000000000';
 
-  // Mock data for export (In a real app, fetch from DB based on type)
-  const data = [
-    { id: 1, date: '2026-04-20', revenue: 50000, orders: 12, status: 'Completed' },
-    { id: 2, date: '2026-04-21', revenue: 75000, orders: 18, status: 'Completed' },
-    { id: 3, date: '2026-04-22', revenue: 42000, orders: 9, status: 'Completed' },
-  ];
+  let data: any[] = [];
+
+  if (type === 'sales') {
+    const report = await ReportingService.getSalesDashboard(
+      tenantId,
+      (startDate as string) || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      (endDate as string) || new Date().toISOString()
+    );
+    data = report.orders || [];
+  } else if (type === 'inventory') {
+    const report = await ReportingService.getInventoryReport(tenantId);
+    data = report.lowStockItems || [];
+  } else if (type === 'crm') {
+    const report = await ReportingService.getCrmPipelineReport(tenantId);
+    data = Object.entries(report.funnel).map(([status, count]) => ({ status, count }));
+  } else {
+    data = [{ error: 'Unknown report type requested.' }];
+  }
 
   if (format === 'excel') {
     const worksheet = XLSX.utils.json_to_sheet(data);

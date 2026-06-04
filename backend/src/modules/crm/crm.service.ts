@@ -59,4 +59,26 @@ export class CrmService {
     eventBus.publish(<any>'crm.activity.created', { tenantId, activityId: activity.id });
     return activity;
   }
+  async getPipelines(tenantId: string) {
+    return await this.crmRepo.getPipelines(tenantId);
+  }
+
+  async getBoardData(tenantId: string, pipelineId: string) {
+    return await this.crmRepo.getBoardData(tenantId, pipelineId);
+  }
+
+  async createDeal(tenantId: string, payload: any) {
+    if (!payload.title || !payload.pipeline_id || !payload.stage_id) {
+      throw new AppError('Title, Pipeline ID, and Stage ID are required', 400);
+    }
+    const deal = await this.crmRepo.createDeal(tenantId, payload);
+    eventBus.publish(<any>'crm.deal.created', { tenantId, dealId: deal.id });
+    return deal;
+  }
+
+  async moveDealStage(tenantId: string, dealId: string, stageId: string) {
+    const updated = await this.crmRepo.moveDealStage(tenantId, dealId, stageId);
+    eventBus.publish(<any>'crm.deal.stage_changed', { tenantId, dealId, stageId });
+    return updated;
+  }
 }

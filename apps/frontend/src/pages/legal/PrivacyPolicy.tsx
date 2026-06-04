@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 
 import { PageSeo } from '@/components/seo/PageSeo';
 import { useCMS } from '@/features/cms/useCMS';
-import { Loader2 } from 'lucide-react';
 
 export default function PrivacyPolicy() {
   const { data: cms, isLoading } = useCMS('privacy');
@@ -22,7 +22,7 @@ export default function PrivacyPolicy() {
         <h1 className="font-display text-4xl font-bold text-white mb-8">
           {content?.title || 'Privacy Policy'}
         </h1>
-        
+
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="w-8 h-8 text-stitch-primary animate-spin" />

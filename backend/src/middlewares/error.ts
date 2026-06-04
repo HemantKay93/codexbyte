@@ -22,14 +22,30 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  logger.error(
-    `${err.statusCode} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
-  );
+  const traceId = (req as any).traceId;
+  const correlationId = (req as any).correlationId;
+  const tenantId = (req as any).user?.tenant_id || 'system';
+  const userId = (req as any).user?.id || 'anonymous';
+
+  logger.error(`${err.statusCode || 500} - ${err.message}`, {
+    metadata: {
+      traceId,
+      correlationId,
+      tenantId,
+      userId,
+      method: req.method,
+      url: req.originalUrl,
+      ip: req.ip,
+      stack: err.stack,
+    },
+  });
 
   if (env.NODE_ENV === 'development') {
     res.status(err.statusCode).json({
       success: false,
       message: err.message,
+      traceId,
+      correlationId,
       error: err,
       stack: err.stack,
     });
@@ -39,11 +55,13 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
       res.status(err.statusCode).json({
         success: false,
         message: err.message,
+        traceId,
       });
     } else {
       res.status(500).json({
         success: false,
         message: 'Internal Server Error',
+        traceId,
       });
     }
   }

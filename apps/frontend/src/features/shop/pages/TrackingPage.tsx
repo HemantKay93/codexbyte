@@ -34,9 +34,10 @@ export function TrackingPage() {
 
   useEffect(() => {
     if (initialId) {
-      fetchTracking(initialId);
-      // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void fetchTracking(initialId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialId]);
 
   return (
