@@ -1,11 +1,11 @@
 export interface Account {
   id?: string;
+  tenant_id?: string;
   code: string;
   name: string;
-  type: 'Asset' | 'Liability' | 'Equity' | 'Revenue' | 'Expense';
-  subtype?: string;
-  parent_account_id?: string;
-  description?: string;
+  type: 'asset' | 'liability' | 'equity' | 'revenue' | 'expense';
+  sub_type?: string;
+  parent_id?: string;
   is_active?: boolean;
   created_at?: string;
   updated_at?: string;
@@ -13,28 +13,24 @@ export interface Account {
 
 export interface JournalHeader {
   id?: string;
-  reference_type?:
-    | 'invoice'
-    | 'order'
-    | 'payment'
-    | 'manual'
-    | 'bill'
-    | 'expense'
-    | 'bank_transaction';
-  reference_id?: string;
+  tenant_id?: string;
+  voucher_number: string;
   transaction_date: string;
-  description?: string;
-  status?: 'draft' | 'posted' | 'void';
+  fiscal_period_id?: string;
+  reference_type?: string;
+  reference_id?: string;
+  status?: 'draft' | 'posted' | 'cancelled';
+  notes?: string;
   created_by?: string;
-  approved_by?: string;
   created_at?: string;
   updated_at?: string;
 }
 
 export interface JournalLine {
   id?: string;
-  journal_header_id?: string;
+  journal_id?: string;
   account_id: string;
+  description?: string;
   debit_amount: number;
   credit_amount: number;
   created_at?: string;

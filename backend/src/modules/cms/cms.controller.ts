@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { catchAsync } from '../../middlewares/error.js';
+import { CacheService } from '../../services/cacheService.js';
 
 import { CmsRepository } from './cms.repository.js';
 
@@ -11,8 +12,17 @@ export const getCmsContent = catchAsync(async (req: Request, res: Response) => {
   const sectionKeys = req.query.sectionKeys
     ? (req.query.sectionKeys as string).split(',')
     : undefined;
+
+  const cacheKey = `cms:content:${pageSlug}:${sectionKeys ? sectionKeys.join(',') : 'all'}`;
+  const cached = await CacheService.get(cacheKey);
+
+  if (cached) {
+    return res.json({ success: true, data: cached });
+  }
+
   const content = await cmsRepo.findBySlug(pageSlug, sectionKeys);
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  await CacheService.set(cacheKey, content, 3600); // 1 hour cache
+
   res.json({
     success: true,
     data: content,
@@ -24,6 +34,9 @@ export const updateCmsContent = catchAsync(async (req: Request, res: Response) =
   const sectionKey = req.params.sectionKey as string;
   const { content } = req.body;
   const result = await cmsRepo.upsert(pageSlug, sectionKey, content);
+
+  await CacheService.invalidatePattern(`cms:content:${pageSlug}:*`);
+
   res.json({
     success: true,
     message: 'Section updated successfully',
@@ -45,6 +58,9 @@ export const updatePageContent = catchAsync(async (req: Request, res: Response) 
   }));
 
   const result = await cmsRepo.upsertBulk(pageSlug, sections);
+
+  await CacheService.invalidatePattern(`cms:content:${pageSlug}:*`);
+
   res.json({
     success: true,
     message: 'Page content updated successfully',

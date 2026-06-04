@@ -63,7 +63,12 @@ export class ExpenseService {
     // Wait, we need a method in AutoPostingEngine for general expense payment.
     // For now, VendorBill payment works similarly: DR Expense, CR Bank (if direct) or DR AP, CR Bank.
     // Assuming direct employee expense reimbursement: DR Expense (6000), CR Bank (1100).
-    const journal = await AutoPostingEngine.postVendorBill(expense.id, expense.amount, '6000'); // Reusing bill posting logic which does DR Expense, CR AP.
+    const journal = await AutoPostingEngine.postVendorBill(
+      expense.tenant_id,
+      expense.id,
+      expense.amount,
+      '6000'
+    ); // Reusing bill posting logic which does DR Expense, CR AP.
     // Wait, let's just do a direct journal here or add a new method to AutoPostingEngine.
 
     const { data, error } = await admin

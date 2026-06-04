@@ -10,70 +10,50 @@ export class CrmService {
     this.crmRepo = new CrmRepository();
   }
 
-  // --- Pipelines & Stages ---
-  async getPipelines(tenantId: string) {
-    const pipelines = await this.crmRepo.getPipelines(tenantId);
-    if (pipelines.length === 0) {
-      // Auto-init default pipeline if none exist
-      const defaultPipeline = await this.crmRepo.createPipeline(tenantId, 'Standard Sales', true);
-      await this.crmRepo.createStage(tenantId, defaultPipeline.id, 'Lead', 10, 10);
-      await this.crmRepo.createStage(tenantId, defaultPipeline.id, 'Qualified', 20, 30);
-      await this.crmRepo.createStage(tenantId, defaultPipeline.id, 'Proposal', 30, 60);
-      await this.crmRepo.createStage(tenantId, defaultPipeline.id, 'Negotiation', 40, 80);
-      await this.crmRepo.createStage(tenantId, defaultPipeline.id, 'Won', 50, 100);
-      await this.crmRepo.createStage(tenantId, defaultPipeline.id, 'Lost', 60, 0);
-      pipelines.push(defaultPipeline);
+  // --- Leads ---
+  async getLeads(tenantId: string) {
+    return await this.crmRepo.getLeads(tenantId);
+  }
+
+  async createLead(tenantId: string, payload: any) {
+    if (!payload.email && !payload.phone) {
+      throw new AppError('Email or phone is required to create a lead', 400);
     }
-
-    // Attach stages to pipelines
-    for (const p of pipelines) {
-      p.stages = await this.crmRepo.getStages(tenantId, p.id);
-    }
-    return pipelines;
+    const lead = await this.crmRepo.createLead(tenantId, payload);
+    eventBus.publish(<any>'crm.lead.created', { tenantId, leadId: lead.id });
+    return lead;
   }
 
-  async getBoardData(tenantId: string, pipelineId: string) {
-    const stages = await this.crmRepo.getStages(tenantId, pipelineId);
-    const deals = await this.crmRepo.getDeals(tenantId, pipelineId);
-
-    return stages.map((stage: any) => {
-      return {
-        ...stage,
-        deals: deals.filter((d: any) => d.stage_id === stage.id),
-      };
-    });
-  }
-
-  // --- Deals ---
-  async getDeals(tenantId: string) {
-    return await this.crmRepo.getDeals(tenantId);
-  }
-
-  async createDeal(tenantId: string, payload: any) {
-    if (!payload.title || !payload.pipeline_id || !payload.stage_id) {
-      throw new AppError('Title, pipeline, and stage are required to create a deal', 400);
-    }
-
-    const deal = await this.crmRepo.createDeal(tenantId, payload);
-    eventBus.publish(<any>'crm.deal.created', { tenantId, dealId: deal.id });
-    return deal;
-  }
-
-  async moveDealStage(tenantId: string, dealId: string, stageId: string) {
-    const updated = await this.crmRepo.updateDealStage(tenantId, dealId, stageId);
-    if (!updated) throw new AppError('Deal not found', 404);
-    eventBus.publish(<any>'crm.deal.stage_changed', { tenantId, dealId, stageId });
+  async updateLeadStatus(tenantId: string, leadId: string, status: string) {
+    const updated = await this.crmRepo.updateLeadStatus(tenantId, leadId, status);
+    if (!updated) throw new AppError('Lead not found', 404);
+    eventBus.publish(<any>'crm.lead.status_changed', { tenantId, leadId, status });
     return updated;
   }
 
+  // --- Opportunities ---
+  async getOpportunities(tenantId: string, leadId?: string) {
+    return await this.crmRepo.getOpportunities(tenantId, leadId);
+  }
+
+  async createOpportunity(tenantId: string, payload: any) {
+    if (!payload.name || !payload.lead_id) {
+      throw new AppError('Name and Lead ID are required to create an opportunity', 400);
+    }
+
+    const opportunity = await this.crmRepo.createOpportunity(tenantId, payload);
+    eventBus.publish(<any>'crm.opportunity.created', { tenantId, opportunityId: opportunity.id });
+    return opportunity;
+  }
+
   // --- Activities ---
-  async getDealActivities(tenantId: string, dealId: string) {
-    return await this.crmRepo.getActivitiesForDeal(tenantId, dealId);
+  async getLeadActivities(tenantId: string, leadId: string) {
+    return await this.crmRepo.getActivitiesForLead(tenantId, leadId);
   }
 
   async createActivity(tenantId: string, payload: any) {
-    if (!payload.title || !payload.activity_type) {
-      throw new AppError('Title and activity type are required', 400);
+    if (!payload.type || !payload.lead_id) {
+      throw new AppError('Type and Lead ID are required for activity', 400);
     }
     const activity = await this.crmRepo.createActivity(tenantId, payload);
     eventBus.publish(<any>'crm.activity.created', { tenantId, activityId: activity.id });

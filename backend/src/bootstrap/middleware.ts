@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import express from 'express';
+import hpp from 'hpp';
 
 import logger from '../services/logger.js';
 import { requestIdCorrelation } from '../middlewares/requestId.js';
@@ -93,6 +94,9 @@ export function bootstrapMiddleware(app: Express) {
       },
     })
   );
+
+  // Prevent HTTP Parameter Pollution
+  app.use(hpp());
 
   // Request ID Correlation
   app.use(requestIdCorrelation);

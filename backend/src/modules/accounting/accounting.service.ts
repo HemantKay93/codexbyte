@@ -5,6 +5,7 @@ import { Invoice, InvoiceLineItem, JournalHeader, JournalLine } from './accounti
 
 export class AccountingService {
   static async createInvoice(
+    tenantId: string,
     invoicePayload: Partial<Invoice>,
     lineItems: Partial<InvoiceLineItem>[]
   ) {
@@ -71,6 +72,7 @@ export class AccountingService {
     // If it's sent or paid immediately, we post a journal entry
     if (createdInvoice.status !== 'draft' && createdInvoice.status !== 'cancelled') {
       await this.postInvoiceJournalEntry(
+        tenantId,
         createdInvoice.id,
         fullInvoice.invoice_number,
         total,
@@ -82,6 +84,7 @@ export class AccountingService {
   }
 
   static async postInvoiceJournalEntry(
+    tenantId: string,
     invoiceId: string,
     invoiceNumber: string,
     amount: number,
@@ -90,13 +93,15 @@ export class AccountingService {
     const description = `Auto-generated entry for ${type.toUpperCase()} Invoice ${invoiceNumber}`;
 
     // 1200: Accounts Receivable, 4000: Sales Revenue
-    const arAccount = await AccountingRepository.getAccountByCode('1200');
-    const revAccount = await AccountingRepository.getAccountByCode('4000');
+    const arAccount = await AccountingRepository.getAccountByCode(tenantId, '1200');
+    const revAccount = await AccountingRepository.getAccountByCode(tenantId, '4000');
 
     await AccountingRepository.createDoubleEntryJournal(
       {
+        tenant_id: tenantId,
         transaction_date: new Date().toISOString(),
-        description,
+        voucher_number: `INV-${invoiceNumber}-${Date.now()}`,
+        notes: description,
         reference_type: 'invoice',
         reference_id: invoiceId,
         status: 'posted',
@@ -116,8 +121,8 @@ export class AccountingService {
     );
   }
 
-  static async getProfitLossReport() {
-    return AccountingRepository.getAggregatedProfitLoss();
+  static async getProfitLossReport(tenantId: string) {
+    return AccountingRepository.getAggregatedProfitLoss(tenantId);
   }
 
   static async getGSTReport() {

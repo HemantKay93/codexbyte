@@ -61,7 +61,8 @@ export class BankingService {
     const journal = await AccountingRepository.createDoubleEntryJournal(
       {
         transaction_date: payload.transaction_date || new Date().toISOString(),
-        description: payload.description || 'Manual Bank Transaction',
+        voucher_number: 'BNK-' + Date.now(),
+        notes: payload.description || 'Manual Bank Transaction',
         reference_type: 'bank_transaction',
         status: 'posted',
       },

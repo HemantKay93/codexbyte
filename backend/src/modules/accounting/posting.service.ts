@@ -5,24 +5,26 @@ import { AccountingRepository } from './accounting.repository.js';
  * Automatically generates balanced double-entry journals for various ERP events.
  */
 export class AutoPostingEngine {
-  private static async getAccountIds(codes: string[]) {
+  private static async getAccountIds(tenantId: string, codes: string[]) {
     const ids: Record<string, string> = {};
     for (const code of codes) {
-      const account = await AccountingRepository.getAccountByCode(code);
+      const account = await AccountingRepository.getAccountByCode(tenantId, code);
       ids[code] = account.id;
     }
     return ids;
   }
 
-  static async postOrderCreated(orderId: string, amount: number) {
+  static async postOrderCreated(tenantId: string, orderId: string, amount: number) {
     // DR Accounts Receivable (1200)
     // CR Sales Revenue (4000)
-    const acc = await this.getAccountIds(['1200', '4000']);
+    const acc = await this.getAccountIds(tenantId, ['1200', '4000']);
 
     return AccountingRepository.createDoubleEntryJournal(
       {
+        tenant_id: tenantId,
         transaction_date: new Date().toISOString(),
-        description: `Order Created - ${orderId}`,
+        voucher_number: 'AUTO-' + Date.now(),
+        notes: `Order Created - ${orderId}`,
         reference_type: 'order',
         reference_id: orderId,
         status: 'posted',
@@ -34,15 +36,22 @@ export class AutoPostingEngine {
     );
   }
 
-  static async postPaymentReceived(paymentId: string, orderId: string, amount: number) {
+  static async postPaymentReceived(
+    tenantId: string,
+    paymentId: string,
+    orderId: string,
+    amount: number
+  ) {
     // DR Bank (1100)
     // CR Accounts Receivable (1200)
-    const acc = await this.getAccountIds(['1100', '1200']);
+    const acc = await this.getAccountIds(tenantId, ['1100', '1200']);
 
     return AccountingRepository.createDoubleEntryJournal(
       {
+        tenant_id: tenantId,
         transaction_date: new Date().toISOString(),
-        description: `Payment Received for Order - ${orderId}`,
+        voucher_number: 'AUTO-' + Date.now(),
+        notes: `Payment Received for Order - ${orderId}`,
         reference_type: 'payment',
         reference_id: paymentId,
         status: 'posted',
@@ -54,15 +63,17 @@ export class AutoPostingEngine {
     );
   }
 
-  static async postRefundIssued(refundId: string, amount: number) {
+  static async postRefundIssued(tenantId: string, refundId: string, amount: number) {
     // DR Refund Expense (6200)
     // CR Bank (1100)
-    const acc = await this.getAccountIds(['6200', '1100']);
+    const acc = await this.getAccountIds(tenantId, ['6200', '1100']);
 
     return AccountingRepository.createDoubleEntryJournal(
       {
+        tenant_id: tenantId,
         transaction_date: new Date().toISOString(),
-        description: `Refund Issued - ${refundId}`,
+        voucher_number: 'AUTO-' + Date.now(),
+        notes: `Refund Issued - ${refundId}`,
         reference_type: 'payment', // using payment as reference type for refunds too
         reference_id: refundId,
         status: 'posted',
@@ -74,15 +85,22 @@ export class AutoPostingEngine {
     );
   }
 
-  static async postVendorBill(billId: string, amount: number, expenseAccountCode: string = '6000') {
+  static async postVendorBill(
+    tenantId: string,
+    billId: string,
+    amount: number,
+    expenseAccountCode: string = '6000'
+  ) {
     // DR Expense (Dynamic or 6000)
     // CR Accounts Payable (2000)
-    const acc = await this.getAccountIds([expenseAccountCode, '2000']);
+    const acc = await this.getAccountIds(tenantId, [expenseAccountCode, '2000']);
 
     return AccountingRepository.createDoubleEntryJournal(
       {
+        tenant_id: tenantId,
         transaction_date: new Date().toISOString(),
-        description: `Vendor Bill - ${billId}`,
+        voucher_number: 'AUTO-' + Date.now(),
+        notes: `Vendor Bill - ${billId}`,
         reference_type: 'bill',
         reference_id: billId,
         status: 'posted',
@@ -94,15 +112,22 @@ export class AutoPostingEngine {
     );
   }
 
-  static async postVendorPayment(paymentId: string, billId: string, amount: number) {
+  static async postVendorPayment(
+    tenantId: string,
+    paymentId: string,
+    billId: string,
+    amount: number
+  ) {
     // DR Accounts Payable (2000)
     // CR Bank (1100)
-    const acc = await this.getAccountIds(['2000', '1100']);
+    const acc = await this.getAccountIds(tenantId, ['2000', '1100']);
 
     return AccountingRepository.createDoubleEntryJournal(
       {
+        tenant_id: tenantId,
         transaction_date: new Date().toISOString(),
-        description: `Vendor Payment for Bill - ${billId}`,
+        voucher_number: 'AUTO-' + Date.now(),
+        notes: `Vendor Payment for Bill - ${billId}`,
         reference_type: 'payment',
         reference_id: paymentId,
         status: 'posted',
@@ -114,15 +139,17 @@ export class AutoPostingEngine {
     );
   }
 
-  static async postEmployeeExpense(expenseId: string, amount: number) {
+  static async postEmployeeExpense(tenantId: string, expenseId: string, amount: number) {
     // DR Operating Expenses (6000)
     // CR Bank (1100)
-    const acc = await this.getAccountIds(['6000', '1100']);
+    const acc = await this.getAccountIds(tenantId, ['6000', '1100']);
 
     return AccountingRepository.createDoubleEntryJournal(
       {
+        tenant_id: tenantId,
         transaction_date: new Date().toISOString(),
-        description: `Employee Expense Reimbursement - ${expenseId}`,
+        voucher_number: 'AUTO-' + Date.now(),
+        notes: `Employee Expense Reimbursement - ${expenseId}`,
         reference_type: 'expense',
         reference_id: expenseId,
         status: 'posted',

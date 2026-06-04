@@ -16,7 +16,8 @@ import { PeriodService } from './period.service.js';
 
 export const createInvoice = catchAsync(async (req: Request, res: Response) => {
   const { invoice, lineItems } = req.body;
-  const created = await AccountingService.createInvoice(invoice, lineItems);
+  const tenantId = (req as any).user?.tenant_id;
+  const created = await AccountingService.createInvoice(tenantId, invoice, lineItems);
   res.status(201).json({ status: 'success', data: created });
 });
 
@@ -53,7 +54,8 @@ export const createJournalEntry = catchAsync(async (req: Request, res: Response)
 
 export const getJournalEntries = catchAsync(async (req: Request, res: Response) => {
   const { account_type } = req.query;
-  const entries = await AccountingRepository.getJournalEntries({
+  const tenantId = (req as any).user?.tenant_id;
+  const entries = await AccountingRepository.getJournalEntries(tenantId, {
     account_type: account_type as string,
   });
   res.status(200).json({ status: 'success', data: entries });

@@ -54,12 +54,13 @@ export class OrderWorkflow {
       for (const item of items) {
         await InventoryService.adjustStock({
           productId: item.productId || item.product_id,
-          warehouseId,
-          quantity: -Number(item.quantity),
+          warehouseId: item.warehouseId,
+          quantity: -item.quantity,
           type: 'out',
-          referenceType: 'order',
+          referenceType: 'ORDER',
           referenceId: order.id,
-          userId,
+          notes: 'Order Fulfillment',
+          userId: 'SYSTEM',
         });
       }
       // 4. Dispatch analytics event asynchronously

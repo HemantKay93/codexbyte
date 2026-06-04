@@ -1,98 +1,32 @@
 import { getAdminClient } from '../../config/supabase.js';
 
 export class CrmRepository {
-  // --- Pipelines ---
-  async getPipelines(tenantId: string) {
+  // --- Leads ---
+  async getLeads(tenantId: string) {
     const admin = await getAdminClient();
     const { data, error } = await admin
-      .from('crm_pipelines')
-      .select('*')
-      .eq('tenant_id', tenantId)
-      .order('created_at', { ascending: true });
-    if (error) throw error;
-    return data || [];
-  }
-
-  async createPipeline(tenantId: string, name: string, isDefault: boolean = false) {
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('crm_pipelines')
-      .insert([{ tenant_id: tenantId, name, is_default: isDefault }])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
-  }
-
-  // --- Stages ---
-  async getStages(tenantId: string, pipelineId: string) {
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('crm_stages')
-      .select('*')
-      .eq('tenant_id', tenantId)
-      .eq('pipeline_id', pipelineId)
-      .order('sequence', { ascending: true });
-    if (error) throw error;
-    return data || [];
-  }
-
-  async createStage(
-    tenantId: string,
-    pipelineId: string,
-    name: string,
-    sequence: number,
-    probability: number
-  ) {
-    const admin = await getAdminClient();
-    const { data, error } = await admin
-      .from('crm_stages')
-      .insert([{ tenant_id: tenantId, pipeline_id: pipelineId, name, sequence, probability }])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
-  }
-
-  // --- Deals ---
-  async getDeals(tenantId: string, pipelineId?: string) {
-    const admin = await getAdminClient();
-    let query = admin
-      .from('crm_deals')
-      .select('*, customers(first_name, last_name, email), crm_stages(name), user_profiles(email)')
+      .from('crm_leads')
+      .select('*, assigned:user_profiles(first_name, last_name, email)')
       .eq('tenant_id', tenantId)
       .order('created_at', { ascending: false });
-
-    if (pipelineId) {
-      query = query.eq('pipeline_id', pipelineId);
-    }
-    const { data, error } = await query;
     if (error) throw error;
-
-    // Flatten joins for frontend
-    return (data || []).map((d: any) => ({
-      ...d,
-      customer_email: d.customers?.email,
-      first_name: d.customers?.first_name,
-      last_name: d.customers?.last_name,
-      stage_name: d.crm_stages?.name,
-      assigned_user_email: d.user_profiles?.email,
-    }));
+    return data || [];
   }
 
-  async createDeal(tenantId: string, payload: any) {
+  async createLead(tenantId: string, payload: any) {
     const admin = await getAdminClient();
     const { data, error } = await admin
-      .from('crm_deals')
+      .from('crm_leads')
       .insert([
         {
           tenant_id: tenantId,
-          customer_id: payload.customer_id,
-          title: payload.title,
-          value: payload.value || 0,
-          pipeline_id: payload.pipeline_id,
-          stage_id: payload.stage_id,
-          expected_close_date: payload.expected_close_date,
+          first_name: payload.first_name,
+          last_name: payload.last_name,
+          email: payload.email,
+          phone: payload.phone,
+          company: payload.company,
+          status: payload.status || 'lead',
+          score: payload.score || 0,
           assigned_to: payload.assigned_to,
         },
       ])
@@ -102,12 +36,12 @@ export class CrmRepository {
     return data;
   }
 
-  async updateDealStage(tenantId: string, dealId: string, stageId: string) {
+  async updateLeadStatus(tenantId: string, leadId: string, status: string) {
     const admin = await getAdminClient();
     const { data, error } = await admin
-      .from('crm_deals')
-      .update({ stage_id: stageId, updated_at: new Date().toISOString() })
-      .eq('id', dealId)
+      .from('crm_leads')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', leadId)
       .eq('tenant_id', tenantId)
       .select()
       .single();
@@ -115,21 +49,54 @@ export class CrmRepository {
     return data;
   }
 
+  // --- Opportunities ---
+  async getOpportunities(tenantId: string, leadId?: string) {
+    const admin = await getAdminClient();
+    let query = admin
+      .from('crm_opportunities')
+      .select('*, lead:crm_leads(*)')
+      .eq('tenant_id', tenantId)
+      .order('created_at', { ascending: false });
+
+    if (leadId) {
+      query = query.eq('lead_id', leadId);
+    }
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  }
+
+  async createOpportunity(tenantId: string, payload: any) {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('crm_opportunities')
+      .insert([
+        {
+          tenant_id: tenantId,
+          lead_id: payload.lead_id,
+          name: payload.name,
+          expected_value: payload.expected_value || 0,
+          probability_percentage: payload.probability_percentage || 0,
+          expected_close_date: payload.expected_close_date,
+        },
+      ])
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  }
+
   // --- Activities ---
-  async getActivitiesForDeal(tenantId: string, dealId: string) {
+  async getActivitiesForLead(tenantId: string, leadId: string) {
     const admin = await getAdminClient();
     const { data, error } = await admin
       .from('crm_activities')
-      .select('*, user_profiles(email)')
+      .select('*, performed:user_profiles(first_name, last_name, email)')
       .eq('tenant_id', tenantId)
-      .eq('deal_id', dealId)
-      .order('created_at', { ascending: false });
+      .eq('lead_id', leadId)
+      .order('performed_at', { ascending: false });
     if (error) throw error;
-
-    return (data || []).map((a: any) => ({
-      ...a,
-      assigned_user_email: a.user_profiles?.email,
-    }));
+    return data || [];
   }
 
   async createActivity(tenantId: string, payload: any) {
@@ -139,13 +106,11 @@ export class CrmRepository {
       .insert([
         {
           tenant_id: tenantId,
-          deal_id: payload.deal_id,
-          customer_id: payload.customer_id,
-          activity_type: payload.activity_type,
-          title: payload.title,
+          lead_id: payload.lead_id,
+          type: payload.type,
           notes: payload.notes,
-          due_date: payload.due_date,
-          assigned_to: payload.assigned_to,
+          performed_by: payload.performed_by,
+          performed_at: payload.performed_at || new Date().toISOString(),
         },
       ])
       .select()

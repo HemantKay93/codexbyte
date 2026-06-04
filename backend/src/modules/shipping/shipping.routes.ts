@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.get('/rates', shippingController.getShippingRates);
 router.get('/track/:trackingId', shippingController.trackShipment);
+router.post('/webhook', shippingController.webhookHandler);
 
 export default router;

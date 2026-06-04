@@ -29,7 +29,11 @@ export function initializeEventSubscribers() {
 
     // Trigger Auto Posting Engine for Accounting (Phase 4)
     try {
-      await AutoPostingEngine.postOrderCreated(payload.orderId, payload.totalAmount);
+      await AutoPostingEngine.postOrderCreated(
+        (payload as any).tenantId || '00000000-0000-0000-0000-000000000000',
+        payload.orderId,
+        payload.totalAmount
+      );
       logger.info(`[AutoPostingEngine] Posted journal for order ${payload.orderId}`);
     } catch (err: any) {
       logger.error(`[AutoPostingEngine] Failed to post journal for order ${payload.orderId}:`, err);
@@ -88,12 +92,13 @@ export function initializeEventSubscribers() {
       const admin = await getAdminClient();
       const { data: order } = await admin
         .from('orders')
-        .select('total_amount')
+        .select('total_amount, tenant_id')
         .eq('id', payload.orderId)
         .single();
 
       if (order && order.total_amount) {
         await AutoPostingEngine.postPaymentReceived(
+          order.tenant_id || '00000000-0000-0000-0000-000000000000',
           payload.transactionId,
           payload.orderId,
           order.total_amount

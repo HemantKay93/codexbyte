@@ -27,6 +27,7 @@ import { documentsRoutes } from '../modules/documents/documents.routes.js';
 import { workflowsRoutes } from '../modules/workflows/workflows.routes.js';
 import { slaRoutes } from '../modules/sla/sla.routes.js';
 import { operationsRoutes } from '../modules/operations/operations.routes.js';
+import reportingRoutes from '../modules/reporting/reporting.routes.js';
 
 import { createRateLimiters } from './middleware.js';
 
@@ -60,6 +61,7 @@ export function bootstrapRoutes(app: Express) {
   app.use('/api/v1/workflows', workflowsRoutes);
   app.use('/api/v1/sla', slaRoutes);
   app.use('/api/v1/operations', operationsRoutes);
+  app.use('/api/v1/reporting', reportingRoutes);
 
   // Legacy compatibility
   app.use('/api/leads', leadRoutes);

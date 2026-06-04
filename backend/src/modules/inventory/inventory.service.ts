@@ -10,8 +10,10 @@ export class InventoryService {
   private static LOW_STOCK_THRESHOLD = 5;
 
   static async reserveStock(data: {
+    tenantId?: string;
     productId: string;
-    warehouseId: string;
+    warehouseId?: string;
+    binId?: string;
     quantity: number;
     userId?: string;
   }): Promise<{ reservationId: string }> {
@@ -19,10 +21,11 @@ export class InventoryService {
 
     // Check available stock (quantity - reserved_quantity)
     const { data: inventory, error: invError } = await admin
-      .from('inventory')
+      .from('inventory_stock')
       .select('id, quantity, reserved_quantity')
+      .eq('tenant_id', data.tenantId)
       .eq('product_id', data.productId)
-      .eq('warehouse_id', data.warehouseId)
+      .eq('bin_id', data.binId)
       .maybeSingle();
 
     if (invError) throw invError;
@@ -42,7 +45,7 @@ export class InventoryService {
 
     // Increment reserved_quantity
     const { error: reserveError } = await admin
-      .from('inventory')
+      .from('inventory_stock')
       .update({ reserved_quantity: (inventory.reserved_quantity || 0) + data.quantity })
       .eq('id', inventory.id);
 
@@ -57,22 +60,25 @@ export class InventoryService {
   }
 
   static async releaseReservation(data: {
+    tenantId?: string;
     productId: string;
-    warehouseId: string;
+    warehouseId?: string;
+    binId?: string;
     quantity: number;
     reservationId: string;
   }) {
     const admin = await getAdminClient();
     const { data: inventory } = await admin
-      .from('inventory')
+      .from('inventory_stock')
       .select('id, reserved_quantity')
+      .eq('tenant_id', data.tenantId)
       .eq('product_id', data.productId)
-      .eq('warehouse_id', data.warehouseId)
+      .eq('bin_id', data.binId)
       .maybeSingle();
 
     if (inventory && inventory.reserved_quantity >= data.quantity) {
       await admin
-        .from('inventory')
+        .from('inventory_stock')
         .update({ reserved_quantity: inventory.reserved_quantity - data.quantity })
         .eq('id', inventory.id);
       logger.info(`[Inventory] Released reservation ${data.reservationId}`);
@@ -80,8 +86,11 @@ export class InventoryService {
   }
 
   static async adjustStock(data: {
+    tenantId?: string;
     productId: string;
-    warehouseId: string;
+    warehouseId?: string;
+    binId?: string;
+    batchId?: string;
     quantity: number;
     type: 'in' | 'out' | 'transfer' | 'adjustment' | 'return';
     referenceType?: string;
@@ -92,10 +101,11 @@ export class InventoryService {
     const admin = await getAdminClient();
 
     const { data: inventory, error: invError } = await admin
-      .from('inventory')
+      .from('inventory_stock')
       .select('id, quantity, reserved_quantity')
+      .eq('tenant_id', data.tenantId)
       .eq('product_id', data.productId)
-      .eq('warehouse_id', data.warehouseId)
+      .eq('bin_id', data.binId)
       .maybeSingle();
 
     if (invError) throw invError;
@@ -119,7 +129,7 @@ export class InventoryService {
       }
 
       await admin
-        .from('inventory')
+        .from('inventory_stock')
         .update({
           quantity: newQty,
           reserved_quantity: newReserved,
@@ -128,10 +138,12 @@ export class InventoryService {
         .eq('id', inventory.id);
     } else {
       const { data: newInv, error: insertError } = await admin
-        .from('inventory')
+        .from('inventory_stock')
         .insert({
+          tenant_id: data.tenantId,
           product_id: data.productId,
-          warehouse_id: data.warehouseId,
+          bin_id: data.binId,
+          batch_id: data.batchId || null,
           quantity: newQty,
           reserved_quantity: 0,
         })
@@ -141,8 +153,9 @@ export class InventoryService {
       inventoryId = newInv.id;
     }
 
-    await admin.from('stock_movements').insert({
-      inventory_id: inventoryId,
+    await admin.from('inventory_stock_movements').insert({
+      tenant_id: data.tenantId,
+      stock_id: inventoryId,
       type: data.type,
       quantity: data.quantity,
       reference_type: data.referenceType,
@@ -152,8 +165,9 @@ export class InventoryService {
     });
 
     const { data: allInv } = await admin
-      .from('inventory')
+      .from('inventory_stock')
       .select('quantity')
+      .eq('tenant_id', data.tenantId)
       .eq('product_id', data.productId);
     // eslint-disable-line @typescript-eslint/no-explicit-any
     const totalStock = allInv?.reduce((sum: number, item: any) => sum + item.quantity, 0) || 0;
@@ -171,7 +185,7 @@ export class InventoryService {
         const { data: wh } = await admin
           .from('warehouses')
           .select('name')
-          .eq('id', data.warehouseId)
+          .eq('id', data.warehouseId || data.binId)
           .single();
         if (prod && wh) {
           await NotificationService.notifyLowStock(prod.name, wh.name, newQty);

@@ -9,17 +9,18 @@ export const auditLog = (module: string, action: string) => {
     const originalJson = res.json;
 
     res.json = function (data: any) {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
-      // eslint-disable-line @typescript-eslint/no-explicit-any
-      // Log after response is sent
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        // eslint-disable-line @typescript-eslint/no-floating-promises
+        // Capture tenant ID from authenticated user context
+        const tenantId = req.user?.tenant_id;
+
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         AuditService.log({
+          tenant_id: tenantId,
           user_id: req.user?.id,
           action: action,
-          module: module,
-          entity_id: req.params.id || data.id,
-          new_data: req.method !== 'GET' ? req.body : undefined,
+          resource: module,
+          resource_id: req.params.id || data?.id,
+          metadata: req.method !== 'GET' ? req.body : undefined,
           ip_address: req.ip,
           user_agent: req.headers['user-agent'],
         });

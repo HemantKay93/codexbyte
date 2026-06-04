@@ -4,80 +4,59 @@ import axios from 'axios';
 import { catchAsync } from '../../middlewares/error.js';
 import logger from '../../services/logger.js';
 
+import { ShiprocketProvider } from './providers/shiprocket.provider.js';
+import { ShipmentService } from './shipping.service.js';
+
+const getProvider = () => {
+  return new ShiprocketProvider(
+    process.env.SHIPROCKET_EMAIL || 'admin@codexbyte.com',
+    process.env.SHIPROCKET_PASSWORD || 'secret'
+  );
+};
+
 export const getShippingRates = catchAsync(async (req: Request, res: Response) => {
-  // Check if credentials exist
-  if (!process.env.SHIPROCKET_EMAIL || !process.env.SHIPROCKET_PASSWORD) {
-    const pincode = String(req.query.pincode || '');
-    const isLocal = pincode.startsWith('400'); // Mumbai local
-
-    return res.json({
-      rates: [
-        {
-          courier_name: 'Delhivery',
-          rate: isLocal ? 40 : 80,
-          estimated_delivery_days: isLocal ? 2 : 5,
-        },
-        {
-          courier_name: 'BlueDart',
-          rate: isLocal ? 90 : 150,
-          estimated_delivery_days: isLocal ? 1 : 3,
-        },
-      ],
-    });
-  }
-
   try {
-    const tokenResponse = await axios.post('https://apiv2.shiprocket.in/v1/external/auth/login', {
-      email: process.env.SHIPROCKET_EMAIL,
-      password: process.env.SHIPROCKET_PASSWORD,
-    });
+    const provider = getProvider();
+    const token = await provider['authenticate'](); // Use internal or public method if needed
 
+    // Call the external API for rates
     const ratesResponse = await axios.get(
       `https://apiv2.shiprocket.in/v1/external/courier/serviceability/`,
       {
         params: req.query,
         headers: {
-          Authorization: `Bearer ${tokenResponse.data.token}`,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
 
     return res.json(ratesResponse.data);
   } catch (err: any) {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-    // eslint-disable-line @typescript-eslint/no-explicit-any
     logger.error(`Shiprocket API failed: ${err.message}`);
-    // Return mock rates as fallback
-    const pincode = String(req.query.pincode || '');
-    const isLocal = pincode.startsWith('400');
-    return res.json({
-      rates: [
-        {
-          courier_name: 'Delhivery (Fallback)',
-          rate: isLocal ? 40 : 80,
-          estimated_delivery_days: isLocal ? 2 : 5,
-        },
-        {
-          courier_name: 'BlueDart (Fallback)',
-          rate: isLocal ? 90 : 150,
-          estimated_delivery_days: isLocal ? 1 : 3,
-        },
-      ],
-    });
+    return res.status(503).json({ error: 'Failed to fetch shipping rates' });
   }
 });
 
 export const trackShipment = catchAsync(async (req: Request, res: Response) => {
   const { trackingId } = req.params;
 
-  if (!process.env.SHIPROCKET_EMAIL) {
-    return res.json({
-      trackingId,
-      status: 'In Transit',
-      events: [{ status: 'Shipment Created', timestamp: new Date().toISOString() }],
-    });
-  }
+  try {
+    const provider = getProvider();
+    const status = await provider.trackShipment(String(trackingId));
 
-  // Similar logic to get token and track
-  res.json({ trackingId, status: 'Processing' });
+    if (!status) {
+      return res.status(404).json({ error: 'Tracking info not found' });
+    }
+
+    res.json({ trackingId, status });
+  } catch (err: any) {
+    logger.error(`Failed to track shipment: ${err.message}`);
+    res.status(500).json({ error: 'Failed to retrieve tracking info' });
+  }
+});
+
+export const webhookHandler = catchAsync(async (req: Request, res: Response) => {
+  // Validate webhook signature if applicable
+  await ShipmentService.handleWebhook(req.body);
+  res.status(200).send('OK');
 });
