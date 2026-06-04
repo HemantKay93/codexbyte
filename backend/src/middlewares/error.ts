@@ -1,4 +1,4 @@
-import { Request, Response, Nextany } from 'express';
+import { Request, Response, NextFunction } from 'express';
 
 import logger from '../services/logger.js';
 import { env } from '../config/env.js';
@@ -16,7 +16,7 @@ export class AppError extends Error {
   }
 }
 
-export const errorHandler = (err: any, req: Request, res: Response, next: Nextany) => {
+export const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   // eslint-disable-line @typescript-eslint/no-explicit-any
   err.statusCode = err.statusCode || 500;
@@ -51,7 +51,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: Nextan
 
 // eslint-disable-line @typescript-eslint/no-unsafe-function-type
 export const catchAsync = (fn: any) => {
-  return (req: Request, res: Response, next: Nextany) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     fn(req, res, next).catch(next);
   };
 };

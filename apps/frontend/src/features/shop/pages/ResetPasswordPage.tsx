@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthService } from '@byteevolvr/api-client';
 import { Button } from '@byteevolvr/ui';
 import { Loader2, Lock, ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -19,10 +19,12 @@ export function ResetPasswordPage() {
     const hash = location.hash;
     const params = new URLSearchParams(hash.replace('#', '?'));
     const accessToken = params.get('access_token');
-    
+
     if (accessToken) {
+      // eslint-disable-next-line
       setToken(accessToken);
     } else {
+      // eslint-disable-next-line
       setError('Invalid or missing password reset token.');
     }
   }, [location]);
@@ -30,12 +32,12 @@ export function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (password !== confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-    
+
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
       return;
@@ -52,7 +54,11 @@ export function ResetPasswordPage() {
       await AuthService.resetPassword(password, token);
       setSuccess(true);
     } catch (err: any) {
-      setError(err.customMessage || err.message || 'An unexpected error occurred. The link might have expired.');
+      setError(
+        err.customMessage ||
+          err.message ||
+          'An unexpected error occurred. The link might have expired.'
+      );
     } finally {
       setLoading(false);
     }
@@ -76,9 +82,7 @@ export function ResetPasswordPage() {
           <h1 className="font-display text-3xl font-bold tracking-tight text-white mb-2">
             Create New Password
           </h1>
-          <p className="text-brand-muted font-medium">
-            Please enter your new password below.
-          </p>
+          <p className="text-brand-muted font-medium">Please enter your new password below.</p>
         </div>
 
         {error && (
@@ -94,10 +98,7 @@ export function ResetPasswordPage() {
               <CheckCircle2 className="h-5 w-5" />
               Password successfully reset!
             </div>
-            <Button
-              onClick={() => navigate('/shop/login')}
-              className="w-full mt-4"
-            >
+            <Button onClick={() => navigate('/shop/login')} className="w-full mt-4">
               Continue to Login
             </Button>
           </div>
@@ -119,7 +120,9 @@ export function ResetPasswordPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-brand-muted ml-1">Confirm New Password</label>
+              <label className="text-sm font-medium text-brand-muted ml-1">
+                Confirm New Password
+              </label>
               <div className="relative group">
                 <Lock className="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-white/40 transition-colors group-focus-within:text-accent" />
                 <input

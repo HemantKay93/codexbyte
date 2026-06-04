@@ -18,6 +18,6 @@ export const createSegment = catchAsync(async (req: Request, res: Response) => {
 
 export const updateSegment = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const segment = await segmentService.updateSegment(id, req.body);
+  const segment = await segmentService.updateSegment(id as string, req.body);
   res.json({ success: true, data: segment });
 });

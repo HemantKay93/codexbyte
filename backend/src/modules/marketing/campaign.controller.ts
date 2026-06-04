@@ -33,7 +33,7 @@ export const createCampaign = catchAsync(async (req: Request, res: Response) => 
     templateId: body.template_id,
     content: body.custom_content,
     scheduledFor: body.scheduled_at,
-    createdBy: req.user?.id || '00000000-0000-0000-0000-000000000000',
+    createdBy: (req as any).user?.id || '00000000-0000-0000-0000-000000000000',
   };
   const campaign = await campaignService.createCampaign(payload as any);
 

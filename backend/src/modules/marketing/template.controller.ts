@@ -18,7 +18,7 @@ export const createEmailTemplate = catchAsync(async (req: Request, res: Response
 
 export const updateEmailTemplate = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const template = await templateService.updateEmailTemplate(id, req.body);
+  const template = await templateService.updateEmailTemplate(id as string, req.body);
   res.json({ success: true, data: template });
 });
 
@@ -34,6 +34,6 @@ export const createPushTemplate = catchAsync(async (req: Request, res: Response)
 
 export const updatePushTemplate = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const template = await templateService.updatePushTemplate(id, req.body);
+  const template = await templateService.updatePushTemplate(id as string, req.body);
   res.json({ success: true, data: template });
 });
