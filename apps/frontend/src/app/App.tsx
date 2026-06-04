@@ -36,6 +36,12 @@ const LoginPage = lazy(() =>
 const SignupPage = lazy(() =>
   import('@/features/shop/pages/SignupPage').then((m) => ({ default: m.SignupPage }))
 );
+const ForgotPasswordPage = lazy(() =>
+  import('@/features/shop/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage }))
+);
+const ResetPasswordPage = lazy(() =>
+  import('@/features/shop/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage }))
+);
 const DashboardPage = lazy(() =>
   import('@/features/shop/pages/DashboardPage').then((m) => ({ default: m.DashboardPage }))
 );
@@ -99,6 +105,8 @@ export default function App() {
           />
           <Route path="/shop/login" element={<LoginPage />} />
           <Route path="/shop/signup" element={<SignupPage />} />
+          <Route path="/shop/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/shop/reset-password" element={<ResetPasswordPage />} />
           <Route path="/shop/track/:id?" element={<TrackingPage />} />
           <Route path="/shop/order-success" element={<OrderSuccessPage />} />
           <Route path="/shop/order-failed" element={<OrderFailedPage />} />

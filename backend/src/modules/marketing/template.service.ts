@@ -59,6 +59,22 @@ export class TemplateService {
   }
 
   /**
+   * Update an email template
+   */
+  async updateEmailTemplate(id: string, payload: Record<string, any>) {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('email_templates')
+      .update({ ...payload, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  /**
    * Create a push template
  // eslint-disable-line @typescript-eslint/no-explicit-any
    */
@@ -68,6 +84,22 @@ export class TemplateService {
     const { data, error } = await admin
       .from('push_templates')
       .insert({ ...payload, created_at: new Date().toISOString() })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  /**
+   * Update a push template
+   */
+  async updatePushTemplate(id: string, payload: Record<string, any>) {
+    const admin = await getAdminClient();
+    const { data, error } = await admin
+      .from('push_templates')
+      .update({ ...payload, updated_at: new Date().toISOString() })
+      .eq('id', id)
       .select()
       .single();
 

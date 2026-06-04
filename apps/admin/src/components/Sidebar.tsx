@@ -29,6 +29,12 @@ import {
   Send,
   ListTodo,
   FileText,
+  FolderOpen,
+  GitBranch,
+  CheckSquare,
+  Activity,
+  Briefcase,
+  Clock,
 } from 'lucide-react';
 import { useAuthStore } from '@byteevolvr/store';
 
@@ -103,12 +109,46 @@ const navigation: (NavItem | NavGroup)[] = [
     ],
   },
   {
+    name: 'CRM & Sales',
+    icon: Briefcase,
+    roles: ['admin', 'super-admin', 'sales'],
+    items: [
+      { name: 'Pipelines', href: '/crm', icon: GitBranch },
+    ],
+  },
+  {
     name: 'Operations',
     icon: Truck,
     roles: ['admin', 'super-admin'],
     items: [
+      { name: 'Command Center', href: '/operations', icon: Activity },
+      { name: 'SLA Dashboard', href: '/sla', icon: Clock },
       { name: 'Suppliers', href: '/suppliers', icon: Truck },
       { name: 'Multi-Store', href: '/stores', icon: Globe },
+    ],
+  },
+  {
+    name: 'Documents',
+    icon: FolderOpen,
+    items: [
+      { name: 'Document Center', href: '/documents', icon: FolderOpen },
+    ],
+  },
+  {
+    name: 'Approvals',
+    icon: CheckSquare,
+    roles: ['admin', 'super-admin', 'manager'],
+    items: [
+      { name: 'My Inbox', href: '/approvals', icon: CheckSquare },
+      { name: 'Templates', href: '/approvals/templates', icon: LayoutTemplate },
+    ],
+  },
+  {
+    name: 'Automations',
+    icon: GitBranch,
+    roles: ['admin', 'super-admin'],
+    items: [
+      { name: 'Workflow Builder', href: '/workflows', icon: GitBranch },
     ],
   },
   {
@@ -155,8 +195,8 @@ function isGroup(item: NavItem | NavGroup): item is NavGroup {
 function NavGroupItem({ group }: { group: NavGroup }) {
   const [open, setOpen] = useState(false);
   const Icon = group.icon;
-  const { user } = useAuthStore();
-  const userRole = user?.role || user?.user_metadata?.role || 'user';
+  const { user, isAdmin } = useAuthStore();
+  const userRole = user?.role || user?.user_metadata?.role || (isAdmin ? 'admin' : 'user');
 
   // Filter group items based on role
   const filteredItems = group.items.filter((item) => !item.roles || item.roles.includes(userRole));
@@ -207,8 +247,8 @@ function NavGroupItem({ group }: { group: NavGroup }) {
 }
 
 export function Sidebar() {
-  const { user } = useAuthStore();
-  const userRole = user?.role || user?.user_metadata?.role || 'user';
+  const { user, isAdmin } = useAuthStore();
+  const userRole = user?.role || user?.user_metadata?.role || (isAdmin ? 'admin' : 'user');
 
   // Filter top-level navigation based on role
   const filteredNavigation = navigation.filter(

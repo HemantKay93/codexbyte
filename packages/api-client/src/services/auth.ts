@@ -40,4 +40,22 @@ export const AuthService = {
     }
     return response.data;
   },
+
+  forgotPassword: async (email: string) => {
+    const response = await apiClient.post('/auth/customer/forgot-password', { email });
+    return response.data;
+  },
+
+  resetPassword: async (password: string, token: string) => {
+    const response = await apiClient.post(
+      '/auth/customer/reset-password',
+      { password },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  },
 };

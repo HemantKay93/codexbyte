@@ -10,42 +10,26 @@ import {
   TableCell,
 } from '../components/ui/Table';
 
-const workflows = [
-  {
-    id: '1',
-    name: 'Abandoned Cart Recovery',
-    trigger: 'Cart idle for 2 hours',
-    active: true,
-    sent: 1245,
-    conversion: '12.4%',
-  },
-  {
-    id: '2',
-    name: 'Welcome Series - New Users',
-    trigger: 'On Sign up',
-    active: true,
-    sent: 8430,
-    conversion: '45.2%',
-  },
-  {
-    id: '3',
-    name: 'Post-Purchase Review Request',
-    trigger: '7 days after delivery',
-    active: true,
-    sent: 3210,
-    conversion: '8.1%',
-  },
-  {
-    id: '4',
-    name: 'Win-back Campaign (90 days)',
-    trigger: 'No purchase for 90 days',
-    active: false,
-    sent: 540,
-    conversion: '2.3%',
-  },
-];
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { WorkflowsService } from '@byteevolvr/api-client';
 
 export function MarketingPage() {
+  const navigate = useNavigate();
+  const [workflows, setWorkflows] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchWorkflows();
+  }, []);
+
+  const fetchWorkflows = async () => {
+    try {
+      const res = await WorkflowsService.getWorkflows();
+      setWorkflows(res.data);
+    } catch (error) {
+      console.error('Failed to load marketing workflows', error);
+    }
+  };
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -55,7 +39,7 @@ export function MarketingPage() {
             Design and manage automated email & SMS workflows
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={() => navigate('/workflows')}>
           <Plus className="h-4 w-4" />
           Create Workflow
         </Button>
@@ -129,19 +113,19 @@ export function MarketingPage() {
                 <TableCell className="text-sm text-on-surface-variant">
                   <div className="flex items-center gap-1.5">
                     <Zap className="h-3 w-3" />
-                    {wf.trigger}
+                    {wf.trigger_event || 'Custom'}
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={wf.active ? 'success' : 'secondary'}>
-                    {wf.active ? 'Active' : 'Paused'}
+                  <Badge variant={wf.is_active ? 'success' : 'secondary'}>
+                    {wf.is_active ? 'Active' : 'Paused'}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right text-on-surface-variant">
-                  {wf.sent.toLocaleString()}
+                  {0}
                 </TableCell>
                 <TableCell className="text-right font-medium text-emerald-600">
-                  {wf.conversion}
+                  0%
                 </TableCell>
                 <TableCell>
                   <button className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-surface-container transition-colors">

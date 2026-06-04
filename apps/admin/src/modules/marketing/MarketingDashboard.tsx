@@ -1,14 +1,51 @@
+import { useState, useEffect } from 'react';
 import { Card } from '@byteevolvr/ui';
-import { Mail, Zap, Users, LayoutTemplate } from 'lucide-react';
+import { Mail, Zap, Users, LayoutTemplate, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { MarketingService, AdminService } from '@byteevolvr/api-client';
 
 export function MarketingDashboard() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    campaigns: 0,
+    automations: 0,
+    audience: 0
+  });
+
+  useEffect(() => {
+    fetchMetrics();
+  }, []);
+
+  const fetchMetrics = async () => {
+    setLoading(true);
+    try {
+      const [campRes, autoRes, custRes] = await Promise.all([
+        MarketingService.getCampaigns().catch(() => ({ data: [] })),
+        MarketingService.getAutomations().catch(() => ({ data: [] })),
+        AdminService.getCustomers().catch(() => ({ data: [] }))
+      ]);
+
+      const campaigns = Array.isArray(campRes.data) ? campRes.data : (campRes.data?.data || []);
+      const automations = Array.isArray(autoRes.data) ? autoRes.data : (autoRes.data?.data || []);
+      const customers = Array.isArray(custRes.data) ? custRes.data : (custRes.data?.data || []);
+
+      setStats({
+        campaigns: campaigns.length,
+        automations: automations.filter((a: any) => a.status === 'active').length,
+        audience: customers.length
+      });
+    } catch (error) {
+      console.error('Failed to load marketing metrics', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const metrics = [
-    { title: 'Total Campaigns', value: '24', trend: '+12%', icon: Mail },
-    { title: 'Active Automations', value: '5', trend: '+2%', icon: Zap },
-    { title: 'Total Audience', value: '12,450', trend: '+1.4%', icon: Users },
+    { title: 'Total Campaigns', value: stats.campaigns.toString(), trend: 'Active', icon: Mail },
+    { title: 'Active Automations', value: stats.automations.toString(), trend: 'Running', icon: Zap },
+    { title: 'Total Audience', value: stats.audience.toLocaleString(), trend: 'Subscribed', icon: Users },
   ];
 
   return (
@@ -22,7 +59,12 @@ export function MarketingDashboard() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {loading ? (
+        <div className="flex justify-center items-center h-32">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {metrics.map((metric, i) => (
           <Card key={i}>
             <div className="p-6">
@@ -37,11 +79,12 @@ export function MarketingDashboard() {
                   <metric.icon className="h-5 w-5 text-primary" />
                 </div>
               </div>
-              <p className="text-label-sm text-green-600 mt-4">{metric.trend} from last month</p>
+              <p className="text-label-sm text-primary mt-4">{metric.trend}</p>
             </div>
           </Card>
         ))}
       </div>
+      )}
 
       <h2 className="text-title-lg font-semibold text-on-background mt-8">Quick Actions</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

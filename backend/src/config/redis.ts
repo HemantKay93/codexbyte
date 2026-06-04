@@ -27,8 +27,9 @@ export const redisConfig = {
     family: 0, // Critical for Upstash
     ...(isUpstashOrTls && { tls: { rejectUnauthorized: false } }),
     retryStrategy(times: number) {
-      if (times > 10) return null; // Increase retry attempts for remote redis
-      const delay = Math.min(times * 100, 3000);
+      // Never return null, otherwise ioredis stops reconnecting and throws "Connection is closed."
+      // Upstash frequently drops idle connections, so we must always try to reconnect.
+      const delay = Math.min(times * 200, 5000);
       return delay;
     },
   }),

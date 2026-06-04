@@ -39,12 +39,23 @@ export const createSegmentSchema = z.object({
   }),
 });
 
-export const createTemplateSchema = z.object({
+export const createEmailTemplateSchema = z.object({
   body: z.object({
     name: z.string().min(1),
-    type: z.enum(['email', 'whatsapp', 'push']),
-    subject: z.string().optional().nullable(),
-    content: z.string().min(1),
+    subject: z.string().min(1),
+    html_content: z.string().min(1),
+    design_json: z.any().optional(),
+    variables: z.array(z.string()).optional(),
+  }),
+});
+
+export const createPushTemplateSchema = z.object({
+  body: z.object({
+    name: z.string().min(1),
+    title: z.string().min(1),
+    body: z.string().min(1),
+    icon_url: z.string().optional().nullable(),
+    action_url: z.string().optional().nullable(),
     variables: z.array(z.string()).optional(),
   }),
 });

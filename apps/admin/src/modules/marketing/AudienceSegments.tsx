@@ -9,11 +9,12 @@ export function AudienceSegments() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const [newSegment, setNewSegment] = useState({
     name: '',
     description: '',
-    filter_rules: { type: 'all' },
+    filter_rules: { type: 'all', rawBulkText: '', contacts: [] } as any,
   });
 
   const loadSegments = async () => {
@@ -33,19 +34,79 @@ export function AudienceSegments() {
     // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
   }, []);
 
-  const handleCreate = async () => {
+  const handleSave = async () => {
     setSaving(true);
     try {
-      await MarketingService.createSegment(newSegment);
+      // Parse raw text into contacts if bulk
+      if (newSegment.filter_rules.type === 'bulk') {
+        const text = newSegment.filter_rules.rawBulkText || '';
+        const items = text.split(/[\n,;]+/).map((s: string) => s.trim()).filter(Boolean);
+        const contacts = items.map((item: string) => {
+          const isEmail = item.includes('@');
+          return {
+            email: isEmail ? item : null,
+            phone: !isEmail ? item : null
+          };
+        });
+        newSegment.filter_rules.contacts = contacts;
+      }
+
+      if (editingId) {
+        await MarketingService.updateSegment(editingId, newSegment);
+      } else {
+        await MarketingService.createSegment(newSegment);
+      }
       setShowModal(false);
-      setNewSegment({ name: '', description: '', filter_rules: { type: 'all' } });
+      setEditingId(null);
+      setNewSegment({ name: '', description: '', filter_rules: { type: 'all', rawBulkText: '', contacts: [] } });
       await loadSegments();
     } catch (err) {
-      console.error('Failed to create segment', err);
-      alert('Failed to create segment');
+      console.error('Failed to save segment', err);
+      alert('Failed to save segment');
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleEdit = (segment: any) => {
+    setEditingId(segment.id);
+    setNewSegment({
+      name: segment.name,
+      description: segment.description || '',
+      filter_rules: segment.filter_rules || { type: 'all', rawBulkText: '', contacts: [] }
+    });
+    setShowModal(true);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target?.result as string;
+      setNewSegment(prev => ({
+        ...prev,
+        filter_rules: {
+          ...prev.filter_rules,
+          rawBulkText: (prev.filter_rules.rawBulkText ? prev.filter_rules.rawBulkText + '\n' : '') + text
+        }
+      }));
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  const downloadCsvTemplate = () => {
+    const csvContent = "email,phone\njohn@example.com,1234567890\njane@example.com,0987654321";
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "segment_template.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (loading) {
@@ -65,7 +126,7 @@ export function AudienceSegments() {
             Build dynamic customer groups for targeting
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setShowModal(true)}>
+        <Button className="gap-2" onClick={() => { setEditingId(null); setNewSegment({ name: '', description: '', filter_rules: { type: 'all', rawBulkText: '', contacts: [] }}); setShowModal(true); }}>
           <Filter className="h-4 w-4" />
           Create Segment
         </Button>
@@ -94,7 +155,7 @@ export function AudienceSegments() {
                   <span className="font-medium text-on-background">
                     Est. Size: {seg.estimated_count}
                   </span>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => handleEdit(seg)}>
                     Edit Rules
                   </Button>
                 </div>
@@ -112,7 +173,7 @@ export function AudienceSegments() {
           />
           <div className="relative bg-surface w-full max-w-[500px] shadow-xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
-              <h2 className="text-xl font-bold text-on-surface">Create Segment</h2>
+              <h2 className="text-xl font-bold text-on-surface">{editingId ? 'Edit Segment' : 'Create Segment'}</h2>
               <Button
                 variant="ghost"
                 size="sm"
@@ -148,11 +209,44 @@ export function AudienceSegments() {
                   }
                 >
                   <option value="all">All Users</option>
+                  <option value="bulk">Bulk Contact List (Emails/Phones)</option>
                   <option value="high_spenders">High Spenders (Placeholder)</option>
                 </select>
-                <p className="text-xs text-on-surface-variant mt-1">
-                  Rule engine MVP only supports "All Users" dynamically right now.
-                </p>
+                
+                {newSegment.filter_rules.type === 'bulk' && (
+                  <div className="mt-4 space-y-3 animate-in fade-in zoom-in-95 duration-200">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-sm font-medium text-on-surface">
+                        Paste Contacts
+                      </label>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="sm" className="h-7 text-xs text-primary" onClick={downloadCsvTemplate}>
+                          Download Template
+                        </Button>
+                        <input type="file" id="csvUpload" accept=".csv,.txt" className="hidden" onChange={handleFileUpload} />
+                        <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => document.getElementById('csvUpload')?.click()}>
+                          Upload CSV
+                        </Button>
+                      </div>
+                    </div>
+                    <textarea 
+                      className="w-full h-32 p-3 rounded-lg border border-outline bg-surface text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                      placeholder="john@example.com, 1234567890&#10;jane@example.com"
+                      value={newSegment.filter_rules.rawBulkText || ''}
+                      onChange={(e) => setNewSegment({
+                        ...newSegment, 
+                        filter_rules: { ...newSegment.filter_rules, rawBulkText: e.target.value }
+                      })}
+                    />
+                    <p className="text-xs text-on-surface-variant">Separate contacts with commas or newlines.</p>
+                  </div>
+                )}
+                
+                {newSegment.filter_rules.type === 'all' && (
+                  <p className="text-xs text-on-surface-variant mt-1">
+                    Rule engine MVP only supports "All Users" dynamically right now.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -160,13 +254,13 @@ export function AudienceSegments() {
               <Button variant="outline" onClick={() => setShowModal(false)}>
                 Cancel
               </Button>
-              <Button onClick={handleCreate} disabled={saving || !newSegment.name}>
+              <Button onClick={handleSave} disabled={saving || !newSegment.name}>
                 {saving ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 ) : (
                   <Plus className="h-4 w-4 mr-2" />
                 )}
-                Create Segment
+                {editingId ? 'Save Segment' : 'Create Segment'}
               </Button>
             </div>
           </div>

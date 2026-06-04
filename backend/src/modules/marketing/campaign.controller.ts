@@ -24,8 +24,18 @@ export const getCampaigns = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const createCampaign = catchAsync(async (req: Request, res: Response) => {
-  const payload = req.body;
-  const campaign = await campaignService.createCampaign(payload);
+  const body = req.body;
+  const payload = {
+    campaignId: crypto.randomUUID(),
+    name: body.name,
+    segmentId: body.segment_id,
+    channel: body.type, // map frontend 'type' to backend 'channel'
+    templateId: body.template_id,
+    content: body.custom_content,
+    scheduledFor: body.scheduled_at,
+    createdBy: req.user?.id || '00000000-0000-0000-0000-000000000000',
+  };
+  const campaign = await campaignService.createCampaign(payload as any);
 
   res.status(201).json({
     success: true,

@@ -8,6 +8,7 @@ export function TemplateManager() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const [emailTemplates, setEmailTemplates] = useState<any[]>([]);
   // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -21,6 +22,18 @@ export function TemplateManager() {
     body: '',
     html_content: '',
   });
+
+  const handleEdit = (tpl: any) => {
+    setEditingId(tpl.id);
+    setNewTemplate({
+      name: tpl.name || '',
+      subject: tpl.subject || '',
+      title: tpl.title || '',
+      body: tpl.body || '',
+      html_content: tpl.html_content || '',
+    });
+    setShowModal(true);
+  };
 
   const loadTemplates = async () => {
     setLoading(true);
@@ -43,28 +56,39 @@ export function TemplateManager() {
     // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
   }, []);
 
-  const handleCreate = async () => {
+  const handleSave = async () => {
     setSaving(true);
     try {
       if (activeTab === 'email') {
-        await MarketingService.createEmailTemplate({
+        const payload = {
           name: newTemplate.name,
           subject: newTemplate.subject,
           html_content: newTemplate.html_content,
-        });
+        };
+        if (editingId) {
+          await MarketingService.updateEmailTemplate(editingId, payload);
+        } else {
+          await MarketingService.createEmailTemplate(payload);
+        }
       } else if (activeTab === 'push') {
-        await MarketingService.createPushTemplate({
+        const payload = {
           name: newTemplate.name,
           title: newTemplate.title,
           body: newTemplate.body,
-        });
+        };
+        if (editingId) {
+          await MarketingService.updatePushTemplate(editingId, payload);
+        } else {
+          await MarketingService.createPushTemplate(payload);
+        }
       }
       setShowModal(false);
+      setEditingId(null);
       setNewTemplate({ name: '', subject: '', title: '', body: '', html_content: '' });
       await loadTemplates();
     } catch (err) {
-      console.error('Failed to create template', err);
-      alert('Failed to create template');
+      console.error('Failed to save template', err);
+      alert('Failed to save template');
     } finally {
       setSaving(false);
     }
@@ -89,9 +113,14 @@ export function TemplateManager() {
             Design and manage reusable campaign templates
           </p>
         </div>
-        <Button className="gap-2" onClick={() => setShowModal(true)}>
-          <Plus className="h-4 w-4" />
-          Create Template
+        <Button
+          onClick={() => {
+            setEditingId(null);
+            setNewTemplate({ name: '', subject: '', title: '', body: '', html_content: '' });
+            setShowModal(true);
+          }}
+        >
+          <Plus className="mr-2 h-4 w-4" /> Create Template
         </Button>
       </div>
 
@@ -131,7 +160,7 @@ export function TemplateManager() {
                 <div className="aspect-video bg-background border border-outline rounded-lg mb-4 flex items-center justify-center relative group">
                   <LayoutTemplate className="h-8 w-8 text-on-surface-variant opacity-20" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                    <Button variant="outline" className="bg-surface text-on-surface border-none">
+                    <Button variant="outline" className="bg-surface text-on-surface border-none" onClick={() => handleEdit(tpl)}>
                       Edit
                     </Button>
                   </div>
@@ -155,7 +184,7 @@ export function TemplateManager() {
           <div className="relative bg-surface w-full max-w-[600px] shadow-xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
               <h2 className="text-xl font-bold text-on-surface">
-                Create {activeTab === 'email' ? 'Email' : 'Push'} Template
+                {editingId ? 'Edit' : 'Create'} {activeTab === 'email' ? 'Email' : 'Push'} Template
               </h2>
               <Button
                 variant="ghost"
@@ -223,16 +252,12 @@ export function TemplateManager() {
             </div>
 
             <div className="p-6 border-t border-outline-variant bg-surface-container-low flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setShowModal(false)}>
+              <Button variant="outline" onClick={() => setShowModal(false)} disabled={saving}>
                 Cancel
               </Button>
-              <Button onClick={handleCreate} disabled={saving || !newTemplate.name}>
-                {saving ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <Plus className="h-4 w-4 mr-2" />
-                )}
-                Create Template
+              <Button onClick={handleSave} disabled={saving || !newTemplate.name}>
+                {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {editingId ? 'Save Changes' : 'Create Template'}
               </Button>
             </div>
           </div>

@@ -60,6 +60,30 @@ const CustomersPage = lazy(() =>
 const CustomerDetailPage = lazy(() =>
   import('./pages/CustomerDetailPage').then((m) => ({ default: m.CustomerDetailPage }))
 );
+const Customer360ProfilePage = lazy(() =>
+  import('./pages/customers/Customer360ProfilePage').then((m) => ({ default: m.Customer360ProfilePage }))
+);
+const CRMDashboardPage = lazy(() =>
+  import('./pages/crm/CRMDashboardPage').then((m) => ({ default: m.CRMDashboardPage }))
+);
+const ApprovalInboxPage = lazy(() =>
+  import('./pages/approvals/ApprovalInboxPage').then((m) => ({ default: m.ApprovalInboxPage }))
+);
+const ApprovalTemplatesPage = lazy(() =>
+  import('./pages/approvals/ApprovalTemplatesPage').then((m) => ({ default: m.ApprovalTemplatesPage }))
+);
+const DocumentCenterPage = lazy(() =>
+  import('./pages/documents/DocumentCenterPage').then((m) => ({ default: m.DocumentCenterPage }))
+);
+const WorkflowBuilderPage = lazy(() =>
+  import('./pages/workflows/WorkflowBuilderPage').then((m) => ({ default: m.WorkflowBuilderPage }))
+);
+const SLADashboardPage = lazy(() =>
+  import('./pages/sla/SLADashboardPage').then((m) => ({ default: m.SLADashboardPage }))
+);
+const OperationsDashboardPage = lazy(() =>
+  import('./pages/operations/OperationsDashboardPage').then((m) => ({ default: m.OperationsDashboardPage }))
+);
 const ReviewsPage = lazy(() =>
   import('./pages/ReviewsPage').then((m) => ({ default: m.ReviewsPage }))
 );
@@ -189,6 +213,14 @@ const Main = () => {
                   <Route path="/warehouse" element={<WarehousePage />} />
                   <Route path="/customers" element={<CustomersPage />} />
                   <Route path="/customers/:id" element={<CustomerDetailPage />} />
+                  <Route path="/customers/:id/360" element={<Customer360ProfilePage />} />
+                  <Route path="/crm" element={<CRMDashboardPage />} />
+                  <Route path="/approvals" element={<ApprovalInboxPage />} />
+                  <Route path="/approvals/templates" element={<ApprovalTemplatesPage />} />
+                  <Route path="/documents" element={<DocumentCenterPage />} />
+                  <Route path="/workflows" element={<WorkflowBuilderPage />} />
+                  <Route path="/sla" element={<SLADashboardPage />} />
+                  <Route path="/operations" element={<OperationsDashboardPage />} />
                   <Route path="/reviews" element={<ReviewsPage />} />
                   <Route path="/marketing" element={<MarketingDashboard />} />
                   <Route path="/marketing/campaigns" element={<CampaignBuilder />} />

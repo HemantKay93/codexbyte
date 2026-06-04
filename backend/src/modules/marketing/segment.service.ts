@@ -42,12 +42,42 @@ export class SegmentService {
   }
 
   /**
+   * Update an existing audience segment
+   */
+  async updateSegment(id: string, payload: Record<string, any>) {
+    const admin = await getAdminClient();
+
+    // Estimate count before saving
+    const count = await this.estimateAudienceCount(payload.filter_rules);
+
+    const { data, error } = await admin
+      .from('audience_segments')
+      .update({
+        name: payload.name,
+        description: payload.description,
+        filter_rules: payload.filter_rules,
+        estimated_count: count,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  /**
    * Run the filter rules against the users/orders tables to count matching users
    */
   // eslint-disable-line @typescript-eslint/no-explicit-any
   async estimateAudienceCount(filterRules: any): Promise<number> {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     const admin = await getAdminClient();
+
+    if (filterRules?.type === 'bulk') {
+      return filterRules.contacts?.length || 0;
+    }
 
     if (filterRules?.type === 'all') {
       const { count } = await admin.from('users').select('*', { count: 'exact', head: true });
@@ -126,6 +156,10 @@ export class SegmentService {
 
     if (segError || !segment) {
       throw new AppError('Segment not found', 404);
+    }
+
+    if (segment.filter_rules?.type === 'bulk') {
+      return segment.filter_rules.contacts || [];
     }
 
     if (segment.filter_rules?.type === 'all') {

@@ -86,4 +86,18 @@ export class AuthService {
     if (error) throw new AppError(error.message, 400);
     return data;
   }
+
+  async forgotPassword(email: string) {
+    const frontendUrl = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',')[0] : 'http://localhost:5173';
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${frontendUrl}/shop/reset-password`,
+    });
+    if (error) throw new AppError(error.message, 400);
+  }
+
+  async resetPassword(userId: string, password: string) {
+    const admin = await getAdminClient();
+    const { error } = await admin.auth.admin.updateUserById(userId, { password });
+    if (error) throw new AppError(error.message, 400);
+  }
 }

@@ -24,6 +24,12 @@ import leadRoutes from '../modules/lead/lead.routes.js';
 import supportRoutes from '../modules/support/support.routes.js';
 import supplierRoutes from '../modules/supplier/supplier.routes.js';
 import whatsappRoutes from '../modules/whatsapp/whatsapp.routes.js';
+import { crmRoutes } from '../modules/crm/crm.routes.js';
+import { approvalsRoutes } from '../modules/approvals/approvals.routes.js';
+import { documentsRoutes } from '../modules/documents/documents.routes.js';
+import { workflowsRoutes } from '../modules/workflows/workflows.routes.js';
+import { slaRoutes } from '../modules/sla/sla.routes.js';
+import { operationsRoutes } from '../modules/operations/operations.routes.js';
 
 import { createRateLimiters } from './middleware.js';
 
@@ -51,6 +57,12 @@ export function bootstrapRoutes(app: Express) {
   app.use('/api/v1/support', supportRoutes);
   app.use('/api/v1/suppliers', supplierRoutes);
   app.use('/api/v1/whatsapp', whatsappRoutes);
+  app.use('/api/v1/crm', crmRoutes);
+  app.use('/api/v1/approvals', approvalsRoutes);
+  app.use('/api/v1/documents', documentsRoutes);
+  app.use('/api/v1/workflows', workflowsRoutes);
+  app.use('/api/v1/sla', slaRoutes);
+  app.use('/api/v1/operations', operationsRoutes);
 
   // Legacy compatibility
   app.use('/api/leads', leadRoutes);

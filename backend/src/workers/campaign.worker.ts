@@ -8,6 +8,7 @@ import { TemplateEngine } from '../core/template/TemplateEngine.js';
 import { SocketGateway } from '../core/notifications/SocketGateway.js';
 import { ProviderHealthService } from '../modules/marketing/providers/provider-health.service.js';
 import logger from '../services/logger.js';
+import { getAdminClient } from '../config/supabase.js';
 
 import { BaseWorker } from './base.worker.js';
 
@@ -56,11 +57,11 @@ export class CampaignWorker extends BaseWorker<CampaignPayload> {
 
       // 2. Resolve the correct Provider
       let provider: IProvider;
-      if (campaign.channel === 'email') provider = await ProviderService.getEmailProvider();
-      else if (campaign.channel === 'whatsapp')
+      if (campaign.type === 'email') provider = await ProviderService.getEmailProvider();
+      else if (campaign.type === 'whatsapp')
         provider = await ProviderService.getWhatsAppProvider();
-      else if (campaign.channel === 'push') provider = await ProviderService.getPushProvider();
-      else throw new Error(`Unknown campaign type: ${campaign.channel}`);
+      else if (campaign.type === 'push') provider = await ProviderService.getPushProvider();
+      else throw new Error(`Unknown campaign type: ${campaign.type}`);
 
       // 3. Fetch Queued Recipients (Batching)
       const BATCH_SIZE = 100;
@@ -81,8 +82,31 @@ export class CampaignWorker extends BaseWorker<CampaignPayload> {
         }
 
         // Prepare payloads
-        const baseSubject = campaign.name;
-        const baseContent = campaign.custom_content || 'No Content';
+        let baseSubject = campaign.name;
+        let baseContent = campaign.custom_content || 'No Content';
+
+        if (campaign.template_id) {
+          const admin = await getAdminClient();
+          if (campaign.type === 'email') {
+            const { data: tpl } = await admin.from('email_templates').select('*').eq('id', campaign.template_id).single();
+            if (tpl) {
+              baseSubject = tpl.subject || campaign.name;
+              baseContent = tpl.html_content || 'No Content';
+            }
+          } else if (campaign.type === 'push') {
+            const { data: tpl } = await admin.from('push_templates').select('*').eq('id', campaign.template_id).single();
+            if (tpl) {
+              baseSubject = tpl.title || campaign.name;
+              baseContent = tpl.body || 'No Content';
+            }
+          } else if (campaign.type === 'whatsapp') {
+            const { data: tpl } = await admin.from('whatsapp_templates').select('*').eq('id', campaign.template_id).single();
+            if (tpl) {
+              baseSubject = campaign.name; // WA usually doesn't have subject
+              baseContent = tpl.body || 'No Content';
+            }
+          }
+        }
         // eslint-disable-line @typescript-eslint/no-explicit-any
 
         const payloads = recipients.map((r: any) => {
@@ -119,11 +143,11 @@ export class CampaignWorker extends BaseWorker<CampaignPayload> {
 
           if (res.success) {
             await this.campaignRepo.updateRecipientStatus(rec.id, 'sent', undefined, res.messageId);
-            await ProviderHealthService.recordSuccess(campaign.channel);
+            await ProviderHealthService.recordSuccess(campaign.type);
             successCount++;
           } else {
             await this.campaignRepo.updateRecipientStatus(rec.id, 'failed', res.error);
-            await ProviderHealthService.recordError(campaign.channel);
+            await ProviderHealthService.recordError(campaign.type);
             failCount++;
           }
         }

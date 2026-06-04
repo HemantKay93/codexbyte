@@ -16,14 +16,12 @@ export class CampaignStateService {
   async createCampaignRecord(payload: CampaignPayload) {
     return this.campaignRepo.createCampaign({
       name: payload.name,
-      type: 'bulk',
-      channel: payload.channel,
+      type: payload.channel,
       status: payload.scheduledFor ? 'scheduled' : 'draft',
       segment_id: payload.segmentId,
       template_id: payload.templateId,
       custom_content: payload.content,
       scheduled_at: payload.scheduledFor,
-      created_by: payload.createdBy,
     });
   }
 

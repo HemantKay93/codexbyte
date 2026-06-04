@@ -150,7 +150,7 @@ export class AccountingRepository {
 
     // Optional client side filtering for account_type
     if (filters?.account_type) {
-      return data.filter(header => 
+      return data.filter((header: any) => 
         header.lines.some((line: any) => line.account.type === filters.account_type)
       );
     }

@@ -23,6 +23,7 @@ const JWT_SECRET: string = jwtSecret;
 interface ProfileEntry {
   role: string;
   fullName: string;
+  tenantId: string;
   expiresAt: number;
 }
 const profileL1 = new Map<string, ProfileEntry>();
@@ -39,8 +40,8 @@ const getProfileL1 = (userId: string): ProfileEntry | null => {
   return entry;
 };
 
-const setProfileL1 = (userId: string, role: string, fullName: string): void => {
-  profileL1.set(userId, { role, fullName, expiresAt: Date.now() + L1_AUTH_TTL_MS });
+const setProfileL1 = (userId: string, role: string, fullName: string, tenantId: string): void => {
+  profileL1.set(userId, { role, fullName, tenantId, expiresAt: Date.now() + L1_AUTH_TTL_MS });
 };
 
 const delProfileL1 = (userId: string): void => {
@@ -102,6 +103,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     // eslint-disable-line @typescript-eslint/no-explicit-any
     let role: string = 'user';
     let fullName: string = '';
+    let tenantId: string = '';
 
     const decodedUnverified: any = jwt.decode(token);
     // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -126,6 +128,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
           // eslint-disable-line @typescript-eslint/no-explicit-any
           role = l1Hit.role;
           fullName = l1Hit.fullName;
+          tenantId = l1Hit.tenantId;
         } else {
           // ── L2 Redis check ──
           let cachedProfile: any = null;
@@ -142,7 +145,8 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
           if (cachedProfile) {
             role = cachedProfile.role;
             fullName = cachedProfile.fullName;
-            setProfileL1(user.id, role, fullName); // backfill L1
+            tenantId = cachedProfile.tenantId || user.id;
+            setProfileL1(user.id, role, fullName, tenantId); // backfill L1
           } else {
             // ── DB fetch (cache miss) ──
             try {
@@ -155,14 +159,16 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 
               role = profile?.role || 'user';
               fullName = profile?.full_name || user.email?.split('@')[0];
+              // Default tenantId to user.id since it's a single-user system context initially
+              tenantId = user.id;
 
               // Write to L1 and L2
-              setProfileL1(user.id, role, fullName);
+              setProfileL1(user.id, role, fullName, tenantId);
               try {
                 if (redis.status === 'ready') {
                   await redis.set(
                     cacheKey,
-                    JSON.stringify({ role, fullName }),
+                    JSON.stringify({ role, fullName, tenantId }),
                     'EX',
                     REDIS_AUTH_TTL_S
                     // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -176,6 +182,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
               logger.error(`[Auth] Profile fetch failed: ${profileError.message}`);
               role = 'user';
               fullName = user.email?.split('@')[0];
+              tenantId = user.id;
             }
             // eslint-disable-line @typescript-eslint/no-explicit-any
           }
@@ -189,6 +196,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
         user = { id: decoded.id, email: decoded.email };
         role = decoded.role || 'user';
         fullName = 'Main Admin';
+        tenantId = user.id;
       } catch (jwtError) {
         logger.warn(`[Auth] Validation failed for ${req.path}: ${(jwtError as Error).message}`);
         return next(new AppError('Invalid or expired token', 401));
@@ -199,6 +207,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
       ...user,
       role,
       fullName,
+      tenant_id: tenantId,
     };
     // eslint-disable-line complexity
 
@@ -264,6 +273,7 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
             ...sbUser,
             role: cachedProfile.role,
             fullName: cachedProfile.fullName,
+            tenant_id: cachedProfile.tenantId || sbUser.id,
           };
         } else {
           try {
@@ -276,14 +286,15 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
 
             const role = profile?.role || 'user';
             const fullName = profile?.full_name || sbUser.email?.split('@')[0];
+            const tenantId = sbUser.id;
 
             // eslint-disable-line @typescript-eslint/no-explicit-any
-            req.user = { ...sbUser, role, fullName };
+            req.user = { ...sbUser, role, fullName, tenant_id: tenantId };
 
             // Cache it
             try {
               if (redis.status === 'ready') {
-                await redis.set(cacheKey, JSON.stringify({ role, fullName }), 'EX', 3600);
+                await redis.set(cacheKey, JSON.stringify({ role, fullName, tenantId }), 'EX', 3600);
               }
             } catch (_e) {
               /* ignore cache errors */
@@ -294,6 +305,7 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
               ...sbUser,
               role: 'user',
               fullName: sbUser.email?.split('@')[0],
+              tenant_id: sbUser.id,
             };
           }
         }
@@ -309,6 +321,7 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
           email: decoded.email,
           role: decoded.role || 'user',
           fullName: 'Main Admin',
+          tenant_id: decoded.id,
         };
       } catch (jwtErr) {
         // eslint-disable-line @typescript-eslint/no-unused-vars

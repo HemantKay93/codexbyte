@@ -78,6 +78,24 @@ export const signup = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+export const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
+  await authService.forgotPassword(email);
+  res.json({
+    success: true,
+    message: 'Password reset email sent',
+  });
+});
+
+export const resetPassword = catchAsync(async (req: any, res: Response) => {
+  const { password } = req.body;
+  await authService.resetPassword(req.user.id, password);
+  res.json({
+    success: true,
+    message: 'Password has been reset successfully',
+  });
+});
 // eslint-disable-line @typescript-eslint/no-explicit-any
 
 export const getMe = catchAsync(async (req: any, res: Response) => {
