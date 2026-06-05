@@ -89,6 +89,9 @@ export function bootstrapMiddleware(app: Express) {
         'X-Requested-With',
         'Accept',
         'Origin',
+        'X-Trace-Id',
+        'X-Correlation-Id',
+        'X-Tenant-Id',
       ],
       exposedHeaders: ['Content-Range', 'X-Content-Range'],
       maxAge: 86400, // 24 hours preflight cache
