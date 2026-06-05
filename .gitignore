@@ -38,3 +38,8 @@ supabase/migrations/consolidated_schema.sql
 
 # Large archives
 packages.zip
+
+.turbo
+dist
+build
+coverage

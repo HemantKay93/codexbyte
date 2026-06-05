@@ -74,6 +74,13 @@ export function DashboardPage() {
   });
   const [savingAddress, setSavingAddress] = useState(false);
 
+  const [toast, setToast] = useState<{ message: string; type: 'error' | 'success' } | null>(null);
+
+  const showToast = (message: string, type: 'error' | 'success' = 'error') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
   const fetchData = useCallback(async (isSilent = false) => {
     // eslint-disable-line complexity
     if (!isSilent) setLoading(true);
@@ -101,7 +108,7 @@ export function DashboardPage() {
       }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
-      if (!isSilent) alert('Failed to connect to the server.');
+      if (!isSilent) showToast('Failed to connect to the server.');
     } finally {
       if (!isSilent) setLoading(false);
     }
@@ -109,18 +116,15 @@ export function DashboardPage() {
 
   useEffect(() => {
     if (user) {
-      fetchData();
-      // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
+      void fetchData(); // eslint-disable-line react-hooks/set-state-in-effect
 
       // Real-time updates via Socket.io
       const socket = SocketService.connect(user.id);
 
       socket.on('order_updated', (data: any) => {
         // eslint-disable-line @typescript-eslint/no-explicit-any
-        console.log('[Socket] Order update received:', data);
-        // eslint-disable-line no-console
-        fetchData(true); // Silently refresh data
-        // eslint-disable-line @typescript-eslint/no-floating-promises
+        console.log('[Socket] Order update received:', data); // eslint-disable-line no-console
+        void fetchData(true); // Silently refresh data
       });
 
       return () => {
@@ -135,9 +139,10 @@ export function DashboardPage() {
       const updated = await UserService.updateProfile({ full_name: fullName });
       setProfile(updated);
       setEditingProfile(false);
+      showToast('Profile updated successfully.', 'success');
     } catch (error) {
       // eslint-disable-line @typescript-eslint/no-unused-vars
-      alert('Failed to update profile.');
+      showToast('Failed to update profile.');
     } finally {
       setSavingProfile(false);
     }
@@ -187,9 +192,10 @@ export function DashboardPage() {
       await fetchData();
       setShowAddressForm(false);
       setEditingAddress(null);
+      showToast('Address saved.', 'success');
     } catch (error) {
       // eslint-disable-line @typescript-eslint/no-unused-vars
-      alert('Failed to save address.');
+      showToast('Failed to save address.');
     } finally {
       setSavingAddress(false);
     }
@@ -202,7 +208,7 @@ export function DashboardPage() {
       setAddresses(addresses.filter((a) => a.id !== id));
     } catch (error) {
       // eslint-disable-line @typescript-eslint/no-unused-vars
-      alert('Failed to delete address.');
+      showToast('Failed to delete address.');
     }
   };
 
@@ -221,12 +227,26 @@ export function DashboardPage() {
       printInvoice(order, items, cmsData);
     } catch (err) {
       console.error('Print failed:', err);
-      alert('Could not generate invoice.');
+      showToast('Could not generate invoice.');
     }
   };
 
   return (
     <div className="min-h-screen bg-[#04080F] text-white p-6 pt-32">
+      {toast && (
+        <div
+          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-xl px-5 py-3 text-sm font-medium shadow-xl border transition-all ${
+            toast.type === 'success'
+              ? 'bg-green-500/10 border-green-500/20 text-green-400'
+              : 'bg-red-500/10 border-red-500/20 text-red-400'
+          }`}
+        >
+          {toast.message}
+          <button onClick={() => setToast(null)} className="ml-2 opacity-60 hover:opacity-100">
+            ✕
+          </button>
+        </div>
+      )}
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between mb-8">
           <h1 className="font-display text-3xl font-bold">My Account</h1>

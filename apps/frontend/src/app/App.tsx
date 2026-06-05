@@ -4,6 +4,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { MainLayout } from '@/components/layout/MainLayout';
 // eslint-disable-line import/order
 
+// eslint-disable-line import/order
+
 import { Loader2 } from 'lucide-react';
 // eslint-disable-line import/order
 
@@ -63,6 +65,7 @@ const CategoryPage = lazy(() =>
 import { useEffect } from 'react';
 import { useAuthStore } from '@byteevolvr/store';
 
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ProtectedRoute } from '@/features/shop/components/ProtectedRoute';
 
 function PageLoader() {
@@ -81,48 +84,43 @@ export default function App() {
   }, [initialize]);
 
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route path="/" element={<Navigate to="/home" replace />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/legal/privacy" element={<PrivacyPolicy />} />
-          <Route path="/legal/refund" element={<RefundPolicy />} />
-          <Route path="/legal/terms" element={<TermsAndConditions />} />
+    <ErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route element={<MainLayout />}>
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/legal/privacy" element={<PrivacyPolicy />} />
+            <Route path="/legal/refund" element={<RefundPolicy />} />
+            <Route path="/legal/terms" element={<TermsAndConditions />} />
 
-          {/* Shop Routes */}
-          <Route path="/shop" element={<ShopPage />} />
-          <Route path="/shop/product/:id" element={<ProductDetailPage />} />
-          <Route path="/shop/cart" element={<CartPage />} />
-          <Route
-            path="/shop/checkout"
-            element={
-              <ProtectedRoute>
-                <CheckoutPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/shop/login" element={<LoginPage />} />
-          <Route path="/shop/signup" element={<SignupPage />} />
-          <Route path="/shop/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/shop/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/shop/track/:id?" element={<TrackingPage />} />
-          <Route path="/shop/order-success" element={<OrderSuccessPage />} />
-          <Route path="/shop/order-failed" element={<OrderFailedPage />} />
-          <Route path="/shop/category/:id" element={<CategoryPage />} />
-          <Route
-            path="/shop/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-        </Route>
-      </Routes>
-    </Suspense>
+            {/* Shop Routes */}
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/shop/product/:id" element={<ProductDetailPage />} />
+            <Route path="/shop/cart" element={<CartPage />} />
+            <Route path="/shop/checkout" element={<CheckoutPage />} />
+            <Route path="/shop/login" element={<LoginPage />} />
+            <Route path="/shop/signup" element={<SignupPage />} />
+            <Route path="/shop/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/shop/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/shop/track/:id?" element={<TrackingPage />} />
+            <Route path="/shop/order-success" element={<OrderSuccessPage />} />
+            <Route path="/shop/order-failed" element={<OrderFailedPage />} />
+            <Route path="/shop/category/:id" element={<CategoryPage />} />
+            <Route
+              path="/shop/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+        </Routes>
+      </Suspense>
+    </ErrorBoundary>
   );
 }

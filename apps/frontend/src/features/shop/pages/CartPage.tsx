@@ -227,7 +227,13 @@ export function CartPage() {
                     </span>
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="p-2 text-stitch-outline hover:text-stitch-primary transition-colors"
+                      disabled={item.max_stock !== undefined && item.quantity >= item.max_stock}
+                      className="p-2 text-stitch-outline hover:text-stitch-primary transition-colors disabled:opacity-30"
+                      title={
+                        item.max_stock !== undefined && item.quantity >= item.max_stock
+                          ? 'Max stock reached'
+                          : undefined
+                      }
                     >
                       <Plus className="w-4 h-4" />
                     </button>

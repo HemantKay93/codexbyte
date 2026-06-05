@@ -56,6 +56,76 @@ export interface AuthRequest extends Request {
 }
 
 /**
+ * Fetches user profile (role, fullName, tenantId) from L1 in-memory cache,
+ * then L2 Redis, then database – in that priority order.
+ * Writes through to lower tiers on a cache miss.
+ */
+async function resolveUserProfile(
+  user: any // eslint-disable-line @typescript-eslint/no-explicit-any
+): Promise<{ role: string; fullName: string; tenantId: string }> {
+  const cacheKey = `user_profile:${user.id}`;
+
+  // L1 check
+  const l1Hit = getProfileL1(user.id);
+  if (l1Hit) {
+    return { role: l1Hit.role, fullName: l1Hit.fullName, tenantId: l1Hit.tenantId };
+  }
+
+  // L2 Redis check
+  let cachedProfile: any = null; // eslint-disable-line @typescript-eslint/no-explicit-any
+  try {
+    if (redis && redis.status === 'ready') {
+      const data = await redis.get(cacheKey);
+      if (data) cachedProfile = JSON.parse(data);
+    }
+  } catch (_e) {
+    /* ignore */
+  }
+
+  if (cachedProfile) {
+    const { role, fullName, tenantId } = cachedProfile;
+    setProfileL1(user.id, role, fullName, tenantId || user.id);
+    return { role, fullName, tenantId: tenantId || user.id };
+  }
+
+  // DB fetch (cache miss)
+  let role = 'user';
+  let fullName = user.email?.split('@')[0] ?? '';
+  const tenantId = user.id;
+
+  try {
+    const admin = await getAdminClient();
+    const { data: profile } = await admin
+      .from('user_profiles')
+      .select('role, full_name')
+      .eq('id', user.id)
+      .single();
+
+    role = profile?.role || 'user';
+    fullName = profile?.full_name || fullName;
+  } catch (profileError: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    logger.error(`[Auth] Profile fetch failed: ${(profileError as Error).message}`);
+  }
+
+  setProfileL1(user.id, role, fullName, tenantId);
+  try {
+    if (redis && redis.status === 'ready') {
+      await redis.set(
+        cacheKey,
+        JSON.stringify({ role, fullName, tenantId }),
+        'EX',
+        REDIS_AUTH_TTL_S
+      );
+    }
+  } catch (_e) {
+    /* ignore */
+  }
+
+  return { role, fullName, tenantId };
+}
+
+/**
  * Revokes/blacklists a token in Redis until its natural expiration.
  */
 export const blacklistToken = async (token: string, expiresAtUnix: number): Promise<void> => {
@@ -118,74 +188,10 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
 
       if (sbUser && !sbError) {
         user = sbUser;
-
-        const cacheKey = `user_profile:${user.id}`;
-
-        // ── L1 check (zero Redis cost) ──
-        const l1Hit = getProfileL1(user.id);
-        if (l1Hit) {
-          // eslint-disable-line @typescript-eslint/no-explicit-any
-          role = l1Hit.role;
-          fullName = l1Hit.fullName;
-          tenantId = l1Hit.tenantId;
-        } else {
-          // ── L2 Redis check ──
-          let cachedProfile: any = null;
-          // eslint-disable-line @typescript-eslint/no-explicit-any
-          try {
-            if (redis.status === 'ready') {
-              const data = await redis.get(cacheKey);
-              if (data) cachedProfile = JSON.parse(data);
-            }
-          } catch (_e) {
-            /* ignore */
-          }
-
-          if (cachedProfile) {
-            role = cachedProfile.role;
-            fullName = cachedProfile.fullName;
-            tenantId = cachedProfile.tenantId || user.id;
-            setProfileL1(user.id, role, fullName, tenantId); // backfill L1
-          } else {
-            // ── DB fetch (cache miss) ──
-            try {
-              const admin = await getAdminClient();
-              const { data: profile } = await admin
-                .from('user_profiles')
-                .select('role, full_name')
-                .eq('id', user.id)
-                .single();
-
-              role = profile?.role || 'user';
-              fullName = profile?.full_name || user.email?.split('@')[0];
-              // Default tenantId to user.id since it's a single-user system context initially
-              tenantId = user.id;
-
-              // Write to L1 and L2
-              setProfileL1(user.id, role, fullName, tenantId);
-              try {
-                if (redis.status === 'ready') {
-                  await redis.set(
-                    cacheKey,
-                    JSON.stringify({ role, fullName, tenantId }),
-                    'EX',
-                    REDIS_AUTH_TTL_S
-                    // eslint-disable-line @typescript-eslint/no-explicit-any
-                  );
-                }
-              } catch (_e) {
-                /* ignore */
-              }
-            } catch (profileError: any) {
-              // eslint-disable-line @typescript-eslint/no-explicit-any
-              logger.error(`[Auth] Profile fetch failed: ${profileError.message}`);
-              role = 'user';
-              fullName = user.email?.split('@')[0];
-              tenantId = user.id;
-            }
-            // eslint-disable-line @typescript-eslint/no-explicit-any
-          }
-        }
+        const { role: r, fullName: fn, tenantId: tid } = await resolveUserProfile(sbUser);
+        role = r;
+        fullName = fn;
+        tenantId = tid;
       }
     } else {
       // 2. Try Local JWT (for hardcoded admin)
@@ -254,61 +260,8 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
       } = await supabase.auth.getUser(token);
 
       if (sbUser && !sbError) {
-        const cacheKey = `user_profile:${sbUser.id}`;
-        let cachedProfile: any = null;
-        // eslint-disable-line @typescript-eslint/no-explicit-any
-
-        try {
-          if (redis.status === 'ready') {
-            const data = await redis.get(cacheKey);
-            if (data) cachedProfile = JSON.parse(data);
-          }
-        } catch (_e) {
-          /* ignore cache errors */
-        }
-
-        if (cachedProfile) {
-          req.user = {
-            ...sbUser,
-            role: cachedProfile.role,
-            fullName: cachedProfile.fullName,
-            tenant_id: cachedProfile.tenantId || sbUser.id,
-          };
-        } else {
-          try {
-            const admin = await getAdminClient();
-            const { data: profile } = await admin
-              .from('user_profiles')
-              .select('role, full_name')
-              .eq('id', sbUser.id)
-              .single();
-
-            const role = profile?.role || 'user';
-            const fullName = profile?.full_name || sbUser.email?.split('@')[0];
-            const tenantId = sbUser.id;
-
-            // eslint-disable-line @typescript-eslint/no-explicit-any
-            req.user = { ...sbUser, role, fullName, tenant_id: tenantId };
-
-            // Cache it
-            try {
-              if (redis.status === 'ready') {
-                await redis.set(cacheKey, JSON.stringify({ role, fullName, tenantId }), 'EX', 3600);
-              }
-            } catch (_e) {
-              /* ignore cache errors */
-            }
-          } catch (_profileErr: any) {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
-            req.user = {
-              ...sbUser,
-              role: 'user',
-              fullName: sbUser.email?.split('@')[0],
-              tenant_id: sbUser.id,
-            };
-          }
-        }
-        // eslint-disable-line @typescript-eslint/no-unused-vars
+        const { role, fullName, tenantId } = await resolveUserProfile(sbUser);
+        req.user = { ...sbUser, role, fullName, tenant_id: tenantId };
       }
     } else {
       // Try local JWT fallback

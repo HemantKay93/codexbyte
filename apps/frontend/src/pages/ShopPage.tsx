@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ProductService, Product } from '@byteevolvr/api-client';
 import {
@@ -57,6 +57,7 @@ export function ShopPage() {
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
+  const productsSectionRef = useRef<HTMLDivElement>(null);
 
   // Auto slider
   useEffect(() => {
@@ -142,12 +143,14 @@ export function ShopPage() {
                   </p>
 
                   <div className="flex flex-wrap gap-4">
-                    <Link
-                      to={slide.link}
+                    <button
+                      onClick={() =>
+                        productsSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
+                      }
                       className="px-8 py-4 bg-stitch-primary text-stitch-on-primary font-bold rounded-lg hover:bg-stitch-primary/90 transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] flex items-center gap-2"
                     >
                       Shop Now <ArrowRight className="w-5 h-5" />
-                    </Link>
+                    </button>
                     <Link
                       to={slide.productLink}
                       className="px-8 py-4 stitch-glass-panel text-white border border-white/20 font-bold rounded-lg hover:bg-white/10 transition-all flex items-center gap-2"
@@ -259,7 +262,7 @@ export function ShopPage() {
             <Loader2 className="h-10 w-10 animate-spin text-stitch-primary" />
           </div>
         ) : (
-          <div className="max-w-7xl mx-auto">
+          <div ref={productsSectionRef} id="product-catalog" className="max-w-7xl mx-auto">
             {/* Deals of the Day */}
             {dealOfTheDay.length > 0 && (
               <section className="px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop mb-stitch-section-gap">

@@ -8,6 +8,8 @@ export interface CartItem {
   quantity: number;
   sku?: string;
   image_url?: string;
+  brand?: string;
+  max_stock?: number;
 }
 
 interface CartState {
@@ -51,17 +53,27 @@ export const useCartStore = create<CartState>()(
             appliedDiscount: null,
           });
         } else {
-          set({ 
-            items: [...items, { ...item, price: itemPrice, quantity: itemQty }],
-            appliedDiscount: null 
+          set({
+            items: [
+              ...items,
+              {
+                ...item,
+                price: itemPrice,
+                quantity: itemQty,
+                max_stock: item.stock_quantity ?? item.max_stock ?? 999,
+                image_url: item.image_url || item.images?.[0]?.url || item.image || '',
+                brand: item.brand || item.brand_name || '',
+              },
+            ],
+            appliedDiscount: null,
           });
         }
       },
 
       removeItem: (id) => {
-        set({ 
+        set({
           items: get().items.filter((i) => i.id !== id),
-          appliedDiscount: null 
+          appliedDiscount: null,
         });
       },
 
@@ -73,7 +85,7 @@ export const useCartStore = create<CartState>()(
         }
         set({
           items: get().items.map((i) => (i.id === id ? { ...i, quantity: newQty } : i)),
-          appliedDiscount: null
+          appliedDiscount: null,
         });
       },
 

@@ -75,6 +75,7 @@ export function ProductDetailPage() {
                 className="w-full h-full object-cover p-4 transform transition-transform duration-700 group-hover:scale-110"
                 src={product.image_url || 'https://via.placeholder.com/150'}
                 alt={product.name}
+                loading="lazy"
               />
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
                 <div className="w-2 h-2 rounded-full bg-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]"></div>
@@ -255,11 +256,6 @@ export function ProductDetailPage() {
                   >
                     <p className="text-stitch-on-surface-variant leading-relaxed">
                       {product.description}
-                      <br />
-                      <br />
-                      Experience the pinnacle of mobile gaming with this model. Engineered for those
-                      who demand uncompromising power without the bulk, this machine combines a
-                      high-performance processor with sheer graphics muscle.
                     </p>
                     {!showFullDesc && (
                       <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-stitch-background to-transparent"></div>

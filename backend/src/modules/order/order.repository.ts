@@ -6,9 +6,16 @@ export class OrderRepository {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     // eslint-disable-line @typescript-eslint/no-explicit-any
     const admin = await getAdminClient();
+    const page = Number(filters.page) || 1;
+    const pageSize = Math.min(Number(filters.pageSize) || 50, 200);
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
     let query = admin
       .from('orders')
-      .select('*, order_items(*), shipments(*), user_profiles(full_name, email)')
+      .select('*, order_items(*), shipments(*), user_profiles(full_name, email)', {
+        count: 'exact',
+      })
       .is('deleted_at', null);
 
     if (filters.status) {
@@ -19,9 +26,11 @@ export class OrderRepository {
       query = query.eq('user_id', filters.userId);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error, count } = await query
+      .order('created_at', { ascending: false })
+      .range(from, to);
     if (error) throw error;
-    return data;
+    return { data, total: count ?? 0, page, pageSize };
   }
 
   async findById(id: string) {

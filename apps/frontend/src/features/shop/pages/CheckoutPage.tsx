@@ -214,13 +214,24 @@ export function CheckoutPage() {
 
               if (verified?.verified) {
                 // Now create the actual order in our system
-                await OrderService.createOrder({
+                const confirmedOrder = await OrderService.createOrder({
                   ...payload,
                   status: 'confirmed',
                 });
+                const confirmedOrderId =
+                  (confirmedOrder as any)?.id || (confirmedOrder as any)?.data?.id;
+                const confirmedOrderNumber =
+                  (confirmedOrder as any)?.order_number ||
+                  (confirmedOrder as any)?.data?.order_number;
                 clearCart();
-                navigate('/shop/order-success');
-                // eslint-disable-line @typescript-eslint/no-floating-promises
+                void navigate('/shop/order-success', {
+                  state: {
+                    orderId: confirmedOrderId,
+                    orderNumber: confirmedOrderNumber,
+                    paymentMethod: 'razorpay',
+                  },
+                  replace: true,
+                });
               } else {
                 throw new Error('Payment verification failed');
               }
@@ -257,10 +268,14 @@ export function CheckoutPage() {
         rzp.open();
       } else {
         // COD logic
-        await OrderService.createOrder(payload);
+        const order = await OrderService.createOrder(payload);
+        const orderId = (order as any)?.id || (order as any)?.data?.id;
+        const orderNumber = (order as any)?.order_number || (order as any)?.data?.order_number;
         clearCart();
-        // eslint-disable-line @typescript-eslint/no-floating-promises
-        navigate('/shop/order-success');
+        void navigate('/shop/order-success', {
+          state: { orderId, orderNumber, paymentMethod },
+          replace: true,
+        });
       }
     } catch (err: any) {
       // eslint-disable-line @typescript-eslint/no-explicit-any

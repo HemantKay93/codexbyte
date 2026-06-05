@@ -65,7 +65,9 @@ export function bootstrapMiddleware(app: Express) {
         const envOrigins = (env.ALLOWED_ORIGINS || '').split(',').map((o) => o.trim());
         const allAllowed = [...allowedOrigins, ...envOrigins].filter(Boolean);
 
+        const isDev = env.NODE_ENV !== 'production';
         const isLocalNetwork =
+          isDev &&
           origin &&
           (origin.startsWith('http://localhost:') ||
             origin.startsWith('http://127.0.0.1:') ||
@@ -127,7 +129,7 @@ export function createRateLimiters() {
 
   const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 30,
+    max: 15,
     message: { message: 'Too many authentication attempts, please try again after 15 minutes.' },
     standardHeaders: true,
     legacyHeaders: false,

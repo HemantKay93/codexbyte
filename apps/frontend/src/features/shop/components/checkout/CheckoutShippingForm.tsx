@@ -40,7 +40,17 @@ export function CheckoutShippingForm({
         <div className="mb-6 space-y-2 md:col-span-2 bg-stitch-primary/5 p-4 rounded-xl border border-stitch-primary/20">
           <h3 className="font-bold text-stitch-primary mb-2">Guest Checkout</h3>
           <p className="text-sm text-stitch-on-surface-variant mb-4">
-            We'll automatically create an account for you so you can track your order.
+            A free account will be created with this email so you can track your order. Already have
+            one?{' '}
+            <button
+              type="button"
+              onClick={() =>
+                void navigate('/shop/login', { state: { from: { pathname: '/shop/checkout' } } })
+              }
+              className="text-stitch-primary hover:underline font-medium"
+            >
+              Sign in instead
+            </button>
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
