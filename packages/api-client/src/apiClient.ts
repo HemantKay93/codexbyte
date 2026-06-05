@@ -7,6 +7,15 @@ const metaEnv = (
 ).env;
 
 let BASE_URL = metaEnv?.VITE_API_BASE_URL ?? 'http://localhost:8080/api/v1';
+
+// If accessed via a local network IP (e.g., from a phone), rewrite localhost to the actual IP.
+if (typeof window !== 'undefined' && BASE_URL.includes('localhost')) {
+  const currentHost = window.location.hostname;
+  if (currentHost !== 'localhost' && currentHost !== '127.0.0.1') {
+    BASE_URL = BASE_URL.replace('localhost', currentHost);
+  }
+}
+
 if (BASE_URL.endsWith('/')) {
   BASE_URL = BASE_URL.slice(0, -1);
 }
