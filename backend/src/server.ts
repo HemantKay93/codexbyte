@@ -31,7 +31,7 @@ const httpServer = createServer(app);
 bootstrapSockets(httpServer);
 
 // Start Server
-httpServer.listen(Number(PORT), '0.0.0.0', () => {
+httpServer.listen(Number(PORT), () => {
   logger.info(`🚀 Backend is LIVE!`);
   logger.info(`URL: http://0.0.0.0:${PORT}`);
   logger.info(`Environment: ${env.NODE_ENV}`);

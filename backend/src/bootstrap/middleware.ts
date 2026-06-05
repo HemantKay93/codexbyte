@@ -65,7 +65,12 @@ export function bootstrapMiddleware(app: Express) {
         const envOrigins = (env.ALLOWED_ORIGINS || '').split(',').map((o) => o.trim());
         const allAllowed = [...allowedOrigins, ...envOrigins].filter(Boolean);
 
-        if (!origin || allAllowed.includes(origin) || origin.startsWith('http://localhost:')) {
+        if (
+          !origin ||
+          allAllowed.includes(origin) ||
+          origin.startsWith('http://localhost:') ||
+          origin.startsWith('http://127.0.0.1:')
+        ) {
           callback(null, true);
         } else {
           logger.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
