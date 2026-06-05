@@ -29,6 +29,9 @@ const DashboardPage = lazy(() =>
 const AnalyticsPage = lazy(() =>
   import('./pages/AnalyticsPage').then((m) => ({ default: m.AnalyticsPage }))
 );
+const ReportsPage = lazy(() =>
+  import('./pages/ReportsPage').then((m) => ({ default: m.ReportsPage }))
+);
 const LoginPage = lazy(() => import('./pages/LoginPage').then((m) => ({ default: m.LoginPage })));
 const SettingsPage = lazy(() =>
   import('./pages/SettingsPage').then((m) => ({ default: m.SettingsPage }))
@@ -61,16 +64,34 @@ const CustomerDetailPage = lazy(() =>
   import('./pages/CustomerDetailPage').then((m) => ({ default: m.CustomerDetailPage }))
 );
 const Customer360ProfilePage = lazy(() =>
-  import('./pages/customers/Customer360ProfilePage').then((m) => ({ default: m.Customer360ProfilePage }))
+  import('./pages/customers/Customer360ProfilePage').then((m) => ({
+    default: m.Customer360ProfilePage,
+  }))
 );
 const CRMDashboardPage = lazy(() =>
   import('./pages/crm/CRMDashboardPage').then((m) => ({ default: m.CRMDashboardPage }))
+);
+const LeadsPage = lazy(() =>
+  import('./pages/crm/LeadsPage').then((m) => ({ default: m.LeadsPage }))
+);
+const OpportunityPipelinePage = lazy(() =>
+  import('./pages/crm/OpportunityPipelinePage').then((m) => ({
+    default: m.OpportunityPipelinePage,
+  }))
+);
+const SalesForecastingPage = lazy(() =>
+  import('./pages/crm/SalesForecastingPage').then((m) => ({ default: m.SalesForecastingPage }))
+);
+const CRMSettingsPage = lazy(() =>
+  import('./pages/crm/CRMSettingsPage').then((m) => ({ default: m.CRMSettingsPage }))
 );
 const ApprovalInboxPage = lazy(() =>
   import('./pages/approvals/ApprovalInboxPage').then((m) => ({ default: m.ApprovalInboxPage }))
 );
 const ApprovalTemplatesPage = lazy(() =>
-  import('./pages/approvals/ApprovalTemplatesPage').then((m) => ({ default: m.ApprovalTemplatesPage }))
+  import('./pages/approvals/ApprovalTemplatesPage').then((m) => ({
+    default: m.ApprovalTemplatesPage,
+  }))
 );
 const DocumentCenterPage = lazy(() =>
   import('./pages/documents/DocumentCenterPage').then((m) => ({ default: m.DocumentCenterPage }))
@@ -82,26 +103,62 @@ const SLADashboardPage = lazy(() =>
   import('./pages/sla/SLADashboardPage').then((m) => ({ default: m.SLADashboardPage }))
 );
 const OperationsDashboardPage = lazy(() =>
-  import('./pages/operations/OperationsDashboardPage').then((m) => ({ default: m.OperationsDashboardPage }))
+  import('./pages/operations/OperationsDashboardPage').then((m) => ({
+    default: m.OperationsDashboardPage,
+  }))
+);
+const InventoryDashboardPage = lazy(() =>
+  import('./pages/operations/InventoryDashboardPage').then((m) => ({
+    default: m.InventoryDashboardPage,
+  }))
+);
+const StockTransfersPage = lazy(() =>
+  import('./pages/operations/StockTransfersPage').then((m) => ({ default: m.StockTransfersPage }))
+);
+const PurchaseRequestsPage = lazy(() =>
+  import('./pages/operations/PurchaseRequestsPage').then((m) => ({
+    default: m.PurchaseRequestsPage,
+  }))
+);
+const PurchaseOrdersPage = lazy(() =>
+  import('./pages/operations/PurchaseOrdersPage').then((m) => ({ default: m.PurchaseOrdersPage }))
+);
+const VendorBillsPage = lazy(() =>
+  import('./pages/operations/VendorBillsPage').then((m) => ({ default: m.VendorBillsPage }))
+);
+const ShippingDashboardPage = lazy(() =>
+  import('./pages/operations/ShippingDashboardPage').then((m) => ({
+    default: m.ShippingDashboardPage,
+  }))
+);
+const ShippingZonesPage = lazy(() =>
+  import('./pages/operations/ShippingZonesPage').then((m) => ({ default: m.ShippingZonesPage }))
+);
+const ShipmentTrackingPage = lazy(() =>
+  import('./pages/operations/ShipmentTrackingPage').then((m) => ({
+    default: m.ShipmentTrackingPage,
+  }))
+);
+const KnowledgeBasePage = lazy(() =>
+  import('./pages/support/KnowledgeBasePage').then((m) => ({ default: m.KnowledgeBasePage }))
+);
+const AudienceSegmentsPage = lazy(() =>
+  import('./pages/marketing/AudienceSegmentsPage').then((m) => ({
+    default: m.AudienceSegmentsPage,
+  }))
+);
+const CampaignBuilderPage = lazy(() =>
+  import('./pages/marketing/CampaignBuilderPage').then((m) => ({ default: m.CampaignBuilderPage }))
+);
+const MarketingDashboardPage = lazy(() =>
+  import('./pages/marketing/MarketingDashboardPage').then((m) => ({
+    default: m.MarketingDashboardPage,
+  }))
 );
 const ReviewsPage = lazy(() =>
   import('./pages/ReviewsPage').then((m) => ({ default: m.ReviewsPage }))
 );
-const MarketingDashboard = lazy(() =>
-  import('./modules/marketing/MarketingDashboard').then((m) => ({ default: m.MarketingDashboard }))
-);
-const CampaignBuilder = lazy(() =>
-  import('./modules/marketing/CampaignBuilder').then((m) => ({ default: m.CampaignBuilder }))
-);
-const AudienceSegments = lazy(() =>
-  import('./modules/marketing/AudienceSegments').then((m) => ({ default: m.AudienceSegments }))
-);
-const AutomationFlows = lazy(() =>
-  import('./modules/marketing/AutomationFlows').then((m) => ({ default: m.AutomationFlows }))
-);
-const TemplateManager = lazy(() =>
-  import('./modules/marketing/TemplateManager').then((m) => ({ default: m.TemplateManager }))
-);
+
 const DiscountsPage = lazy(() =>
   import('./pages/DiscountsPage').then((m) => ({ default: m.DiscountsPage }))
 );
@@ -144,6 +201,9 @@ const InvoicesPage = lazy(() =>
 const JournalEntriesPage = lazy(() =>
   import('./pages/accounting/JournalEntriesPage').then((m) => ({ default: m.JournalEntriesPage }))
 );
+const JournalVoucherPage = lazy(() =>
+  import('./pages/accounting/JournalVoucherPage').then((m) => ({ default: m.JournalVoucherPage }))
+);
 const ProfitLossPage = lazy(() =>
   import('./pages/accounting/ProfitLossPage').then((m) => ({ default: m.ProfitLossPage }))
 );
@@ -151,7 +211,43 @@ const BalanceSheetPage = lazy(() =>
   import('./pages/accounting/BalanceSheetPage').then((m) => ({ default: m.BalanceSheetPage }))
 );
 const BankingReconciliationPage = lazy(() =>
-  import('./pages/accounting/BankingReconciliationPage').then((m) => ({ default: m.BankingReconciliationPage }))
+  import('./pages/accounting/BankingReconciliationPage').then((m) => ({
+    default: m.BankingReconciliationPage,
+  }))
+);
+const BankAccountsPage = lazy(() =>
+  import('./pages/accounting/BankAccountsPage').then((m) => ({ default: m.BankAccountsPage }))
+);
+const FinancialYearPage = lazy(() =>
+  import('./pages/accounting/FinancialYearPage').then((m) => ({ default: m.FinancialYearPage }))
+);
+const AccountsReceivablePage = lazy(() =>
+  import('./pages/accounting/AccountsReceivablePage').then((m) => ({
+    default: m.AccountsReceivablePage,
+  }))
+);
+const AccountsPayablePage = lazy(() =>
+  import('./pages/accounting/AccountsPayablePage').then((m) => ({ default: m.AccountsPayablePage }))
+);
+const BudgetsPage = lazy(() =>
+  import('./pages/accounting/BudgetsPage').then((m) => ({ default: m.BudgetsPage }))
+);
+const TrialBalancePage = lazy(() =>
+  import('./pages/accounting/TrialBalancePage').then((m) => ({ default: m.TrialBalancePage }))
+);
+const CashFlowPage = lazy(() =>
+  import('./pages/accounting/CashFlowPage').then((m) => ({ default: m.CashFlowPage }))
+);
+const AccountingSettingsPage = lazy(() =>
+  import('./pages/accounting/AccountingSettingsPage').then((m) => ({
+    default: m.AccountingSettingsPage,
+  }))
+);
+const CostCentersPage = lazy(() =>
+  import('./pages/accounting/CostCentersPage').then((m) => ({ default: m.CostCentersPage }))
+);
+const ProfitCentersPage = lazy(() =>
+  import('./pages/accounting/ProfitCentersPage').then((m) => ({ default: m.ProfitCentersPage }))
 );
 const GSTFilingPage = lazy(() =>
   import('./pages/accounting/GSTFilingPage').then((m) => ({ default: m.GSTFilingPage }))
@@ -202,19 +298,35 @@ const Main = () => {
                 >
                   <Route path="/" element={<DashboardPage />} />
                   <Route path="/analytics" element={<AnalyticsPage />} />
+                  <Route path="/reports" element={<ReportsPage />} />
                   <Route path="/pos" element={<POSPage />} />
                   <Route path="/products" element={<ProductManagementPage />} />
                   <Route path="/products/new" element={<ProductFormPage />} />
                   <Route path="/products/:id/edit" element={<ProductFormPage />} />
-                  <Route path="/inventory" element={<InventoryPage />} />
+                  <Route path="/inventory">
+                    <Route index element={<InventoryPage />} />
+                    <Route path="dashboard" element={<InventoryDashboardPage />} />
+                    <Route path="transfers" element={<StockTransfersPage />} />
+                  </Route>
                   <Route path="/orders" element={<OrderManagementPage />} />
                   <Route path="/orders/:id" element={<OrderDetailPage />} />
                   <Route path="/returns" element={<ReturnsPage />} />
+                  <Route path="/shipping">
+                    <Route path="dashboard" element={<ShippingDashboardPage />} />
+                    <Route path="zones" element={<ShippingZonesPage />} />
+                    <Route path="tracking" element={<ShipmentTrackingPage />} />
+                  </Route>
                   <Route path="/warehouse" element={<WarehousePage />} />
                   <Route path="/customers" element={<CustomersPage />} />
                   <Route path="/customers/:id" element={<CustomerDetailPage />} />
                   <Route path="/customers/:id/360" element={<Customer360ProfilePage />} />
-                  <Route path="/crm" element={<CRMDashboardPage />} />
+                  <Route path="/crm">
+                    <Route index element={<CRMDashboardPage />} />
+                    <Route path="leads" element={<LeadsPage />} />
+                    <Route path="pipeline" element={<OpportunityPipelinePage />} />
+                    <Route path="forecasting" element={<SalesForecastingPage />} />
+                    <Route path="settings" element={<CRMSettingsPage />} />
+                  </Route>
                   <Route path="/approvals" element={<ApprovalInboxPage />} />
                   <Route path="/approvals/templates" element={<ApprovalTemplatesPage />} />
                   <Route path="/documents" element={<DocumentCenterPage />} />
@@ -222,14 +334,19 @@ const Main = () => {
                   <Route path="/sla" element={<SLADashboardPage />} />
                   <Route path="/operations" element={<OperationsDashboardPage />} />
                   <Route path="/reviews" element={<ReviewsPage />} />
-                  <Route path="/marketing" element={<MarketingDashboard />} />
-                  <Route path="/marketing/campaigns" element={<CampaignBuilder />} />
-                  <Route path="/marketing/segments" element={<AudienceSegments />} />
-                  <Route path="/marketing/automations" element={<AutomationFlows />} />
-                  <Route path="/marketing/templates" element={<TemplateManager />} />
+                  <Route path="/marketing">
+                    <Route index element={<MarketingDashboardPage />} />
+                    <Route path="segments" element={<AudienceSegmentsPage />} />
+                    <Route path="builder" element={<CampaignBuilderPage />} />
+                  </Route>
                   <Route path="/discounts" element={<DiscountsPage />} />
                   <Route path="/cms" element={<CMSBuilderPage />} />
                   <Route path="/invoice-template" element={<InvoiceTemplatePage />} />
+                  <Route path="/procurement">
+                    <Route path="requests" element={<PurchaseRequestsPage />} />
+                    <Route path="orders" element={<PurchaseOrdersPage />} />
+                    <Route path="bills" element={<VendorBillsPage />} />
+                  </Route>
                   <Route path="/suppliers" element={<SuppliersPage />} />
                   <Route path="/suppliers/:id" element={<SupplierProfilePage />} />
                   <Route path="/stores" element={<MultiStorePage />} />
@@ -242,12 +359,26 @@ const Main = () => {
                     <Route path="chart-of-accounts" element={<ChartOfAccountsPage />} />
                     <Route path="invoices" element={<InvoicesPage />} />
                     <Route path="journal" element={<JournalEntriesPage />} />
+                    <Route path="journal/new" element={<JournalVoucherPage />} />
                     <Route path="profit-loss" element={<ProfitLossPage />} />
                     <Route path="balance-sheet" element={<BalanceSheetPage />} />
+                    <Route path="trial-balance" element={<TrialBalancePage />} />
+                    <Route path="cash-flow" element={<CashFlowPage />} />
+                    <Route path="financial-year" element={<FinancialYearPage />} />
+                    <Route path="receivables" element={<AccountsReceivablePage />} />
+                    <Route path="payables" element={<AccountsPayablePage />} />
+                    <Route path="budgets" element={<BudgetsPage />} />
+                    <Route path="cost-centers" element={<CostCentersPage />} />
+                    <Route path="profit-centers" element={<ProfitCentersPage />} />
+                    <Route path="bank-accounts" element={<BankAccountsPage />} />
                     <Route path="banking-reconciliation" element={<BankingReconciliationPage />} />
                     <Route path="gst" element={<GSTFilingPage />} />
+                    <Route path="settings" element={<AccountingSettingsPage />} />
                   </Route>
-                  <Route path="/support" element={<SupportPage />} />
+                  <Route path="/support">
+                    <Route index element={<SupportPage />} />
+                    <Route path="knowledge-base" element={<KnowledgeBasePage />} />
+                  </Route>
                   <Route path="/whatsapp" element={<WhatsAppDashboard />} />
                   <Route path="/whatsapp/campaigns" element={<WhatsAppCampaigns />} />
                   <Route path="/whatsapp/tasks" element={<WhatsAppTasks />} />

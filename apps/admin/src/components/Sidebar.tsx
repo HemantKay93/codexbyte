@@ -35,6 +35,17 @@ import {
   Activity,
   Briefcase,
   Clock,
+  ArrowRightLeft,
+  ArrowUpRight,
+  ArrowDownRight,
+  BookOpen,
+  Building,
+  Scale,
+  TrendingUp,
+  Network,
+  Target,
+  Calendar,
+  Receipt,
 } from 'lucide-react';
 import { useAuthStore } from '@byteevolvr/store';
 
@@ -49,6 +60,7 @@ const navigation: (NavItem | NavGroup)[] = [
     roles: ['admin', 'super-admin', 'support'],
   },
   { name: 'Analytics', href: '/analytics', icon: LineChart, roles: ['admin', 'super-admin'] },
+  { name: 'Reports Hub', href: '/reports', icon: FileText, roles: ['admin', 'super-admin'] },
   { name: 'Point of Sale', href: '/pos', icon: MonitorSmartphone, roles: ['admin', 'super-admin'] },
   {
     name: 'Catalog',
@@ -57,7 +69,9 @@ const navigation: (NavItem | NavGroup)[] = [
     items: [
       { name: 'Products', href: '/products', icon: Package },
       { name: 'Add Product', href: '/products/new', icon: Package },
-      { name: 'Inventory', href: '/inventory', icon: Boxes },
+      { name: 'Inventory Dashboard', href: '/inventory/dashboard', icon: LayoutDashboard },
+      { name: 'Inventory Grid', href: '/inventory', icon: Boxes },
+      { name: 'Stock Transfers', href: '/inventory/transfers', icon: ArrowRightLeft },
     ],
   },
   {
@@ -86,9 +100,12 @@ const navigation: (NavItem | NavGroup)[] = [
   },
   {
     name: 'Support Hub',
-    href: '/support',
     icon: LifeBuoy,
     roles: ['admin', 'super-admin', 'support'],
+    items: [
+      { name: 'Unified Inbox', href: '/support', icon: MessageSquare },
+      { name: 'Knowledge Base', href: '/support/knowledge-base', icon: FileText },
+    ],
   },
   {
     name: 'Marketing',
@@ -113,26 +130,48 @@ const navigation: (NavItem | NavGroup)[] = [
     icon: Briefcase,
     roles: ['admin', 'super-admin', 'sales'],
     items: [
-      { name: 'Pipelines', href: '/crm', icon: GitBranch },
+      { name: 'Dashboard', href: '/crm', icon: LayoutDashboard },
+      { name: 'Leads', href: '/crm/leads', icon: Users },
+      { name: 'Pipelines', href: '/crm/pipeline', icon: GitBranch },
+      { name: 'Forecasting', href: '/crm/forecasting', icon: LineChart },
+      { name: 'Settings', href: '/crm/settings', icon: Settings },
+    ],
+  },
+  {
+    name: 'Procurement',
+    icon: Truck,
+    roles: ['admin', 'super-admin'],
+    items: [
+      { name: 'Suppliers', href: '/suppliers', icon: Users },
+      { name: 'Purchase Requests', href: '/procurement/requests', icon: FileText },
+      { name: 'Purchase Orders', href: '/procurement/orders', icon: FileCheck },
+      { name: 'Vendor Bills', href: '/procurement/bills', icon: Receipt },
     ],
   },
   {
     name: 'Operations',
-    icon: Truck,
+    icon: Activity,
     roles: ['admin', 'super-admin'],
     items: [
       { name: 'Command Center', href: '/operations', icon: Activity },
       { name: 'SLA Dashboard', href: '/sla', icon: Clock },
-      { name: 'Suppliers', href: '/suppliers', icon: Truck },
       { name: 'Multi-Store', href: '/stores', icon: Globe },
+    ],
+  },
+  {
+    name: 'Shipping & Delivery',
+    icon: Truck,
+    roles: ['admin', 'super-admin'],
+    items: [
+      { name: 'Dashboard', href: '/shipping/dashboard', icon: LayoutDashboard },
+      { name: 'Tracking', href: '/shipping/tracking', icon: Activity },
+      { name: 'Zones & Rates', href: '/shipping/zones', icon: Globe },
     ],
   },
   {
     name: 'Documents',
     icon: FolderOpen,
-    items: [
-      { name: 'Document Center', href: '/documents', icon: FolderOpen },
-    ],
+    items: [{ name: 'Document Center', href: '/documents', icon: FolderOpen }],
   },
   {
     name: 'Approvals',
@@ -147,9 +186,7 @@ const navigation: (NavItem | NavGroup)[] = [
     name: 'Automations',
     icon: GitBranch,
     roles: ['admin', 'super-admin'],
-    items: [
-      { name: 'Workflow Builder', href: '/workflows', icon: GitBranch },
-    ],
+    items: [{ name: 'Workflow Builder', href: '/workflows', icon: GitBranch }],
   },
   {
     name: 'WhatsApp Bot',
@@ -168,10 +205,20 @@ const navigation: (NavItem | NavGroup)[] = [
     roles: ['admin', 'super-admin'],
     items: [
       { name: 'Dashboard', href: '/accounting', icon: LayoutDashboard },
+      { name: 'Receivables', href: '/accounting/receivables', icon: ArrowUpRight },
+      { name: 'Payables', href: '/accounting/payables', icon: ArrowDownRight },
       { name: 'Invoices', href: '/accounting/invoices', icon: FileText },
-      { name: 'Journal Entries', href: '/accounting/journal', icon: FileText },
-      { name: 'Profit & Loss', href: '/accounting/profit-loss', icon: FileText },
+      { name: 'Journal Entries', href: '/accounting/journal', icon: BookOpen },
+      { name: 'Bank Accounts', href: '/accounting/bank-accounts', icon: Building },
+      { name: 'Trial Balance', href: '/accounting/trial-balance', icon: Scale },
+      { name: 'Profit & Loss', href: '/accounting/profit-loss', icon: TrendingUp },
+      { name: 'Cash Flow', href: '/accounting/cash-flow', icon: Activity },
+      { name: 'Cost Centers', href: '/accounting/cost-centers', icon: Network },
+      { name: 'Profit Centers', href: '/accounting/profit-centers', icon: TrendingUp },
+      { name: 'Budgets', href: '/accounting/budgets', icon: Target },
+      { name: 'Financial Year', href: '/accounting/financial-year', icon: Calendar },
       { name: 'GST Filing', href: '/accounting/gst', icon: FileText },
+      { name: 'Settings', href: '/accounting/settings', icon: Settings },
     ],
   },
   {
