@@ -1,24 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Button, Badge } from '@byteevolvr/ui';
-import { AdminService } from '@byteevolvr/api-client';
 import {
-  Building2,
-  Mail,
-  Phone,
-  MapPin,
-  ArrowLeft,
-  FileText,
-  Loader2,
-} from 'lucide-react';
-import {
+  Card,
+  Button,
+  Badge,
   Table,
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
-} from '../components/ui/Table';
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
+import { AdminService } from '@byteevolvr/api-client';
+import { Building2, Mail, Phone, MapPin, ArrowLeft, FileText, Loader2 } from 'lucide-react';
 
 export function SupplierProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -73,7 +67,11 @@ export function SupplierProfilePage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => navigate('/suppliers')} className="p-2 h-10 w-10 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/suppliers')}
+          className="p-2 h-10 w-10 rounded-full bg-surface-container hover:bg-surface-container-high transition-colors"
+        >
           <ArrowLeft className="h-5 w-5 text-on-surface" />
         </Button>
         <div>
@@ -95,17 +93,21 @@ export function SupplierProfilePage() {
                 <Building2 className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-bold text-on-surface text-lg">{supplier.contact_name || 'No Contact Person'}</h3>
+                <h3 className="font-bold text-on-surface text-lg">
+                  {supplier.contact_name || 'No Contact Person'}
+                </h3>
                 <p className="text-sm text-on-surface-variant">Primary Contact</p>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <Mail className="h-5 w-5 text-on-surface-variant mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-on-surface">Email Address</p>
-                  <p className="text-sm text-on-surface-variant break-all">{supplier.email || 'N/A'}</p>
+                  <p className="text-sm text-on-surface-variant break-all">
+                    {supplier.email || 'N/A'}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -135,7 +137,7 @@ export function SupplierProfilePage() {
               Total: {purchaseOrders.length}
             </div>
           </div>
-          
+
           <div className="flex-1 overflow-auto">
             <Table>
               <TableHeader>
@@ -164,14 +166,22 @@ export function SupplierProfilePage() {
                         {new Date(po.created_at).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="text-on-surface-variant">
-                        {po.expected_delivery ? new Date(po.expected_delivery).toLocaleDateString() : 'N/A'}
+                        {po.expected_delivery
+                          ? new Date(po.expected_delivery).toLocaleDateString()
+                          : 'N/A'}
                       </TableCell>
                       <TableCell className="text-on-surface font-medium">
                         ${Number(po.total_amount).toFixed(2)}
                       </TableCell>
                       <TableCell>
-                        <Badge 
-                          variant={po.status === 'received' ? 'success' : po.status === 'pending' ? 'warning' : 'default'}
+                        <Badge
+                          variant={
+                            po.status === 'received'
+                              ? 'success'
+                              : po.status === 'pending'
+                                ? 'warning'
+                                : 'default'
+                          }
                         >
                           {po.status.toUpperCase()}
                         </Badge>

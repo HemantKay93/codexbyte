@@ -62,7 +62,7 @@ export function SystemHealthWidget() {
             Checking System & Integration Health...
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="flex flex-col space-y-2">
               <div className="h-3 w-20 bg-outline-variant/30 rounded" />
@@ -101,7 +101,7 @@ export function SystemHealthWidget() {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-4 gap-4 mt-2">
         {services.map((svc) => (
           <div key={svc.name} className="flex flex-col">
             <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">

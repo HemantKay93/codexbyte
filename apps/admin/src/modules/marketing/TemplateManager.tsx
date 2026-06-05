@@ -160,7 +160,11 @@ export function TemplateManager() {
                 <div className="aspect-video bg-background border border-outline rounded-lg mb-4 flex items-center justify-center relative group">
                   <LayoutTemplate className="h-8 w-8 text-on-surface-variant opacity-20" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                    <Button variant="outline" className="bg-surface text-on-surface border-none" onClick={() => handleEdit(tpl)}>
+                    <Button
+                      variant="outline"
+                      className="bg-surface text-on-surface border-none"
+                      onClick={() => handleEdit(tpl)}
+                    >
                       Edit
                     </Button>
                   </div>

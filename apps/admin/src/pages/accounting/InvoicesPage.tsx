@@ -77,81 +77,87 @@ export function InvoicesPage() {
           <div>Loading invoices...</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse whitespace-nowrap">
-              <thead>
-                <tr className="border-b border-outline">
-                  <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">
-                    Invoice #
-                  </th>
-                  <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">
-                    Customer
-                  </th>
-                  <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">Type</th>
-                  <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">Status</th>
-                  <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">Date</th>
-                  <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">Total</th>
-                  <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredInvoices.map((inv: any) => (
-                  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  <tr key={inv.id} className="hover:bg-surface-container/50 transition-colors">
-                    <td className="py-3 px-4 font-medium">{inv.invoice_number}</td>
-                    <td className="py-3 px-4">
-                      <div className="font-medium text-on-surface">{inv.customer_name}</div>
-                      {inv.type === 'b2b' && inv.customer_gst && (
-                        <div className="text-xs font-semibold text-primary/80 mt-0.5">
-                          GSTIN: {inv.customer_gst}
-                        </div>
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium uppercase ${inv.type === 'b2b' ? 'bg-blue-500/10 text-blue-500' : 'bg-green-500/10 text-green-500'}`}
-                      >
-                        {inv.type}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                          inv.status === 'paid'
-                            ? 'bg-green-500/10 text-green-500'
-                            : inv.status === 'sent'
-                              ? 'bg-blue-500/10 text-blue-500'
-                              : 'bg-yellow-500/10 text-yellow-500'
-                        }`}
-                      >
-                        {inv.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">{new Date(inv.created_at).toLocaleDateString()}</td>
-                    <td className="py-3 px-4 font-semibold">
-                      {currencySymbol}
-                      {Number(inv.total).toFixed(2)}
-                    </td>
-                    <td className="py-3 px-4">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-primary hover:text-primary/80"
-                        onClick={() => setViewInvoiceId(inv.id)}
-                      >
-                        <FileText className="w-4 h-4 mr-2" /> View
-                      </Button>
-                    </td>
+            <div className="w-full overflow-x-auto custom-scrollbar">
+              <table className="w-full text-left border-collapse whitespace-nowrap">
+                <thead>
+                  <tr className="border-b border-outline">
+                    <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">
+                      Invoice #
+                    </th>
+                    <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">
+                      Customer
+                    </th>
+                    <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">Type</th>
+                    <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">
+                      Status
+                    </th>
+                    <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">Date</th>
+                    <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">Total</th>
+                    <th className="py-3 px-4 font-medium text-sm text-on-surface-variant">
+                      Actions
+                    </th>
                   </tr>
-                ))}
-                {filteredInvoices.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="text-center py-8 text-on-surface-variant">
-                      No invoices found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredInvoices.map((inv: any) => (
+                    // eslint-disable-line @typescript-eslint/no-explicit-any
+                    <tr key={inv.id} className="hover:bg-surface-container/50 transition-colors">
+                      <td className="py-3 px-4 font-medium">{inv.invoice_number}</td>
+                      <td className="py-3 px-4">
+                        <div className="font-medium text-on-surface">{inv.customer_name}</div>
+                        {inv.type === 'b2b' && inv.customer_gst && (
+                          <div className="text-xs font-semibold text-primary/80 mt-0.5">
+                            GSTIN: {inv.customer_gst}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium uppercase ${inv.type === 'b2b' ? 'bg-blue-500/10 text-blue-500' : 'bg-green-500/10 text-green-500'}`}
+                        >
+                          {inv.type}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
+                            inv.status === 'paid'
+                              ? 'bg-green-500/10 text-green-500'
+                              : inv.status === 'sent'
+                                ? 'bg-blue-500/10 text-blue-500'
+                                : 'bg-yellow-500/10 text-yellow-500'
+                          }`}
+                        >
+                          {inv.status}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">{new Date(inv.created_at).toLocaleDateString()}</td>
+                      <td className="py-3 px-4 font-semibold">
+                        {currencySymbol}
+                        {Number(inv.total).toFixed(2)}
+                      </td>
+                      <td className="py-3 px-4">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-primary hover:text-primary/80"
+                          onClick={() => setViewInvoiceId(inv.id)}
+                        >
+                          <FileText className="w-4 h-4 mr-2" /> View
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                  {filteredInvoices.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="text-center py-8 text-on-surface-variant">
+                        No invoices found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </Card>

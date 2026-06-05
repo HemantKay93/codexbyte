@@ -3,8 +3,7 @@ import { Card, Button } from '@byteevolvr/ui';
 import { Upload, X, Check, AlertCircle, FileText, Download, Loader2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { AdminService } from '@byteevolvr/api-client';
-
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from './ui/Table';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@byteevolvr/ui';
 
 interface BulkImportDialogProps {
   isOpen: boolean;

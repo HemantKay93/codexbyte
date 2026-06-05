@@ -184,7 +184,9 @@ export function CreateInvoiceModal({
                 />
 
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-on-surface mb-1.5">Billing Address</label>
+                  <label className="block text-sm font-medium text-on-surface mb-1.5">
+                    Billing Address
+                  </label>
                   <textarea
                     rows={2}
                     className="w-full px-3 py-2 bg-surface border border-outline rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-on-surface"
@@ -237,135 +239,137 @@ export function CreateInvoiceModal({
             </div>
 
             <div className="bg-surface-container/20 border border-outline rounded-lg p-1 overflow-visible pb-32">
-              <table className="w-full text-left border-collapse whitespace-nowrap min-w-[800px] table-fixed">
-                <thead>
-                  <tr className="bg-surface-container/50">
-                    <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[38%]">
-                      Item Description
-                    </th>
-                    <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[15%]">
-                      HSN/SAC
-                    </th>
-                    <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[10%]">
-                      Qty
-                    </th>
-                    <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[15%]">
-                      Rate ({currencySymbol})
-                    </th>
-                    <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[10%]">
-                      GST %
-                    </th>
-                    <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[10%] text-right">
-                      Amount
-                    </th>
-                    <th className="py-2 px-3 w-[2%]"></th>
-                  </tr>
-                </thead>
-                <tbody className="space-y-2">
-                  {lineItems.map((item, idx) => {
-                    const lineAmount = item.quantity * item.unit_price;
+              <div className="w-full overflow-x-auto custom-scrollbar">
+                <table className="w-full text-left border-collapse whitespace-nowrap min-w-[800px] table-fixed">
+                  <thead>
+                    <tr className="bg-surface-container/50">
+                      <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[38%]">
+                        Item Description
+                      </th>
+                      <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[15%]">
+                        HSN/SAC
+                      </th>
+                      <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[10%]">
+                        Qty
+                      </th>
+                      <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[15%]">
+                        Rate ({currencySymbol})
+                      </th>
+                      <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[10%]">
+                        GST %
+                      </th>
+                      <th className="py-2 px-3 text-xs font-semibold text-on-surface-variant uppercase w-[10%] text-right">
+                        Amount
+                      </th>
+                      <th className="py-2 px-3 w-[2%]"></th>
+                    </tr>
+                  </thead>
+                  <tbody className="space-y-2">
+                    {lineItems.map((item, idx) => {
+                      const lineAmount = item.quantity * item.unit_price;
 
-                    return (
-                      <tr
-                        key={idx}
-                        className="border-b border-outline-variant/50 last:border-0 group"
-                      >
-                        <td className="p-2 w-[38%]">
-                          <ProductAutocomplete
-                            value={item.description}
-                            onChange={(val) => {
-                              const newItems = [...lineItems];
-                              newItems[idx].description = val;
-                              setLineItems(newItems);
-                            }}
-                            onSelectProduct={(p) => {
-                              const newItems = [...lineItems];
-                              newItems[idx].description = p.name;
-                              newItems[idx].unit_price = Number(p.price) || 0;
-                              newItems[idx].tax_rate = p.tax_rate || 18;
-                              if (p.sku) newItems[idx].hsn_code = p.sku;
-                              setLineItems(newItems);
-                            }}
-                          />
-                        </td>
-                        <td className="p-2 w-[15%]">
-                          <Input
-                            placeholder="HSN"
-                            value={item.hsn_code}
-                            fullWidth
-                            onChange={(e) => {
-                              const newItems = [...lineItems];
-                              newItems[idx].hsn_code = e.target.value;
-                              setLineItems(newItems);
-                            }}
-                          />
-                        </td>
-                        <td className="p-2 w-[10%]">
-                          <Input
-                            type="number"
-                            placeholder="1"
-                            min="1"
-                            value={item.quantity}
-                            fullWidth
-                            onChange={(e) => {
-                              const newItems = [...lineItems];
-                              newItems[idx].quantity = Number(e.target.value) || 0;
-                              setLineItems(newItems);
-                            }}
-                          />
-                        </td>
-                        <td className="p-2 w-[15%]">
-                          <Input
-                            type="number"
-                            placeholder="0.00"
-                            value={item.unit_price}
-                            fullWidth
-                            onChange={(e) => {
-                              const newItems = [...lineItems];
-                              newItems[idx].unit_price = Number(e.target.value) || 0;
-                              setLineItems(newItems);
-                            }}
-                          />
-                        </td>
-                        <td className="p-2 w-[10%]">
-                          <div className="relative">
-                            <select
-                              className="w-full px-3 py-2 bg-surface border border-outline rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-on-surface appearance-none pr-8"
-                              value={item.tax_rate}
-                              onChange={(e) => {
+                      return (
+                        <tr
+                          key={idx}
+                          className="border-b border-outline-variant/50 last:border-0 group"
+                        >
+                          <td className="p-2 w-[38%]">
+                            <ProductAutocomplete
+                              value={item.description}
+                              onChange={(val) => {
                                 const newItems = [...lineItems];
-                                newItems[idx].tax_rate = Number(e.target.value);
+                                newItems[idx].description = val;
                                 setLineItems(newItems);
                               }}
+                              onSelectProduct={(p) => {
+                                const newItems = [...lineItems];
+                                newItems[idx].description = p.name;
+                                newItems[idx].unit_price = Number(p.price) || 0;
+                                newItems[idx].tax_rate = p.tax_rate || 18;
+                                if (p.sku) newItems[idx].hsn_code = p.sku;
+                                setLineItems(newItems);
+                              }}
+                            />
+                          </td>
+                          <td className="p-2 w-[15%]">
+                            <Input
+                              placeholder="HSN"
+                              value={item.hsn_code}
+                              fullWidth
+                              onChange={(e) => {
+                                const newItems = [...lineItems];
+                                newItems[idx].hsn_code = e.target.value;
+                                setLineItems(newItems);
+                              }}
+                            />
+                          </td>
+                          <td className="p-2 w-[10%]">
+                            <Input
+                              type="number"
+                              placeholder="1"
+                              min="1"
+                              value={item.quantity}
+                              fullWidth
+                              onChange={(e) => {
+                                const newItems = [...lineItems];
+                                newItems[idx].quantity = Number(e.target.value) || 0;
+                                setLineItems(newItems);
+                              }}
+                            />
+                          </td>
+                          <td className="p-2 w-[15%]">
+                            <Input
+                              type="number"
+                              placeholder="0.00"
+                              value={item.unit_price}
+                              fullWidth
+                              onChange={(e) => {
+                                const newItems = [...lineItems];
+                                newItems[idx].unit_price = Number(e.target.value) || 0;
+                                setLineItems(newItems);
+                              }}
+                            />
+                          </td>
+                          <td className="p-2 w-[10%]">
+                            <div className="relative">
+                              <select
+                                className="w-full px-3 py-2 bg-surface border border-outline rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-on-surface appearance-none pr-8"
+                                value={item.tax_rate}
+                                onChange={(e) => {
+                                  const newItems = [...lineItems];
+                                  newItems[idx].tax_rate = Number(e.target.value);
+                                  setLineItems(newItems);
+                                }}
+                              >
+                                <option value="0">0%</option>
+                                <option value="5">5%</option>
+                                <option value="12">12%</option>
+                                <option value="18">18%</option>
+                                <option value="28">28%</option>
+                              </select>
+                              <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" />
+                            </div>
+                          </td>
+                          <td className="p-2 w-[10%] text-right font-medium text-on-surface">
+                            {currencySymbol}
+                            {lineAmount.toFixed(2)}
+                          </td>
+                          <td className="p-2 w-[2%] text-center">
+                            <button
+                              className="p-1.5 text-on-surface-variant hover:text-red-500 hover:bg-red-500/10 rounded-md transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                              onClick={() => setLineItems(lineItems.filter((_, i) => i !== idx))}
+                              disabled={lineItems.length === 1}
+                              title="Remove row"
                             >
-                              <option value="0">0%</option>
-                              <option value="5">5%</option>
-                              <option value="12">12%</option>
-                              <option value="18">18%</option>
-                              <option value="28">28%</option>
-                            </select>
-                            <ChevronDown className="w-4 h-4 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" />
-                          </div>
-                        </td>
-                        <td className="p-2 w-[10%] text-right font-medium text-on-surface">
-                          {currencySymbol}
-                          {lineAmount.toFixed(2)}
-                        </td>
-                        <td className="p-2 w-[2%] text-center">
-                          <button
-                            className="p-1.5 text-on-surface-variant hover:text-red-500 hover:bg-red-500/10 rounded-md transition-colors opacity-0 group-hover:opacity-100 disabled:opacity-50"
-                            onClick={() => setLineItems(lineItems.filter((_, i) => i !== idx))}
-                            disabled={lineItems.length === 1}
-                            title="Remove row"
-                          >
-                            ✕
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                              ✕
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {/* Totals Section */}

@@ -145,7 +145,7 @@ export function MultiStorePage() {
                   </Button>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-outline-variant">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-outline-variant">
                   <div>
                     <div className="text-xs text-on-surface-variant mb-1">Revenue (30d)</div>
                     <div className="font-bold text-on-surface text-lg">{store.revenue}</div>

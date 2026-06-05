@@ -42,7 +42,7 @@ export function WorkflowBuilderPage() {
 
   const handleDiscard = () => {
     if (!activeWorkflow) return;
-    const original = workflows.find(w => w.id === activeWorkflow.id);
+    const original = workflows.find((w) => w.id === activeWorkflow.id);
     if (original) {
       setActiveWorkflow(JSON.parse(JSON.stringify(original)));
     }
@@ -51,7 +51,11 @@ export function WorkflowBuilderPage() {
   const updateNode = (index: number, updates: any) => {
     if (!activeWorkflow) return;
     const newNodes = [...activeWorkflow.nodes];
-    newNodes[index] = { ...newNodes[index], ...updates, data: { ...newNodes[index].data, ...updates.data } };
+    newNodes[index] = {
+      ...newNodes[index],
+      ...updates,
+      data: { ...newNodes[index].data, ...updates.data },
+    };
     setActiveWorkflow({ ...activeWorkflow, nodes: newNodes });
   };
 
@@ -65,9 +69,14 @@ export function WorkflowBuilderPage() {
         name: newWorkflowName,
         trigger_event: 'system.custom_event',
         nodes: [
-          { id: 'node-1', type: 'trigger', label: 'Custom Trigger', data: { event: 'system.custom_event' } }
+          {
+            id: 'node-1',
+            type: 'trigger',
+            label: 'Custom Trigger',
+            data: { event: 'system.custom_event' },
+          },
         ],
-        edges: []
+        edges: [],
       });
       fetchWorkflows();
       setActiveWorkflow(res.data);
@@ -83,7 +92,7 @@ export function WorkflowBuilderPage() {
 
   const addActionNode = () => {
     if (!activeWorkflow) return;
-    
+
     const newNodeId = `node-${activeWorkflow.nodes.length + 1}`;
     const previousNode = activeWorkflow.nodes[activeWorkflow.nodes.length - 1];
 
@@ -91,19 +100,19 @@ export function WorkflowBuilderPage() {
       id: newNodeId,
       type: 'action',
       label: 'Send Email',
-      data: { action_type: 'email' }
+      data: { action_type: 'email' },
     };
 
     const newEdge = {
       id: `edge-${previousNode.id}-${newNodeId}`,
       source: previousNode.id,
-      target: newNodeId
+      target: newNodeId,
     };
 
     setActiveWorkflow({
       ...activeWorkflow,
       nodes: [...activeWorkflow.nodes, newNode],
-      edges: [...activeWorkflow.edges, newEdge]
+      edges: [...activeWorkflow.edges, newEdge],
     });
   };
 
@@ -113,25 +122,36 @@ export function WorkflowBuilderPage() {
       <div className="w-80 border-r border-outline-variant pr-6 flex flex-col">
         <div className="flex items-center justify-between mb-4 shrink-0">
           <h2 className="font-semibold text-lg text-on-background">Automations</h2>
-          <Button size="sm" variant="ghost" className="p-0 h-8 w-8" onClick={() => setShowNewWorkflowModal(true)}><Plus className="h-4 w-4" /></Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="p-0 h-8 w-8"
+            onClick={() => setShowNewWorkflowModal(true)}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
         <div className="flex-1 overflow-y-auto space-y-2 custom-scrollbar">
           {loading ? (
-            <div className="flex justify-center p-4"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+            <div className="flex justify-center p-4">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
           ) : (
-            workflows.map(wf => (
-              <div 
+            workflows.map((wf) => (
+              <div
                 key={wf.id}
                 onClick={() => setActiveWorkflow(wf)}
                 className={`p-3 rounded-lg cursor-pointer border transition-colors ${
-                  activeWorkflow?.id === wf.id 
-                  ? 'border-primary bg-primary/5 text-primary' 
-                  : 'border-transparent hover:bg-surface-container-lowest text-on-surface'
+                  activeWorkflow?.id === wf.id
+                    ? 'border-primary bg-primary/5 text-primary'
+                    : 'border-transparent hover:bg-surface-container-lowest text-on-surface'
                 }`}
               >
                 <p className="font-semibold text-sm">{wf.name}</p>
                 <div className="flex items-center mt-2 text-xs opacity-70 gap-2">
-                  <span className={`w-2 h-2 rounded-full ${wf.is_active ? 'bg-green-500' : 'bg-surface-variant'}`} />
+                  <span
+                    className={`w-2 h-2 rounded-full ${wf.is_active ? 'bg-green-500' : 'bg-surface-variant'}`}
+                  />
                   {wf.trigger_event}
                 </div>
               </div>
@@ -147,10 +167,10 @@ export function WorkflowBuilderPage() {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-outline-variant bg-surface shrink-0 z-10">
               <div>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={activeWorkflow.name}
-                  onChange={(e) => setActiveWorkflow({...activeWorkflow, name: e.target.value})}
+                  onChange={(e) => setActiveWorkflow({ ...activeWorkflow, name: e.target.value })}
                   className="font-bold text-xl bg-transparent border-none focus:outline-none focus:ring-0 text-on-background w-full"
                 />
                 <p className="text-xs text-on-surface-variant mt-1 flex items-center gap-1">
@@ -160,31 +180,44 @@ export function WorkflowBuilderPage() {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 mr-4">
                   <span className="text-sm font-medium text-on-surface-variant">Active</span>
-                  <button 
-                    onClick={() => setActiveWorkflow({...activeWorkflow, is_active: !activeWorkflow.is_active})}
+                  <button
+                    onClick={() =>
+                      setActiveWorkflow({ ...activeWorkflow, is_active: !activeWorkflow.is_active })
+                    }
                     className={`w-10 h-5 rounded-full relative transition-colors ${activeWorkflow.is_active ? 'bg-primary' : 'bg-surface-variant'}`}
                   >
-                    <span className={`absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full transition-all ${activeWorkflow.is_active ? 'left-6' : 'left-1'}`} />
+                    <span
+                      className={`absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full transition-all ${activeWorkflow.is_active ? 'left-6' : 'left-1'}`}
+                    />
                   </button>
                 </div>
-                <Button variant="outline" className="gap-2" onClick={handleDiscard}><Play className="h-4 w-4" /> Discard</Button>
-                <Button className="gap-2" onClick={handleSave}><Save className="h-4 w-4" /> Save Workflow</Button>
+                <Button variant="outline" className="gap-2" onClick={handleDiscard}>
+                  <Play className="h-4 w-4" /> Discard
+                </Button>
+                <Button className="gap-2" onClick={handleSave}>
+                  <Save className="h-4 w-4" /> Save Workflow
+                </Button>
               </div>
             </div>
 
             {/* Canvas (Simplified Custom DAG Renderer) */}
             <div className="flex-1 overflow-auto p-12 bg-grid-pattern relative flex flex-col items-center">
-              
               {activeWorkflow.nodes.map((node: any, index: number) => {
                 const isTrigger = node.type === 'trigger';
-                
+
                 return (
                   <div key={node.id} className="flex flex-col items-center">
                     {/* Node Card */}
-                    <Card className={`w-80 shadow-sm border ${isTrigger ? 'border-primary/50 ring-2 ring-primary/20' : 'border-outline-variant'} relative group`}>
-                      <div className={`p-3 border-b flex items-center gap-2 ${isTrigger ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-surface-container border-outline-variant text-on-surface'}`}>
+                    <Card
+                      className={`w-80 shadow-sm border ${isTrigger ? 'border-primary/50 ring-2 ring-primary/20' : 'border-outline-variant'} relative group`}
+                    >
+                      <div
+                        className={`p-3 border-b flex items-center gap-2 ${isTrigger ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-surface-container border-outline-variant text-on-surface'}`}
+                      >
                         {isTrigger ? <Zap className="h-4 w-4" /> : <Mail className="h-4 w-4" />}
-                        <span className="font-bold text-sm uppercase tracking-wider">{isTrigger ? 'TRIGGER' : 'ACTION'}</span>
+                        <span className="font-bold text-sm uppercase tracking-wider">
+                          {isTrigger ? 'TRIGGER' : 'ACTION'}
+                        </span>
                       </div>
                       <div className="p-5 bg-surface flex flex-col gap-2">
                         <input
@@ -194,7 +227,7 @@ export function WorkflowBuilderPage() {
                           className="font-semibold text-lg text-on-background bg-transparent border-b border-transparent hover:border-outline-variant focus:border-primary focus:outline-none transition-colors px-1 -ml-1"
                         />
                         {isTrigger ? (
-                          <select 
+                          <select
                             value={node.data.event}
                             onChange={(e) => updateNode(index, { data: { event: e.target.value } })}
                             className="text-sm font-mono bg-surface-container-lowest p-2 rounded border border-outline-variant outline-none focus:border-primary text-on-surface-variant w-full"
@@ -205,9 +238,11 @@ export function WorkflowBuilderPage() {
                             <option value="customer.created">Customer Created</option>
                           </select>
                         ) : (
-                          <select 
+                          <select
                             value={node.data.action_type}
-                            onChange={(e) => updateNode(index, { data: { action_type: e.target.value } })}
+                            onChange={(e) =>
+                              updateNode(index, { data: { action_type: e.target.value } })
+                            }
                             className="text-sm font-mono bg-surface-container-lowest p-2 rounded border border-outline-variant outline-none focus:border-primary text-on-surface-variant w-full"
                           >
                             <option value="email">Send Email</option>
@@ -234,13 +269,16 @@ export function WorkflowBuilderPage() {
               {/* Add Node Button */}
               <div className="mt-12 flex flex-col items-center">
                 <div className="w-px h-12 bg-dashed border-l-2 border-outline-variant border-dashed mb-2 relative">
-                   <ChevronRight className="h-4 w-4 absolute -bottom-2 -left-[9px] text-outline-variant rotate-90" />
+                  <ChevronRight className="h-4 w-4 absolute -bottom-2 -left-[9px] text-outline-variant rotate-90" />
                 </div>
-                <Button variant="outline" className="rounded-full shadow-sm gap-2 mt-2 border-dashed border-2 hover:border-primary hover:text-primary" onClick={addActionNode}>
+                <Button
+                  variant="outline"
+                  className="rounded-full shadow-sm gap-2 mt-2 border-dashed border-2 hover:border-primary hover:text-primary"
+                  onClick={addActionNode}
+                >
                   <Plus className="h-4 w-4" /> Add Action Step
                 </Button>
               </div>
-
             </div>
           </>
         ) : (
@@ -269,9 +307,9 @@ export function WorkflowBuilderPage() {
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            
+
             <form onSubmit={handleCreate} className="p-6 space-y-4">
-              <Input 
+              <Input
                 label="Automation Name *"
                 placeholder="e.g. Welcome Email Sequence"
                 value={newWorkflowName}
@@ -279,17 +317,17 @@ export function WorkflowBuilderPage() {
                 autoFocus
                 disabled={isSubmitting}
               />
-              
+
               <div className="pt-2 flex justify-end gap-3">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setShowNewWorkflowModal(false)}
                   type="button"
                   disabled={isSubmitting}
                 >
                   Cancel
                 </Button>
-                <Button 
+                <Button
                   type="submit"
                   disabled={!newWorkflowName.trim() || isSubmitting}
                   className="min-w-[100px]"

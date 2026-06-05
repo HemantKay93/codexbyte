@@ -25,15 +25,16 @@ export function ViewInvoiceModal({
     queryFn: () => CMSService.getContent('global'),
   });
 
-  const cmsData = Array.isArray(cmsDataResponse) 
-    ? cmsDataResponse 
+  const cmsData = Array.isArray(cmsDataResponse)
+    ? cmsDataResponse
     : (cmsDataResponse as any)?.data || [];
 
   const invoice = invoiceData;
   const lineItems = invoiceData?.line_items || [];
 
   const contactSettings = cmsData?.find((s: any) => s.section_key === 'contact')?.content || {};
-  const templateSettings = cmsData?.find((s: any) => s.section_key === 'invoice_template')?.content || {};
+  const templateSettings =
+    cmsData?.find((s: any) => s.section_key === 'invoice_template')?.content || {};
 
   const layout = templateSettings.layout || 'classic';
   const primaryColor = templateSettings.primaryColor || '#004ac6';
@@ -67,7 +68,9 @@ export function ViewInvoiceModal({
               <FileText className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-title-lg font-bold text-on-surface">Invoice #{invoice.invoice_number}</h2>
+              <h2 className="text-title-lg font-bold text-on-surface">
+                Invoice #{invoice.invoice_number}
+              </h2>
               <span
                 className={`px-2 py-0.5 rounded-full text-xs font-medium uppercase mt-1 inline-block ${
                   invoice.status === 'paid'
@@ -89,18 +92,20 @@ export function ViewInvoiceModal({
               onClick={() => {
                 const printContents = document.getElementById('invoice-printable-area')?.outerHTML;
                 if (!printContents) return;
-                
+
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
                 document.body.appendChild(iframe);
-                
+
                 const pri = iframe.contentWindow;
                 if (pri) {
                   pri.document.open();
-                  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+                  const styles = Array.from(
+                    document.querySelectorAll('style, link[rel="stylesheet"]')
+                  )
                     .map((s) => s.outerHTML)
                     .join('\n');
-                    
+
                   pri.document.write(`
                     <html>
                       <head>
@@ -260,7 +265,7 @@ export function ViewInvoiceModal({
                 .invoice-classic-format .items-table th { ${isModern ? '-webkit-print-color-adjust: exact; print-color-adjust: exact;' : ''} }
               }
             `}</style>
-            
+
             <div className="invoice-container">
               <div className="header">
                 <div className="company-info">
@@ -269,8 +274,17 @@ export function ViewInvoiceModal({
                     {contactSettings?.storeName || 'ByteEvolvr'}
                   </h1>
                   <p>{contactSettings?.email || 'hello@byteevolvr.com'}</p>
-                  <p dangerouslySetInnerHTML={{ __html: (contactSettings?.address || '101, Tech Park\nMumbai, Maharashtra 400069').replace(/\n/g, '<br/>') }}></p>
-                  <p>GSTIN: {contactSettings?.gstNumber || '19AABCU9603R1ZN'} | PAN: {contactSettings?.panNumber || 'AABCU9603R'}</p>
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: (
+                        contactSettings?.address || '101, Tech Park\nMumbai, Maharashtra 400069'
+                      ).replace(/\n/g, '<br/>'),
+                    }}
+                  ></p>
+                  <p>
+                    GSTIN: {contactSettings?.gstNumber || '19AABCU9603R1ZN'} | PAN:{' '}
+                    {contactSettings?.panNumber || 'AABCU9603R'}
+                  </p>
                 </div>
                 <div className="invoice-details">
                   <h2>Tax Invoice</h2>
@@ -280,11 +294,15 @@ export function ViewInvoiceModal({
                   </div>
                   <div className="detail-row">
                     <span className="detail-label">Date:</span>
-                    <span className="detail-value">{new Date(invoice.created_at).toLocaleDateString('en-IN')}</span>
+                    <span className="detail-value">
+                      {new Date(invoice.created_at).toLocaleDateString('en-IN')}
+                    </span>
                   </div>
                   <div className="detail-row">
                     <span className="detail-label">Place of Supply:</span>
-                    <span className="detail-value capitalize">{invoice.supply_type || 'Maharashtra (27)'}</span>
+                    <span className="detail-value capitalize">
+                      {invoice.supply_type || 'Maharashtra (27)'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -303,7 +321,11 @@ export function ViewInvoiceModal({
                   <h3>Billing Address</h3>
                   <div className="address-content">
                     {invoice.customer_address ? (
-                      <p dangerouslySetInnerHTML={{ __html: invoice.customer_address.replace(/\n/g, '<br/>') }}></p>
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: invoice.customer_address.replace(/\n/g, '<br/>'),
+                        }}
+                      ></p>
                     ) : (
                       <p style={{ color: '#6b7280', fontStyle: 'italic' }}>Address not provided</p>
                     )}
@@ -311,66 +333,95 @@ export function ViewInvoiceModal({
                 </div>
               </div>
 
-              <table className="items-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: '40px' }}>#</th>
-                    <th>Description</th>
-                    <th className="text-center" style={{ width: '80px' }}>HSN</th>
-                    <th className="text-center" style={{ width: '60px' }}>Qty</th>
-                    <th className="text-right" style={{ width: '100px' }}>Rate</th>
-                    <th className="text-right" style={{ width: '100px' }}>Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {lineItems.map((item: any, i: number) => (
-                    <tr key={item.id}>
-                      <td className="text-center">{i + 1}</td>
-                      <td>
-                        <div style={{ fontWeight: 600 }}>{item.description}</div>
-                      </td>
-                      <td className="text-center">{item.hsn_code || '-'}</td>
-                      <td className="text-center">{item.quantity}</td>
-                      <td className="text-right">{Number(item.unit_price).toFixed(2)}</td>
-                      <td className="text-right">{Number(item.quantity * item.unit_price).toFixed(2)}</td>
+              <div className="w-full overflow-x-auto custom-scrollbar">
+                <table className="items-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '40px' }}>#</th>
+                      <th>Description</th>
+                      <th className="text-center" style={{ width: '80px' }}>
+                        HSN
+                      </th>
+                      <th className="text-center" style={{ width: '60px' }}>
+                        Qty
+                      </th>
+                      <th className="text-right" style={{ width: '100px' }}>
+                        Rate
+                      </th>
+                      <th className="text-right" style={{ width: '100px' }}>
+                        Amount
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {lineItems.map((item: any, i: number) => (
+                      <tr key={item.id}>
+                        <td className="text-center">{i + 1}</td>
+                        <td>
+                          <div style={{ fontWeight: 600 }}>{item.description}</div>
+                        </td>
+                        <td className="text-center">{item.hsn_code || '-'}</td>
+                        <td className="text-center">{item.quantity}</td>
+                        <td className="text-right">{Number(item.unit_price).toFixed(2)}</td>
+                        <td className="text-right">
+                          {Number(item.quantity * item.unit_price).toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
               <div className="summary-section">
                 <div className="summary-table">
                   <div className="summary-row">
                     <span>Subtotal</span>
-                    <span>{currencySymbol}{Number(invoice.subtotal).toFixed(2)}</span>
+                    <span>
+                      {currencySymbol}
+                      {Number(invoice.subtotal).toFixed(2)}
+                    </span>
                   </div>
                   {invoice.supply_type === 'intra-state' ? (
                     <>
                       <div className="summary-row">
                         <span>CGST</span>
-                        <span>{currencySymbol}{(Number(invoice.tax_total) / 2).toFixed(2)}</span>
+                        <span>
+                          {currencySymbol}
+                          {(Number(invoice.tax_total) / 2).toFixed(2)}
+                        </span>
                       </div>
                       <div className="summary-row">
                         <span>SGST</span>
-                        <span>{currencySymbol}{(Number(invoice.tax_total) / 2).toFixed(2)}</span>
+                        <span>
+                          {currencySymbol}
+                          {(Number(invoice.tax_total) / 2).toFixed(2)}
+                        </span>
                       </div>
                     </>
                   ) : (
                     <div className="summary-row">
                       <span>IGST</span>
-                      <span>{currencySymbol}{Number(invoice.tax_total).toFixed(2)}</span>
+                      <span>
+                        {currencySymbol}
+                        {Number(invoice.tax_total).toFixed(2)}
+                      </span>
                     </div>
                   )}
                   <div className="summary-row total">
                     <span>Total</span>
-                    <span>{currencySymbol}{Number(invoice.total).toFixed(2)}</span>
+                    <span>
+                      {currencySymbol}
+                      {Number(invoice.total).toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="footer">
                 <div className="terms">
-                  <p style={{ fontWeight: 700, color: '#4b5563', marginBottom: '4px' }}>Terms & Conditions</p>
+                  <p style={{ fontWeight: 700, color: '#4b5563', marginBottom: '4px' }}>
+                    Terms & Conditions
+                  </p>
                   <p>1. Goods once sold will not be taken back or exchanged.</p>
                   <p>2. Any dispute subject to company Jurisdiction.</p>
                   <p>3. This is a computer generated invoice and requires no physical signature.</p>

@@ -262,7 +262,7 @@ export function InvoiceTemplatePage() {
                 >
                   Tax Invoice
                 </h2>
-                <div className="text-sm grid grid-cols-2 gap-x-4 gap-y-1 text-gray-600">
+                <div className="text-sm grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-gray-600">
                   <span>Invoice No:</span>{' '}
                   <span className="font-semibold text-black">INV-2026-0042</span>
                   <span>Date:</span> <span className="font-semibold text-black">02-May-2026</span>
@@ -272,7 +272,7 @@ export function InvoiceTemplatePage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div>
                 <h4 className="text-xs font-bold text-gray-500 uppercase mb-2 border-b border-gray-200 pb-1">
                   Billed To
@@ -288,67 +288,73 @@ export function InvoiceTemplatePage() {
               </div>
             </div>
 
-            <table className="w-full text-sm mb-8">
-              <thead>
-                <tr
-                  style={{
-                    backgroundColor: isModern
-                      ? `${primaryColor}20`
-                      : isMinimalist
-                        ? 'transparent'
-                        : `${primaryColor}10`,
-                    borderTop: isMinimalist ? '1px solid #e5e7eb' : 'none',
-                    borderBottom: isMinimalist
-                      ? '1px solid #e5e7eb'
-                      : `1px solid ${primaryColor}40`,
-                  }}
-                >
-                  <th className="text-left py-2 px-2 font-semibold text-black">Description</th>
-                  <th className="text-center py-2 px-2 font-semibold text-black">HSN/SAC</th>
-                  <th className="text-right py-2 px-2 font-semibold text-black">Qty</th>
-                  <th className="text-right py-2 px-2 font-semibold text-black">Rate</th>
-                  <th className="text-right py-2 px-2 font-semibold text-black">Taxable Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-100 text-gray-700">
-                  <td className="py-3 px-2">Premium Wireless Headphones</td>
-                  <td className="text-center py-3 px-2">8518</td>
-                  <td className="text-right py-3 px-2">10</td>
-                  <td className="text-right py-3 px-2">₹25,000.00</td>
-                  <td className="text-right py-3 px-2">₹2,50,000.00</td>
-                </tr>
-              </tbody>
-            </table>
+            <div className="w-full overflow-x-auto custom-scrollbar">
+              <table className="w-full text-sm mb-8">
+                <thead>
+                  <tr
+                    style={{
+                      backgroundColor: isModern
+                        ? `${primaryColor}20`
+                        : isMinimalist
+                          ? 'transparent'
+                          : `${primaryColor}10`,
+                      borderTop: isMinimalist ? '1px solid #e5e7eb' : 'none',
+                      borderBottom: isMinimalist
+                        ? '1px solid #e5e7eb'
+                        : `1px solid ${primaryColor}40`,
+                    }}
+                  >
+                    <th className="text-left py-2 px-2 font-semibold text-black">Description</th>
+                    <th className="text-center py-2 px-2 font-semibold text-black">HSN/SAC</th>
+                    <th className="text-right py-2 px-2 font-semibold text-black">Qty</th>
+                    <th className="text-right py-2 px-2 font-semibold text-black">Rate</th>
+                    <th className="text-right py-2 px-2 font-semibold text-black">Taxable Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-gray-100 text-gray-700">
+                    <td className="py-3 px-2">Premium Wireless Headphones</td>
+                    <td className="text-center py-3 px-2">8518</td>
+                    <td className="text-right py-3 px-2">10</td>
+                    <td className="text-right py-3 px-2">₹25,000.00</td>
+                    <td className="text-right py-3 px-2">₹2,50,000.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
             <div className="flex justify-end mb-10">
               <div className="w-1/2">
-                <table className="w-full text-sm">
-                  <tbody className="text-gray-700">
-                    <tr>
-                      <td className="py-1">Total Taxable Value</td>
-                      <td className="py-1 text-right font-medium text-black">₹2,50,000.00</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1">CGST @ 9%</td>
-                      <td className="py-1 text-right text-black">₹22,500.00</td>
-                    </tr>
-                    <tr>
-                      <td className="py-1">SGST @ 9%</td>
-                      <td className="py-1 text-right text-black">₹22,500.00</td>
-                    </tr>
-                    <tr
-                      className="font-bold text-lg"
-                      style={{
-                        borderTop: isMinimalist ? '1px solid #e5e7eb' : `2px solid ${primaryColor}`,
-                        color: primaryColor,
-                      }}
-                    >
-                      <td className="py-2 pt-4">Invoice Total</td>
-                      <td className="py-2 pt-4 text-right">₹2,95,000.00</td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div className="w-full overflow-x-auto custom-scrollbar">
+                  <table className="w-full text-sm">
+                    <tbody className="text-gray-700">
+                      <tr>
+                        <td className="py-1">Total Taxable Value</td>
+                        <td className="py-1 text-right font-medium text-black">₹2,50,000.00</td>
+                      </tr>
+                      <tr>
+                        <td className="py-1">CGST @ 9%</td>
+                        <td className="py-1 text-right text-black">₹22,500.00</td>
+                      </tr>
+                      <tr>
+                        <td className="py-1">SGST @ 9%</td>
+                        <td className="py-1 text-right text-black">₹22,500.00</td>
+                      </tr>
+                      <tr
+                        className="font-bold text-lg"
+                        style={{
+                          borderTop: isMinimalist
+                            ? '1px solid #e5e7eb'
+                            : `2px solid ${primaryColor}`,
+                          color: primaryColor,
+                        }}
+                      >
+                        <td className="py-2 pt-4">Invoice Total</td>
+                        <td className="py-2 pt-4 text-right">₹2,95,000.00</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
 

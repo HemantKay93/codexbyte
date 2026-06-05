@@ -104,7 +104,9 @@ export function CartPage() {
         <div className="flex flex-col items-center justify-center space-y-4 py-16">
           <ShoppingCart className="w-16 h-16 text-stitch-outline" />
           <h2 className="text-2xl font-bold text-white">Your Crate is Empty</h2>
-          <p className="text-stitch-on-surface-variant">Looks like you haven't added any gear yet.</p>
+          <p className="text-stitch-on-surface-variant">
+            Looks like you haven't added any gear yet.
+          </p>
           <Link
             to="/shop"
             className="mt-4 bg-stitch-primary text-stitch-on-primary px-8 py-3 rounded-full font-stitch-cta-button hover:brightness-110 transition-all uppercase"
@@ -112,7 +114,7 @@ export function CartPage() {
             Explore Shop
           </Link>
         </div>
-        
+
         {/* Recommended Products for Empty Cart */}
         {relatedProducts.length > 0 && (
           <div className="mt-8 border-t border-stitch-outline-variant/20 pt-12">

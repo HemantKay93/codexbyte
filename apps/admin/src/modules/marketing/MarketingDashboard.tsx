@@ -10,7 +10,7 @@ export function MarketingDashboard() {
   const [stats, setStats] = useState({
     campaigns: 0,
     automations: 0,
-    audience: 0
+    audience: 0,
   });
 
   useEffect(() => {
@@ -23,17 +23,17 @@ export function MarketingDashboard() {
       const [campRes, autoRes, custRes] = await Promise.all([
         MarketingService.getCampaigns().catch(() => ({ data: [] })),
         MarketingService.getAutomations().catch(() => ({ data: [] })),
-        AdminService.getCustomers().catch(() => ({ data: [] }))
+        AdminService.getCustomers().catch(() => ({ data: [] })),
       ]);
 
-      const campaigns = Array.isArray(campRes.data) ? campRes.data : (campRes.data?.data || []);
-      const automations = Array.isArray(autoRes.data) ? autoRes.data : (autoRes.data?.data || []);
-      const customers = Array.isArray(custRes.data) ? custRes.data : (custRes.data?.data || []);
+      const campaigns = Array.isArray(campRes.data) ? campRes.data : campRes.data?.data || [];
+      const automations = Array.isArray(autoRes.data) ? autoRes.data : autoRes.data?.data || [];
+      const customers = Array.isArray(custRes.data) ? custRes.data : custRes.data?.data || [];
 
       setStats({
         campaigns: campaigns.length,
         automations: automations.filter((a: any) => a.status === 'active').length,
-        audience: customers.length
+        audience: customers.length,
       });
     } catch (error) {
       console.error('Failed to load marketing metrics', error);
@@ -44,8 +44,18 @@ export function MarketingDashboard() {
 
   const metrics = [
     { title: 'Total Campaigns', value: stats.campaigns.toString(), trend: 'Active', icon: Mail },
-    { title: 'Active Automations', value: stats.automations.toString(), trend: 'Running', icon: Zap },
-    { title: 'Total Audience', value: stats.audience.toLocaleString(), trend: 'Subscribed', icon: Users },
+    {
+      title: 'Active Automations',
+      value: stats.automations.toString(),
+      trend: 'Running',
+      icon: Zap,
+    },
+    {
+      title: 'Total Audience',
+      value: stats.audience.toLocaleString(),
+      trend: 'Subscribed',
+      icon: Users,
+    },
   ];
 
   return (
@@ -65,25 +75,27 @@ export function MarketingDashboard() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {metrics.map((metric, i) => (
-          <Card key={i}>
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-body-sm font-medium text-on-surface-variant">{metric.title}</p>
-                  <p className="text-display-sm font-bold text-on-background mt-1">
-                    {metric.value}
-                  </p>
+          {metrics.map((metric, i) => (
+            <Card key={i}>
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-body-sm font-medium text-on-surface-variant">
+                      {metric.title}
+                    </p>
+                    <p className="text-display-sm font-bold text-on-background mt-1">
+                      {metric.value}
+                    </p>
+                  </div>
+                  <div className="rounded-full bg-primary/10 p-3">
+                    <metric.icon className="h-5 w-5 text-primary" />
+                  </div>
                 </div>
-                <div className="rounded-full bg-primary/10 p-3">
-                  <metric.icon className="h-5 w-5 text-primary" />
-                </div>
+                <p className="text-label-sm text-primary mt-4">{metric.trend}</p>
               </div>
-              <p className="text-label-sm text-primary mt-4">{metric.trend}</p>
-            </div>
-          </Card>
-        ))}
-      </div>
+            </Card>
+          ))}
+        </div>
       )}
 
       <h2 className="text-title-lg font-semibold text-on-background mt-8">Quick Actions</h2>

@@ -1,51 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Plus, Search, Filter, Trash2, Shield, Mail, X } from 'lucide-react';
-import { TeamService } from '@byteevolvr/api-client';
-
 import {
+  Card,
+  Button,
+  Badge,
+  Input,
   Table,
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
-} from '../components/ui/Table';
-
-const mockTeam = [
-  {
-    id: '1',
-    name: 'Admin User',
-    email: 'admin@byteevolvr.com',
-    role: 'Super Admin',
-    status: 'active',
-    lastActive: 'Just now',
-  },
-  {
-    id: '2',
-    name: 'John Doe',
-    email: 'john@byteevolvr.com',
-    role: 'Store Manager',
-    status: 'active',
-    lastActive: '2 hours ago',
-  },
-  {
-    id: '3',
-    name: 'Jane Smith',
-    email: 'jane@byteevolvr.com',
-    role: 'Support Agent',
-    status: 'active',
-    lastActive: 'Yesterday',
-  },
-  {
-    id: '4',
-    name: 'Mike Ross',
-    email: 'mike@byteevolvr.com',
-    role: 'Support Agent',
-    status: 'invited',
-    lastActive: 'Never',
-  },
-];
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
+import { Plus, Search, Filter, Trash2, Shield, Mail, X } from 'lucide-react';
+import { TeamService } from '@byteevolvr/api-client';
 
 export function TeamPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -73,11 +40,11 @@ export function TeamPage() {
         }));
         setTeam(mapped);
       } else {
-        setTeam(mockTeam);
+        setTeam([]);
       }
     } catch (error) {
-      console.warn('Failed to fetch team members, falling back to mock:', error);
-      setTeam(mockTeam);
+      console.warn('Failed to fetch team members:', error);
+      setTeam([]);
     } finally {
       setLoading(false);
     }
@@ -191,6 +158,12 @@ export function TeamPage() {
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-8 text-on-surface-variant">
                     Loading team...
+                  </TableCell>
+                </TableRow>
+              ) : team.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-on-surface-variant">
+                    No team members found.
                   </TableCell>
                 </TableRow>
               ) : (

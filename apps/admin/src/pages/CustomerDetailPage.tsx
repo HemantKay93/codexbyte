@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Card, Button, Badge } from '@byteevolvr/ui';
-import { ArrowLeft, Edit, Mail, MapPin, ShoppingBag, Star, Loader2, Calendar } from 'lucide-react';
-import { AdminService } from '@byteevolvr/api-client';
-
 import {
+  Card,
+  Button,
+  Badge,
   Table,
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
-} from '../components/ui/Table';
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
+import { ArrowLeft, Edit, Mail, MapPin, ShoppingBag, Star, Loader2, Calendar } from 'lucide-react';
+import { AdminService } from '@byteevolvr/api-client';
 
 export function CustomerDetailPage() {
   const { id } = useParams<{ id: string }>();

@@ -1,18 +1,19 @@
 import { useState, useEffect } from 'react';
 import { AdminService } from '@byteevolvr/api-client';
-import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Plus, Search, Filter, MoreHorizontal, Tag } from 'lucide-react';
-// eslint-disable-line import/order
-
 import {
+  Card,
+  Button,
+  Badge,
+  Input,
   Table,
-  // eslint-disable-line import/order
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
-} from '../components/ui/Table';
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
+import { Plus, Search, Filter, MoreHorizontal, Tag } from 'lucide-react';
+// eslint-disable-line import/order
 
 import { CreateDiscountModal } from './marketing-components/CreateDiscountModal';
 

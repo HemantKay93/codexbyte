@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import {
+  Card,
+  Button,
+  Badge,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
 import { Star, MessageSquare, Check, X, Search, Filter, Loader2, RefreshCcw } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { ReviewService } from '@byteevolvr/api-client';
-
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '../components/ui/Table';
 
 export function ReviewsPage() {
   const [searchTerm, setSearchTerm] = useState('');

@@ -358,7 +358,7 @@ export function ProductFormPage() {
               <h2 className="text-lg font-semibold text-on-surface">Inventory & Pricing</h2>
             </div>
             <div className="p-6">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-on-surface mb-1.5">
                     Price (₹)
@@ -437,7 +437,7 @@ export function ProductFormPage() {
                       <X className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-1">
                         Type (e.g. Size)

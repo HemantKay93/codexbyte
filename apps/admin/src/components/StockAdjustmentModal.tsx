@@ -111,7 +111,7 @@ export function StockAdjustmentModal({ product, isOpen, onClose, onSuccess }: Pr
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3 relative">
                 <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
                   Operation Type

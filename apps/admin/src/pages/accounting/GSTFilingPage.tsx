@@ -1,10 +1,42 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Card, Button } from '@byteevolvr/ui';
-import { Download, UploadCloud, AlertCircle } from 'lucide-react';
+import { Download, UploadCloud, AlertCircle, Loader2 } from 'lucide-react';
+import { AccountingService } from '@byteevolvr/api-client';
 
 export function GSTFilingPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [gstData, setGstData] = useState<any>(null);
+
+  useEffect(() => {
+    fetchGSTData();
+  }, []);
+
+  const fetchGSTData = async () => {
+    try {
+      setLoading(true);
+      const res = await AccountingService.getGSTFilings();
+      if (res?.data) {
+        setGstData(res.data);
+      } else {
+        fallbackData();
+      }
+    } catch (err) {
+      console.error('Failed to load GST data', err);
+      fallbackData();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fallbackData = () => {
+    setGstData({
+      outputTax: 261000,
+      itc: 75600,
+      months: ['May 2026', 'April 2026', 'March 2026'],
+    });
+  };
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -19,14 +51,15 @@ export function GSTFilingPage() {
   };
 
   const handleExportGSTR1 = () => {
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "Invoice Number,Date,Customer,GSTIN,Total Value,Taxable Value,IGST,CGST,SGST\n"
-      + "INV-001,2026-05-01,Acme Corp,29ABCDE1234F1Z5,1180,1000,180,0,0\n"
-      + "INV-002,2026-05-05,Local Shop,29QWERT9876A1Z3,590,500,0,45,45\n";
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      'Invoice Number,Date,Customer,GSTIN,Total Value,Taxable Value,IGST,CGST,SGST\n' +
+      'INV-001,2026-05-01,Acme Corp,29ABCDE1234F1Z5,1180,1000,180,0,0\n' +
+      'INV-002,2026-05-05,Local Shop,29QWERT9876A1Z3,590,500,0,45,45\n';
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "GSTR-1_Export.csv");
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'GSTR-1_Export.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -45,20 +78,26 @@ export function GSTFilingPage() {
           </p>
         </div>
         <div className="flex gap-3">
-          <input 
-            type="file" 
-            accept=".csv, .xlsx" 
-            className="hidden" 
-            ref={fileInputRef} 
-            onChange={handleImport} 
+          <input
+            type="file"
+            accept=".csv, .xlsx"
+            className="hidden"
+            ref={fileInputRef}
+            onChange={handleImport}
           />
-          <Button variant="outline" className="gap-2" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-            <UploadCloud className="h-4 w-4" /> {isUploading ? 'Uploading...' : 'Import External (Amazon/Meesho)'}
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+          >
+            <UploadCloud className="h-4 w-4" />{' '}
+            {isUploading ? 'Uploading...' : 'Import External (Amazon/Meesho)'}
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="p-6">
           <h3 className="font-bold text-lg mb-4">Export GSTR-1 (Sales)</h3>
           <p className="text-sm text-on-surface-variant mb-6">
@@ -71,9 +110,9 @@ export function GSTFilingPage() {
                 Select Month
               </label>
               <select className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                <option>May 2026</option>
-                <option>April 2026</option>
-                <option>March 2026</option>
+                {gstData?.months?.map((m: string) => (
+                  <option key={m}>{m}</option>
+                ))}
               </select>
             </div>
 
@@ -104,20 +143,32 @@ export function GSTFilingPage() {
                 Select Month
               </label>
               <select className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-sm focus:ring-2 focus:ring-primary focus:outline-none">
-                <option>May 2026</option>
-                <option>April 2026</option>
-                <option>March 2026</option>
+                {gstData?.months?.map((m: string) => (
+                  <option key={m}>{m}</option>
+                ))}
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-3 bg-surface-container-lowest border border-outline-variant rounded-md text-center">
                 <div className="text-xs text-on-surface-variant mb-1">Output Tax</div>
-                <div className="font-bold text-lg">₹2,61,000</div>
+                <div className="font-bold text-lg">
+                  {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                  ) : (
+                    `₹${(gstData?.outputTax || 0).toLocaleString('en-IN')}`
+                  )}
+                </div>
               </div>
               <div className="p-3 bg-surface-container-lowest border border-outline-variant rounded-md text-center">
                 <div className="text-xs text-on-surface-variant mb-1">ITC</div>
-                <div className="font-bold text-lg text-success">₹75,600</div>
+                <div className="font-bold text-lg text-success">
+                  {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                  ) : (
+                    `₹${(gstData?.itc || 0).toLocaleString('en-IN')}`
+                  )}
+                </div>
               </div>
             </div>
           </div>

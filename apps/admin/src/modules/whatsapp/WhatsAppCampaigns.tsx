@@ -254,27 +254,29 @@ export const WhatsAppCampaigns = () => {
                     <h4 className="text-sm font-semibold mb-3 flex items-center justify-between">
                       Preview ({bulkPreview.length} items)
                     </h4>
-                    <table className="w-full text-xs text-left">
-                      <thead>
-                        <tr className="text-on-surface-variant">
-                          <th className="pb-2">Phone</th>
-                          <th className="pb-2">Message</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-outline-variant">
-                        {bulkPreview.slice(0, 50).map((row, i) => (
-                          <tr key={i}>
-                            <td className="py-2 text-on-surface">{row.to}</td>
-                            <td
-                              className="py-2 text-on-surface-variant max-w-[200px] truncate"
-                              title={row.message}
-                            >
-                              {row.message}
-                            </td>
+                    <div className="w-full overflow-x-auto custom-scrollbar">
+                      <table className="w-full text-xs text-left">
+                        <thead>
+                          <tr className="text-on-surface-variant">
+                            <th className="pb-2">Phone</th>
+                            <th className="pb-2">Message</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="divide-y divide-outline-variant">
+                          {bulkPreview.slice(0, 50).map((row, i) => (
+                            <tr key={i}>
+                              <td className="py-2 text-on-surface">{row.to}</td>
+                              <td
+                                className="py-2 text-on-surface-variant max-w-[200px] truncate"
+                                title={row.message}
+                              >
+                                {row.message}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                     {bulkPreview.length > 50 && (
                       <p className="text-center text-xs text-on-surface-variant mt-2 pt-2 border-t border-outline-variant">
                         ... and {bulkPreview.length - 50} more

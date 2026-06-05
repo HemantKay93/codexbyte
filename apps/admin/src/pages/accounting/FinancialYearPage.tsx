@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { Card, Button, Badge } from '@byteevolvr/ui';
-import { Plus, Calendar, Settings, MoreHorizontal } from 'lucide-react';
-
 import {
+  Card,
+  Button,
+  Badge,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../../components/ui/Table';
+} from '@byteevolvr/ui';
+import { Plus, Calendar, Settings, MoreHorizontal } from 'lucide-react';
 
 export function FinancialYearPage() {
   const [years] = useState([

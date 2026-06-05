@@ -28,7 +28,7 @@ export function ApprovalTemplatesPage() {
       name: `New Flow ${Math.floor(Math.random() * 1000)}`,
       module: 'crm',
       entity_type: 'deal',
-      steps: [{ title: 'Manager Review', required_role: 'manager' }]
+      steps: [{ title: 'Manager Review', required_role: 'manager' }],
     };
     try {
       await ApprovalsService.createTemplate(fakeTemplate);
@@ -64,8 +64,11 @@ export function ApprovalTemplatesPage() {
               <p>No templates created yet.</p>
             </div>
           ) : (
-            templates.map(tpl => (
-              <Card key={tpl.id} className="p-5 border-l-4 border-l-primary hover:shadow-md transition-shadow">
+            templates.map((tpl) => (
+              <Card
+                key={tpl.id}
+                className="p-5 border-l-4 border-l-primary hover:shadow-md transition-shadow"
+              >
                 <div className="flex items-start justify-between mb-4">
                   <h3 className="font-bold text-lg text-on-surface line-clamp-1">{tpl.name}</h3>
                   <span className="bg-surface-container text-xs font-semibold px-2 py-1 rounded-md border border-outline-variant uppercase">
@@ -74,17 +77,25 @@ export function ApprovalTemplatesPage() {
                 </div>
                 <div className="space-y-2 mb-4">
                   <p className="text-sm text-on-surface-variant flex justify-between">
-                    <span>Entity:</span> <span className="font-medium text-on-surface capitalize">{tpl.entity_type}</span>
+                    <span>Entity:</span>{' '}
+                    <span className="font-medium text-on-surface capitalize">
+                      {tpl.entity_type}
+                    </span>
                   </p>
                   <p className="text-sm text-on-surface-variant flex justify-between">
-                    <span>Created:</span> <span className="font-medium text-on-surface">{new Date(tpl.created_at).toLocaleDateString()}</span>
+                    <span>Created:</span>{' '}
+                    <span className="font-medium text-on-surface">
+                      {new Date(tpl.created_at).toLocaleDateString()}
+                    </span>
                   </p>
                 </div>
                 <div className="pt-4 border-t border-outline-variant flex items-center justify-between">
                   <div className="flex items-center gap-1 text-xs text-on-surface-variant font-medium">
                     <Activity className="h-3.5 w-3.5" /> Active Flow
                   </div>
-                  <Button variant="ghost" size="sm" className="h-8">Edit Flow</Button>
+                  <Button variant="ghost" size="sm" className="h-8">
+                    Edit Flow
+                  </Button>
                 </div>
               </Card>
             ))

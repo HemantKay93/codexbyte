@@ -366,68 +366,70 @@ export const WhatsAppDashboard = () => {
         </div>
         <div>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
-                <tr>
-                  <th className="px-4 py-3">Recipient</th>
-                  <th className="px-4 py-3">Message</th>
-                  <th className="px-4 py-3">Provider</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Time</th>
-                  <th className="px-4 py-3">Error</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logs.map((log) => (
-                  <tr
-                    key={log.id}
-                    className="border-b border-border hover:bg-muted/20 transition-colors"
-                  >
-                    <td className="px-4 py-3 font-mono text-xs">{log.recipient}</td>
-                    <td
-                      className="px-4 py-3 max-w-[180px] truncate text-muted-foreground"
-                      title={log.payload?.content}
-                    >
-                      {log.payload?.content || '—'}
-                    </td>
-                    <td className="px-4 py-3 text-xs uppercase text-muted-foreground font-semibold">
-                      {log.provider_used || 'unknown'}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                          log.status === 'delivered'
-                            ? 'bg-green-500/20 text-green-400'
-                            : log.status === 'sent'
-                              ? 'bg-blue-500/20 text-blue-400'
-                              : log.status === 'failed'
-                                ? 'bg-red-500/20 text-red-400'
-                                : 'bg-yellow-500/20 text-yellow-400'
-                        }`}
-                      >
-                        {log.status?.toUpperCase()}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
-                      {new Date(log.created_at).toLocaleString()}
-                    </td>
-                    <td
-                      className="px-4 py-3 text-red-400 text-xs max-w-[160px] truncate"
-                      title={log.error_log}
-                    >
-                      {log.error_log || '—'}
-                    </td>
-                  </tr>
-                ))}
-                {logs.length === 0 && !loading && (
+            <div className="w-full overflow-x-auto custom-scrollbar">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
                   <tr>
-                    <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
-                      No messages sent yet.
-                    </td>
+                    <th className="px-4 py-3">Recipient</th>
+                    <th className="px-4 py-3">Message</th>
+                    <th className="px-4 py-3">Provider</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Time</th>
+                    <th className="px-4 py-3">Error</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {logs.map((log) => (
+                    <tr
+                      key={log.id}
+                      className="border-b border-border hover:bg-muted/20 transition-colors"
+                    >
+                      <td className="px-4 py-3 font-mono text-xs">{log.recipient}</td>
+                      <td
+                        className="px-4 py-3 max-w-[180px] truncate text-muted-foreground"
+                        title={log.payload?.content}
+                      >
+                        {log.payload?.content || '—'}
+                      </td>
+                      <td className="px-4 py-3 text-xs uppercase text-muted-foreground font-semibold">
+                        {log.provider_used || 'unknown'}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            log.status === 'delivered'
+                              ? 'bg-green-500/20 text-green-400'
+                              : log.status === 'sent'
+                                ? 'bg-blue-500/20 text-blue-400'
+                                : log.status === 'failed'
+                                  ? 'bg-red-500/20 text-red-400'
+                                  : 'bg-yellow-500/20 text-yellow-400'
+                          }`}
+                        >
+                          {log.status?.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                        {new Date(log.created_at).toLocaleString()}
+                      </td>
+                      <td
+                        className="px-4 py-3 text-red-400 text-xs max-w-[160px] truncate"
+                        title={log.error_log}
+                      >
+                        {log.error_log || '—'}
+                      </td>
+                    </tr>
+                  ))}
+                  {logs.length === 0 && !loading && (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                        No messages sent yet.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </Card>

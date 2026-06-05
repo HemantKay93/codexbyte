@@ -37,7 +37,9 @@ const SignupPage = lazy(() =>
   import('@/features/shop/pages/SignupPage').then((m) => ({ default: m.SignupPage }))
 );
 const ForgotPasswordPage = lazy(() =>
-  import('@/features/shop/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage }))
+  import('@/features/shop/pages/ForgotPasswordPage').then((m) => ({
+    default: m.ForgotPasswordPage,
+  }))
 );
 const ResetPasswordPage = lazy(() =>
   import('@/features/shop/pages/ResetPasswordPage').then((m) => ({ default: m.ResetPasswordPage }))

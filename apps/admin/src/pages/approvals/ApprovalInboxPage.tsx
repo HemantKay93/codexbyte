@@ -23,7 +23,11 @@ export function ApprovalInboxPage() {
     }
   };
 
-  const handleAction = async (requestId: string, stepId: string, status: 'approved' | 'rejected') => {
+  const handleAction = async (
+    requestId: string,
+    stepId: string,
+    status: 'approved' | 'rejected'
+  ) => {
     try {
       await ApprovalsService.processStep(requestId, stepId, status);
       fetchInbox(); // Refresh
@@ -59,9 +63,12 @@ export function ApprovalInboxPage() {
             {inbox.map((step) => {
               const req = step.approval_requests;
               const template = req?.approval_templates;
-              
+
               return (
-                <div key={step.id} className="p-6 flex flex-col md:flex-row gap-4 items-start md:items-center hover:bg-surface-container-lowest transition-colors">
+                <div
+                  key={step.id}
+                  className="p-6 flex flex-col md:flex-row gap-4 items-start md:items-center hover:bg-surface-container-lowest transition-colors"
+                >
                   <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-3">
                       <span className="text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-1 rounded">
@@ -76,22 +83,23 @@ export function ApprovalInboxPage() {
                       </span>
                     </div>
                     <p className="text-on-surface font-medium">
-                      Request ID: {req?.id?.split('-')[0]}... requires your attention for entity {req?.entity_id?.split('-')[0]}...
+                      Request ID: {req?.id?.split('-')[0]}... requires your attention for entity{' '}
+                      {req?.entity_id?.split('-')[0]}...
                     </p>
                     <div className="text-sm bg-surface-container-low p-3 rounded-md font-mono text-on-surface-variant overflow-x-auto border border-outline-variant">
                       {JSON.stringify(req?.payload, null, 2)}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-3 w-full md:w-auto shrink-0 justify-end mt-4 md:mt-0">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="text-red-500 border-red-500/30 hover:bg-red-50"
                       onClick={() => handleAction(req.id, step.id, 'rejected')}
                     >
                       <XCircle className="h-4 w-4 mr-2" /> Reject
                     </Button>
-                    <Button 
+                    <Button
                       className="bg-green-600 hover:bg-green-700 text-white"
                       onClick={() => handleAction(req.id, step.id, 'approved')}
                     >

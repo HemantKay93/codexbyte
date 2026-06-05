@@ -1,14 +1,14 @@
-import { Card, Button } from '@byteevolvr/ui';
-import { Download, FileText, Calendar } from 'lucide-react';
-
 import {
+  Card,
+  Button,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../../components/ui/Table';
+} from '@byteevolvr/ui';
+import { Download, FileText, Calendar } from 'lucide-react';
 
 export function TrialBalancePage() {
   // Mock data for Trial Balance

@@ -1,15 +1,15 @@
-import { Card, Button, Badge } from '@byteevolvr/ui';
-import { Plus, Zap, Send, MousePointerClick, TrendingUp, MoreHorizontal } from 'lucide-react';
-
 import {
+  Card,
+  Button,
+  Badge,
   Table,
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
-} from '../components/ui/Table';
-
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
+import { Plus, Zap, Send, MousePointerClick, TrendingUp, MoreHorizontal } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WorkflowsService } from '@byteevolvr/api-client';
@@ -121,12 +121,8 @@ export function MarketingPage() {
                     {wf.is_active ? 'Active' : 'Paused'}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right text-on-surface-variant">
-                  {0}
-                </TableCell>
-                <TableCell className="text-right font-medium text-emerald-600">
-                  0%
-                </TableCell>
+                <TableCell className="text-right text-on-surface-variant">{0}</TableCell>
+                <TableCell className="text-right font-medium text-emerald-600">0%</TableCell>
                 <TableCell>
                   <button className="text-on-surface-variant hover:text-on-surface p-1 rounded-md hover:bg-surface-container transition-colors">
                     <MoreHorizontal className="h-5 w-5" />

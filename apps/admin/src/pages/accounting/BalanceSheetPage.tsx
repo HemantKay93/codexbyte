@@ -26,9 +26,7 @@ export function BalanceSheetPage() {
     <div className="space-y-6 max-w-6xl mx-auto min-h-[calc(100vh-8rem)]">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-display-sm font-semibold text-on-background">
-            Balance Sheet
-          </h1>
+          <h1 className="text-display-sm font-semibold text-on-background">Balance Sheet</h1>
           <p className="text-body-sm text-on-surface-variant mt-1">
             Financial position as of today
           </p>
@@ -56,22 +54,25 @@ export function BalanceSheetPage() {
               <h2 className="text-xl font-bold text-on-surface uppercase tracking-widest">
                 ByteEvolvr Technologies
               </h2>
-              <h3 className="text-lg font-semibold text-on-surface-variant mt-1">
-                Balance Sheet
-              </h3>
+              <h3 className="text-lg font-semibold text-on-surface-variant mt-1">Balance Sheet</h3>
               <p className="text-sm text-on-surface-variant mt-1">
                 As of {new Date().toLocaleDateString()}
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
               <div className="border border-outline-variant rounded-lg overflow-hidden">
                 <div className="bg-surface-container p-4 font-bold border-b border-outline-variant">
                   Assets
                 </div>
                 <div className="p-4 flex justify-between font-bold text-success border-t border-outline-variant bg-success/5 mt-auto">
                   <span>Total Assets</span>
-                  <span>₹{Number(data.assets || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  <span>
+                    ₹
+                    {Number(data.assets || 0).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                    })}
+                  </span>
                 </div>
               </div>
 
@@ -82,16 +83,32 @@ export function BalanceSheetPage() {
                 <div className="p-4 space-y-4 flex-1">
                   <div className="flex justify-between">
                     <span>Liabilities</span>
-                    <span>₹{Number(data.liabilities || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span>
+                      ₹
+                      {Number(data.liabilities || 0).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Equity</span>
-                    <span>₹{Number(data.equity || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    <span>
+                      ₹
+                      {Number(data.equity || 0).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </span>
                   </div>
                 </div>
                 <div className="p-4 flex justify-between font-bold text-error border-t border-outline-variant bg-error/5">
                   <span>Total Liabilities & Equity</span>
-                  <span>₹{(Number(data.liabilities || 0) + Number(data.equity || 0)).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                  <span>
+                    ₹
+                    {(Number(data.liabilities || 0) + Number(data.equity || 0)).toLocaleString(
+                      undefined,
+                      { minimumFractionDigits: 2 }
+                    )}
+                  </span>
                 </div>
               </div>
             </div>

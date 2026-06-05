@@ -476,7 +476,7 @@ export function OrderDetailPage() {
               </div>
 
               {/* Courier & Tracking */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
                   <label className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest ml-1">
                     Courier Provider

@@ -1,5 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import {
+  Card,
+  Button,
+  Badge,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
 import {
   Search,
   Filter,
@@ -9,18 +20,14 @@ import {
   UploadCloud,
   Plus,
   ArrowRightLeft,
+  Tags,
+  Layers,
+  ClipboardCheck,
+  Hash,
 } from 'lucide-react';
 import { useAdminStore } from '@byteevolvr/store';
 import { AdminService } from '@byteevolvr/api-client';
 
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '../components/ui/Table';
 import { BulkImportDialog } from '../components/BulkImportDialog';
 import { StockAdjustmentModal } from '../components/StockAdjustmentModal';
 import { StockMovementHistoryModal } from '../components/StockMovementHistoryModal';
@@ -38,6 +45,9 @@ export function InventoryPage() {
   const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'stock' | 'categories' | 'tracking' | 'audits'>(
+    'stock'
+  );
 
   useEffect(() => {
     fetchInventory();
@@ -155,216 +165,294 @@ export function InventoryPage() {
         </>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-none shadow-sm bg-surface-container-lowest">
-          <div className="p-6">
-            <div className="text-on-surface-variant font-black text-[10px] uppercase tracking-widest mb-2">
-              Total SKUs
-            </div>
-            <div className="text-4xl font-black text-on-surface tracking-tighter">
-              {stats.total}
-            </div>
-          </div>
-        </Card>
-        <Card className="border-none shadow-sm bg-warning/5 border-l-4 border-l-warning">
-          <div className="p-6">
-            <div className="text-warning font-black text-[10px] uppercase tracking-widest mb-2">
-              Low Stock Alerts
-            </div>
-            <div className="text-4xl font-black text-warning tracking-tighter">
-              {stats.lowStock}
-            </div>
-          </div>
-        </Card>
-        <Card className="border-none shadow-sm bg-error/5 border-l-4 border-l-error">
-          <div className="p-6">
-            <div className="text-error font-black text-[10px] uppercase tracking-widest mb-2">
-              Out of Stock
-            </div>
-            <div className="text-4xl font-black text-error tracking-tighter">
-              {stats.outOfStock}
-            </div>
-          </div>
-        </Card>
-        <Card className="border-none shadow-sm bg-primary/5 border-l-4 border-l-primary">
-          <div className="p-6">
-            <div className="text-primary font-black text-[10px] uppercase tracking-widest mb-2">
-              Inventory Value
-            </div>
-            <div className="text-4xl font-black text-primary tracking-tighter">
-              ₹{stats.totalValue.toLocaleString()}
-            </div>
-          </div>
-        </Card>
+      <div className="flex border-b border-outline-variant mb-6 overflow-x-auto custom-scrollbar">
+        <button
+          className={`px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${activeTab === 'stock' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-on-surface'}`}
+          onClick={() => setActiveTab('stock')}
+        >
+          <Layers className="h-4 w-4" /> Stock Levels
+        </button>
+        <button
+          className={`px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${activeTab === 'categories' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-on-surface'}`}
+          onClick={() => setActiveTab('categories')}
+        >
+          <Tags className="h-4 w-4" /> Categories & Brands
+        </button>
+        <button
+          className={`px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${activeTab === 'tracking' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-on-surface'}`}
+          onClick={() => setActiveTab('tracking')}
+        >
+          <Hash className="h-4 w-4" /> Batch & Serial Tracking
+        </button>
+        <button
+          className={`px-4 py-3 text-sm font-medium border-b-2 whitespace-nowrap transition-colors flex items-center gap-2 ${activeTab === 'audits' ? 'border-primary text-primary' : 'border-transparent text-on-surface-variant hover:text-on-surface'}`}
+          onClick={() => setActiveTab('audits')}
+        >
+          <ClipboardCheck className="h-4 w-4" /> Stock Audits
+        </button>
       </div>
 
-      <Card className="border-none shadow-sm">
-        <div className="flex items-center justify-between p-4 border-b border-outline-variant">
-          <div className="flex items-center gap-2 max-md w-full">
-            <div className="relative w-full max-w-md">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-on-surface-variant" />
-              <Input
-                placeholder="Search products or SKUs..."
-                className="pl-10 h-10 rounded-xl"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-              />
+      {activeTab === 'stock' && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <Card className="border-none shadow-sm bg-surface-container-lowest">
+              <div className="p-6">
+                <div className="text-on-surface-variant font-black text-[10px] uppercase tracking-widest mb-2">
+                  Total SKUs
+                </div>
+                <div className="text-4xl font-black text-on-surface tracking-tighter">
+                  {stats.total}
+                </div>
+              </div>
+            </Card>
+            <Card className="border-none shadow-sm bg-warning/5 border-l-4 border-l-warning">
+              <div className="p-6">
+                <div className="text-warning font-black text-[10px] uppercase tracking-widest mb-2">
+                  Low Stock Alerts
+                </div>
+                <div className="text-4xl font-black text-warning tracking-tighter">
+                  {stats.lowStock}
+                </div>
+              </div>
+            </Card>
+            <Card className="border-none shadow-sm bg-error/5 border-l-4 border-l-error">
+              <div className="p-6">
+                <div className="text-error font-black text-[10px] uppercase tracking-widest mb-2">
+                  Out of Stock
+                </div>
+                <div className="text-4xl font-black text-error tracking-tighter">
+                  {stats.outOfStock}
+                </div>
+              </div>
+            </Card>
+            <Card className="border-none shadow-sm bg-primary/5 border-l-4 border-l-primary">
+              <div className="p-6">
+                <div className="text-primary font-black text-[10px] uppercase tracking-widest mb-2">
+                  Inventory Value
+                </div>
+                <div className="text-4xl font-black text-primary tracking-tighter">
+                  ₹{stats.totalValue.toLocaleString()}
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <Card className="border-none shadow-sm">
+            <div className="flex items-center justify-between p-4 border-b border-outline-variant">
+              <div className="flex items-center gap-2 max-md w-full">
+                <div className="relative w-full max-w-md">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-on-surface-variant" />
+                  <Input
+                    placeholder="Search products or SKUs..."
+                    className="pl-10 h-10 rounded-xl"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" className="gap-2 rounded-xl">
+                  <Filter className="h-4 w-4" /> Filters
+                </Button>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" className="gap-2 rounded-xl">
-              <Filter className="h-4 w-4" /> Filters
-            </Button>
-          </div>
-        </div>
-        <div className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-surface-container-lowest">
-                <TableHead className="font-bold uppercase text-[10px] tracking-widest">
-                  Product
-                </TableHead>
-                <TableHead className="font-bold uppercase text-[10px] tracking-widest">
-                  SKU
-                </TableHead>
-                <TableHead className="font-bold uppercase text-[10px] tracking-widest">
-                  Status
-                </TableHead>
-                <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">
-                  Total Qty
-                </TableHead>
-                <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">
-                  Price
-                </TableHead>
-                <TableHead className="w-24"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-20">
-                    <Loader2 className="h-10 w-10 animate-spin mx-auto text-primary" />
-                    <p className="mt-4 text-sm font-medium text-on-surface-variant">
-                      Syncing inventory levels...
-                    </p>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                paginatedProducts.map((item) => (
-                  <TableRow
-                    key={item.id}
-                    className="hover:bg-surface-container-lowest transition-colors"
-                  >
-                    <TableCell>
-                      <div className="font-bold text-on-surface">{item.name}</div>
-                      <div className="text-[10px] text-on-surface-variant font-medium">
-                        {item.category}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-mono text-xs text-on-surface-variant uppercase font-bold tracking-wider">
-                      {item.sku}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          item.stock_quantity > 10
-                            ? 'success'
-                            : item.stock_quantity > 0
-                              ? 'warning'
-                              : 'error'
-                        }
-                        className="rounded-full px-3 py-0.5"
-                      >
-                        {item.stock_quantity > 10
-                          ? 'In Stock'
-                          : item.stock_quantity > 0
-                            ? 'Low Stock'
-                            : 'Out of Stock'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right font-black text-on-surface">
-                      {item.stock_quantity}
-                    </TableCell>
-                    <TableCell className="text-right text-on-surface-variant font-bold">
-                      ₹{Number(item.price).toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 rounded-lg hover:bg-indigo-500/10 hover:text-indigo-500"
-                          onClick={() => {
-                            setSelectedProduct(item);
-                            setIsTransferModalOpen(true);
-                          }}
-                          title="Transfer Stock"
-                        >
-                          <ArrowRightLeft className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10 hover:text-primary"
-                          onClick={() => {
-                            setSelectedProduct(item);
-                            setIsAdjustmentModalOpen(true);
-                          }}
-                          title="Adjust Stock"
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
-                          onClick={() => {
-                            setSelectedProduct(item);
-                            setIsHistoryModalOpen(true);
-                          }}
-                          title="View History"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <div className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-surface-container-lowest">
+                    <TableHead className="font-bold uppercase text-[10px] tracking-widest">
+                      Product
+                    </TableHead>
+                    <TableHead className="font-bold uppercase text-[10px] tracking-widest">
+                      SKU
+                    </TableHead>
+                    <TableHead className="font-bold uppercase text-[10px] tracking-widest">
+                      Status
+                    </TableHead>
+                    <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">
+                      Total Qty
+                    </TableHead>
+                    <TableHead className="text-right font-bold uppercase text-[10px] tracking-widest">
+                      Price
+                    </TableHead>
+                    <TableHead className="w-24"></TableHead>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="p-4 border-t border-outline-variant flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
-          <div>
-            Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
-            {Math.min(currentPage * itemsPerPage, filteredProducts.length)} of{' '}
-            {filteredProducts.length} items
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 rounded-lg"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-            >
-              Previous
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-20">
+                        <Loader2 className="h-10 w-10 animate-spin mx-auto text-primary" />
+                        <p className="mt-4 text-sm font-medium text-on-surface-variant">
+                          Syncing inventory levels...
+                        </p>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    paginatedProducts.map((item) => (
+                      <TableRow
+                        key={item.id}
+                        className="hover:bg-surface-container-lowest transition-colors"
+                      >
+                        <TableCell>
+                          <div className="font-bold text-on-surface">{item.name}</div>
+                          <div className="text-[10px] text-on-surface-variant font-medium">
+                            {item.category}
+                          </div>
+                        </TableCell>
+                        <TableCell className="font-mono text-xs text-on-surface-variant uppercase font-bold tracking-wider">
+                          {item.sku}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              item.stock_quantity > 10
+                                ? 'success'
+                                : item.stock_quantity > 0
+                                  ? 'warning'
+                                  : 'error'
+                            }
+                            className="rounded-full px-3 py-0.5"
+                          >
+                            {item.stock_quantity > 10
+                              ? 'In Stock'
+                              : item.stock_quantity > 0
+                                ? 'Low Stock'
+                                : 'Out of Stock'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right font-black text-on-surface">
+                          {item.stock_quantity}
+                        </TableCell>
+                        <TableCell className="text-right text-on-surface-variant font-bold">
+                          ₹{Number(item.price).toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 rounded-lg hover:bg-indigo-500/10 hover:text-indigo-500"
+                              onClick={() => {
+                                setSelectedProduct(item);
+                                setIsTransferModalOpen(true);
+                              }}
+                              title="Transfer Stock"
+                            >
+                              <ArrowRightLeft className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 rounded-lg hover:bg-primary/10 hover:text-primary"
+                              onClick={() => {
+                                setSelectedProduct(item);
+                                setIsAdjustmentModalOpen(true);
+                              }}
+                              title="Adjust Stock"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
+                              onClick={() => {
+                                setSelectedProduct(item);
+                                setIsHistoryModalOpen(true);
+                              }}
+                              title="View History"
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="p-4 border-t border-outline-variant flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
+              <div>
+                Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
+                {Math.min(currentPage * itemsPerPage, filteredProducts.length)} of{' '}
+                {filteredProducts.length} items
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 rounded-lg"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                >
+                  Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 rounded-lg"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </>
+      )}
+
+      {activeTab === 'categories' && (
+        <Card className="p-10 text-center">
+          <Tags className="h-12 w-12 text-outline mx-auto mb-4" />
+          <h3 className="text-xl font-bold mb-2">Categories & Brands</h3>
+          <p className="text-on-surface-variant mb-6 max-w-md mx-auto">
+            Manage product taxonomy, nested categories, and brand mappings to organize your catalog
+            effectively.
+          </p>
+          <div className="flex justify-center gap-4">
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" /> Create Category
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 rounded-lg"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-            >
-              Next
+            <Button variant="outline" className="gap-2">
+              <Plus className="h-4 w-4" /> Add Brand
             </Button>
           </div>
-        </div>
-      </Card>
+        </Card>
+      )}
+
+      {activeTab === 'tracking' && (
+        <Card className="p-10 text-center">
+          <Hash className="h-12 w-12 text-outline mx-auto mb-4" />
+          <h3 className="text-xl font-bold mb-2">Batch & Serial Tracking</h3>
+          <p className="text-on-surface-variant mb-6 max-w-md mx-auto">
+            Trace inventory by specific manufacturing batches, expiry dates, or individual serial
+            numbers for warranty and compliance.
+          </p>
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" /> Register New Batch
+          </Button>
+        </Card>
+      )}
+
+      {activeTab === 'audits' && (
+        <Card className="p-10 text-center">
+          <ClipboardCheck className="h-12 w-12 text-outline mx-auto mb-4" />
+          <h3 className="text-xl font-bold mb-2">Stock Audits & Cycle Counts</h3>
+          <p className="text-on-surface-variant mb-6 max-w-md mx-auto">
+            Schedule and perform physical inventory counts to reconcile system stock with actual
+            warehouse quantities.
+          </p>
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" /> Start New Audit
+          </Button>
+        </Card>
+      )}
     </div>
   );
 }

@@ -227,7 +227,7 @@ export function POSPage() {
                 No products found.
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 pb-4">
                 {filteredProducts.map((product) => (
                   <div
                     key={product.id}
@@ -358,7 +358,7 @@ export function POSPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
             <Button
               variant="secondary"
               className="gap-2 h-14 font-bold"

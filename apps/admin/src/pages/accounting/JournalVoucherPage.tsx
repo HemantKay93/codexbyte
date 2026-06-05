@@ -1,21 +1,42 @@
-import { useState } from 'react';
-import { Card, Button, Input } from '@byteevolvr/ui';
-import { Plus, Save, Trash2, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
+import { useState, useEffect } from 'react';
 import {
+  Card,
+  Button,
+  Input,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../../components/ui/Table';
+} from '@byteevolvr/ui';
+import { Plus, Save, Trash2, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { AccountingService } from '@byteevolvr/api-client';
 
 export function JournalVoucherPage() {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [reference, setReference] = useState('');
   const [notes, setNotes] = useState('');
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    AccountingService.getAccounts()
+      .then((res) => {
+        setAccounts(res?.data || []);
+      })
+      .catch((err) => {
+        console.error('Failed to load accounts', err);
+        // Fallback mock accounts
+        setAccounts([
+          { id: '1', code: '1000', name: 'Cash' },
+          { id: '2', code: '1200', name: 'Accounts Receivable' },
+          { id: '3', code: '5400', name: 'Office Supplies' },
+          { id: '4', code: '4100', name: 'Consulting Revenue' },
+        ]);
+      });
+  }, []);
 
   const [entries, setEntries] = useState([
     { id: 1, accountId: '', description: '', debit: 0, credit: 0 },
@@ -54,6 +75,30 @@ export function JournalVoucherPage() {
   const totalCredit = entries.reduce((sum, e) => sum + (Number(e.credit) || 0), 0);
   const isBalanced = totalDebit === totalCredit && totalDebit > 0;
 
+  const handleSave = async () => {
+    if (!isBalanced) return;
+    setIsSubmitting(true);
+    try {
+      await AccountingService.createJournalEntry(
+        { date, reference, notes },
+        entries.filter((e) => e.accountId)
+      );
+      alert('Journal entry saved successfully!');
+      // Reset form
+      setReference('');
+      setNotes('');
+      setEntries([
+        { id: Date.now(), accountId: '', description: '', debit: 0, credit: 0 },
+        { id: Date.now() + 1, accountId: '', description: '', debit: 0, credit: 0 },
+      ]);
+    } catch (err) {
+      console.error('Failed to save journal entry', err);
+      alert('Failed to save journal entry.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       <div className="flex items-center justify-between">
@@ -72,9 +117,9 @@ export function JournalVoucherPage() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline">Cancel</Button>
-          <Button className="gap-2" disabled={!isBalanced}>
+          <Button className="gap-2" disabled={!isBalanced || isSubmitting} onClick={handleSave}>
             <Save className="h-4 w-4" />
-            Save Voucher
+            {isSubmitting ? 'Saving...' : 'Save Voucher'}
           </Button>
         </div>
       </div>
@@ -131,10 +176,11 @@ export function JournalVoucherPage() {
                       onChange={(e) => updateEntry(entry.id, 'accountId', e.target.value)}
                     >
                       <option value="">Select Account...</option>
-                      <option value="1">Cash (1000)</option>
-                      <option value="2">Accounts Receivable (1200)</option>
-                      <option value="3">Office Supplies (5400)</option>
-                      <option value="4">Consulting Revenue (4100)</option>
+                      {accounts.map((acc) => (
+                        <option key={acc.id} value={acc.id}>
+                          {acc.name} ({acc.code})
+                        </option>
+                      ))}
                     </select>
                   </TableCell>
                   <TableCell>

@@ -24,6 +24,23 @@ export const AccountingService = {
     return response.data;
   },
 
+  // AR / AP
+  getAR: async () => {
+    const response = await apiClient.get('/accounting/ar');
+    return response.data;
+  },
+
+  getAP: async () => {
+    const response = await apiClient.get('/accounting/ap');
+    return response.data;
+  },
+
+  // GST
+  getGSTFilings: async () => {
+    const response = await apiClient.get('/accounting/gst');
+    return response.data;
+  },
+
   // Financial Reports
   getProfitLoss: async (startDate?: string, endDate?: string) => {
     const params = new URLSearchParams();
@@ -64,6 +81,11 @@ export const AccountingService = {
 
   closePeriod: async (periodId: string) => {
     const response = await apiClient.post(`/accounting/periods/${periodId}/close`);
+    return response.data;
+  },
+
+  getFinancialHealthTracker: async () => {
+    const response = await apiClient.get('/accounting/health-tracker');
     return response.data;
   }
 };

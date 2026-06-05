@@ -7,6 +7,8 @@ export * from './components/Navbar';
 export * from './components/Footer';
 export * from './components/Spinner';
 export * from './components/Skeleton';
+export * from './components/Select';
+export * from './components/Table';
 
 export * from './utils/format';
 export * from './utils/numberToWords';

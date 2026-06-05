@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { Card, Button, Input } from '@byteevolvr/ui';
-import { Search, Plus, Filter, Target } from 'lucide-react';
-
 import {
+  Card,
+  Button,
+  Input,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../../components/ui/Table';
+} from '@byteevolvr/ui';
+import { Search, Plus, Filter, Target } from 'lucide-react';
 
 export function BudgetsPage() {
   const [searchTerm, setSearchTerm] = useState('');

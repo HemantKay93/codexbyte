@@ -1,14 +1,13 @@
-import { Card } from '@byteevolvr/ui';
-import { Package } from 'lucide-react';
-
 import {
+  Card,
   Table,
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
-} from '../../../components/ui/Table';
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
+import { Package } from 'lucide-react';
 
 export function OrderItemsTable({ items }: { items: any[] }) {
   // eslint-disable-line @typescript-eslint/no-explicit-any

@@ -1,4 +1,5 @@
 import { Card, Button, Input } from '@byteevolvr/ui';
+import * as XLSX from 'xlsx';
 import {
   Download,
   FileText,
@@ -14,9 +15,20 @@ import { useState } from 'react';
 export function ReportsPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleExport = async (type: string, format: string) => {
-    // Mock export flow
-    alert(`Exporting ${type} report in ${format} format...`);
+  const handleExport = async (title: string, format: string) => {
+    // Generate some dummy data based on title
+    const data = [
+      { id: 1, metric: 'Metric A', value: 100 },
+      { id: 2, metric: 'Metric B', value: 250 },
+      { id: 3, metric: 'Metric C', value: 175 },
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Report Data');
+
+    const filename = `${title.replace(/\s+/g, '_').toLowerCase()}_report.${format === 'Excel' ? 'xlsx' : 'csv'}`;
+    XLSX.writeFile(wb, filename);
   };
 
   const reportCategories = [

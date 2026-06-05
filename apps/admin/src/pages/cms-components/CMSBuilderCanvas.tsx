@@ -60,7 +60,7 @@ export function CMSBuilderCanvas({
             <div
               className={`p-12 border-t bg-white ${selectedSection === 'contact' ? 'ring-2 ring-primary ring-inset' : ''}`}
             >
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <h3 className="font-bold text-lg mb-4">Contact Us</h3>
                   <div className="space-y-2 text-sm text-gray-600">
@@ -95,7 +95,7 @@ export function CMSBuilderCanvas({
         {selectedPage === 'contact_page' && (
           <div className="p-12">
             <h1 className="text-3xl font-bold mb-8 text-center">Get in Touch</h1>
-            <div className="grid grid-cols-2 gap-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
               <div className="space-y-6">
                 <div>
                   <h3 className="font-bold text-lg mb-2">Our Office</h3>

@@ -1,15 +1,17 @@
 import { useState } from 'react';
-import { Card, Button, Input, Badge } from '@byteevolvr/ui';
-import { Search, Filter, Receipt, Upload } from 'lucide-react';
-
 import {
+  Card,
+  Button,
+  Input,
+  Badge,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../../components/ui/Table';
+} from '@byteevolvr/ui';
+import { Search, Filter, Receipt, Upload } from 'lucide-react';
 
 export function VendorBillsPage() {
   const [searchTerm, setSearchTerm] = useState('');

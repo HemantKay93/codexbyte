@@ -31,5 +31,10 @@ export const SupportService = {
   replyToTicket: async (id: string, messageBody: string) => {
     const response = await apiClient.post(`/support/tickets/${id}/reply`, { messageBody });
     return response.data;
+  },
+
+  getKnowledgeBaseArticles: async () => {
+    const response = await apiClient.get('/support/knowledge-base');
+    return response.data;
   }
 };

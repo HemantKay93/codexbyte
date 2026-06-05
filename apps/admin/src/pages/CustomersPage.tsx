@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Button, Input, Badge } from '@byteevolvr/ui';
-import { Search, Download, Filter, MoreHorizontal, Mail, Loader2, User } from 'lucide-react';
-import { useAdminStore } from '@byteevolvr/store';
-import { AdminService } from '@byteevolvr/api-client';
-
 import {
+  Card,
+  Button,
+  Input,
+  Badge,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../components/ui/Table';
+} from '@byteevolvr/ui';
+import { Search, Download, Filter, MoreHorizontal, Mail, Loader2, User } from 'lucide-react';
+import { useAdminStore } from '@byteevolvr/store';
+import { AdminService } from '@byteevolvr/api-client';
 
 export function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState('');

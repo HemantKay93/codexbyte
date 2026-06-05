@@ -59,7 +59,8 @@ export function ForgotPasswordPage() {
           <div className="text-center">
             <div className="mb-6 flex items-center rounded-xl bg-green-500/10 p-4 text-sm text-green-400 border border-green-500/20 shadow-sm animate-in fade-in slide-in-from-top-2">
               <div className="h-1.5 w-1.5 rounded-full bg-green-400 mr-3 shrink-0"></div>
-              Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.
+              Check your email for a link to reset your password. If it doesn't appear within a few
+              minutes, check your spam folder.
             </div>
             <Link
               to="/shop/login"
@@ -99,7 +100,7 @@ export function ForgotPasswordPage() {
                 </span>
               )}
             </Button>
-            
+
             <div className="mt-8 text-center">
               <Link
                 to="/shop/login"

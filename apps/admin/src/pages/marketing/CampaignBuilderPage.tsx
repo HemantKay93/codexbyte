@@ -74,7 +74,7 @@ export function CampaignBuilderPage() {
 
           <Card className="p-4 space-y-4 flex-1">
             <h3 className="font-semibold text-on-surface text-sm">Blocks</h3>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <button className="flex flex-col items-center justify-center p-3 border border-outline-variant rounded-lg bg-surface-container-lowest hover:border-primary hover:bg-primary/5 transition-colors text-on-surface-variant">
                 <Type className="h-5 w-5 mb-1" />
                 <span className="text-[10px] font-medium">Text</span>

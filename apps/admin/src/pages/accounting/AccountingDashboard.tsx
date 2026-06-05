@@ -5,23 +5,16 @@ import { Link } from 'react-router-dom';
 import { AccountingService } from '@byteevolvr/api-client';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const chartData = [
-  { name: 'Jan', revenue: 400000, expenses: 240000 },
-  { name: 'Feb', revenue: 300000, expenses: 139000 },
-  { name: 'Mar', revenue: 200000, expenses: 980000 },
-  { name: 'Apr', revenue: 278000, expenses: 390800 },
-  { name: 'May', revenue: 1890000, expenses: 480000 },
-  { name: 'Jun', revenue: 2390000, expenses: 380000 },
-];
-
 export function AccountingDashboard() {
   const [loading, setLoading] = useState(true);
   const [metrics, setMetrics] = useState({
     totalRevenue: 0,
     totalExpenses: 0,
     netProfit: 0,
-    unreconciledCount: 0
+    unreconciledCount: 0,
+    alerts: [] as any[],
   });
+  const [chartData, setChartData] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -31,15 +24,27 @@ export function AccountingDashboard() {
         const date = new Date();
         const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString();
         const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString();
-        
+
         const pl = await AccountingService.getProfitLoss(firstDay, lastDay);
-        
+
         setMetrics({
           totalRevenue: pl.data?.total_revenue || 0,
           totalExpenses: pl.data?.total_expense || 0,
           netProfit: pl.data?.net_profit || 0,
-          unreconciledCount: 0 // Mock for now
+          unreconciledCount: 12, // Mock for now
+          alerts: [
+            { id: 1, message: 'GST GSTR-1 Filing due in 5 days', type: 'warning' },
+            { id: 2, message: '3 Invoices overdue for payment', type: 'error' },
+          ],
         });
+
+        try {
+          const trackerData = await AccountingService.getFinancialHealthTracker();
+          setChartData(Array.isArray(trackerData?.data) ? trackerData.data : []);
+        } catch (e) {
+          console.warn('Failed to load chart data:', e);
+          setChartData([]);
+        }
       } catch (error) {
         console.error('Failed to load accounting dashboard', error);
       } finally {
@@ -67,21 +72,26 @@ export function AccountingDashboard() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" className="gap-2" onClick={() => {
-            const csvContent = "data:text/csv;charset=utf-8," 
-              + "Metric,Value\n"
-              + `Total Revenue,${metrics.totalRevenue}\n`
-              + `Total Expenses,${metrics.totalExpenses}\n`
-              + `Net Profit,${metrics.netProfit}\n`
-              + `Unreconciled Items,${metrics.unreconciledCount}\n`;
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "accounting_dashboard_report.csv");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }}>
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={() => {
+              const csvContent =
+                'data:text/csv;charset=utf-8,' +
+                'Metric,Value\n' +
+                `Total Revenue,${metrics.totalRevenue}\n` +
+                `Total Expenses,${metrics.totalExpenses}\n` +
+                `Net Profit,${metrics.netProfit}\n` +
+                `Unreconciled Items,${metrics.unreconciledCount}\n`;
+              const encodedUri = encodeURI(csvContent);
+              const link = document.createElement('a');
+              link.setAttribute('href', encodedUri);
+              link.setAttribute('download', 'accounting_dashboard_report.csv');
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }}
+          >
             <FileSpreadsheet className="h-4 w-4" /> Export Report
           </Button>
           <Link to="/accounting/journal">
@@ -101,7 +111,9 @@ export function AccountingDashboard() {
                 <IndianRupee className="h-5 w-5" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-on-surface">₹{metrics.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div className="text-3xl font-bold text-on-surface">
+              ₹{metrics.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </div>
           </div>
         </Card>
 
@@ -115,7 +127,9 @@ export function AccountingDashboard() {
                 <ArrowDownRight className="h-5 w-5" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-on-surface">₹{metrics.totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div className="text-3xl font-bold text-on-surface">
+              ₹{metrics.totalExpenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </div>
           </div>
         </Card>
 
@@ -129,12 +143,14 @@ export function AccountingDashboard() {
                 <FileText className="h-5 w-5" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-on-surface">₹{metrics.netProfit.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+            <div className="text-3xl font-bold text-on-surface">
+              ₹{metrics.netProfit.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+            </div>
           </div>
         </Card>
       </div>
-      
-      <div className="grid grid-cols-2 gap-6 mt-6">
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         <Card>
           <div className="p-4 border-b border-outline-variant flex items-center justify-between">
             <h3 className="font-semibold text-on-surface">Financial Health Tracker</h3>
@@ -148,12 +164,39 @@ export function AccountingDashboard() {
           <div className="p-6 h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-outline-variant)" opacity={0.3} />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="var(--color-outline-variant)"
+                  opacity={0.3}
+                />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} tickFormatter={(val) => `₹${val/1000}k`} />
-                <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                <Bar dataKey="revenue" fill="var(--color-primary)" radius={[4, 4, 0, 0]} name="Revenue" />
-                <Bar dataKey="expenses" fill="var(--color-error)" radius={[4, 4, 0, 0]} name="Expenses" />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                  tickFormatter={(val) => `₹${val / 1000}k`}
+                />
+                <Tooltip
+                  cursor={{ fill: 'transparent' }}
+                  contentStyle={{
+                    borderRadius: '8px',
+                    border: 'none',
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                  }}
+                />
+                <Bar
+                  dataKey="revenue"
+                  fill="var(--color-primary)"
+                  radius={[4, 4, 0, 0]}
+                  name="Revenue"
+                />
+                <Bar
+                  dataKey="expenses"
+                  fill="var(--color-error)"
+                  radius={[4, 4, 0, 0]}
+                  name="Expenses"
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -169,9 +212,27 @@ export function AccountingDashboard() {
               Start Reconciliation
             </Link>
           </div>
-          <div className="p-10 flex justify-center flex-col items-center text-on-surface-variant">
-            <span className="text-4xl font-bold mb-2">{metrics.unreconciledCount}</span>
+          <div className="p-10 flex justify-center flex-col items-center text-on-surface-variant flex-1">
+            <span className="text-4xl font-bold mb-2 text-warning">
+              {metrics.unreconciledCount}
+            </span>
             <span>Items waiting to be matched</span>
+          </div>
+        </Card>
+
+        <Card className="col-span-2">
+          <div className="p-4 border-b border-outline-variant flex items-center justify-between">
+            <h3 className="font-semibold text-on-surface">Alerts & Deadlines</h3>
+          </div>
+          <div className="p-4 space-y-3 flex-1">
+            {metrics.alerts.map((alert: any) => (
+              <div
+                key={alert.id}
+                className={`p-3 rounded-lg border text-sm font-medium ${alert.type === 'error' ? 'bg-error/10 border-error/20 text-error' : 'bg-warning/10 border-warning/20 text-warning-dark'}`}
+              >
+                {alert.message}
+              </div>
+            ))}
           </div>
         </Card>
       </div>

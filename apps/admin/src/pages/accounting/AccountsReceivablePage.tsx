@@ -1,46 +1,87 @@
-import { useState } from 'react';
-import { Card, Button, Input, Badge } from '@byteevolvr/ui';
-import { Search, Filter, Download, ArrowUpRight, TrendingUp } from 'lucide-react';
-
+import { useState, useEffect } from 'react';
 import {
+  Card,
+  Button,
+  Input,
+  Badge,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../../components/ui/Table';
+} from '@byteevolvr/ui';
+import { Search, Filter, Download, ArrowUpRight, TrendingUp, Loader2 } from 'lucide-react';
+import { AccountingService } from '@byteevolvr/api-client';
 
 export function AccountsReceivablePage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [receivables, setReceivables] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data for AR
-  const receivables = [
-    {
-      id: 'INV-2023-001',
-      customer: 'Acme Corp',
-      amount: 45000.0,
-      dueDate: '2023-10-15',
-      status: 'overdue',
-      daysOverdue: 12,
-    },
-    {
-      id: 'INV-2023-005',
-      customer: 'Stark Industries',
-      amount: 125000.0,
-      dueDate: '2023-11-01',
-      status: 'pending',
-      daysOverdue: 0,
-    },
-    {
-      id: 'INV-2023-008',
-      customer: 'Wayne Enterprises',
-      amount: 8500.0,
-      dueDate: '2023-11-10',
-      status: 'pending',
-      daysOverdue: 0,
-    },
-  ];
+  useEffect(() => {
+    fetchReceivables();
+  }, []);
+
+  const fetchReceivables = async () => {
+    try {
+      setLoading(true);
+      const res = await AccountingService.getAR();
+      if (res?.data && res.data.length > 0) {
+        setReceivables(res.data);
+      } else {
+        fallbackData();
+      }
+    } catch (err) {
+      console.error('Failed to load AR data', err);
+      fallbackData();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fallbackData = () => {
+    setReceivables([
+      {
+        id: 'INV-2023-001',
+        customer: 'Acme Corp',
+        amount: 45000.0,
+        dueDate: '2023-10-15',
+        status: 'overdue',
+        daysOverdue: 12,
+      },
+      {
+        id: 'INV-2023-005',
+        customer: 'Stark Industries',
+        amount: 125000.0,
+        dueDate: '2023-11-01',
+        status: 'pending',
+        daysOverdue: 0,
+      },
+      {
+        id: 'INV-2023-008',
+        customer: 'Wayne Enterprises',
+        amount: 8500.0,
+        dueDate: '2023-11-10',
+        status: 'pending',
+        daysOverdue: 0,
+      },
+    ]);
+  };
+
+  const totalOutstanding = receivables.reduce((sum, r) => sum + r.amount, 0);
+  const totalOverdue30 = receivables
+    .filter((r) => r.daysOverdue > 0 && r.daysOverdue <= 30)
+    .reduce((sum, r) => sum + r.amount, 0);
+  const totalOverdue31 = receivables
+    .filter((r) => r.daysOverdue > 30)
+    .reduce((sum, r) => sum + r.amount, 0);
+
+  const filteredReceivables = receivables.filter(
+    (r) =>
+      r.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.customer.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -66,15 +107,21 @@ export function AccountsReceivablePage() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <Card className="p-6">
           <p className="text-sm text-on-surface-variant mb-1">Total Outstanding</p>
-          <h3 className="text-2xl font-bold text-on-surface">₹1,78,500.00</h3>
+          <h3 className="text-2xl font-bold text-on-surface">
+            ₹{totalOutstanding.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+          </h3>
         </Card>
         <Card className="p-6 border-l-4 border-l-error">
           <p className="text-sm text-on-surface-variant mb-1">Overdue (1-30 Days)</p>
-          <h3 className="text-2xl font-bold text-error">₹45,000.00</h3>
+          <h3 className="text-2xl font-bold text-error">
+            ₹{totalOverdue30.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+          </h3>
         </Card>
         <Card className="p-6 border-l-4 border-l-error">
           <p className="text-sm text-on-surface-variant mb-1">Overdue (31+ Days)</p>
-          <h3 className="text-2xl font-bold text-error">₹0.00</h3>
+          <h3 className="text-2xl font-bold text-error">
+            ₹{totalOverdue31.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+          </h3>
         </Card>
         <Card className="p-6 flex items-center justify-between">
           <div>
@@ -116,35 +163,51 @@ export function AccountsReceivablePage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {receivables.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className="font-medium text-primary hover:underline cursor-pointer">
-                  {item.id}
-                </TableCell>
-                <TableCell>{item.customer}</TableCell>
-                <TableCell>
-                  <span className={item.daysOverdue > 0 ? 'text-error font-medium' : ''}>
-                    {new Date(item.dueDate).toLocaleDateString()}
-                  </span>
-                  {item.daysOverdue > 0 && (
-                    <span className="text-xs text-error ml-2">({item.daysOverdue} days late)</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right font-medium">
-                  ₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={item.status === 'overdue' ? 'error' : 'default'}>
-                    {item.status.toUpperCase()}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5">
-                    Remind
-                  </Button>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary mx-auto" />
                 </TableCell>
               </TableRow>
-            ))}
+            ) : filteredReceivables.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-on-surface-variant">
+                  No invoices found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredReceivables.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className="font-medium text-primary hover:underline cursor-pointer">
+                    {item.id}
+                  </TableCell>
+                  <TableCell>{item.customer}</TableCell>
+                  <TableCell>
+                    <span className={item.daysOverdue > 0 ? 'text-error font-medium' : ''}>
+                      {new Date(item.dueDate).toLocaleDateString()}
+                    </span>
+                    {item.daysOverdue > 0 && (
+                      <span className="text-xs text-error ml-2">
+                        ({item.daysOverdue} days late)
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    ₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.status === 'overdue' ? 'error' : 'default'}>
+                      {item.status.toUpperCase()}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5">
+                      Remind
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Card>

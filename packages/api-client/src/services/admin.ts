@@ -223,4 +223,37 @@ export const AdminService = {
     const response = await apiClient.get('/admin/audit-logs', { params });
     return response.data;
   },
+
+  // Team
+  getTeam: async () => {
+    const response = await apiClient.get('/admin/team');
+    return response.data;
+  },
+
+  inviteTeamMember: async (data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    const response = await apiClient.post('/admin/team/invite', data);
+    return response.data;
+  },
+
+  updateTeamMember: async (id: string, data: any) => {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
+    const response = await apiClient.put(`/admin/team/${id}`, data);
+    return response.data;
+  },
+
+  getInventoryDashboardMetrics: async () => {
+    const response = await apiClient.get('/admin/warehouse/dashboard-metrics');
+    return response.data;
+  },
+
+  getMarketingDashboardMetrics: async () => {
+    const response = await apiClient.get('/marketing/dashboard-metrics');
+    return response.data;
+  },
+
+  getShippingDashboardMetrics: async () => {
+    const response = await apiClient.get('/admin/shipping/dashboard-metrics');
+    return response.data;
+  },
 };

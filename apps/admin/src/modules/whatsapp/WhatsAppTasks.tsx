@@ -163,99 +163,12 @@ export function WhatsAppTasks() {
         {loading && tasks.length === 0 && historyLogs.length === 0 ? (
           <div className="p-8 text-center text-on-surface-variant">Loading data...</div>
         ) : activeTab === 'queue' ? (
-          <table className="min-w-full divide-y divide-outline-variant">
-            <thead className="bg-surface-container">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-                  Job ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-                  Recipient
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-                  Attempts
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-outline-variant bg-surface">
-              {tasks.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-on-surface-variant">
-                    No tasks currently in the queue
-                  </td>
-                </tr>
-              ) : (
-                tasks.map((task) => (
-                  <tr key={task.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-on-surface">
-                      #{task.id}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
-                      {task.data?.to || task.data?.payload?.to || 'Unknown'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          task.state === 'completed'
-                            ? 'bg-green-100 text-green-800'
-                            : task.state === 'failed'
-                              ? 'bg-red-100 text-red-800'
-                              : task.state === 'active'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
-                        {task.state}
-                      </span>
-                      {task.failedReason && (
-                        <div
-                          className="mt-1 flex items-center text-xs text-error max-w-xs truncate"
-                          title={task.failedReason}
-                        >
-                          <AlertCircle className="w-3 h-3 mr-1" />
-                          {task.failedReason}
-                        </div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
-                      {task.attemptsMade}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      {(task.state === 'failed' || task.state === 'waiting') && (
-                        <>
-                          <button
-                            onClick={() => retryTask(task.id)}
-                            className="text-primary hover:text-primary-dark mr-4"
-                          >
-                            <RefreshCw className="w-4 h-4 inline" /> Retry
-                          </button>
-                          <button
-                            onClick={() => cancelTask(task.id)}
-                            className="text-error hover:text-error-dark"
-                          >
-                            <Trash2 className="w-4 h-4 inline" /> Cancel
-                          </button>
-                        </>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        ) : (
-          <>
+          <div className="w-full overflow-x-auto custom-scrollbar">
             <table className="min-w-full divide-y divide-outline-variant">
               <thead className="bg-surface-container">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-                    Time
+                    Job ID
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
                     Recipient
@@ -264,50 +177,141 @@ export function WhatsAppTasks() {
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
-                    Error Details
+                    Attempts
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-on-surface-variant uppercase tracking-wider">
+                    Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant bg-surface">
-                {historyLogs.length === 0 ? (
+                {tasks.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-8 text-center text-on-surface-variant">
-                      No historical tasks found
+                    <td colSpan={5} className="px-6 py-8 text-center text-on-surface-variant">
+                      No tasks currently in the queue
                     </td>
                   </tr>
                 ) : (
-                  historyLogs.map((log) => (
-                    <tr key={log.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
-                        {new Date(log.created_at).toLocaleString()}
+                  tasks.map((task) => (
+                    <tr key={task.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-on-surface">
+                        #{task.id}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
-                        {log.recipient}
+                        {task.data?.to || task.data?.payload?.to || 'Unknown'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
                           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            log.status === 'sent' || log.status === 'delivered'
+                            task.state === 'completed'
                               ? 'bg-green-100 text-green-800'
-                              : log.status === 'failed'
+                              : task.state === 'failed'
                                 ? 'bg-red-100 text-red-800'
-                                : 'bg-yellow-100 text-yellow-800'
+                                : task.state === 'active'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : 'bg-gray-100 text-gray-800'
                           }`}
                         >
-                          {(log.status || 'unknown').toUpperCase()}
+                          {task.state}
                         </span>
+                        {task.failedReason && (
+                          <div
+                            className="mt-1 flex items-center text-xs text-error max-w-xs truncate"
+                            title={task.failedReason}
+                          >
+                            <AlertCircle className="w-3 h-3 mr-1" />
+                            {task.failedReason}
+                          </div>
+                        )}
                       </td>
-                      <td
-                        className="px-6 py-4 text-sm text-on-surface-variant max-w-xs truncate"
-                        title={log.error_log}
-                      >
-                        {log.error_log || '-'}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
+                        {task.attemptsMade}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        {(task.state === 'failed' || task.state === 'waiting') && (
+                          <>
+                            <button
+                              onClick={() => retryTask(task.id)}
+                              className="text-primary hover:text-primary-dark mr-4"
+                            >
+                              <RefreshCw className="w-4 h-4 inline" /> Retry
+                            </button>
+                            <button
+                              onClick={() => cancelTask(task.id)}
+                              className="text-error hover:text-error-dark"
+                            >
+                              <Trash2 className="w-4 h-4 inline" /> Cancel
+                            </button>
+                          </>
+                        )}
                       </td>
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
+          </div>
+        ) : (
+          <>
+            <div className="w-full overflow-x-auto custom-scrollbar">
+              <table className="min-w-full divide-y divide-outline-variant">
+                <thead className="bg-surface-container">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
+                      Time
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
+                      Recipient
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-on-surface-variant uppercase tracking-wider">
+                      Error Details
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-outline-variant bg-surface">
+                  {historyLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-6 py-8 text-center text-on-surface-variant">
+                        No historical tasks found
+                      </td>
+                    </tr>
+                  ) : (
+                    historyLogs.map((log) => (
+                      <tr key={log.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
+                          {new Date(log.created_at).toLocaleString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-on-surface-variant">
+                          {log.recipient}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              log.status === 'sent' || log.status === 'delivered'
+                                ? 'bg-green-100 text-green-800'
+                                : log.status === 'failed'
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-yellow-100 text-yellow-800'
+                            }`}
+                          >
+                            {(log.status || 'unknown').toUpperCase()}
+                          </span>
+                        </td>
+                        <td
+                          className="px-6 py-4 text-sm text-on-surface-variant max-w-xs truncate"
+                          title={log.error_log}
+                        >
+                          {log.error_log || '-'}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
             {activeTab === 'history' && totalLogs > 0 && (
               <div className="flex items-center justify-between px-6 py-3 border-t border-outline-variant bg-surface-container">
                 <span className="text-sm text-on-surface-variant">

@@ -1,14 +1,15 @@
-import { Card, Button, Badge } from '@byteevolvr/ui';
-import { FileText, Building, Landmark, PieChart } from 'lucide-react';
-
 import {
+  Card,
+  Button,
+  Badge,
   Table,
-  TableHeader,
-  TableRow,
-  TableHead,
   TableBody,
   TableCell,
-} from '../components/ui/Table';
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
+import { FileText, Building, Landmark, PieChart } from 'lucide-react';
 
 export function TaxCompliancePage() {
   return (

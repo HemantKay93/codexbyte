@@ -16,4 +16,13 @@ export const CRMService = {
 
   // Customer 360
   getCustomer360: (customerId: string) => apiClient.get(`/crm/customer-360/${customerId}`),
+
+  // Dashboard
+  getDashboardMetrics: () => apiClient.get('/crm/dashboard-metrics'),
+
+  // Leads
+  getLeads: () => apiClient.get('/crm/leads'),
+
+  // Forecasting
+  getSalesForecasts: () => apiClient.get('/crm/forecasts'),
 };

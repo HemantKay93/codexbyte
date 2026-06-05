@@ -60,29 +60,38 @@ export function ProfitLossPage() {
               <h3 className="text-lg font-semibold text-on-surface-variant mt-1">
                 Profit & Loss Statement
               </h3>
-              <p className="text-sm text-on-surface-variant mt-1">
-                For the current period
-              </p>
+              <p className="text-sm text-on-surface-variant mt-1">For the current period</p>
             </div>
 
             <div className="max-w-4xl mx-auto border border-outline-variant">
               <div className="flex bg-primary/5 p-4 font-bold border-b border-primary/20">
                 <div className="flex-1 text-on-surface">Revenue</div>
                 <div className="w-48 text-right text-success">
-                  ₹{Number(data.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  ₹
+                  {Number(data.total_revenue || 0).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}
                 </div>
               </div>
               <div className="flex bg-error/5 p-4 font-bold border-b border-error/20">
                 <div className="flex-1 text-on-surface">Expenses</div>
                 <div className="w-48 text-right text-error">
-                  ₹{Number(data.total_expense || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  ₹
+                  {Number(data.total_expense || 0).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}
                 </div>
               </div>
 
               <div className="flex bg-surface-container-low p-4 font-bold text-lg border-t-2 border-outline">
                 <div className="flex-1 text-on-surface uppercase tracking-wider">Net Profit</div>
-                <div className={`w-48 text-right ${(data.net_profit || 0) >= 0 ? 'text-success' : 'text-error'}`}>
-                  ₹{Number(data.net_profit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                <div
+                  className={`w-48 text-right ${(data.net_profit || 0) >= 0 ? 'text-success' : 'text-error'}`}
+                >
+                  ₹
+                  {Number(data.net_profit || 0).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}
                 </div>
               </div>
             </div>

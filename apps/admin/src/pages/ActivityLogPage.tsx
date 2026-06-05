@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, Input } from '@byteevolvr/ui';
+import {
+  Card,
+  Button,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
 import {
   Search,
   Filter,
@@ -11,15 +21,6 @@ import {
 } from 'lucide-react';
 import { AdminService } from '@byteevolvr/api-client';
 import { formatDistanceToNow } from 'date-fns';
-
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '../components/ui/Table';
 
 export function ActivityLogPage() {
   const [searchTerm, setSearchTerm] = useState('');

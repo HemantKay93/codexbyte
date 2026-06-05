@@ -40,12 +40,15 @@ export function AudienceSegments() {
       // Parse raw text into contacts if bulk
       if (newSegment.filter_rules.type === 'bulk') {
         const text = newSegment.filter_rules.rawBulkText || '';
-        const items = text.split(/[\n,;]+/).map((s: string) => s.trim()).filter(Boolean);
+        const items = text
+          .split(/[\n,;]+/)
+          .map((s: string) => s.trim())
+          .filter(Boolean);
         const contacts = items.map((item: string) => {
           const isEmail = item.includes('@');
           return {
             email: isEmail ? item : null,
-            phone: !isEmail ? item : null
+            phone: !isEmail ? item : null,
           };
         });
         newSegment.filter_rules.contacts = contacts;
@@ -58,7 +61,11 @@ export function AudienceSegments() {
       }
       setShowModal(false);
       setEditingId(null);
-      setNewSegment({ name: '', description: '', filter_rules: { type: 'all', rawBulkText: '', contacts: [] } });
+      setNewSegment({
+        name: '',
+        description: '',
+        filter_rules: { type: 'all', rawBulkText: '', contacts: [] },
+      });
       await loadSegments();
     } catch (err) {
       console.error('Failed to save segment', err);
@@ -73,7 +80,7 @@ export function AudienceSegments() {
     setNewSegment({
       name: segment.name,
       description: segment.description || '',
-      filter_rules: segment.filter_rules || { type: 'all', rawBulkText: '', contacts: [] }
+      filter_rules: segment.filter_rules || { type: 'all', rawBulkText: '', contacts: [] },
     });
     setShowModal(true);
   };
@@ -85,12 +92,13 @@ export function AudienceSegments() {
     const reader = new FileReader();
     reader.onload = (event) => {
       const text = event.target?.result as string;
-      setNewSegment(prev => ({
+      setNewSegment((prev) => ({
         ...prev,
         filter_rules: {
           ...prev.filter_rules,
-          rawBulkText: (prev.filter_rules.rawBulkText ? prev.filter_rules.rawBulkText + '\n' : '') + text
-        }
+          rawBulkText:
+            (prev.filter_rules.rawBulkText ? prev.filter_rules.rawBulkText + '\n' : '') + text,
+        },
       }));
     };
     reader.readAsText(file);
@@ -98,12 +106,12 @@ export function AudienceSegments() {
   };
 
   const downloadCsvTemplate = () => {
-    const csvContent = "email,phone\njohn@example.com,1234567890\njane@example.com,0987654321";
+    const csvContent = 'email,phone\njohn@example.com,1234567890\njane@example.com,0987654321';
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.setAttribute("download", "segment_template.csv");
+    link.setAttribute('download', 'segment_template.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -126,7 +134,18 @@ export function AudienceSegments() {
             Build dynamic customer groups for targeting
           </p>
         </div>
-        <Button className="gap-2" onClick={() => { setEditingId(null); setNewSegment({ name: '', description: '', filter_rules: { type: 'all', rawBulkText: '', contacts: [] }}); setShowModal(true); }}>
+        <Button
+          className="gap-2"
+          onClick={() => {
+            setEditingId(null);
+            setNewSegment({
+              name: '',
+              description: '',
+              filter_rules: { type: 'all', rawBulkText: '', contacts: [] },
+            });
+            setShowModal(true);
+          }}
+        >
           <Filter className="h-4 w-4" />
           Create Segment
         </Button>
@@ -173,7 +192,9 @@ export function AudienceSegments() {
           />
           <div className="relative bg-surface w-full max-w-[500px] shadow-xl rounded-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
-              <h2 className="text-xl font-bold text-on-surface">{editingId ? 'Edit Segment' : 'Create Segment'}</h2>
+              <h2 className="text-xl font-bold text-on-surface">
+                {editingId ? 'Edit Segment' : 'Create Segment'}
+              </h2>
               <Button
                 variant="ghost"
                 size="sm"
@@ -212,7 +233,7 @@ export function AudienceSegments() {
                   <option value="bulk">Bulk Contact List (Emails/Phones)</option>
                   <option value="high_spenders">High Spenders (Placeholder)</option>
                 </select>
-                
+
                 {newSegment.filter_rules.type === 'bulk' && (
                   <div className="mt-4 space-y-3 animate-in fade-in zoom-in-95 duration-200">
                     <div className="flex items-center justify-between">
@@ -220,28 +241,48 @@ export function AudienceSegments() {
                         Paste Contacts
                       </label>
                       <div className="flex gap-2">
-                        <Button variant="ghost" size="sm" className="h-7 text-xs text-primary" onClick={downloadCsvTemplate}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 text-xs text-primary"
+                          onClick={downloadCsvTemplate}
+                        >
                           Download Template
                         </Button>
-                        <input type="file" id="csvUpload" accept=".csv,.txt" className="hidden" onChange={handleFileUpload} />
-                        <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => document.getElementById('csvUpload')?.click()}>
+                        <input
+                          type="file"
+                          id="csvUpload"
+                          accept=".csv,.txt"
+                          className="hidden"
+                          onChange={handleFileUpload}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 text-xs"
+                          onClick={() => document.getElementById('csvUpload')?.click()}
+                        >
                           Upload CSV
                         </Button>
                       </div>
                     </div>
-                    <textarea 
+                    <textarea
                       className="w-full h-32 p-3 rounded-lg border border-outline bg-surface text-sm focus:ring-2 focus:ring-primary focus:outline-none"
                       placeholder="john@example.com, 1234567890&#10;jane@example.com"
                       value={newSegment.filter_rules.rawBulkText || ''}
-                      onChange={(e) => setNewSegment({
-                        ...newSegment, 
-                        filter_rules: { ...newSegment.filter_rules, rawBulkText: e.target.value }
-                      })}
+                      onChange={(e) =>
+                        setNewSegment({
+                          ...newSegment,
+                          filter_rules: { ...newSegment.filter_rules, rawBulkText: e.target.value },
+                        })
+                      }
                     />
-                    <p className="text-xs text-on-surface-variant">Separate contacts with commas or newlines.</p>
+                    <p className="text-xs text-on-surface-variant">
+                      Separate contacts with commas or newlines.
+                    </p>
                   </div>
                 )}
-                
+
                 {newSegment.filter_rules.type === 'all' && (
                   <p className="text-xs text-on-surface-variant mt-1">
                     Rule engine MVP only supports "All Users" dynamically right now.

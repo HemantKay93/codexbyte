@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Button, Badge, Input } from '@byteevolvr/ui';
-import { Plus, Filter, Search, UploadCloud, Edit } from 'lucide-react';
-
 import {
+  Card,
+  Button,
+  Badge,
+  Input,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../components/ui/Table';
+} from '@byteevolvr/ui';
+import { Plus, Filter, Search, UploadCloud, Edit } from 'lucide-react';
+
 import { BulkImportDialog } from '../components/BulkImportDialog';
 import { useProduct } from '../modules/product/hooks/useProduct';
 

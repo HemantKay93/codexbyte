@@ -67,7 +67,7 @@ export function CreateDiscountModal({ onClose, onSuccess }: CreateDiscountModalP
             onChange={(e) => setFormData({ ...formData, code: e.target.value })}
           />
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-on-surface-variant mb-1">Type</label>
               <select
@@ -89,7 +89,7 @@ export function CreateDiscountModal({ onClose, onSuccess }: CreateDiscountModalP
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Min Amount"
               type="number"
@@ -106,7 +106,7 @@ export function CreateDiscountModal({ onClose, onSuccess }: CreateDiscountModalP
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Start Date"
               type="date"

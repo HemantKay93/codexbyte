@@ -7,7 +7,7 @@ export function ChartOfAccountsPage() {
   const [loading, setLoading] = useState(true);
   const [accounts, setAccounts] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+
   // Form state
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
@@ -33,14 +33,14 @@ export function ChartOfAccountsPage() {
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!code || !name) return;
-    
+
     try {
       setIsSubmitting(true);
       await AccountingService.createAccount({
         code,
         name,
         type,
-        currency: 'INR'
+        currency: 'INR',
       });
       setIsModalOpen(false);
       setCode('');
@@ -64,12 +64,15 @@ export function ChartOfAccountsPage() {
   }
 
   // Group accounts by type
-  const groupedAccounts = accounts.reduce((acc, account) => {
-    const t = account.type || 'Other';
-    if (!acc[t]) acc[t] = [];
-    acc[t].push(account);
-    return acc;
-  }, {} as Record<string, any[]>);
+  const groupedAccounts = accounts.reduce(
+    (acc, account) => {
+      const t = account.type || 'Other';
+      if (!acc[t]) acc[t] = [];
+      acc[t].push(account);
+      return acc;
+    },
+    {} as Record<string, any[]>
+  );
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto relative">
@@ -90,24 +93,28 @@ export function ChartOfAccountsPage() {
               <Layers className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-bold text-on-surface">{t}</h2>
             </div>
-            <table className="w-full text-sm text-left">
-              <thead className="text-on-surface-variant uppercase text-xs border-b border-outline-variant">
-                <tr>
-                  <th className="py-2 px-4 w-1/4">Code</th>
-                  <th className="py-2 px-4 w-1/2">Name</th>
-                  <th className="py-2 px-4 w-1/4 text-right">Balance</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-outline-variant">
-                {(accs as any[]).map((acc: any) => (
-                  <tr key={acc.id} className="hover:bg-surface-variant/30">
-                    <td className="py-3 px-4 text-on-surface-variant font-mono">{acc.code}</td>
-                    <td className="py-3 px-4 font-medium text-on-surface">{acc.name}</td>
-                    <td className="py-3 px-4 text-right font-medium">₹{(acc.current_balance || 0).toLocaleString()}</td>
+            <div className="w-full overflow-x-auto custom-scrollbar">
+              <table className="w-full text-sm text-left">
+                <thead className="text-on-surface-variant uppercase text-xs border-b border-outline-variant">
+                  <tr>
+                    <th className="py-2 px-4 w-1/4">Code</th>
+                    <th className="py-2 px-4 w-1/2">Name</th>
+                    <th className="py-2 px-4 w-1/4 text-right">Balance</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-outline-variant">
+                  {(accs as any[]).map((acc: any) => (
+                    <tr key={acc.id} className="hover:bg-surface-variant/30">
+                      <td className="py-3 px-4 text-on-surface-variant font-mono">{acc.code}</td>
+                      <td className="py-3 px-4 font-medium text-on-surface">{acc.name}</td>
+                      <td className="py-3 px-4 text-right font-medium">
+                        ₹{(acc.current_balance || 0).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </Card>
         ))}
         {accounts.length === 0 && (
@@ -120,7 +127,7 @@ export function ChartOfAccountsPage() {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-md p-6 bg-surface shadow-2xl relative">
-            <button 
+            <button
               className="absolute top-4 right-4 text-on-surface-variant hover:text-on-surface"
               onClick={() => setIsModalOpen(false)}
             >
@@ -129,19 +136,35 @@ export function ChartOfAccountsPage() {
             <h2 className="text-xl font-bold mb-4 text-on-surface">Create New Account</h2>
             <form onSubmit={handleCreateAccount} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-on-surface-variant mb-1">Code</label>
-                <Input value={code} onChange={e => setCode(e.target.value)} placeholder="e.g. 1000" required />
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">
+                  Code
+                </label>
+                <Input
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="e.g. 1000"
+                  required
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-on-surface-variant mb-1">Name</label>
-                <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Cash in Hand" required />
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">
+                  Name
+                </label>
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Cash in Hand"
+                  required
+                />
               </div>
               <div>
-                <label className="block text-sm font-medium text-on-surface-variant mb-1">Type</label>
-                <select 
+                <label className="block text-sm font-medium text-on-surface-variant mb-1">
+                  Type
+                </label>
+                <select
                   className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-sm focus:ring-2 focus:ring-primary focus:outline-none text-on-surface"
                   value={type}
-                  onChange={e => setType(e.target.value)}
+                  onChange={(e) => setType(e.target.value)}
                 >
                   <option value="Asset">Asset</option>
                   <option value="Liability">Liability</option>

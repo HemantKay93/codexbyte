@@ -1,58 +1,40 @@
-import { useState } from 'react';
-import { Card, Button, Input, Badge } from '@byteevolvr/ui';
-import { Search, Plus, Filter, FileText, Globe, Lock } from 'lucide-react';
-
+import { useState, useEffect } from 'react';
 import {
+  Card,
+  Button,
+  Input,
+  Badge,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../../components/ui/Table';
+} from '@byteevolvr/ui';
+import { Search, Plus, Filter, FileText, Globe, Lock } from 'lucide-react';
 
 export function KnowledgeBasePage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [articles, setArticles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data
-  const articles = [
-    {
-      id: 'KB-101',
-      title: 'How to reset your password',
-      category: 'Authentication',
-      views: 1245,
-      status: 'published',
-      visibility: 'public',
-      lastUpdated: '2023-10-15',
-    },
-    {
-      id: 'KB-102',
-      title: 'Setting up 2FA via Authenticator',
-      category: 'Security',
-      views: 856,
-      status: 'published',
-      visibility: 'public',
-      lastUpdated: '2023-10-10',
-    },
-    {
-      id: 'KB-103',
-      title: 'Internal Guide: Handling Refunds',
-      category: 'Operations',
-      views: 112,
-      status: 'published',
-      visibility: 'internal',
-      lastUpdated: '2023-10-20',
-    },
-    {
-      id: 'KB-104',
-      title: 'Configuring API Webhooks',
-      category: 'Developers',
-      views: 0,
-      status: 'draft',
-      visibility: 'public',
-      lastUpdated: '2023-10-25',
-    },
-  ];
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  const fetchArticles = async () => {
+    setLoading(true);
+    try {
+      // @ts-ignore
+      const { SupportService } = await import('@byteevolvr/api-client');
+      const response = await SupportService.getKnowledgeBaseArticles();
+      setArticles(Array.isArray(response) ? response : response?.data || []);
+    } catch (error) {
+      console.error('Failed to load KB articles:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -102,51 +84,67 @@ export function KnowledgeBasePage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {articles.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-on-surface-variant shrink-0" />
-                    <div>
-                      <div className="font-medium text-primary hover:underline cursor-pointer">
-                        {item.title}
-                      </div>
-                      <div className="text-xs text-on-surface-variant mt-0.5">{item.id}</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>{item.category}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-1 text-sm">
-                    {item.visibility === 'public' ? (
-                      <>
-                        <Globe className="h-3.5 w-3.5 text-on-surface-variant" /> Public
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="h-3.5 w-3.5 text-warning" /> Internal
-                      </>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="text-right font-medium">
-                  {item.views.toLocaleString()}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={item.status === 'published' ? 'success' : 'default'}>
-                    {item.status.toUpperCase()}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-sm text-on-surface-variant">
-                  {new Date(item.lastUpdated).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5">
-                    Edit
-                  </Button>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-on-surface-variant">
+                  Loading articles...
                 </TableCell>
               </TableRow>
-            ))}
+            ) : articles.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-on-surface-variant">
+                  No articles found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              articles.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-on-surface-variant shrink-0" />
+                      <div>
+                        <div className="font-medium text-primary hover:underline cursor-pointer">
+                          {item.title}
+                        </div>
+                        <div className="text-xs text-on-surface-variant mt-0.5">{item.id}</div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{item.category}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1 text-sm">
+                      {item.visibility === 'public' ? (
+                        <>
+                          <Globe className="h-3.5 w-3.5 text-on-surface-variant" /> Public
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="h-3.5 w-3.5 text-warning" /> Internal
+                        </>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    {item.views?.toLocaleString() || 0}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={item.status === 'published' ? 'success' : 'default'}>
+                      {(item.status || 'draft').toUpperCase()}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-sm text-on-surface-variant">
+                    {new Date(
+                      item.lastUpdated || item.updated_at || new Date()
+                    ).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="sm" className="text-primary hover:bg-primary/5">
+                      Edit
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Card>

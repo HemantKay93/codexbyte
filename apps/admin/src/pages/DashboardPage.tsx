@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Badge, Button } from '@byteevolvr/ui';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Plus, Users, Megaphone } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { SocketService } from '@byteevolvr/api-client';
 
 import { useAdmin } from '../modules/admin/hooks/useAdmin';
@@ -71,8 +72,27 @@ export function DashboardPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-display-sm font-semibold text-on-background">Dashboard Overview</h1>
-        <Badge variant="primary">Live Sync: Active</Badge>
+        <div className="flex items-center gap-4">
+          <h1 className="text-display-sm font-semibold text-on-background">Dashboard Overview</h1>
+          <Badge variant="primary">Live Sync: Active</Badge>
+        </div>
+        <div className="flex gap-3">
+          <Link to="/customers">
+            <Button variant="outline" className="gap-2">
+              <Users className="h-4 w-4" /> New Customer
+            </Button>
+          </Link>
+          <Link to="/marketing/campaigns">
+            <Button variant="outline" className="gap-2">
+              <Megaphone className="h-4 w-4" /> New Campaign
+            </Button>
+          </Link>
+          <Link to="/orders">
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" /> New Order
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <DashboardMetricsRow displayStats={displayStats} />

@@ -1,6 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, Button, Badge, Input } from '@byteevolvr/ui';
+import {
+  Card,
+  Button,
+  Badge,
+  Input,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@byteevolvr/ui';
 import {
   Search,
   // eslint-disable-line import/order
@@ -15,18 +26,6 @@ import {
   FilePlus,
 } from 'lucide-react';
 import { AdminService } from '@byteevolvr/api-client';
-
-import {
-  Table,
-  TableHeader,
-  // eslint-disable-line @typescript-eslint/no-explicit-any
-  TableRow,
-  // eslint-disable-line @typescript-eslint/no-explicit-any
-  TableHead,
-  TableBody,
-  TableCell,
-  // eslint-disable-line @typescript-eslint/no-explicit-any
-} from '../components/ui/Table';
 
 import { CreatePOModal } from './suppliers-components/CreatePOModal';
 
@@ -59,8 +58,12 @@ export function SuppliersPage() {
         AdminService.getSuppliers(),
         AdminService.getPurchaseOrders(),
       ]);
-      setSuppliers(Array.isArray(suppRes?.data) ? suppRes.data : Array.isArray(suppRes) ? suppRes : []);
-      setPurchaseOrders(Array.isArray(poRes?.data) ? poRes.data : Array.isArray(poRes) ? poRes : []);
+      setSuppliers(
+        Array.isArray(suppRes?.data) ? suppRes.data : Array.isArray(suppRes) ? suppRes : []
+      );
+      setPurchaseOrders(
+        Array.isArray(poRes?.data) ? poRes.data : Array.isArray(poRes) ? poRes : []
+      );
     } catch (error) {
       console.error('Failed to fetch supplier data:', error);
     } finally {
@@ -261,7 +264,7 @@ export function SuppliersPage() {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Acme Corp"
               />
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   label="Contact Name"
                   value={formData.contact_name}

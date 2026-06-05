@@ -1,14 +1,15 @@
-import { Card, Button, Badge } from '@byteevolvr/ui';
-import { ArrowRight, Plus, CheckCircle2, XCircle } from 'lucide-react';
-
 import {
+  Card,
+  Button,
+  Badge,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '../../components/ui/Table';
+} from '@byteevolvr/ui';
+import { ArrowRight, Plus, CheckCircle2, XCircle } from 'lucide-react';
 
 export function StockTransfersPage() {
   const transfers = [
