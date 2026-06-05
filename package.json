@@ -9,7 +9,7 @@
     "backend"
   ],
   "scripts": {
-    "dev": "concurrently -n \"frontend,admin,backend,whatsapp\" -c \"blue,magenta,yellow,green\" \"npm run dev -w @byteevolvr/frontend\" \"npm run dev -w @byteevolvr/admin\" \"npm run dev -w @byteevolvr/backend\" \"npm run dev:whatsapp -w @byteevolvr/backend\"",
+    "dev": "concurrently -n \"frontend,admin,backend\" -c \"blue,magenta,yellow\" \"npm run dev -w @byteevolvr/frontend\" \"npm run dev -w @byteevolvr/admin\" \"npm run dev -w @byteevolvr/backend\"",
     "dev:frontend": "npm run dev --workspace @byteevolvr/frontend",
     "dev:admin": "npm run dev --workspace @byteevolvr/admin",
     "dev:backend": "npm run dev --workspace @byteevolvr/backend",
