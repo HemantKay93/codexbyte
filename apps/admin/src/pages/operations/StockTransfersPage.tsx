@@ -89,7 +89,7 @@ export function StockTransfersPage() {
                         ? 'success'
                         : trf.status === 'in-transit'
                           ? 'primary'
-                          : 'neutral'
+                          : 'default'
                     }
                   >
                     {trf.status.toUpperCase()}

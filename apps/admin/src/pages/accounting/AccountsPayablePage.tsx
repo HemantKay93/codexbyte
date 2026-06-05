@@ -134,7 +134,7 @@ export function AccountsPayablePage() {
                   ₹{item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={item.status === 'overdue' ? 'destructive' : 'neutral'}>
+                  <Badge variant={item.status === 'overdue' ? 'error' : 'default'}>
                     {item.status.toUpperCase()}
                   </Badge>
                 </TableCell>

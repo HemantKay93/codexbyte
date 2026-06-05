@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Button, Input, Badge } from '@byteevolvr/ui';
+import { Card, Button, Badge } from '@byteevolvr/ui';
 import { Plus, Calendar, Settings, MoreHorizontal } from 'lucide-react';
 
 import {
@@ -72,7 +72,7 @@ export function FinancialYearPage() {
                         ? 'primary'
                         : year.status === 'upcoming'
                           ? 'secondary'
-                          : 'neutral'
+                          : 'default'
                     }
                   >
                     {year.status.toUpperCase()}

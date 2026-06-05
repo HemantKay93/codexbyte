@@ -52,13 +52,13 @@ export function LeadsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'new':
-        return <Badge variant="neutral">New</Badge>;
+        return <Badge variant="default">New</Badge>;
       case 'contacted':
         return <Badge variant="primary">Contacted</Badge>;
       case 'qualified':
         return <Badge variant="success">Qualified</Badge>;
       default:
-        return <Badge variant="neutral">{status}</Badge>;
+        return <Badge variant="default">{status}</Badge>;
     }
   };
 

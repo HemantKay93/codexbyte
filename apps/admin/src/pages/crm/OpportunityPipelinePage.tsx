@@ -100,7 +100,7 @@ export function OpportunityPipelinePage() {
           >
             <div className="flex items-center justify-between px-1">
               <h3 className="font-semibold text-on-surface">{stage.name}</h3>
-              <Badge variant="neutral">{stage.opportunities.length}</Badge>
+              <Badge variant="default">{stage.opportunities.length}</Badge>
             </div>
             <div className="text-xs font-medium text-on-surface-variant px-1 border-b border-outline-variant pb-2 mb-1">
               Total Value: ₹{stage.value.toLocaleString()}

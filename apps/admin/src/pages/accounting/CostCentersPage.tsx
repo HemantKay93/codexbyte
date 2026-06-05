@@ -104,7 +104,7 @@ export function CostCentersPage() {
                   ₹{item.totalExpenses.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={item.status === 'active' ? 'primary' : 'neutral'}>
+                  <Badge variant={item.status === 'active' ? 'primary' : 'default'}>
                     {item.status.toUpperCase()}
                   </Badge>
                 </TableCell>
