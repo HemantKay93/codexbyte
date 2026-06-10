@@ -19,7 +19,7 @@ export function bootstrapMiddleware(app: Express) {
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Support frontend integrations
+          scriptSrc: ["'self'", "'unsafe-inline'"], // Removed 'unsafe-eval'
           styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
           fontSrc: ["'self'", 'https://fonts.gstatic.com', 'data:'],
           imgSrc: ["'self'", 'data:', 'https://*'], // Relaxed to support external product images
@@ -102,6 +102,7 @@ export function bootstrapMiddleware(app: Express) {
 
   app.use(
     express.json({
+      limit: '5mb',
       verify: (req: any, res, buf) => {
         req.rawBody = buf.toString();
       },
@@ -121,7 +122,7 @@ export function bootstrapMiddleware(app: Express) {
 export function createRateLimiters() {
   const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 300,
+    max: 100,
     message: { message: 'Too many requests from this IP, please try again after 15 minutes.' },
     standardHeaders: true,
     legacyHeaders: false,

@@ -19,7 +19,7 @@ export const createReview = catchAsync(async (req: AuthRequest, res: Response) =
   const { rating, comment } = req.body;
   const review = await reviewRepo.create({
     product_id: req.params.productId as string,
-    user_id: req.user.id,
+    user_id: req.user!.id,
     rating,
     comment,
     status: 'pending',

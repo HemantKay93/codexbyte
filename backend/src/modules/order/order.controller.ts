@@ -29,9 +29,9 @@ export const getOrderItems = catchAsync(async (req: Request, res: Response) => {
   const authReq = req as AuthRequest;
   const order = await orderService.getOrderByIdForUser(
     req.params.id as string,
-    authReq.user.id as string,
-    authReq.user.email,
-    authReq.user.role
+    authReq.user!.id as string,
+    authReq.user!.email,
+    authReq.user!.role
   );
   res.json({
     success: true,
@@ -40,7 +40,7 @@ export const getOrderItems = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getMyOrders = catchAsync(async (req: AuthRequest, res: Response) => {
-  const orders = await orderService.getMyOrders(req.user.id as string, req.user.email);
+  const orders = await orderService.getMyOrders(req.user!.id as string, req.user!.email);
   res.json({
     success: true,
     data: orders,

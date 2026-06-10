@@ -49,10 +49,17 @@ const delProfileL1 = (userId: string): void => {
   profileL1.delete(userId);
 };
 
+export interface AuthenticatedUser {
+  id: string;
+  email: string;
+  role: 'super-admin' | 'admin' | 'manager' | 'support' | 'warehouse-staff' | 'user' | string;
+  fullName: string;
+  tenant_id: string;
+  [key: string]: any;
+}
+
 export interface AuthRequest extends Request {
-  // eslint-disable-line @typescript-eslint/no-explicit-any
-  user?: any;
-  // eslint-disable-line @typescript-eslint/no-explicit-any
+  user?: AuthenticatedUser;
 }
 
 /**
@@ -270,7 +277,7 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
         // eslint-disable-line @typescript-eslint/no-explicit-any
         req.user = {
           id: decoded.id,
-          email: decoded.email,
+          email: decoded.email || '',
           role: decoded.role || 'user',
           fullName: 'Main Admin',
           tenant_id: decoded.id,

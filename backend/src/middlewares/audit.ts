@@ -13,6 +13,24 @@ export const auditLog = (module: string, action: string) => {
         // Capture tenant ID from authenticated user context
         const tenantId = req.user?.tenant_id;
 
+        const SENSITIVE_FIELDS = [
+          'password',
+          'token',
+          'card',
+          'cvv',
+          'secret',
+          'key',
+          'authorization',
+        ];
+        const scrubSensitive = (obj: any) => {
+          if (!obj || typeof obj !== 'object') return obj;
+          const scrubbed = { ...obj };
+          for (const field of SENSITIVE_FIELDS) {
+            if (field in scrubbed) scrubbed[field] = '[REDACTED]';
+          }
+          return scrubbed;
+        };
+
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         AuditService.log({
           tenant_id: tenantId,
@@ -20,7 +38,7 @@ export const auditLog = (module: string, action: string) => {
           action: action,
           resource: module,
           resource_id: req.params.id || data?.id,
-          metadata: req.method !== 'GET' ? req.body : undefined,
+          metadata: req.method !== 'GET' ? scrubSensitive(req.body) : undefined,
           ip_address: req.ip,
           user_agent: req.headers['user-agent'],
         });

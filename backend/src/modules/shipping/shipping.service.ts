@@ -13,9 +13,12 @@ export class ShipmentService {
   private static getProvider() {
     if (!this.provider) {
       // Fetch these from ENV in production
+      if (!process.env.SHIPROCKET_PASSWORD) {
+        throw new Error('SHIPROCKET_PASSWORD is not configured in the environment');
+      }
       this.provider = new ShiprocketProvider(
         process.env.SHIPROCKET_EMAIL || 'admin@codexbyte.com',
-        process.env.SHIPROCKET_PASSWORD || 'secret'
+        process.env.SHIPROCKET_PASSWORD
       );
     }
     return this.provider;

@@ -43,3 +43,6 @@ packages.zip
 dist
 build
 coverage
+
+# Dev Scripts
+backend/scripts/

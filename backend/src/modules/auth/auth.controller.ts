@@ -90,7 +90,7 @@ export const forgotPassword = catchAsync(async (req: Request, res: Response) => 
 
 export const resetPassword = catchAsync(async (req: any, res: Response) => {
   const { password } = req.body;
-  await authService.resetPassword(req.user.id, password);
+  await authService.resetPassword(req.user!.id, password);
   res.json({
     success: true,
     message: 'Password has been reset successfully',
@@ -100,7 +100,7 @@ export const resetPassword = catchAsync(async (req: any, res: Response) => {
 
 export const getMe = catchAsync(async (req: any, res: Response) => {
   // eslint-disable-line @typescript-eslint/no-explicit-any
-  const user = await authService.getMe(req.user.id);
+  const user = await authService.getMe(req.user!.id);
   res.json({
     success: true,
     data: { user },
@@ -110,7 +110,7 @@ export const getMe = catchAsync(async (req: any, res: Response) => {
 
 export const getAdminMe = catchAsync(async (req: any, res: Response) => {
   // eslint-disable-line @typescript-eslint/no-explicit-any
-  const user = await authService.getMe(req.user.id);
+  const user = await authService.getMe(req.user!.id);
   if (user.role !== 'admin' && user.role !== 'super-admin') {
     res.status(403).json({ status: 'error', message: 'Admin access required' });
     return;
@@ -136,10 +136,10 @@ export const logout = catchAsync(async (req: any, res: Response) => {
     await blacklistToken(token, expiresAt);
 
     await AuditService.log({
-      user_id: req.user.id,
+      user_id: req.user!.id,
       action: 'USER_LOGOUT',
       module: 'auth',
-      new_data: { email: req.user.email },
+      new_data: { email: req.user!.email },
     });
   }
 

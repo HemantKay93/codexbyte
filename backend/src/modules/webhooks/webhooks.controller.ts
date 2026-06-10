@@ -17,8 +17,12 @@ export const handleResendWebhook = async (req: Request, res: Response) => {
   // For standard HMAC if provided:
   if (env.RESEND_API_KEY && signature) {
     // Implement constant-time comparison
-    // const isValid = CryptoUtils.verifyHmacSignature(JSON.stringify(req.body), signature, env.RESEND_API_KEY);
-    // if (!isValid) throw new AppError('Invalid webhook signature', 401);
+    const isValid = CryptoUtils.verifyHmacSignature(
+      JSON.stringify(req.body),
+      signature,
+      env.RESEND_API_KEY
+    );
+    if (!isValid) throw new AppError('Invalid webhook signature', 401);
   }
 
   await webhooksService.handleEvent(req.body, 'resend');
@@ -27,6 +31,19 @@ export const handleResendWebhook = async (req: Request, res: Response) => {
 
 export const handleBrevoWebhook = async (req: Request, res: Response) => {
   // Brevo signature check if applicable
+  const signature = req.headers['x-sib-signature'] as string; // Check expected header
+  if (env.BREVO_API_KEY && signature) {
+    // Basic implementation assuming HMAC SHA256 (requires correct spec match)
+    // Adjust if Brevo uses different signature strategy
+    const expectedSignature = crypto
+      .createHmac('sha256', env.BREVO_API_KEY)
+      .update(JSON.stringify(req.body))
+      .digest('hex');
+    if (!CryptoUtils.constantTimeCompare(signature, expectedSignature)) {
+      throw new AppError('Invalid Brevo signature', 401);
+    }
+  }
+
   await webhooksService.handleEvent(req.body, 'brevo');
   res.status(200).send('OK');
 };

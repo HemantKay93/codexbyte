@@ -10,7 +10,7 @@ const supportRepo = new SupportRepository();
 
 export const getMyTickets = catchAsync(async (req: AuthRequest, res: Response) => {
   if (!req.user?.id) throw new AppError('Unauthorized', 401);
-  const data = await supportRepo.findByUserId(req.user.id);
+  const data = await supportRepo.findByUserId(req.user!.id);
   res.json({
     success: true,
     data,
@@ -60,8 +60,8 @@ export const replyTicket = catchAsync(async (req: AuthRequest, res: Response) =>
   const { messageBody } = req.body;
 
   if (!req.user) throw new AppError('Unauthorized', 401);
-  const senderName = req.user.full_name || req.user.email || 'Agent';
-  const senderEmail = req.user.email || '';
+  const senderName = req.user!.fullName || req.user!.email || 'Agent';
+  const senderEmail = req.user!.email || '';
 
   const message = await SupportService.replyToTicket(
     id as string,
