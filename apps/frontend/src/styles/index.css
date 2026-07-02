@@ -6,8 +6,31 @@
 @tailwind utilities;
 
 :root {
+  /* Core */
   --color-bg: #04080f;
+  --color-bg2: #070d1a;
   --color-fg: #e8edf5;
+
+  /* Brand */
+  --accent: 96, 165, 250; /* rgb values for rgba() use */
+  --primary: 26, 79, 214;
+  --accent-hex: #60a5fa;
+  --primary-hex: #1a4fd6;
+
+  /* Glow */
+  --glow-primary: 0 0 20px rgba(26, 79, 214, 0.4), 0 0 40px rgba(26, 79, 214, 0.1);
+  --glow-accent: 0 0 20px rgba(96, 165, 250, 0.4), 0 0 40px rgba(96, 165, 250, 0.1);
+
+  /* Glass */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 20px;
+
+  /* Motion */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 0.2s;
+  --duration-normal: 0.4s;
+  --duration-slow: 0.8s;
 }
 
 html {
@@ -58,7 +81,9 @@ body {
 .btn-primary {
   background: linear-gradient(135deg, #1a4fd6, #3b7bf8);
   border: 1px solid rgba(96, 165, 250, 0.3);
-  box-shadow: 0 0 20px rgba(26, 79, 214, 0.4), 0 0 40px rgba(26, 79, 214, 0.1);
+  box-shadow:
+    0 0 20px rgba(26, 79, 214, 0.4),
+    0 0 40px rgba(26, 79, 214, 0.1);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -69,13 +94,17 @@ body {
 .stitch-btn-primary {
   background: linear-gradient(135deg, #005ac2, #4d8eff);
   border: 1px solid rgba(173, 198, 255, 0.3);
-  box-shadow: 0 0 20px rgba(77, 142, 255, 0.4), 0 0 40px rgba(77, 142, 255, 0.1);
+  box-shadow:
+    0 0 20px rgba(77, 142, 255, 0.4),
+    0 0 40px rgba(77, 142, 255, 0.1);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stitch-btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 25px rgba(173, 198, 255, 0.6), 0 0 50px rgba(173, 198, 255, 0.2);
+  box-shadow:
+    0 0 25px rgba(173, 198, 255, 0.6),
+    0 0 50px rgba(173, 198, 255, 0.2);
 }
 
 .btn-ghost {
@@ -123,4 +152,21 @@ body {
 
 .contact-input::placeholder {
   color: #4a5568;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
 }

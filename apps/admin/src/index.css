@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @config "../tailwind.config.js";
 
@@ -42,12 +42,12 @@
   --surface-container: #ededf9;
   --surface-container-high: #e7e7f3;
   --surface-container-highest: #e1e2ed;
-  
+
   --on-surface: #191b23;
   --on-surface-variant: #434655;
   --inverse-surface: #2e3039;
   --inverse-on-surface: #f0f0fb;
-  
+
   --outline: #737686;
   --outline-variant: #c3c6d7;
 }
@@ -86,19 +86,24 @@ html.dark {
   --surface-container: #1d2024;
   --surface-container-high: #282a2f;
   --surface-container-highest: #33353a;
-  
+
   --on-surface: #e2e2e9;
   --on-surface-variant: #c5c6d0;
   --inverse-surface: #e2e2e9;
   --inverse-on-surface: #2e3039;
-  
+
   --outline: #8f9099;
   --outline-variant: #44474e;
 }
 
 /* Smooth theme transitions */
-*, *::before, *::after {
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.15s ease;
 }
 
 html {
@@ -128,10 +133,20 @@ body {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
+html.dark .glass-panel {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
 .shadow-card {
-  box-shadow: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
 .shadow-dropdown {
-  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1);
 }

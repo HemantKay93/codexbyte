@@ -1,9 +1,32 @@
+import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+
 const stats = [
   { val: '10+', label: 'Years Experience', sub: 'In IT consulting & trading' },
   { val: '500+', label: 'Business Clients', sub: 'Across India' },
   { val: '3000+', label: 'Products Listed', sub: 'In our online store' },
   { val: '99.8%', label: 'AMC SLA Uptime', sub: 'Guaranteed response' },
 ];
+
+function AnimatedStat({ value, suffix = '' }: { value: number; suffix?: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (v) => (Math.round(v * 10) / 10).toString());
+
+  useEffect(() => {
+    if (isInView) {
+      animate(count, value, { duration: 1.5, ease: 'easeOut' });
+    }
+  }, [isInView, count, value]);
+
+  return (
+    <span ref={ref}>
+      <motion.span>{rounded}</motion.span>
+      {suffix}
+    </span>
+  );
+}
 
 export function AboutSection() {
   return (
@@ -44,9 +67,18 @@ export function AboutSection() {
             />
           </div>
 
-          <div className="flex flex-col gap-4 lg:col-span-5">
-            {stats.map((stat) => (
-              <div key={stat.label} className="glass-panel rounded-2xl p-6">
+          <div className="flex flex-col gap-4 lg:col-span-5" style={{ perspective: '1000px' }}>
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, rotateX: -15, y: 30 }}
+                whileInView={{ opacity: 1, rotateX: 0, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ rotateY: 3, rotateX: -3, scale: 1.02 }}
+                style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
+                className="glass-panel rounded-2xl p-6 cursor-default"
+              >
                 <div
                   className="mb-1 text-4xl font-bold"
                   style={{
@@ -55,11 +87,14 @@ export function AboutSection() {
                     WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  {stat.val}
+                  <AnimatedStat
+                    value={parseFloat(stat.val)}
+                    suffix={stat.val.replace(/[0-9.]/g, '')}
+                  />
                 </div>
                 <div className="font-display text-base font-semibold text-white">{stat.label}</div>
                 <div className="font-mono text-xs text-brand-subtle">{stat.sub}</div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

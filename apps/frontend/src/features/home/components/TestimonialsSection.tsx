@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+
 const testimonials = [
   {
     quote:
@@ -37,16 +39,32 @@ export function TestimonialsSection() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
-          {testimonials.map((testimonial) => (
-            <article key={testimonial.name} className="glass-panel rounded-2xl p-8">
-              <p className="text-sm leading-relaxed text-brand-fg">“{testimonial.quote}”</p>
-              <div className="mt-6 border-t border-white/5 pt-6">
+          {testimonials.map((testimonial, index) => (
+            <motion.article
+              key={testimonial.name}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.12 }}
+              whileHover={{ y: -8, boxShadow: '0 24px 60px rgba(26,79,214,0.15)' }}
+              className="glass-panel rounded-2xl p-8 relative overflow-hidden cursor-default"
+            >
+              <span
+                className="absolute top-4 right-6 font-display text-8xl text-accent/5 select-none leading-none"
+                aria-hidden="true"
+              >
+                "
+              </span>
+              <p className="text-sm leading-relaxed text-brand-fg relative z-10">
+                “{testimonial.quote}”
+              </p>
+              <div className="mt-6 border-t border-white/5 pt-6 relative z-10">
                 <div className="font-display text-sm font-semibold text-white">
                   {testimonial.name}
                 </div>
                 <div className="font-mono text-xs text-brand-subtle">{testimonial.title}</div>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </div>

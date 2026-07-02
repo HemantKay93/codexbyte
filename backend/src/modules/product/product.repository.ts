@@ -9,19 +9,43 @@ export class ProductRepository {
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    let query = admin.from('products').select('*', { count: 'exact' }).is('deleted_at', null);
+    let query;
 
+    // Use RPC if there's a search term to leverage full-text search ranking
+    if (filters.search) {
+      query = admin.rpc(
+        'search_products',
+        {
+          search_term: filters.search,
+        },
+        { count: 'exact' }
+      );
+    } else {
+      query = admin.from('products').select('*', { count: 'exact' }).is('deleted_at', null);
+    }
+
+    // Apply category filter
     if (filters.category) {
       query = query.eq('category', filters.category);
     }
 
-    if (filters.search) {
-      query = query.ilike('name', `%${filters.search}%`);
+    // Apply brand filter (supports comma-separated list from UI)
+    if (filters.brand) {
+      const brands = filters.brand.split(',');
+      query = query.in('brand', brands);
     }
 
-    const { data, error, count } = await query
-      .order('created_at', { ascending: false })
-      .range(from, to);
+    // Apply sorting
+    if (filters.sort === 'price_asc') {
+      query = query.order('price', { ascending: true });
+    } else if (filters.sort === 'price_desc') {
+      query = query.order('price', { ascending: false });
+    } else if (!filters.search) {
+      // Default sort if not searching (search RPC already sorts by rank)
+      query = query.order('created_at', { ascending: false });
+    }
+
+    const { data, error, count } = await query.range(from, to);
     if (error) throw error;
     return { data, total: count ?? 0, page, pageSize };
   }

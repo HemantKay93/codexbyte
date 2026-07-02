@@ -12,6 +12,7 @@ import {
   Star,
   Plus,
   Check,
+  Search,
 } from 'lucide-react';
 
 import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
@@ -22,14 +23,36 @@ export function CategoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchInput, setSearchInput] = useState('');
+  const [activeSearch, setActiveSearch] = useState('');
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const [sortOption, setSortOption] = useState<string>('best_match');
+
+  const toggleBrand = (brand: string) => {
+    setSelectedBrands((prev) =>
+      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
+    );
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        // Fetch products; ideally filter by category (id)
-        const data = await ProductService.getProducts();
-        // Since we don't have categories in dummy API, let's just use all
+        // Map UI slugs to dummy database categories
+        const categoryMap: Record<string, string> = {
+          laptops: 'desktop_windows',
+          pcs: 'desktop_windows',
+          accessories: 'keyboard_mouse',
+          monitors: 'monitor',
+        };
+        const mappedCategory = id && id !== 'all' ? categoryMap[id] || id : undefined;
+
+        const data = await ProductService.getProducts({
+          category: mappedCategory,
+          search: activeSearch || undefined,
+          brand: selectedBrands.length > 0 ? selectedBrands.join(',') : undefined,
+          sort: sortOption,
+        });
         setProducts(data);
       } catch (err) {
         console.error('Failed to fetch products', err);
@@ -39,7 +62,7 @@ export function CategoryPage() {
     };
     fetchProducts();
     // eslint-disable-line @typescript-eslint/no-floating-promises
-  }, [id]);
+  }, [id, activeSearch, selectedBrands, sortOption]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -64,32 +87,28 @@ export function CategoryPage() {
               Brand
             </h3>
             <div className="space-y-4">
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className="w-5 h-5 rounded border border-stitch-outline-variant bg-stitch-surface-container-high flex items-center justify-center group-hover:border-stitch-primary transition-colors">
-                  {/* Unchecked state */}
-                </div>
-                <span className="group-hover:text-stitch-primary text-stitch-on-surface-variant transition-colors">
-                  Logitech G
-                </span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className="w-5 h-5 rounded bg-stitch-primary flex items-center justify-center shadow-[0_0_10px_rgba(77,142,255,0.3)]">
-                  <Check className="w-3 h-3 text-stitch-on-primary" strokeWidth={3} />
-                </div>
-                <span className="text-white font-medium transition-colors">Razer</span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className="w-5 h-5 rounded border border-stitch-outline-variant bg-stitch-surface-container-high flex items-center justify-center group-hover:border-stitch-primary transition-colors"></div>
-                <span className="group-hover:text-stitch-primary text-stitch-on-surface-variant transition-colors">
-                  Corsair
-                </span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer group">
-                <div className="w-5 h-5 rounded border border-stitch-outline-variant bg-stitch-surface-container-high flex items-center justify-center group-hover:border-stitch-primary transition-colors"></div>
-                <span className="group-hover:text-stitch-primary text-stitch-on-surface-variant transition-colors">
-                  HyperX
-                </span>
-              </label>
+              {['Logitech G', 'Razer', 'Corsair', 'HyperX'].map((b) => (
+                <label key={b} className="flex items-center gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    className="hidden"
+                    checked={selectedBrands.includes(b)}
+                    onChange={() => toggleBrand(b)}
+                  />
+                  <div
+                    className={`w-5 h-5 rounded border ${selectedBrands.includes(b) ? 'bg-stitch-primary border-transparent shadow-[0_0_10px_rgba(77,142,255,0.3)]' : 'border-stitch-outline-variant bg-stitch-surface-container-high group-hover:border-stitch-primary'} flex items-center justify-center transition-colors`}
+                  >
+                    {selectedBrands.includes(b) && (
+                      <Check className="w-3 h-3 text-stitch-on-primary" strokeWidth={3} />
+                    )}
+                  </div>
+                  <span
+                    className={`${selectedBrands.includes(b) ? 'text-white font-medium' : 'group-hover:text-stitch-primary text-stitch-on-surface-variant'} transition-colors`}
+                  >
+                    {b}
+                  </span>
+                </label>
+              ))}
             </div>
           </section>
 
@@ -120,7 +139,7 @@ export function CategoryPage() {
       <main className="pt-24 pb-20 px-stitch-container-padding-mobile md:px-8 min-h-screen w-full">
         {/* Toolbar */}
         <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 border-b border-stitch-outline-variant/20 pb-6">
-          <div>
+          <div className="flex-1">
             <h1 className="font-stitch-headline-lg text-stitch-headline-lg text-white capitalize mb-2">
               {id || 'Premium Selection'}
             </h1>
@@ -128,6 +147,36 @@ export function CategoryPage() {
               <span className="w-2 h-2 rounded-full bg-stitch-primary animate-pulse"></span>
               Displaying {products.length} items
             </p>
+          </div>
+          <div className="flex-1 max-w-md w-full relative group">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && setActiveSearch(searchInput)}
+              className="w-full bg-stitch-surface-container-high border border-stitch-outline-variant/30 rounded-xl px-4 py-3 pl-11 text-white focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none transition-colors group-hover:border-stitch-primary/50"
+            />
+            <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-stitch-outline group-hover:text-stitch-primary transition-colors pointer-events-none" />
+            {searchInput !== activeSearch && searchInput && (
+              <button
+                onClick={() => setActiveSearch(searchInput)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-stitch-primary text-sm hover:text-white"
+              >
+                Enter to search
+              </button>
+            )}
+            {activeSearch && (
+              <button
+                onClick={() => {
+                  setSearchInput('');
+                  setActiveSearch('');
+                }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-stitch-outline hover:text-stitch-error"
+              >
+                Clear
+              </button>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <div className="hidden md:flex bg-stitch-surface-container p-1 rounded-xl border border-stitch-outline-variant/30">
@@ -149,11 +198,14 @@ export function CategoryPage() {
               Sort &amp; Filter
             </button>
             <div className="hidden md:block relative group">
-              <select className="appearance-none bg-stitch-surface-container-high border border-stitch-outline-variant/30 rounded-xl px-6 py-3 pr-12 text-white focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none font-stitch-cta-button cursor-pointer group-hover:border-stitch-primary/50 transition-colors">
-                <option>Sort: Best Match</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-                <option>Top Rated</option>
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value)}
+                className="appearance-none bg-stitch-surface-container-high border border-stitch-outline-variant/30 rounded-xl px-6 py-3 pr-12 text-white focus:ring-2 focus:ring-stitch-primary focus:border-transparent outline-none font-stitch-cta-button cursor-pointer group-hover:border-stitch-primary/50 transition-colors"
+              >
+                <option value="best_match">Sort: Best Match</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
               </select>
               <ChevronDown className="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-stitch-primary" />
             </div>

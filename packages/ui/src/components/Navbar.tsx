@@ -37,10 +37,10 @@ export function Navbar({
 
   return (
     <nav
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-700 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-[#04080F]/70 backdrop-blur-2xl py-3 shadow-[0_4px_30px_rgba(0,0,0,0.5)] border-b border-white/5'
-          : 'bg-gradient-to-b from-[#04080F]/80 to-transparent py-5'
+          ? 'bg-[#04080F]/80 backdrop-blur-xl border-b border-white/5 shadow-lg py-3'
+          : 'bg-transparent border-b border-transparent py-5'
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-8">

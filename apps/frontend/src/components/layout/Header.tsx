@@ -19,7 +19,7 @@ function ShopNavLinks() {
   const shopLinks = [
     { label: 'Gaming Gears', to: '/shop?category=gaming' },
     { label: 'Networking', to: '/shop?category=networking' },
-    { label: 'Custom Build', to: '/shop/custom-build' },
+    { label: 'Custom Build', to: '/shop/builder' },
   ];
 
   return (

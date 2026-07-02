@@ -1,4 +1,16 @@
+import { motion } from 'framer-motion';
+import { Server, Wrench, ShieldCheck, Cpu, Wifi, Package, LucideIcon } from 'lucide-react';
+
 import { websiteServices } from '@/content/services';
+
+const SERVICE_ICONS: Record<string, LucideIcon> = {
+  consulting: Server,
+  repair: Wrench,
+  amc: ShieldCheck,
+  hardware: Cpu,
+  networking: Wifi,
+  supply: Package,
+};
 
 export function ServicesSection() {
   return (
@@ -29,42 +41,50 @@ export function ServicesSection() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {websiteServices.map((service) => (
-            <article
-              key={service.id}
-              className="card-glow rounded-2xl border border-white/5 bg-brand-bg p-8 transition-all hover:bg-brand-bg2"
-            >
-              <div
-                className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl"
-                style={{
-                  background: `${service.accent}15`,
-                  border: `1px solid ${service.accent}30`,
-                  color: service.accent,
-                }}
+          {websiteServices.map((service, index) => {
+            const Icon = SERVICE_ICONS[service.id] ?? Server;
+            return (
+              <motion.article
+                key={service.id}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -6, transition: { duration: 0.3 } }}
+                className="card-glow rounded-2xl border border-white/5 bg-brand-bg p-8 cursor-default transition-colors hover:bg-brand-bg2"
               >
-                <span className="font-display text-lg font-bold">{service.title[0]}</span>
-              </div>
-              <h3 className="mb-3 font-display text-xl font-semibold text-white">
-                {service.title}
-              </h3>
-              <p className="mb-5 text-sm leading-relaxed text-brand-muted">{service.desc}</p>
-              <div className="flex flex-wrap gap-2">
-                {service.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full px-2.5 py-1 font-mono text-[10px]"
-                    style={{
-                      background: `${service.accent}10`,
-                      border: `1px solid ${service.accent}25`,
-                      color: service.accent,
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </article>
-          ))}
+                <div
+                  className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl"
+                  style={{
+                    background: `${service.accent}15`,
+                    border: `1px solid ${service.accent}30`,
+                    color: service.accent,
+                  }}
+                >
+                  <Icon className="w-6 h-6" />
+                </div>
+                <h3 className="mb-3 font-display text-xl font-semibold text-white">
+                  {service.title}
+                </h3>
+                <p className="mb-5 text-sm leading-relaxed text-brand-muted">{service.desc}</p>
+                <div className="flex flex-wrap gap-2">
+                  {service.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full px-2.5 py-1 font-mono text-[10px]"
+                      style={{
+                        background: `${service.accent}10`,
+                        border: `1px solid ${service.accent}25`,
+                        color: service.accent,
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
     </section>

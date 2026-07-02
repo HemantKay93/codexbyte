@@ -394,7 +394,7 @@ export function ProductDetailPage() {
       </main>
 
       {/* Sticky Bottom Bar */}
-      <div className="fixed bottom-0 left-0 w-full z-[60] bg-stitch-surface-container/90 backdrop-blur-md border-t border-stitch-outline-variant/20 h-20 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] flex items-center justify-between px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop">
+      <div className="fixed bottom-0 left-0 w-full z-[60] bg-stitch-surface-container/80 backdrop-blur-2xl border-t border-white/10 h-20 shadow-[0_-15px_40px_-10px_rgba(0,0,0,0.8)] flex items-center justify-between px-stitch-container-padding-mobile md:px-stitch-container-padding-desktop">
         <div className="hidden md:flex flex-col">
           <span className="font-stitch-label-sm text-stitch-outline text-[10px] uppercase">
             Current Config

@@ -1,8 +1,10 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function HeroSection() {
+  const prefersReduced = useReducedMotion();
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -15,22 +17,26 @@ export function HeroSection() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: prefersReduced ? 0 : 30 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as any },
+      transition: { duration: prefersReduced ? 0 : 0.8, ease: [0.16, 1, 0.3, 1] as any },
       // eslint-disable-line @typescript-eslint/no-explicit-any
     },
   };
 
   const imageVariants = {
-    hidden: { opacity: 0, scale: 0.9, rotateY: 20 },
+    hidden: { opacity: 0, scale: prefersReduced ? 1 : 0.9, rotateY: prefersReduced ? 0 : 20 },
     visible: {
       opacity: 1,
       scale: 1,
       rotateY: 0,
-      transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] as any, delay: 0.5 },
+      transition: {
+        duration: prefersReduced ? 0 : 1.2,
+        ease: [0.16, 1, 0.3, 1] as any,
+        delay: prefersReduced ? 0 : 0.5,
+      },
       // eslint-disable-line @typescript-eslint/no-explicit-any
     },
   };
@@ -56,18 +62,23 @@ export function HeroSection() {
       {/* Floating Orbs */}
       <motion.div
         animate={{
-          y: [0, -20, 0],
-          opacity: [0.2, 0.4, 0.2],
+          y: prefersReduced ? 0 : [0, -20, 0],
+          opacity: prefersReduced ? 0.2 : [0.2, 0.4, 0.2],
         }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        transition={{ duration: prefersReduced ? 0 : 8, repeat: Infinity, ease: 'easeInOut' }}
         className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 rounded-full blur-[100px] pointer-events-none"
       />
       <motion.div
         animate={{
-          y: [0, 20, 0],
-          opacity: [0.1, 0.3, 0.1],
+          y: prefersReduced ? 0 : [0, 20, 0],
+          opacity: prefersReduced ? 0.1 : [0.1, 0.3, 0.1],
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+        transition={{
+          duration: prefersReduced ? 0 : 10,
+          repeat: Infinity,
+          ease: 'easeInOut',
+          delay: prefersReduced ? 0 : 1,
+        }}
         className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-[100px] pointer-events-none"
       />
 
@@ -193,8 +204,12 @@ export function HeroSection() {
 
                 {/* Decorative scanning line */}
                 <motion.div
-                  animate={{ top: ['0%', '100%', '0%'] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                  animate={prefersReduced ? {} : { top: ['0%', '100%', '0%'] }}
+                  transition={{
+                    duration: prefersReduced ? 0 : 4,
+                    repeat: Infinity,
+                    ease: 'linear',
+                  }}
                   className="absolute left-0 right-0 h-1 bg-accent/10 blur-sm z-20"
                 />
               </div>

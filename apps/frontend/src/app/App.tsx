@@ -61,6 +61,9 @@ const OrderFailedPage = lazy(() =>
 const CategoryPage = lazy(() =>
   import('@/features/shop/pages/CategoryPage').then((m) => ({ default: m.CategoryPage }))
 );
+const BuilderPage = lazy(() =>
+  import('@/features/shop/pages/BuilderPage').then((m) => ({ default: m.BuilderPage }))
+);
 
 import { useEffect } from 'react';
 import { useAuthStore } from '@byteevolvr/store';
@@ -99,6 +102,7 @@ export default function App() {
 
             {/* Shop Routes */}
             <Route path="/shop" element={<ShopPage />} />
+            <Route path="/shop/builder" element={<BuilderPage />} />
             <Route path="/shop/product/:id" element={<ProductDetailPage />} />
             <Route path="/shop/cart" element={<CartPage />} />
             <Route path="/shop/checkout" element={<CheckoutPage />} />

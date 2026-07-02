@@ -44,7 +44,7 @@ export function LoginPage() {
         className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/20 rounded-full mix-blend-screen filter blur-[120px] animate-pulse z-0"
         style={{ animationDelay: '2s' }}
       ></div>
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 z-0 pointer-events-none"></div>
+      <div className="noise-overlay absolute inset-0 z-0 pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-white/5 p-10 shadow-2xl backdrop-blur-xl border border-white/10 transition-all hover:border-white/20">
         <div className="mb-10 text-center">
