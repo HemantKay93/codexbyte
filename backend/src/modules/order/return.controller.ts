@@ -8,7 +8,7 @@ const returnService = new ReturnService();
 
 export const createReturnRequest = catchAsync(async (req: AuthRequest, res: Response) => {
   const { orderId, reason, items } = req.body;
-  const userId = req.user?.id;
+  const userId = req.user?.id || '';
 
   const result = await returnService.createReturnRequest({
     orderId,

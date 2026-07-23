@@ -268,7 +268,7 @@ export const authenticateOptional = async (req: AuthRequest, res: Response, next
 
       if (sbUser && !sbError) {
         const { role, fullName, tenantId } = await resolveUserProfile(sbUser);
-        req.user = { ...sbUser, role, fullName, tenant_id: tenantId };
+        req.user = { ...sbUser, email: sbUser.email || '', role, fullName, tenant_id: tenantId };
       }
     } else {
       // Try local JWT fallback

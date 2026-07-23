@@ -11,7 +11,7 @@ const marketingService = new MarketingService();
 
 export const validateCoupon = catchAsync(async (req: AuthRequest, res: Response) => {
   const { code, orderAmount } = req.body;
-  const userId = req.user?.id;
+  const userId = req.user?.id || '';
 
   const result = await marketingService.validateCoupon(code, userId, orderAmount);
   res.json(createResponse(result, 'Coupon applied successfully'));
