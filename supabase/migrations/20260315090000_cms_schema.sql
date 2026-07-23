@@ -1,6 +1,6 @@
 -- ============================================================
 -- ByteeVolvr CMS Schema
--- Tables: user_profiles, services, about_content, products, contact_submissions
+-- Tables: user_profiles, services, about_content, products, leads
 -- ============================================================
 
 -- 1. TYPES
@@ -82,8 +82,8 @@ CREATE TABLE public.products (
 );
 
 -- Contact Submissions
-DROP TABLE IF EXISTS public.contact_submissions CASCADE;
-CREATE TABLE public.contact_submissions (
+DROP TABLE IF EXISTS public.leads CASCADE;
+CREATE TABLE public.leads (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
   email TEXT NOT NULL,
@@ -103,8 +103,8 @@ CREATE INDEX IF NOT EXISTS idx_services_sort_order ON public.services(sort_order
 CREATE INDEX IF NOT EXISTS idx_products_status ON public.products(status);
 CREATE INDEX IF NOT EXISTS idx_products_category ON public.products(category);
 CREATE INDEX IF NOT EXISTS idx_products_featured ON public.products(featured);
-CREATE INDEX IF NOT EXISTS idx_contact_submissions_status ON public.contact_submissions(status);
-CREATE INDEX IF NOT EXISTS idx_contact_submissions_created_at ON public.contact_submissions(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_leads_status ON public.leads(status);
+CREATE INDEX IF NOT EXISTS idx_leads_created_at ON public.leads(created_at DESC);
 
 -- 4. FUNCTIONS
 
@@ -162,7 +162,7 @@ ALTER TABLE public.user_profiles DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.services DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.about_content DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.products DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.contact_submissions DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.leads DISABLE ROW LEVEL SECURITY;
 
 -- 6. RLS POLICIES
 
@@ -210,15 +210,15 @@ CREATE POLICY "admin_manage_products"
 ON public.products FOR ALL TO authenticated
 USING (public.is_admin()) WITH CHECK (public.is_admin());
 
--- contact_submissions: anyone can insert, only admin can read/update
-DROP POLICY IF EXISTS "public_insert_contact" ON public.contact_submissions;
+-- leads: anyone can insert, only admin can read/update
+DROP POLICY IF EXISTS "public_insert_contact" ON public.leads;
 CREATE POLICY "public_insert_contact"
-ON public.contact_submissions FOR INSERT TO public
+ON public.leads FOR INSERT TO public
 WITH CHECK (true);
 
-DROP POLICY IF EXISTS "admin_manage_contact_submissions" ON public.contact_submissions;
-CREATE POLICY "admin_manage_contact_submissions"
-ON public.contact_submissions FOR ALL TO authenticated
+DROP POLICY IF EXISTS "admin_manage_leads" ON public.leads;
+CREATE POLICY "admin_manage_leads"
+ON public.leads FOR ALL TO authenticated
 USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 -- 7. TRIGGERS
@@ -238,9 +238,9 @@ CREATE TRIGGER set_products_updated_at
   BEFORE UPDATE ON public.products
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
-DROP TRIGGER IF EXISTS set_contact_updated_at ON public.contact_submissions;
+DROP TRIGGER IF EXISTS set_contact_updated_at ON public.leads;
 CREATE TRIGGER set_contact_updated_at
-  BEFORE UPDATE ON public.contact_submissions
+  BEFORE UPDATE ON public.leads
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
 -- 8. MOCK DATA
@@ -304,7 +304,7 @@ BEGIN
   ON CONFLICT (id) DO NOTHING;
 
   -- Sample contact submissions
-  INSERT INTO public.contact_submissions (name, email, phone, subject, message, status) VALUES
+  INSERT INTO public.leads (name, email, phone, subject, message, status) VALUES
     ('Rajesh Kumar', 'rajesh@techcorp.in', '+91 98765 43210', 'AMC Contract Inquiry', 'We have 50 workstations and are looking for an annual maintenance contract. Please share your pricing and SLA details.', 'new'),
     ('Priya Sharma', 'priya.sharma@gmail.com', '+91 87654 32109', 'Laptop Repair', 'My Dell laptop screen is cracked and the keyboard is not working. Can you provide a repair estimate?', 'read'),
     ('Amit Patel', 'amit@retailbiz.com', '+91 76543 21098', 'B2B Supply Partnership', 'We run a chain of 10 retail stores and need a reliable IT hardware supplier. Interested in discussing bulk pricing.', 'replied')

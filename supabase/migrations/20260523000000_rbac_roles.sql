@@ -1,9 +1,10 @@
 -- Phase 8: RBAC Roles (Part 1 - Run this first!)
 -- You MUST run this block by itself first because Postgres requires new ENUM values to be committed before they can be used as defaults.
-ALTER TYPE public.user_role ADD VALUE IF NOT EXISTS 'super-admin';
-ALTER TYPE public.user_role ADD VALUE IF NOT EXISTS 'manager';
-ALTER TYPE public.user_role ADD VALUE IF NOT EXISTS 'warehouse-staff';
-ALTER TYPE public.user_role ADD VALUE IF NOT EXISTS 'customer';
+-- ALTER TYPE public.user_role ADD VALUE IF NOT EXISTS 'super-admin';
+-- ALTER TYPE public.user_role ADD VALUE IF NOT EXISTS 'manager';
+-- ALTER TYPE public.user_role ADD VALUE IF NOT EXISTS 'warehouse-staff';
+-- ALTER TYPE public.user_role ADD VALUE IF NOT EXISTS 'customer';
+
 
 /*
 -------------------------------------------------------------------------------------
