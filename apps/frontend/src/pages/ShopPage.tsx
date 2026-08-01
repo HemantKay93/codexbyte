@@ -59,13 +59,26 @@ export function ShopPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const productsSectionRef = useRef<HTMLDivElement>(null);
 
-  // Auto slider
+  // Auto slider and keyboard navigation
   useEffect(() => {
     const sliderInterval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 6000);
-    return () => clearInterval(sliderInterval);
-  }, [heroSlides.length]);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+      } else if (e.key === 'ArrowLeft') {
+        setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      clearInterval(sliderInterval);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [currentSlide, heroSlides.length]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -164,14 +177,35 @@ export function ShopPage() {
           ))}
 
           {/* Slider Indicators */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4 z-20">
             {heroSlides.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentSlide(idx)}
-                className={`transition-all duration-300 rounded-full ${idx === currentSlide ? 'w-8 h-2 bg-stitch-primary shadow-[0_0_10px_rgba(37,99,235,0.8)]' : 'w-2 h-2 bg-white/40 hover:bg-white/70'}`}
+                className="group relative p-2 -m-2 flex items-center justify-center outline-none focus-visible:ring-2 focus-visible:ring-stitch-primary rounded-full"
                 aria-label={`Go to slide ${idx + 1}`}
-              />
+                aria-current={idx === currentSlide ? 'true' : 'false'}
+              >
+                <div
+                  className={`transition-all duration-300 rounded-full overflow-hidden ${
+                    idx === currentSlide
+                      ? 'w-12 h-2 bg-stitch-primary/30 shadow-[0_0_10px_rgba(37,99,235,0.4)]'
+                      : 'w-2 h-2 bg-white/40 group-hover:bg-white/70'
+                  }`}
+                >
+                  {idx === currentSlide && (
+                    <div
+                      key={currentSlide}
+                      className="h-full bg-stitch-primary rounded-full animate-carousel-progress origin-left"
+                      style={{
+                        animationDuration: '6000ms',
+                        animationTimingFunction: 'linear',
+                        animationFillMode: 'forwards',
+                      }}
+                    />
+                  )}
+                </div>
+              </button>
             ))}
           </div>
         </section>

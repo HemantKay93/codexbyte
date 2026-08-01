@@ -30,17 +30,17 @@ export const ProductService = {
 
   getProduct: async (id: string): Promise<Product> => {
     const response = await apiClient.get(`/products/${id}`);
-    return response.data;
+    return response.data?.data || response.data;
   },
 
   createProduct: async (payload: Product): Promise<Product> => {
     const response = await apiClient.post('/products', payload);
-    return response.data;
+    return response.data?.data || response.data;
   },
 
   updateProduct: async (id: string, payload: Partial<Product>): Promise<Product> => {
     const response = await apiClient.put(`/products/${id}`, payload);
-    return response.data;
+    return response.data?.data || response.data;
   },
 
   deleteProduct: async (id: string): Promise<void> => {
@@ -53,6 +53,6 @@ export const ProductService = {
     const response = await apiClient.post('/admin/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    return response.data.url;
+    return response.data.url || response.data.data?.url;
   },
 };

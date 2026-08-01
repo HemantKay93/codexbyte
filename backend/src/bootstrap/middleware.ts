@@ -117,6 +117,9 @@ export function bootstrapMiddleware(app: Express) {
 
   // Request Logging
   app.use(requestLogger);
+
+  // Serve uploads statically for local fallback storage
+  app.use('/uploads', express.static('uploads'));
 }
 
 export function createRateLimiters() {

@@ -67,7 +67,7 @@ export function ProductFormPage() {
             // eslint-disable-line @typescript-eslint/no-explicit-any
           });
         } catch (err: any) {
-          // eslint-disable-line @typescript-eslint/no-unused-vars // eslint-disable-line @typescript-eslint/no-explicit-any
+          // eslint-disable-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
           setError('Failed to load product details.');
         } finally {
           setLoading(false);
@@ -97,7 +97,7 @@ export function ProductFormPage() {
         setFormData({ ...formData, images: newImages });
       }
     } catch (err: any) {
-      // eslint-disable-line @typescript-eslint/no-unused-vars // eslint-disable-line @typescript-eslint/no-explicit-any
+      // eslint-disable-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
       setError('Failed to upload image. Please try again.');
     } finally {
       setUploading(false);
@@ -147,7 +147,7 @@ export function ProductFormPage() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-20">
-      <div className="flex items-center justify-between">
+      <div className="sticky top-0 bg-[var(--color-bg)]/90 backdrop-blur-md z-30 py-4 border-b border-outline-variant/20 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" className="px-2" onClick={() => navigate('/products')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -576,6 +576,20 @@ export function ProductFormPage() {
                   className="w-full h-10 px-3 rounded-md border border-outline bg-surface text-on-surface focus:ring-2 focus:ring-primary focus:outline-none"
                   placeholder="e.g. dod, clearance, new, trending"
                 />
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {formData.tags
+                    .split(',')
+                    .map((t) => t.trim())
+                    .filter(Boolean)
+                    .map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary border border-primary/20"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                </div>
               </div>
             </div>
           </Card>

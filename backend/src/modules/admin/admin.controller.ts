@@ -1,10 +1,15 @@
+import path from 'path';
+import fs from 'fs';
+
 import { Request, Response } from 'express';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 import { catchAsync } from '../../middlewares/error.js';
 import { AnalyticsService } from '../../services/analyticsService.js';
 import { getAdminClient } from '../../config/supabase.js';
 import { ProviderService } from '../marketing/providers/provider.service.js';
 import { redis } from '../../config/redis.js';
+import { env } from '../../config/env.js';
 
 // eslint-disable-line import/order
 import { AdminRepository } from './admin.repository.js';
@@ -223,10 +228,66 @@ export const getAuditLogs = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const uploadFile = catchAsync(async (req: Request, res: Response) => {
-  // Placeholder: In a real system, this would upload to S3/Cloudinary/Supabase
+  const file = req.file;
+  if (!file) {
+    res.status(400).json({ success: false, message: 'No file uploaded' });
+    return;
+  }
+
+  const bucketName = process.env.AWS_S3_BUCKET_NAME || 'byte-ecom';
+  const region = process.env.AWS_REGION || 'ap-northeast-1';
+  const accessKeyId = process.env.AWS_ACCESS_KEY_ID || '';
+  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || '';
+
+  // Fallback if AWS keys are not configured or are placeholders: save locally
+  if (
+    !accessKeyId ||
+    accessKeyId.includes('placeholder') ||
+    !secretAccessKey ||
+    secretAccessKey.includes('placeholder')
+  ) {
+    const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}${path.extname(file.originalname)}`;
+    if (!fs.existsSync('uploads')) {
+      fs.mkdirSync('uploads', { recursive: true });
+    }
+    fs.writeFileSync(path.join('uploads', filename), file.buffer);
+
+    const host = req.get('host') || 'localhost:8080';
+    const protocol = req.protocol || 'http';
+    const localUrl = `${protocol}://${host}/uploads/${filename}`;
+
+    res.json({
+      success: true,
+      data: { url: localUrl },
+    });
+    return;
+  }
+
+  const s3Client = new S3Client({
+    region,
+    credentials: {
+      accessKeyId,
+      secretAccessKey,
+    },
+  });
+
+  const extension = path.extname(file.originalname);
+  const key = `products/${Date.now()}-${Math.random().toString(36).substring(7)}${extension}`;
+
+  const command = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: key,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  });
+
+  await s3Client.send(command);
+
+  const s3Url = `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
+
   res.json({
     success: true,
-    data: { url: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80' },
+    data: { url: s3Url },
   });
 });
 

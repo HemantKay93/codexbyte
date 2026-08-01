@@ -59,22 +59,24 @@ export class ProductService {
     // eslint-disable-line @typescript-eslint/no-explicit-any
 
     if (data.name) sanitizedData.name = data.name;
-    if (data.description) sanitizedData.description = data.description;
+    if (data.description !== undefined) sanitizedData.description = data.description;
     if (data.price !== undefined) sanitizedData.price = Number(data.price);
     if (data.original_price !== undefined)
-      sanitizedData.original_price = Number(data.original_price);
-    if (data.image_url) sanitizedData.image_url = data.image_url;
+      sanitizedData.original_price =
+        data.original_price !== null ? Number(data.original_price) : null;
+    if (data.image_url !== undefined) sanitizedData.image_url = data.image_url;
     if (data.category) sanitizedData.category = data.category;
-    if (data.brand) sanitizedData.brand = data.brand;
+    if (data.brand !== undefined) sanitizedData.brand = data.brand;
     if (data.sku) sanitizedData.sku = data.sku;
     if (data.stock_quantity !== undefined)
       sanitizedData.stock_quantity = Number(data.stock_quantity);
     if (data.status) sanitizedData.status = data.status;
-    if (data.images)
+    if (data.images !== undefined)
       sanitizedData.images = Array.isArray(data.images) ? data.images : [data.images];
-    if (data.tags) sanitizedData.tags = Array.isArray(data.tags) ? data.tags : [data.tags];
-    if (data.variants) sanitizedData.variants = data.variants;
-    if (data.specifications) sanitizedData.specifications = data.specifications;
+    if (data.tags !== undefined)
+      sanitizedData.tags = Array.isArray(data.tags) ? data.tags : [data.tags];
+    if (data.variants !== undefined) sanitizedData.variants = data.variants;
+    if (data.specifications !== undefined) sanitizedData.specifications = data.specifications;
     if (data.slug) sanitizedData.slug = data.slug;
 
     return await productRepo.update(id, sanitizedData, userId);

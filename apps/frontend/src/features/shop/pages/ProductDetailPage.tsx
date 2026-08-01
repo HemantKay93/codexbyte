@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { ProductService, Product } from '@byteevolvr/api-client';
 import { useCartStore } from '@byteevolvr/store';
-import { Loader2, ZoomIn, Star, Cpu, Monitor, Zap, ChevronDown, Plus } from 'lucide-react';
+import { Check, Loader2, ZoomIn, Star, Cpu, Monitor, Zap, ChevronDown, Plus } from 'lucide-react';
 
 import { useStoreCurrency } from '@/features/shop/hooks/useStoreCurrency';
 export function ProductDetailPage() {
@@ -18,6 +18,14 @@ export function ProductDetailPage() {
   const [selectedRam, setSelectedRam] = useState(16);
   const [selectedStorage, setSelectedStorage] = useState(1);
   const [adding, setAdding] = useState(false);
+
+  const getCalculatedPrice = () => {
+    if (!product) return 0;
+    let basePrice = product.price;
+    if (selectedRam === 32) basePrice += 199;
+    if (selectedStorage === 2) basePrice += 249;
+    return basePrice;
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -40,7 +48,14 @@ export function ProductDetailPage() {
   const handleAddToCart = () => {
     if (product) {
       setAdding(true);
-      addItem(product);
+      const calculatedPrice = getCalculatedPrice();
+      const customItem = {
+        ...product,
+        id: `${product.id}-${selectedRam}-${selectedStorage}`,
+        name: `${product.name} (${selectedRam}GB RAM / ${selectedStorage}TB SSD)`,
+        price: calculatedPrice,
+      };
+      addItem(customItem);
       setTimeout(() => setAdding(false), 500);
     }
   };
@@ -126,7 +141,7 @@ export function ProductDetailPage() {
               </h1>
               <p className="font-stitch-headline-lg text-stitch-primary">
                 {currencySymbol}
-                {product.price.toFixed(2)}
+                {getCalculatedPrice().toFixed(2)}
               </p>
             </div>
 
@@ -157,8 +172,11 @@ export function ProductDetailPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setSelectedRam(16)}
-                    className={`stitch-glass-panel py-4 rounded-xl transition-all ${selectedRam === 16 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
+                    className={`stitch-glass-panel py-4 rounded-xl transition-all relative overflow-hidden ${selectedRam === 16 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
                   >
+                    {selectedRam === 16 && (
+                      <Check className="absolute top-2 right-2 w-4 h-4 text-stitch-primary" />
+                    )}
                     <span
                       className={`block font-bold ${selectedRam === 16 ? 'text-white' : 'text-stitch-on-surface-variant'}`}
                     >
@@ -170,8 +188,11 @@ export function ProductDetailPage() {
                   </button>
                   <button
                     onClick={() => setSelectedRam(32)}
-                    className={`stitch-glass-panel py-4 rounded-xl transition-all ${selectedRam === 32 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
+                    className={`stitch-glass-panel py-4 rounded-xl transition-all relative overflow-hidden ${selectedRam === 32 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
                   >
+                    {selectedRam === 32 && (
+                      <Check className="absolute top-2 right-2 w-4 h-4 text-stitch-primary" />
+                    )}
                     <span
                       className={`block font-bold ${selectedRam === 32 ? 'text-white' : 'text-stitch-on-surface-variant'}`}
                     >
@@ -190,8 +211,11 @@ export function ProductDetailPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => setSelectedStorage(1)}
-                    className={`stitch-glass-panel py-4 rounded-xl transition-all ${selectedStorage === 1 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
+                    className={`stitch-glass-panel py-4 rounded-xl transition-all relative overflow-hidden ${selectedStorage === 1 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
                   >
+                    {selectedStorage === 1 && (
+                      <Check className="absolute top-2 right-2 w-4 h-4 text-stitch-primary" />
+                    )}
                     <span
                       className={`block font-bold ${selectedStorage === 1 ? 'text-white' : 'text-stitch-on-surface-variant'}`}
                     >
@@ -203,8 +227,11 @@ export function ProductDetailPage() {
                   </button>
                   <button
                     onClick={() => setSelectedStorage(2)}
-                    className={`stitch-glass-panel py-4 rounded-xl transition-all ${selectedStorage === 2 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
+                    className={`stitch-glass-panel py-4 rounded-xl transition-all relative overflow-hidden ${selectedStorage === 2 ? 'border-2 border-stitch-primary shadow-[0_0_10px_rgba(93,230,255,0.4)]' : 'border border-stitch-outline-variant hover:border-stitch-primary'}`}
                   >
+                    {selectedStorage === 2 && (
+                      <Check className="absolute top-2 right-2 w-4 h-4 text-stitch-primary" />
+                    )}
                     <span
                       className={`block font-bold ${selectedStorage === 2 ? 'text-white' : 'text-stitch-on-surface-variant'}`}
                     >
