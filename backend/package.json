@@ -38,7 +38,7 @@
     "pdfkit": "^0.18.0",
     "pg": "^8.21.0",
     "razorpay": "^2.9.6",
-    "resend": "^6.12.3",
+    "resend": "^6.12.4",
     "socket.io": "^4.8.3",
     "winston": "^3.19.0",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
