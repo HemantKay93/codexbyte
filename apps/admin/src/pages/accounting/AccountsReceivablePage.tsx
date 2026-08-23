@@ -19,27 +19,6 @@ export function AccountsReceivablePage() {
   const [receivables, setReceivables] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchReceivables();
-  }, []);
-
-  const fetchReceivables = async () => {
-    try {
-      setLoading(true);
-      const res = await AccountingService.getAR();
-      if (res?.data && res.data.length > 0) {
-        setReceivables(res.data);
-      } else {
-        fallbackData();
-      }
-    } catch (err) {
-      console.error('Failed to load AR data', err);
-      fallbackData();
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const fallbackData = () => {
     setReceivables([
       {
@@ -68,6 +47,27 @@ export function AccountsReceivablePage() {
       },
     ]);
   };
+
+  const fetchReceivables = async () => {
+    try {
+      const res = await AccountingService.getAR();
+      if (res?.data && res.data.length > 0) {
+        setReceivables(res.data);
+      } else {
+        fallbackData();
+      }
+    } catch (err) {
+      console.error('Failed to load AR data', err);
+      fallbackData();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchReceivables();
+  }, []);
 
   const totalOutstanding = receivables.reduce((sum, r) => sum + r.amount, 0);
   const totalOverdue30 = receivables

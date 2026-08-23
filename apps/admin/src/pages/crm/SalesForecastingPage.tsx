@@ -16,13 +16,8 @@ export function SalesForecastingPage() {
   const [loading, setLoading] = useState(true);
   const [forecasts, setForecasts] = useState<any[]>([]);
 
-  useEffect(() => {
-    fetchForecasts();
-  }, []);
-
   const fetchForecasts = async () => {
     try {
-      setLoading(true);
       const res = await CRMService.getSalesForecasts();
       if (res?.data && res.data.length > 0) {
         setForecasts(res.data);
@@ -104,6 +99,12 @@ export function SalesForecastingPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchForecasts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const totalQuota = forecasts.reduce((sum, f) => sum + f.quota, 0);
   const totalCommitted = forecasts.reduce((sum, f) => sum + f.committed, 0);

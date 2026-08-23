@@ -7,13 +7,8 @@ export function ApprovalTemplatesPage() {
   const [loading, setLoading] = useState(true);
   const [templates, setTemplates] = useState<any[]>([]);
 
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
-
   const fetchTemplates = async () => {
     try {
-      setLoading(true);
       const res = await ApprovalsService.getTemplates();
       setTemplates(res.data || []);
     } catch (error) {
@@ -22,6 +17,11 @@ export function ApprovalTemplatesPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchTemplates();
+  }, []);
 
   const handleCreate = async () => {
     const fakeTemplate = {

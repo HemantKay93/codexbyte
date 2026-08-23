@@ -30,15 +30,8 @@ export function OperationsDashboardPage() {
   const [healthData, setHealthData] = useState<any>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
 
-  useEffect(() => {
-    fetchHealth();
-    const interval = setInterval(fetchHealth, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
   const fetchHealth = async () => {
     try {
-      setLoading(true);
       const res = await OperationsService.getSystemHealth();
 
       // Inject some mock metrics to fill the 4-part structure if they are missing
@@ -69,6 +62,16 @@ export function OperationsDashboardPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchHealth();
+    const interval = setInterval(() => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void fetchHealth();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (loading && !healthData) {
     return (

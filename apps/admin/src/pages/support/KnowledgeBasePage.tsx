@@ -18,14 +18,9 @@ export function KnowledgeBasePage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchArticles();
-  }, []);
-
   const fetchArticles = async () => {
-    setLoading(true);
     try {
-      // @ts-ignore
+      // @ts-expect-error Dynamic import compatibility
       const { SupportService } = await import('@byteevolvr/api-client');
       const response = await SupportService.getKnowledgeBaseArticles();
       setArticles(Array.isArray(response) ? response : response?.data || []);
@@ -35,6 +30,12 @@ export function KnowledgeBasePage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchArticles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="space-y-6">

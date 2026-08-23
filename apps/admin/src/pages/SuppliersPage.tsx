@@ -37,7 +37,6 @@ export function SuppliersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSupplierForPO, setSelectedSupplierForPO] = useState<any>(null);
   const [formData, setFormData] = useState({
-    // eslint-disable-line react-hooks/immutability // eslint-disable-line @typescript-eslint/no-floating-promises
     name: '',
     contact_name: '',
     email: '',
@@ -47,12 +46,7 @@ export function SuppliersPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
-    setLoading(true);
     try {
       const [suppRes, poRes] = await Promise.all([
         AdminService.getSuppliers(),
@@ -70,6 +64,11 @@ export function SuppliersPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchData();
+  }, []);
 
   const handleCreate = async () => {
     if (!formData.name || !formData.email) return;

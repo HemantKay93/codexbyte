@@ -43,6 +43,7 @@ export function ProductCard({ product, tag, tagClass, label }: ProductCardProps)
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-lg"
           src={product.image_url || 'https://via.placeholder.com/200'}
           alt={product.name}
+          loading="lazy"
         />
       </Link>
       <Link to={`/shop/product/${product.slug || product.id}`}>

@@ -13,13 +13,8 @@ export function DocumentCenterPage() {
   const [selectedRoles, setSelectedRoles] = useState<string[]>(['all']);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    fetchDocuments(currentFolder);
-  }, [currentFolder]);
-
   const fetchDocuments = async (folderId: string | null) => {
     try {
-      setLoading(true);
       const res = await DocumentsService.getDocuments(folderId || undefined);
       const docs = Array.isArray(res.data) ? res.data : res.data?.data || [];
       setDocuments(docs);
@@ -29,6 +24,12 @@ export function DocumentCenterPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchDocuments(currentFolder);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentFolder]);
 
   const handleUploadClick = () => {
     if (fileInputRef.current) {

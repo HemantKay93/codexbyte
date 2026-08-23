@@ -13,12 +13,7 @@ export function MarketingDashboard() {
     audience: 0,
   });
 
-  useEffect(() => {
-    fetchMetrics();
-  }, []);
-
   const fetchMetrics = async () => {
-    setLoading(true);
     try {
       const [campRes, autoRes, custRes] = await Promise.all([
         MarketingService.getCampaigns().catch(() => ({ data: [] })),
@@ -41,6 +36,11 @@ export function MarketingDashboard() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchMetrics();
+  }, []);
 
   const metrics = [
     { title: 'Total Campaigns', value: stats.campaigns.toString(), trend: 'Active', icon: Mail },

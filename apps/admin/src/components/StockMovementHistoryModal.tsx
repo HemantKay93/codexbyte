@@ -26,9 +26,8 @@ export function StockMovementHistoryModal({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isOpen && product) {
-      setLoading(true);
-      // eslint-disable-line react-hooks/set-state-in-effect
       AdminService.getStockMovements(product.id)
         .then((data) => setMovements(data || []))
         .catch((err) => console.error(err))

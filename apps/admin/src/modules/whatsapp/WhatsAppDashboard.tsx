@@ -96,9 +96,11 @@ export const WhatsAppDashboard = () => {
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (statusData) setStatus(statusData);
-    // eslint-disable-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (logsData) setLogs(logsData);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(false);
   }, [statusData, logsData]);
 

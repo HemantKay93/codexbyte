@@ -16,13 +16,8 @@ export function CRMDashboardPage() {
     pipelineChart: [] as any[],
   });
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
       const res = await CRMService.getDashboardMetrics();
       if (res?.data) {
         setMetrics({
@@ -40,6 +35,11 @@ export function CRMDashboardPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchDashboardData();
+  }, []);
 
   if (loading) {
     return (

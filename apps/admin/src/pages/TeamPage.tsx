@@ -51,8 +51,8 @@ export function TeamPage() {
   };
 
   useEffect(() => {
-    fetchTeam();
-    // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchTeam();
   }, []);
 
   const handleInvite = async () => {

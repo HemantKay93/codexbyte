@@ -26,13 +26,8 @@ export function ShippingDashboardPage() {
     shipmentsVolume: [] as any[],
   });
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
       const res = await AdminService.getShippingDashboardMetrics();
       if (res?.data) {
         setMetrics({
@@ -64,6 +59,12 @@ export function ShippingDashboardPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return (

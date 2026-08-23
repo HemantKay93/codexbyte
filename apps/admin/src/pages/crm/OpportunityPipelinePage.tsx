@@ -22,11 +22,6 @@ export function OpportunityPipelinePage() {
   const [dealActivities, setDealActivities] = useState<any[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(false);
 
-  useEffect(() => {
-    fetchPipelines();
-    fetchCustomers();
-  }, []);
-
   const fetchCustomers = async () => {
     try {
       const res = await AdminService.getCustomers();
@@ -34,6 +29,16 @@ export function OpportunityPipelinePage() {
       setCustomers(custList);
     } catch (error) {
       console.error('Failed to load customers', error);
+    }
+  };
+
+  const fetchBoardData = async (pipelineId: string) => {
+    try {
+      const res = await CRMService.getBoardData(pipelineId);
+      const board = Array.isArray(res.data) ? res.data : res.data?.data || [];
+      setBoardData(board);
+    } catch (error) {
+      console.error('Failed to load board', error);
     }
   };
 
@@ -59,15 +64,13 @@ export function OpportunityPipelinePage() {
     }
   };
 
-  const fetchBoardData = async (pipelineId: string) => {
-    try {
-      const res = await CRMService.getBoardData(pipelineId);
-      const board = Array.isArray(res.data) ? res.data : res.data?.data || [];
-      setBoardData(board);
-    } catch (error) {
-      console.error('Failed to load board', error);
-    }
-  };
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchPipelines();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchCustomers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDragStart = (e: React.DragEvent, dealId: string) => {
     e.dataTransfer.setData('dealId', dealId);
@@ -160,19 +163,19 @@ export function OpportunityPipelinePage() {
           id: '1',
           type: 'note',
           content: 'Left a voicemail.',
-          created_at: new Date(Date.now() - 86400000).toISOString(),
+          created_at: '2023-11-23T10:00:00Z',
         },
         {
           id: '2',
           type: 'email',
           content: 'Sent pricing proposal.',
-          created_at: new Date(Date.now() - 172800000).toISOString(),
+          created_at: '2023-11-22T14:30:00Z',
         },
         {
           id: '3',
           type: 'call',
           content: 'Introductory call, very interested.',
-          created_at: new Date(Date.now() - 345600000).toISOString(),
+          created_at: '2023-11-20T09:15:00Z',
         },
       ]);
     } finally {

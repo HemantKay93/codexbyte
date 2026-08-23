@@ -21,14 +21,7 @@ export function CustomersPage() {
   const [loading, setLoading] = useState(false);
   const { customers, setCustomers, setError } = useAdminStore();
 
-  useEffect(() => {
-    fetchCustomers();
-    // eslint-disable-line react-hooks/immutability // eslint-disable-line @typescript-eslint/no-floating-promises
-  }, []);
-  // eslint-disable-line react-hooks/exhaustive-deps
-
   async function fetchCustomers() {
-    setLoading(true);
     try {
       const data = await AdminService.getCustomers();
       setCustomers(data || []);
@@ -40,6 +33,11 @@ export function CustomersPage() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchCustomers();
+  }, []);
 
   const filteredCustomers = customers.filter(
     (c) =>

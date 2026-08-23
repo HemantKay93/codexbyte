@@ -18,10 +18,6 @@ export function MarketingPage() {
   const navigate = useNavigate();
   const [workflows, setWorkflows] = useState<any[]>([]);
 
-  useEffect(() => {
-    fetchWorkflows();
-  }, []);
-
   const fetchWorkflows = async () => {
     try {
       const res = await WorkflowsService.getWorkflows();
@@ -30,6 +26,11 @@ export function MarketingPage() {
       console.error('Failed to load marketing workflows', error);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchWorkflows();
+  }, []);
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

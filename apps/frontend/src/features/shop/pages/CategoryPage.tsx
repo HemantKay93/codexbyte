@@ -234,6 +234,7 @@ export function CategoryPage() {
                     src={product.image_url || 'https://via.placeholder.com/150'}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover/image:scale-110 opacity-90 group-hover/image:opacity-100"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-stitch-surface/80 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300"></div>
                   <button

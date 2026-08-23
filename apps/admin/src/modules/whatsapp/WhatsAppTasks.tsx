@@ -17,6 +17,7 @@ export function WhatsAppTasks() {
   const limit = 50;
 
   const fetchData = async () => {
+    setLoading(true);
     try {
       if (activeTab === 'queue') {
         const res = await apiClient.get('/whatsapp/tasks');
@@ -45,14 +46,13 @@ export function WhatsAppTasks() {
   };
 
   useEffect(() => {
-    setLoading(true);
-    // eslint-disable-line react-hooks/set-state-in-effect
-    fetchData();
-    // eslint-disable-line @typescript-eslint/no-floating-promises
-    const interval = setInterval(fetchData, 5000);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchData();
+    const interval = setInterval(() => {
+      void fetchData();
+    }, 5000);
     return () => clearInterval(interval);
   }, [activeTab, page]);
-  // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleQueue = async () => {
     try {

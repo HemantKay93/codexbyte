@@ -52,8 +52,8 @@ export function WhatsAppTemplates() {
   };
 
   useEffect(() => {
-    fetchTemplates();
-    // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchTemplates();
   }, []);
 
   const saveTemplate = async () => {

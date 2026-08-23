@@ -30,13 +30,14 @@ export function AudienceSegments() {
   };
 
   useEffect(() => {
-    loadSegments();
-    // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadSegments();
   }, []);
 
   const handleSave = async () => {
     setSaving(true);
     try {
+      let segmentToSave = { ...newSegment };
       // Parse raw text into contacts if bulk
       if (newSegment.filter_rules.type === 'bulk') {
         const text = newSegment.filter_rules.rawBulkText || '';
@@ -51,13 +52,19 @@ export function AudienceSegments() {
             phone: !isEmail ? item : null,
           };
         });
-        newSegment.filter_rules.contacts = contacts;
+        segmentToSave = {
+          ...newSegment,
+          filter_rules: {
+            ...newSegment.filter_rules,
+            contacts,
+          },
+        };
       }
 
       if (editingId) {
-        await MarketingService.updateSegment(editingId, newSegment);
+        await MarketingService.updateSegment(editingId, segmentToSave);
       } else {
-        await MarketingService.createSegment(newSegment);
+        await MarketingService.createSegment(segmentToSave);
       }
       setShowModal(false);
       setEditingId(null);

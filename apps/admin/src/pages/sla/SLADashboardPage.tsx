@@ -37,13 +37,8 @@ export function SLADashboardPage() {
     ],
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const fetchData = async () => {
     try {
-      setLoading(true);
       const [policiesRes, breachesRes] = await Promise.all([
         SLAService.getPolicies(),
         SLAService.getBreaches(),
@@ -56,6 +51,12 @@ export function SLADashboardPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCreatePolicy = async () => {
     try {

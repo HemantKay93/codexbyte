@@ -11,13 +11,8 @@ export function WorkflowBuilderPage() {
   const [newWorkflowName, setNewWorkflowName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchWorkflows();
-  }, []);
-
   const fetchWorkflows = async () => {
     try {
-      setLoading(true);
       const res = await WorkflowsService.getWorkflows();
       setWorkflows(res.data);
       if (res.data.length > 0 && !activeWorkflow) {
@@ -29,6 +24,12 @@ export function WorkflowBuilderPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchWorkflows();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSave = async () => {
     if (!activeWorkflow) return;

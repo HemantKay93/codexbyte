@@ -30,17 +30,8 @@ export function CustomerDetailPage() {
     reviewsCount: 0,
   });
 
-  useEffect(() => {
-    if (id) {
-      fetchCustomerData();
-      // eslint-disable-line react-hooks/immutability // eslint-disable-line @typescript-eslint/no-floating-promises
-    }
-  }, [id]);
-  // eslint-disable-line react-hooks/exhaustive-deps
-
   async function fetchCustomerData() {
     if (!id) return;
-    setLoading(true);
     try {
       const data = await AdminService.getCustomerDetail(id);
       const { profile, orders: customerOrders, addresses, reviewsCount } = data;
@@ -71,6 +62,14 @@ export function CustomerDetailPage() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void fetchCustomerData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, 'success' | 'primary' | 'warning' | 'error' | 'secondary'> = {

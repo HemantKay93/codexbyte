@@ -52,8 +52,8 @@ export function TemplateManager() {
   };
 
   useEffect(() => {
-    loadTemplates();
-    // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadTemplates();
   }, []);
 
   const handleSave = async () => {

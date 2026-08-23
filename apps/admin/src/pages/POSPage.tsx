@@ -36,13 +36,7 @@ export function POSPage() {
   const [lastCartSnapshot, setLastCartSnapshot] = useState<any[]>([]);
   // eslint-disable-line @typescript-eslint/no-explicit-any
 
-  useEffect(() => {
-    fetchProducts();
-    // eslint-disable-line react-hooks/immutability // eslint-disable-line @typescript-eslint/no-floating-promises
-  }, []);
-
   async function fetchProducts() {
-    setLoading(true);
     try {
       const data = await AdminService.getPosProducts({ status: 'active' });
       setProducts(data);
@@ -52,6 +46,11 @@ export function POSPage() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchProducts();
+  }, []);
 
   const addToCart = (product: any) => {
     // eslint-disable-line @typescript-eslint/no-explicit-any

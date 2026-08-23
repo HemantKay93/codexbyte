@@ -55,7 +55,6 @@ export function OrderDetailPage() {
 
   const loadData = async () => {
     if (!id) return;
-    setLoading(true);
     const data = await fetchOrderDetail(id);
     if (data) {
       setOrder(data);
@@ -68,10 +67,10 @@ export function OrderDetailPage() {
   };
 
   useEffect(() => {
-    loadData();
-    // eslint-disable-line react-hooks/set-state-in-effect // eslint-disable-line @typescript-eslint/no-floating-promises
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
-  // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleUpdateStatus = async (status: string, extra: any = {}) => {
     // eslint-disable-line @typescript-eslint/no-explicit-any

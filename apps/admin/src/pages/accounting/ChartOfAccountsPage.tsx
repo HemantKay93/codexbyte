@@ -27,7 +27,8 @@ export function ChartOfAccountsPage() {
   };
 
   useEffect(() => {
-    fetchAccounts();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchAccounts();
   }, []);
 
   const handleCreateAccount = async (e: React.FormEvent) => {

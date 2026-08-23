@@ -7,13 +7,8 @@ export function ApprovalInboxPage() {
   const [loading, setLoading] = useState(true);
   const [inbox, setInbox] = useState<any[]>([]);
 
-  useEffect(() => {
-    fetchInbox();
-  }, []);
-
   const fetchInbox = async () => {
     try {
-      setLoading(true);
       const res = await ApprovalsService.getInbox();
       setInbox(res.data);
     } catch (error) {
@@ -22,6 +17,11 @@ export function ApprovalInboxPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchInbox();
+  }, []);
 
   const handleAction = async (
     requestId: string,

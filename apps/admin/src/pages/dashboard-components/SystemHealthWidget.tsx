@@ -11,7 +11,6 @@ export function SystemHealthWidget() {
 
   useEffect(() => {
     let mounted = true;
-    setIsLoading(true);
     AdminService.getIntegrationHealth()
       .then((res) => {
         if (mounted) {

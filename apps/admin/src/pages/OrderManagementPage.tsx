@@ -22,14 +22,7 @@ export function OrderManagementPage() {
   const [loading, setLoading] = useState(false);
   const { orders, setOrders, setError } = useAdminStore();
 
-  useEffect(() => {
-    fetchOrders();
-    // eslint-disable-line react-hooks/immutability // eslint-disable-line @typescript-eslint/no-floating-promises
-  }, []);
-  // eslint-disable-line react-hooks/exhaustive-deps
-
   async function fetchOrders() {
-    setLoading(true);
     try {
       const data = await AdminService.getOrders();
       // Map user_profiles to user for backward compatibility
@@ -47,6 +40,11 @@ export function OrderManagementPage() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchOrders();
+  }, []);
 
   const exportOrders = () => {
     const headers = ['Order #', 'Date', 'Customer', 'Status', 'Total'];

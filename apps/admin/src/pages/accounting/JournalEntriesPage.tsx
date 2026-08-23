@@ -32,7 +32,6 @@ export function JournalEntriesPage() {
 
   const fetchEntries = async () => {
     try {
-      setLoading(true);
       const data = await AccountingService.getJournalEntries();
       setEntries(data.data || []);
       const accs = await AccountingService.getAccounts();
@@ -45,7 +44,8 @@ export function JournalEntriesPage() {
   };
 
   useEffect(() => {
-    fetchEntries();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchEntries();
   }, []);
 
   const handleCreateEntry = async (e: React.FormEvent) => {

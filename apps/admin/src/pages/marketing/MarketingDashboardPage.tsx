@@ -43,13 +43,8 @@ export function MarketingDashboardPage() {
     alerts: [] as any[],
   });
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
       const res = await AdminService.getMarketingDashboardMetrics();
       if (res?.data) {
         setMetrics({
@@ -81,6 +76,12 @@ export function MarketingDashboardPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading) {
     return (

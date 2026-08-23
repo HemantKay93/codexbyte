@@ -45,13 +45,6 @@ export function AdminLayout() {
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetchNotifications();
-    // eslint-disable-line react-hooks/immutability // eslint-disable-line @typescript-eslint/no-floating-promises
-    const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
-    return () => clearInterval(interval);
-  }, []);
-
   async function fetchNotifications() {
     try {
       const data = await AdminService.getNotifications();
@@ -62,6 +55,16 @@ export function AdminLayout() {
       console.error('Failed to fetch notifications:', err);
     }
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchNotifications();
+    const interval = setInterval(() => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void fetchNotifications();
+    }, 30000); // Poll every 30s
+    return () => clearInterval(interval);
+  }, []);
 
   const markAsRead = async (id: string) => {
     try {

@@ -135,6 +135,8 @@ export function ShopPage() {
                 className="w-full h-full object-cover brightness-[0.4]"
                 src={slide.image}
                 alt={slide.title}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchpriority={index === 0 ? 'high' : 'low'}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stitch-background via-stitch-background/60 to-transparent"></div>
 
@@ -221,6 +223,7 @@ export function ShopPage() {
                 src="https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500&q=80"
                 alt="Laptops"
                 className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:brightness-75 group-hover:scale-105 transition-all duration-700"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center justify-end pb-6">
                 <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-1">
@@ -240,6 +243,7 @@ export function ShopPage() {
                 src="https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&w=500&q=80"
                 alt="Gaming PCs"
                 className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:brightness-75 group-hover:scale-105 transition-all duration-700"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center justify-end pb-6">
                 <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-1">
@@ -259,6 +263,7 @@ export function ShopPage() {
                 src="https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=500&q=80"
                 alt="Accessories"
                 className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:brightness-75 group-hover:scale-105 transition-all duration-700"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center justify-end pb-6">
                 <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-1">
@@ -278,6 +283,7 @@ export function ShopPage() {
                 src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=500&q=80"
                 alt="Monitors"
                 className="absolute inset-0 w-full h-full object-cover brightness-50 group-hover:brightness-75 group-hover:scale-105 transition-all duration-700"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center justify-end pb-6">
                 <h3 className="text-xl font-bold uppercase tracking-widest text-white mb-1">

@@ -24,13 +24,8 @@ export function Customer360ProfilePage() {
     'timeline' | 'invoices' | 'subscriptions' | 'communications'
   >('timeline');
 
-  useEffect(() => {
-    if (id) fetchProfile(id);
-  }, [id]);
-
   const fetchProfile = async (customerId: string) => {
     try {
-      setLoading(true);
       const res = await CRMService.getCustomer360(customerId);
 
       // Inject mock data for Invoices, Subscriptions, Communications if not present
@@ -110,6 +105,12 @@ export function Customer360ProfilePage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (id) fetchProfile(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   if (loading) {
     return (

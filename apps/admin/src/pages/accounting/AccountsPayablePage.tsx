@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Card,
   Button,
@@ -18,27 +18,6 @@ export function AccountsPayablePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [payables, setPayables] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchPayables();
-  }, []);
-
-  const fetchPayables = async () => {
-    try {
-      setLoading(true);
-      const res = await AccountingService.getAP();
-      if (res?.data && res.data.length > 0) {
-        setPayables(res.data);
-      } else {
-        fallbackData();
-      }
-    } catch (err) {
-      console.error('Failed to load AP data', err);
-      fallbackData();
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const fallbackData = () => {
     setPayables([
@@ -69,18 +48,49 @@ export function AccountsPayablePage() {
     ]);
   };
 
-  const totalPayable = payables.reduce((sum, p) => sum + p.amount, 0);
-  const totalOverdue30 = payables
-    .filter((p) => p.daysOverdue > 0 && p.daysOverdue <= 30)
-    .reduce((sum, p) => sum + p.amount, 0);
-  const totalOverdue31 = payables
-    .filter((p) => p.daysOverdue > 30)
-    .reduce((sum, p) => sum + p.amount, 0);
-  const upcoming7 = payables
-    .filter(
-      (p) => p.daysOverdue === 0 && new Date(p.dueDate).getTime() - Date.now() <= 7 * 86400000
-    )
-    .reduce((sum, p) => sum + p.amount, 0);
+  const fetchPayables = async () => {
+    try {
+      const res = await AccountingService.getAP();
+      if (res?.data && res.data.length > 0) {
+        setPayables(res.data);
+      } else {
+        fallbackData();
+      }
+    } catch (err) {
+      console.error('Failed to load AP data', err);
+      fallbackData();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchPayables();
+  }, []);
+
+  const stats = useMemo(() => {
+    // eslint-disable-next-line react-hooks/purity
+    const now = Date.now();
+    const total = payables.reduce((sum, p) => sum + p.amount, 0);
+    const overdue30 = payables
+      .filter((p) => p.daysOverdue > 0 && p.daysOverdue <= 30)
+      .reduce((sum, p) => sum + p.amount, 0);
+    const overdue31 = payables
+      .filter((p) => p.daysOverdue > 30)
+      .reduce((sum, p) => sum + p.amount, 0);
+    const upcoming = payables
+      .filter((p) => p.daysOverdue === 0 && new Date(p.dueDate).getTime() - now <= 7 * 86400000)
+      .reduce((sum, p) => sum + p.amount, 0);
+    return { total, overdue30, overdue31, upcoming };
+  }, [payables]);
+
+  const { totalPayable, totalOverdue30, totalOverdue31, upcoming7 } = {
+    totalPayable: stats.total,
+    totalOverdue30: stats.overdue30,
+    totalOverdue31: stats.overdue31,
+    upcoming7: stats.upcoming,
+  };
 
   const filteredPayables = payables.filter(
     (p) =>

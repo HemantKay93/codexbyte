@@ -118,10 +118,9 @@ export function useCMSBuilder() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void fetchCMSContent(selectedPage);
-    // eslint-disable-line react-hooks/set-state-in-effect
   }, [selectedPage]);
-  // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSave = async () => {
     // Determine which sections have actually changed

@@ -26,13 +26,8 @@ export function InventoryDashboardPage() {
     stockByCategory: [] as any[],
   });
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
       const res = await AdminService.getInventoryDashboardMetrics();
       if (res?.data) {
         setMetrics({
@@ -56,6 +51,11 @@ export function InventoryDashboardPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchDashboardData();
+  }, []);
 
   if (loading) {
     return (

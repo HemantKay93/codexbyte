@@ -53,13 +53,6 @@ export function SettingsPage() {
     fcmServerKey: '',
   });
 
-  useEffect(() => {
-    fetchSettings();
-    // eslint-disable-line react-hooks/immutability // eslint-disable-line @typescript-eslint/no-floating-promises
-    fetchApiConfig();
-    // eslint-disable-line react-hooks/immutability // eslint-disable-line @typescript-eslint/no-floating-promises
-  }, []);
-
   const fetchApiConfig = async () => {
     // eslint-disable-line complexity
     try {
@@ -214,6 +207,13 @@ export function SettingsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchSettings();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchApiConfig();
+  }, []);
 
   const handleSave = async () => {
     setSaving(true);

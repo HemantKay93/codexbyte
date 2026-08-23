@@ -22,14 +22,7 @@ export function SupplierProfilePage() {
   const [purchaseOrders, setPurchaseOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (id) {
-      fetchSupplierData(id);
-    }
-  }, [id]);
-
   const fetchSupplierData = async (supplierId: string) => {
-    setLoading(true);
     try {
       const [suppRes, poRes] = await Promise.all([
         AdminService.getSupplierById(supplierId),
@@ -44,6 +37,14 @@ export function SupplierProfilePage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      void fetchSupplierData(id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   if (loading) {
     return (

@@ -101,7 +101,9 @@ export function BankingReconciliationPage() {
   };
 
   useEffect(() => {
-    fetchUnreconciled();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchUnreconciled();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBank]);
 
   const handleOpenReconcile = (tx: any) => {

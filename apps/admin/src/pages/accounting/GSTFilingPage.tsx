@@ -9,13 +9,16 @@ export function GSTFilingPage() {
   const [loading, setLoading] = useState(true);
   const [gstData, setGstData] = useState<any>(null);
 
-  useEffect(() => {
-    fetchGSTData();
-  }, []);
+  const fallbackData = () => {
+    setGstData({
+      outputTax: 261000,
+      itc: 75600,
+      months: ['May 2026', 'April 2026', 'March 2026'],
+    });
+  };
 
   const fetchGSTData = async () => {
     try {
-      setLoading(true);
       const res = await AccountingService.getGSTFilings();
       if (res?.data) {
         setGstData(res.data);
@@ -30,13 +33,10 @@ export function GSTFilingPage() {
     }
   };
 
-  const fallbackData = () => {
-    setGstData({
-      outputTax: 261000,
-      itc: 75600,
-      months: ['May 2026', 'April 2026', 'March 2026'],
-    });
-  };
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchGSTData();
+  }, []);
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

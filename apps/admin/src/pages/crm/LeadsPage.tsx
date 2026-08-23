@@ -20,13 +20,8 @@ export function LeadsPage() {
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchLeads();
-  }, []);
-
   const fetchLeads = async () => {
     try {
-      setLoading(true);
       const res = await CRMService.getLeads();
       if (res?.data && res.data.length > 0) {
         setLeads(res.data);
@@ -110,6 +105,11 @@ export function LeadsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchLeads();
+  }, []);
 
   const getStatusBadge = (status: string) => {
     switch (status) {

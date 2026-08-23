@@ -24,13 +24,7 @@ export function DiscountsPage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    // eslint-disable-line react-hooks/immutability // eslint-disable-line @typescript-eslint/no-floating-promises
-    fetchDiscounts();
-  }, []);
-
   const fetchDiscounts = async () => {
-    setLoading(true);
     try {
       const response = await AdminService.getCoupons();
       const data = response?.data || response;
@@ -59,6 +53,11 @@ export function DiscountsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchDiscounts();
+  }, []);
 
   const filteredDiscounts = discounts.filter((d) =>
     d.code.toLowerCase().includes(searchTerm.toLowerCase())
